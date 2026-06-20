@@ -1,0 +1,3048 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#042C53">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MCJ 2026">
+<meta name="mobile-web-app-capable" content="yes">
+<title>MCJ 2026 — Sistema de Inscrição</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue-50:#E6F1FB;--blue-100:#B5D4F4;--blue-200:#85B7EB;--blue-400:#378ADD;--blue-600:#185FA5;--blue-800:#0C447C;--blue-900:#042C53;
+  --teal-50:#E1F5EE;--teal-100:#9FE1CB;--teal-400:#1D9E75;--teal-600:#0F6E56;--teal-800:#085041;
+  --amber-50:#FAEEDA;--amber-100:#FAC775;--amber-800:#633806;
+  --gray-50:#F1EFE8;--gray-100:#D3D1C7;--gray-200:#B4B2A9;--gray-400:#888780;--gray-600:#5F5E5A;--gray-800:#444441;--gray-900:#2C2C2A;
+  --red-50:#FCEBEB;--red-100:#F7C1C1;--red-400:#E24B4A;--red-800:#791F1F;
+  --green-50:#EAF3DE;--green-100:#C0DD97;--green-800:#27500A;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-family:'Inter',sans-serif;background:#F5F4F0;color:var(--gray-900);min-height:100vh;display:flex;flex-direction:column;padding-bottom:var(--safe-bot)}
+
+/* NAV */
+nav{background:var(--blue-900);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;padding-left:calc(1rem + var(--safe-left));padding-right:calc(1rem + var(--safe-right));height:56px;position:sticky;top:0;top:var(--safe-top);z-index:200}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:white;letter-spacing:-0.5px}
+.nav-logo span{color:var(--blue-200)}
+.nav-date{font-size:11px;color:var(--blue-100);font-weight:500;border:1px solid var(--blue-800);padding:4px 10px;border-radius:20px;white-space:nowrap}
+
+/* TABS PRINCIPAIS */
+.tabs-bar{background:var(--blue-900);border-top:1px solid var(--blue-800);display:flex;padding:0 1rem;padding-left:calc(1rem + var(--safe-left));padding-right:calc(1rem + var(--safe-right));overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs-bar::-webkit-scrollbar{display:none}
+.tab-btn{background:none;border:none;color:var(--blue-200);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:0 16px;height:44px;min-height:44px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;-webkit-appearance:none}
+.tab-btn.active{color:white;border-bottom:2px solid white}
+.tab-btn.admin-tab{margin-left:auto;color:var(--blue-100);border-left:1px solid var(--blue-800)}
+
+/* VIEWS */
+.view{display:none}.view.active{display:block}
+
+/* HERO */
+.hero{background:var(--blue-900);padding:2rem 1rem 2rem;text-align:center}
+.hero-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--blue-200);border:1px solid var(--blue-800);padding:4px 12px;border-radius:20px;margin-bottom:1rem}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,8vw,3.8rem);font-weight:800;color:white;letter-spacing:-1px;line-height:1.05;margin-bottom:.75rem}
+.hero h1 em{font-style:normal;color:var(--blue-200)}
+.hero-sub{font-size:14px;color:var(--blue-100);margin-bottom:1.5rem;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6}
+.hero-pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.hero-pill{background:var(--blue-800);color:var(--blue-100);font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid var(--blue-800)}
+
+/* POLO SELECTOR */
+.polo-section{max-width:860px;margin:1.5rem auto 0;padding:0 1rem}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-400);margin-bottom:.75rem}
+.polo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1.5rem}
+.polo-card{background:white;border:1.5px solid var(--gray-100);border-radius:14px;padding:1rem;cursor:pointer;position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.polo-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-bottom:8px}
+.polo-name{font-weight:600;font-size:14px;margin-bottom:3px}
+.polo-valor{font-size:12px;font-weight:600;margin-top:3px}
+.polo-count{font-size:11px;color:var(--gray-400);margin-top:2px}
+.polo-check{position:absolute;top:10px;right:10px;font-size:16px;display:none}
+.polo-card.selected .polo-check{display:block}
+
+/* FORM */
+.form-wrap{max-width:860px;margin:0 auto;padding:0 1rem 2.5rem}
+.form-card{background:white;border:1px solid var(--gray-100);border-radius:14px;padding:1.25rem}
+.form-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+label{font-size:13px;font-weight:500;color:var(--gray-800)}
+label .req{color:var(--red-400);margin-left:2px}
+/* font-size 16px prevents iOS auto-zoom */
+input,select,textarea{font-family:'Inter',sans-serif;font-size:16px;color:var(--gray-900);background:var(--gray-50);border:1px solid var(--gray-100);border-radius:10px;padding:12px 14px;outline:none;width:100%;-webkit-appearance:none;appearance:none;transition:border-color .15s}
+input[type=date]{-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blue-400);background:white}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.polo-required-msg{background:var(--amber-50);border:1px solid var(--amber-100);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--amber-800);margin-bottom:1rem;display:none}
+.polo-required-msg.show{display:block}
+.radio-turma-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.radio-turma-label{flex:1;min-width:140px;display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500;-webkit-user-select:none;user-select:none}
+.radio-turma-label.sel{border-color:var(--blue-400);background:var(--blue-50);color:var(--blue-800)}
+.radio-turma-label input{width:18px;height:18px;flex-shrink:0;accent-color:var(--blue-600)}
+.btn-primary{width:100%;padding:15px;background:var(--blue-600);color:white;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:1.25rem;-webkit-appearance:none;min-height:50px}
+.alert{border-radius:10px;padding:12px 16px;font-size:14px;margin-top:1rem;display:none}
+.alert.ok{background:var(--teal-50);color:var(--teal-800);border:1px solid var(--teal-100)}
+.alert.err{background:var(--red-50);color:var(--red-800);border:1px solid var(--red-100)}
+.inscricoes-fechadas-banner{background:var(--red-50);border:1.5px solid var(--red-100);border-radius:12px;padding:1rem;margin-bottom:1.25rem;display:none;align-items:center;gap:10px}
+.inscricoes-fechadas-banner.show{display:flex}
+.banner-text{font-size:14px;color:var(--red-800);font-weight:500;line-height:1.4}
+
+/* MODAIS */
+.overlay{position:fixed;inset:0;background:rgba(4,44,83,.55);z-index:500;display:flex;align-items:flex-end;justify-content:center;padding:0;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.show{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:20px 20px 0 0;width:100%;max-width:100%;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1)}
+.overlay.show .modal{transform:translateY(0)}
+/* Em telas maiores, modal centralizado */
+@media(min-width:520px){
+  .overlay{align-items:center;padding:1rem}
+  .modal{border-radius:20px;max-width:480px;max-height:90vh;transform:translateY(20px)}
+  .overlay.show .modal{transform:translateY(0)}
+  .modal-sm{max-width:400px}
+}
+.modal-hd{background:var(--blue-900);padding:1.25rem 1.25rem 1rem;display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;z-index:1}
+.modal-hd h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:white;margin-bottom:3px}
+.modal-hd p{font-size:12px;color:var(--blue-100)}
+.modal-close{background:none;border:none;color:var(--blue-200);font-size:28px;cursor:pointer;line-height:1;padding:0;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;-webkit-appearance:none}
+.modal-body{padding:1.25rem}
+.modal-footer{padding:.75rem 1.25rem;padding-bottom:calc(.75rem + var(--safe-bot));border-top:1px solid var(--gray-100);display:flex;gap:10px;position:sticky;bottom:0;background:white}
+
+/* PIX */
+.pix-step{display:flex;gap:12px;margin-bottom:1.25rem;align-items:flex-start}
+.pix-step-num{width:28px;height:28px;border-radius:50%;background:var(--blue-50);color:var(--blue-800);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.pix-step-content{flex:1}
+.pix-step-title{font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px}
+.pix-step-text{font-size:13px;color:var(--gray-600);line-height:1.5}
+.pix-chave-box{background:var(--gray-50);border:1px solid var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pix-chave-val{font-size:14px;font-weight:600;color:var(--gray-900);word-break:break-all}
+.pix-copy-btn{background:var(--blue-600);color:white;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:40px;-webkit-appearance:none}
+.pix-copy-btn.copied{background:var(--teal-600)}
+.pix-valor-box{background:var(--green-50);border:1px solid var(--green-100);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;justify-content:space-between}
+.pix-valor-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--green-800)}
+.pix-nome-box{background:var(--blue-50);border:1px solid var(--blue-100);border-radius:10px;padding:8px 14px;margin-top:8px;font-size:13px;color:var(--blue-800);font-weight:500}
+.pix-divider{height:1px;background:var(--gray-100);margin:1.25rem 0}
+.pix-obs{font-size:12px;color:var(--gray-400);line-height:1.6;background:var(--amber-50);border:1px solid var(--amber-100);border-radius:8px;padding:10px 14px}
+.pix-breakdown{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.pix-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--gray-600);padding:4px 0;border-bottom:1px solid var(--gray-100)}
+.pix-line:last-child{border-bottom:none;font-weight:700;color:var(--gray-900);font-size:15px;padding-top:8px}
+.pix-line-label{display:flex;align-items:center;gap:6px}
+.pix-almoco-line{color:#6B3A00}
+
+/* BOTÕES GENÉRICOS */
+.btn-ok{flex:1;padding:14px;background:var(--blue-600);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;min-height:48px;-webkit-appearance:none}
+.btn-cancel{flex:1;padding:14px;background:white;color:var(--gray-800);border:1px solid var(--gray-100);border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;min-height:48px;-webkit-appearance:none}
+
+/* ADMIN */
+.admin-user-bar{background:var(--blue-50);border-bottom:1px solid var(--blue-100);padding:10px 1rem;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--blue-800);font-weight:500;flex-wrap:wrap;gap:6px}
+.btn-logout{background:none;border:1px solid var(--blue-200);color:var(--blue-800);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;min-height:36px;-webkit-appearance:none}
+.admin-wrap{max-width:1000px;margin:0 auto;padding:1.25rem 1rem 3rem}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px}
+.admin-header h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:800}
+.btn-export-all{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--blue-600);color:white;border:none;min-height:44px;-webkit-appearance:none}
+
+/* ADMIN INTERNAL TABS */
+.admin-tabs{display:flex;border-bottom:1px solid var(--gray-100);margin-bottom:1.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.admin-tabs::-webkit-scrollbar{display:none}
+.atab-btn{background:none;border:none;border-bottom:2px solid transparent;padding:12px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--gray-400);cursor:pointer;white-space:nowrap;margin-bottom:-1px;min-height:44px;-webkit-appearance:none}
+.atab-btn.active{color:var(--blue-600);border-bottom-color:var(--blue-600);font-weight:600}
+.admin-panel{display:none}.admin-panel.active{display:block}
+
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
+.summary-card{background:white;border-radius:12px;border:1px solid var(--gray-100);padding:.9rem 1rem;display:flex;align-items:center;gap:10px}
+.summary-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.summary-num{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;line-height:1;color:var(--gray-900)}
+.summary-lbl{font-size:10px;color:var(--gray-400);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+
+/* POLO PANELS — tabela com scroll horizontal em mobile */
+.polo-panel{margin-bottom:1.25rem;background:white;border-radius:12px;border:1px solid var(--gray-100);overflow:hidden}
+.polo-panel-header{padding:.9rem 1rem;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--gray-50);gap:8px;flex-wrap:wrap}
+.polo-panel-title{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-weight:600;font-size:14px}
+.polo-panel-actions{display:flex;gap:6px;flex-shrink:0}
+.polo-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.btn-export-polo{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;background:white;border:1px solid var(--gray-100);color:var(--gray-800);min-height:36px;-webkit-appearance:none}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.list-table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
+.list-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--gray-50);background:var(--gray-50);white-space:nowrap}
+.list-table td{padding:10px 12px;border-bottom:1px solid var(--gray-50);color:var(--gray-800);vertical-align:middle}
+.list-table tr:last-child td{border-bottom:none}
+.num-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--gray-50);color:var(--gray-600);font-size:10px;font-weight:600}
+.empty-row td{text-align:center;padding:2rem;color:var(--gray-400);font-style:italic}
+
+/* PAGAMENTO */
+.btn-pago{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;min-height:32px;-webkit-appearance:none}
+.btn-pago.sim{background:var(--teal-50);color:var(--teal-800);border:1px solid var(--teal-100)}
+.btn-pago.nao{background:var(--gray-50);color:var(--gray-400);border:1px solid var(--gray-100)}
+.pago-resumo{display:flex;align-items:center;gap:6px;font-size:11px}
+.pago-count-sim{color:var(--teal-600);font-weight:600}
+.pago-count-nao{color:var(--gray-400);font-weight:500}
+.btn-whatsapp{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #C3E6C8;background:#F0FAF1;color:#1A6630;white-space:nowrap;text-decoration:none;margin-left:4px;min-height:32px}
+.pago-cell{display:flex;align-items:center;gap:4px;flex-wrap:nowrap}
+
+/* TRABALHADOR */
+.btn-trabalhador{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;transition:background .15s}
+.btn-trabalhador.sim{background:#F0EAF8;color:#4A1575;border:1px solid #D4B8EF}
+.btn-trabalhador.sim:hover{background:#E4D5F5}
+.btn-trabalhador.nao{background:var(--gray-50);color:var(--gray-400);border:1px solid var(--gray-100)}
+.btn-trabalhador.nao:hover{background:#F0EAF8;color:#4A1575;border-color:#D4B8EF}
+
+/* EXCLUIR INSCRIÇÃO */
+.btn-excluir{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:white;color:var(--red-400);border:1px solid var(--red-100);cursor:pointer;font-size:14px;transition:background .15s;flex-shrink:0}
+.btn-excluir:hover{background:var(--red-50)}
+.trab-resumo{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#4A1575;font-weight:600;margin-left:2px}
+
+/* SALA */
+.sala-select{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:6px 8px;border-radius:8px;border:1.5px solid var(--gray-100);background:var(--gray-50);color:var(--gray-700);cursor:pointer;outline:none;min-width:80px;min-height:36px;-webkit-appearance:auto}
+.sala-select:focus{border-color:var(--blue-400);background:white}
+.sala-select.atribuida{background:var(--blue-50);border-color:var(--blue-200);color:var(--blue-800)}
+.sala-resumo{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--gray-400)}
+
+/* CONFIG */
+.config-actions-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px}
+.config-actions-bar h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.btn-add-polo{display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--blue-600);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;-webkit-appearance:none}
+.config-grid{display:grid;grid-template-columns:1fr;gap:1rem}
+.config-polo-card{background:white;border:1px solid var(--gray-100);border-radius:14px;overflow:hidden}
+.config-polo-head{padding:.9rem 1rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--gray-100)}
+.config-polo-head-name{flex:1;font-weight:600;font-size:14px;min-width:0}
+.config-polo-body{padding:1rem;display:flex;flex-direction:column;gap:0}
+.cfg-section{padding:12px 0;border-bottom:1px solid var(--gray-50)}
+.cfg-section:last-child{border-bottom:none;padding-bottom:0}
+.cfg-section-title{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray-300);margin-bottom:10px}
+.cfg-section-title::after{content:'';flex:1;height:1px;background:var(--gray-100)}
+.cfg-section .cfg-field{margin-bottom:8px}
+.cfg-section .cfg-field:last-child{margin-bottom:0}
+.cfg-section .cfg-row{margin-bottom:8px}
+.cfg-section .cfg-row:last-child{margin-bottom:0}
+.cfg-section .toggle-wrap{margin-bottom:8px}
+.cfg-section .toggle-wrap:last-child{margin-bottom:0}
+.cfg-field{display:flex;flex-direction:column;gap:5px}
+.cfg-field label{font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px}
+.cfg-field input,.cfg-field textarea,.cfg-field select{font-size:16px;border-radius:8px;padding:11px 12px}
+.cfg-field textarea{resize:vertical;min-height:72px;font-size:14px}
+.cfg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.config-polo-footer{padding:.75rem 1rem;border-top:1px solid var(--gray-50);display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--gray-50)}
+.cfg-saved-msg{font-size:12px;color:var(--teal-600);font-weight:500;opacity:0;transition:opacity .3s}
+.cfg-saved-msg.show{opacity:1}
+.btn-cfg-save{padding:10px 18px;background:var(--blue-600);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;min-height:44px;-webkit-appearance:none}
+.btn-remove-polo{padding:8px 12px;background:white;color:var(--red-400);border:1px solid var(--red-100);border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;min-height:36px;-webkit-appearance:none}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:10px;padding:12px 14px;gap:12px}
+.toggle-lbl-main{font-size:13px;font-weight:600;color:var(--gray-800)}
+.toggle-lbl-sub{font-size:11px;color:var(--gray-400);margin-top:2px}
+.toggle-switch{position:relative;width:48px;height:28px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--gray-200);border-radius:28px;cursor:pointer;transition:background .2s}
+.toggle-slider:before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.toggle-switch input:checked+.toggle-slider{background:var(--teal-400)}
+.toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px)}
+.polo-status-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;margin-left:4px}
+.polo-status-aberto{background:var(--teal-50);color:var(--teal-800);border:1px solid var(--teal-100)}
+.polo-status-fechado{background:var(--red-50);color:var(--red-800);border:1px solid var(--red-100)}
+
+/* USUÁRIOS */
+.users-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px}
+.users-header h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.btn-add-user{display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--blue-600);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;-webkit-appearance:none}
+.users-table-wrap{background:white;border-radius:12px;border:1px solid var(--gray-100);overflow:hidden;margin-bottom:1.25rem}
+.users-table-title{padding:.75rem 1rem;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--gray-400);border-bottom:1px solid var(--gray-50);background:var(--gray-50)}
+.users-table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.users-table{width:100%;border-collapse:collapse;font-size:13px;min-width:480px}
+.users-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;background:var(--gray-50);border-bottom:1px solid var(--gray-100);white-space:nowrap}
+.users-table td{padding:11px 12px;border-bottom:1px solid var(--gray-50);color:var(--gray-800);vertical-align:middle}
+.users-table tr:last-child td{border-bottom:none}
+.role-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
+.role-admin{background:var(--blue-50);color:var(--blue-800);border:1px solid var(--blue-100)}
+.role-coord{background:var(--amber-50);color:var(--amber-800);border:1px solid var(--amber-100)}
+.user-polo-tags{display:flex;flex-wrap:wrap;gap:4px}
+.user-polo-tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:12px;background:var(--gray-50);border:1px solid var(--gray-100);color:var(--gray-600)}
+.btn-user-edit{padding:6px 12px;background:white;color:var(--blue-600);border:1px solid var(--blue-100);border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;min-height:36px;-webkit-appearance:none}
+.btn-user-del{padding:6px 12px;background:white;color:var(--red-400);border:1px solid var(--red-100);border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;min-height:36px;-webkit-appearance:none}
+.user-status-on{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--teal-400);margin-right:4px}
+.user-status-off{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gray-200);margin-right:4px}
+
+/* MODAL USUÁRIO */
+.user-modal-body{padding:1.25rem;display:flex;flex-direction:column;gap:14px}
+.user-field{display:flex;flex-direction:column;gap:5px}
+.user-field label{font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px}
+.user-field input,.user-field select{font-size:16px;padding:11px 12px;border-radius:8px}
+.polo-checkboxes{display:flex;flex-direction:column;gap:8px;margin-top:4px;max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px}
+.polo-checkbox-label{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500;-webkit-user-select:none;user-select:none;min-height:48px}
+.polo-checkbox-label input{width:18px;height:18px;accent-color:var(--blue-600);flex-shrink:0}
+.polo-checkbox-label.checked{border-color:var(--blue-400);background:var(--blue-50);color:var(--blue-800)}
+.user-modal-err{background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800);display:none}
+.user-modal-err.show{display:block}
+.coord-scope-note{font-size:12px;color:var(--gray-400);background:var(--gray-50);border:1px solid var(--gray-100);border-radius:8px;padding:8px 12px;line-height:1.5}
+
+/* SESSION BARS */
+.coord-bar{background:#FFFBF0;border-bottom:1px solid var(--amber-100);padding:10px 1rem;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--amber-800);font-weight:500;flex-wrap:wrap;gap:6px}
+.coord-polo-tags-bar{display:flex;gap:6px;flex-wrap:wrap}
+.coord-polo-tag-bar{font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;background:var(--amber-50);border:1px solid var(--amber-100);color:var(--amber-800)}
+
+/* LOGIN */
+.login-overlay{position:fixed;inset:0;background:rgba(4,44,83,.72);z-index:600;display:flex;align-items:flex-end;justify-content:center;padding:0;opacity:0;pointer-events:none;transition:opacity .2s}
+.login-overlay.show{opacity:1;pointer-events:all}
+.login-box{background:white;border-radius:20px 20px 0 0;width:100%;max-width:100%;transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);overflow:hidden;padding-bottom:var(--safe-bot)}
+.login-overlay.show .login-box{transform:translateY(0)}
+@media(min-width:520px){
+  .login-overlay{align-items:center}
+  .login-box{border-radius:20px;max-width:380px;padding-bottom:0;transform:translateY(20px)}
+  .login-overlay.show .login-box{transform:translateY(0)}
+}
+.login-hd{background:var(--blue-900);padding:1.75rem 1.5rem 1.25rem;text-align:center}
+.login-icon{width:48px;height:48px;border-radius:14px;background:var(--blue-800);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:22px}
+.login-hd h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:white;margin-bottom:4px}
+.login-hd p{font-size:13px;color:var(--blue-100)}
+.login-body{padding:1.5rem}
+.login-field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.login-field label{font-size:13px;font-weight:500;color:var(--gray-800)}
+.login-field input{font-size:16px;padding:13px 14px;border-radius:10px}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:52px}
+.pw-toggle{position:absolute;right:0;top:0;bottom:0;width:50px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--gray-400);font-size:18px;-webkit-appearance:none}
+.login-err{background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red-800);margin-bottom:14px;display:none}
+.login-err.show{display:block}
+.btn-login{width:100%;padding:15px;background:var(--blue-600);color:white;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:4px;min-height:50px;-webkit-appearance:none}
+.login-cancel{display:block;text-align:center;margin-top:14px;font-size:14px;color:var(--gray-400);cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif;width:100%;padding:8px;min-height:44px;-webkit-appearance:none}
+
+/* ADD POLO MODAL */
+.addpolo-field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.addpolo-field label{font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px}
+.addpolo-field input{font-size:16px;padding:11px 12px;border-radius:8px}
+.addpolo-err{background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--red-800);display:none;margin-bottom:10px}
+.addpolo-err.show{display:block}
+
+/* ALMOÇO */
+.almoco-wrap{display:none;margin-top:6px}
+.almoco-wrap.show{display:block}
+.almoco-check-label{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500;-webkit-user-select:none;user-select:none;min-height:50px}
+.almoco-check-label.sel{border-color:#E08020;background:#FFF8EF;color:#6B3A00}
+.almoco-check-label input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:#E08020}
+.almoco-valor-tag{margin-left:auto;font-size:13px;font-weight:700;color:#E08020}
+
+footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc(1.5rem + var(--safe-bot));font-size:12px;color:var(--gray-200);border-top:1px solid var(--gray-100)}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(min-width:640px){
+  .form-grid{grid-template-columns:1fr 1fr}
+  .polo-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+  .config-grid{grid-template-columns:repeat(auto-fill,minmax(400px,1fr))}
+  .cfg-row{grid-template-columns:1fr 1fr}
+  .admin-wrap{padding:1.5rem 1.5rem 3rem}
+  .form-wrap{padding:0 1.5rem 3rem}
+  .polo-section{padding:0 1.5rem;margin-top:2rem}
+}
+@media(max-width:400px){
+  .polo-grid{grid-template-columns:1fr}
+  .radio-turma-wrap{flex-direction:column}
+  .radio-turma-label{min-width:unset}
+}
+
+/* ================================================================
+   DEFINIR TURMAS — DRAG AND DROP
+================================================================ */
+.turmas-polo-section{margin-bottom:2rem}
+.turmas-polo-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--gray-900);margin-bottom:1rem;display:flex;align-items:center;gap:10px}
+.turmas-layout{display:grid;grid-template-columns:240px 1fr;gap:1.25rem;align-items:start}
+@media(max-width:700px){.turmas-layout{grid-template-columns:1fr}}
+
+/* Coluna de não atribuídos */
+.turmas-unassigned{background:white;border:1px solid var(--gray-100);border-radius:14px;overflow:hidden;min-height:120px}
+.turmas-unassigned-title{padding:.75rem 1rem;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);background:var(--gray-50);border-bottom:1px solid var(--gray-100)}
+.turmas-unassigned-list{padding:.5rem;min-height:80px}
+
+/* Grid de salas */
+.turmas-salas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.turmas-sala-card{background:white;border:1.5px solid var(--gray-100);border-radius:12px;overflow:hidden;min-height:100px}
+.turmas-sala-header{padding:.6rem .85rem;font-size:12px;font-weight:700;background:var(--blue-50);color:var(--blue-800);border-bottom:1px solid var(--blue-100);display:flex;align-items:center;justify-content:space-between}
+.turmas-sala-count{font-size:11px;font-weight:500;color:var(--blue-400)}
+.turmas-sala-list{padding:.4rem;min-height:70px}
+
+/* Drop zones */
+.drop-zone{transition:background .15s,border-color .15s}
+.drop-zone.drag-over{background:var(--blue-50)!important;border-color:var(--blue-400)!important}
+
+/* Pessoa card (draggable) */
+.pessoa-card{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;background:var(--gray-50);border:1px solid var(--gray-100);margin-bottom:4px;cursor:grab;user-select:none;-webkit-user-select:none;transition:box-shadow .15s,opacity .15s;touch-action:none}
+.pessoa-card:active{cursor:grabbing;box-shadow:0 4px 14px rgba(0,0,0,.15);opacity:.85}
+.pessoa-card.dragging{opacity:.4;box-shadow:none}
+.pessoa-avatar{width:28px;height:28px;border-radius:50%;background:var(--blue-100);color:var(--blue-800);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pessoa-info{flex:1;min-width:0}
+.pessoa-nome{font-size:12px;font-weight:600;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pessoa-meta{font-size:10px;color:var(--gray-400);margin-top:1px}
+.pessoa-trab{display:inline-flex;align-items:center;font-size:10px;font-weight:600;color:#4A1575;background:#F0EAF8;padding:1px 5px;border-radius:6px;margin-left:3px}
+.btn-remover-atrib{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.08);border:none;color:var(--gray-500);font-size:13px;cursor:pointer;flex-shrink:0;line-height:1;transition:background .12s,color .12s;padding:0;margin-left:2px}
+.btn-remover-atrib:hover{background:var(--red-100);color:var(--red-800)}
+
+/* Turma selector header */
+.turmas-turma-tabs{display:flex;gap:8px;margin-bottom:1rem}
+.turma-tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-100);background:white;color:var(--gray-600);transition:all .15s}
+.turma-tab.active{background:var(--blue-600);color:white;border-color:var(--blue-600)}
+
+@media(max-width:700px){
+  .turmas-salas-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+}
+
+/* ================================================================
+   EQUIPE DE TRABALHO
+================================================================ */
+.equipe-layout{display:grid;grid-template-columns:260px 1fr;gap:1.25rem;align-items:start}
+@media(max-width:700px){.equipe-layout{grid-template-columns:1fr}}
+.equipe-workers-panel{background:white;border:1px solid var(--gray-100);border-radius:14px;overflow:hidden;position:sticky;top:80px}
+.equipe-workers-title{padding:.75rem 1rem;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);background:var(--gray-50);border-bottom:1px solid var(--gray-100)}
+.equipe-worker-row{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-bottom:1px solid var(--gray-50);transition:background .1s}
+.equipe-worker-row:last-child{border-bottom:none}
+.equipe-worker-row:hover{background:var(--gray-50)}
+.equipe-worker-info{flex:1;min-width:0}
+.equipe-worker-nome{font-size:13px;font-weight:600;color:var(--gray-900)}
+.equipe-worker-meta{font-size:11px;color:var(--gray-400);margin-top:1px}
+.equipe-worker-setores{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.equipe-setor-mini{font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;background:var(--amber-50);color:var(--amber-800);border:1px solid var(--amber-100)}
+.equipe-setores-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.equipe-setor-card{background:white;border:1.5px solid var(--gray-100);border-radius:12px;overflow:hidden}
+.equipe-setor-header{padding:.65rem 1rem;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.equipe-setor-list{padding:.5rem;min-height:60px}
+.equipe-check-label{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;background:var(--gray-50);border:1px solid var(--gray-100);margin-bottom:4px;cursor:pointer;font-size:12px;font-weight:500;color:var(--gray-800);transition:background .12s,border-color .12s;user-select:none}
+.equipe-check-label:hover{background:var(--amber-50);border-color:var(--amber-100)}
+.equipe-check-label.marcado{background:#FFFBF0;border-color:var(--amber-100);color:var(--amber-800)}
+.equipe-check-label input{accent-color:var(--amber-600);width:15px;height:15px;flex-shrink:0}
+.equipe-empty{font-size:12px;color:var(--gray-200);padding:.5rem;text-align:center}
+
+/* Membro do setor — pill com botão remover */
+.setor-membro{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:8px;background:white;border:1px solid var(--gray-100);margin-bottom:4px}
+.setor-membro-nome{flex:1;font-size:12px;font-weight:600;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.setor-membro-meta{font-size:10px;color:var(--gray-400)}
+.setor-membro-rm{background:none;border:none;color:var(--gray-300);cursor:pointer;font-size:15px;line-height:1;padding:0 2px;flex-shrink:0;transition:color .12s}
+.setor-membro-rm:hover{color:var(--red-400)}
+
+/* Botão + Adicionar e dropdown */
+.setor-add-wrap{position:relative;margin-top:4px}
+.btn-setor-add{display:flex;align-items:center;gap:5px;width:100%;padding:7px 10px;border-radius:8px;border:1.5px dashed var(--gray-100);background:transparent;color:var(--gray-400);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:Inter,sans-serif}
+.btn-setor-add:hover{border-color:var(--amber-300);color:var(--amber-700);background:var(--amber-50)}
+.setor-dropdown{position:absolute;bottom:calc(100% + 4px);left:0;right:0;background:white;border:1px solid var(--gray-100);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:200;max-height:200px;overflow-y:auto;display:none}
+.setor-dropdown.open{display:block}
+.setor-dropdown-item{display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;font-size:12px;color:var(--gray-800);transition:background .1s;border-bottom:1px solid var(--gray-50)}
+.setor-dropdown-item:last-child{border-bottom:none}
+.setor-dropdown-item:hover{background:var(--amber-50);color:var(--amber-800)}
+.setor-dropdown-empty{padding:10px;font-size:12px;color:var(--gray-400);text-align:center}
+</style>
+</head>
+<body>
+
+<!-- TELA DE CARREGAMENTO INICIAL -->
+<div id="supa-init-screen" style="position:fixed;inset:0;background:var(--blue-900);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:1.5rem">
+  <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:white;letter-spacing:-1px">MCJ <span style="color:var(--blue-200)">2026</span></div>
+  <div style="display:flex;align-items:center;gap:10px;color:var(--blue-200);font-size:14px">
+    <span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite"></span>
+    Carregando dados…
+  </div>
+</div>
+
+<nav>
+  <div class="nav-logo">MCJ <span>2026</span></div>
+  <div class="nav-date">20 de setembro de 2026</div>
+</nav>
+<div class="tabs-bar">
+  <button class="tab-btn active" id="tab-inscricao" onclick="showView('inscricao',this)">Inscrição</button>
+  <button class="tab-btn admin-tab" id="tab-admin" onclick="showView('admin',this)">⚙ Administração</button>
+</div>
+
+<!-- VIEW: INSCRIÇÃO -->
+<div class="view active" id="view-inscricao">
+  <div class="hero">
+    <div class="hero-tag">Evento Oficial</div>
+    <h1>MCJ <em>2026</em></h1>
+    <p class="hero-sub">Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.</p>
+    <div class="hero-pills">
+      <div class="hero-pill">📅 20 de setembro de 2026</div>
+      <div class="hero-pill">📍 Polos no Rio de Janeiro</div>
+      <div class="hero-pill">Inscrições abertas</div>
+    </div>
+  </div>
+
+  <div class="polo-section">
+    <div class="section-eyebrow">Escolha seu polo</div>
+    <div class="polo-grid" id="polo-grid"></div>
+  </div>
+
+  <div class="form-wrap">
+    <div class="inscricoes-fechadas-banner" id="banner-fechado">
+      <span style="font-size:22px">🔒</span>
+      <div class="banner-text" id="banner-fechado-text"></div>
+    </div>
+    <div class="section-eyebrow">Dados do participante</div>
+    <div class="polo-required-msg" id="polo-msg">⚠ Selecione um polo antes de enviar a inscrição.</div>
+    <div class="form-card">
+      <div class="form-grid">
+        <div class="field">
+          <label>Nome completo <span class="req">*</span></label>
+          <input type="text" id="f-nome" placeholder="Seu nome completo">
+        </div>
+        <div class="field">
+          <label>Data de nascimento <span class="req">*</span></label>
+          <input type="date" id="f-nascimento">
+        </div>
+        <div class="field">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" id="f-email" placeholder="seu@email.com">
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="f-telefone" placeholder="(00) 00000-0000" maxlength="15">
+        </div>
+        <div class="field full">
+          <label>Instituição de origem</label>
+          <input type="text" id="f-instituicao" placeholder="Nome da sua igreja, escola ou organização">
+        </div>
+        <div class="field full">
+          <label>Nome para o crachá</label>
+          <input type="text" id="f-cracha" placeholder="Como deseja ser identificado(a) no crachá" maxlength="40">
+          <span style="font-size:11px;color:var(--gray-400);margin-top:3px">Deixe em branco para usar o nome completo</span>
+        </div>
+        <div class="field full">
+          <label>Turma <span class="req">*</span></label>
+          <div class="radio-turma-wrap">
+            <label class="radio-turma-label" id="lbl-adulto">
+              <input type="radio" name="turma" value="Adulto"> 👤 Turma de Adulto
+            </label>
+            <label class="radio-turma-label" id="lbl-mocidade">
+              <input type="radio" name="turma" value="Mocidade"> 🌟 Turma de Mocidade
+            </label>
+          </div>
+        </div>
+        <div class="field full" id="almoco-field" style="display:none">
+          <label>🍽 Almoço</label>
+          <div class="almoco-wrap show">
+            <label class="almoco-check-label" id="lbl-almoco">
+              <input type="checkbox" id="f-almoco"> Desejo incluir o almoço na minha inscrição
+              <span class="almoco-valor-tag" id="almoco-valor-tag"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="inscrever()">Confirmar inscrição</button>
+      <div class="alert" id="alert"></div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW: ADMIN -->
+<div class="view" id="view-admin">
+  <!-- barra admin geral -->
+  <div class="admin-user-bar" id="bar-admin" style="display:none">
+    <span>🔒 <span id="admin-user-nome">admin</span> — Administrador geral</span>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+  </div>
+  <!-- barra coordenador -->
+  <div class="coord-bar" id="bar-coord" style="display:none">
+    <span>👤 <span id="coord-user-nome"></span> — Coordenador de polo:
+      <span class="coord-polo-tags-bar" id="coord-polo-tags-bar"></span>
+    </span>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+  </div>
+
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h2 id="admin-panel-title">Painel de inscrições</h2>
+      <button class="btn-export-all" id="btn-exportar-todos" onclick="exportarTodos()">⬇ Exportar todas (Excel)</button>
+    </div>
+    <div class="admin-tabs" id="admin-tabs-bar">
+      <button class="atab-btn active" id="atab-inscricoes" onclick="switchAdminTab('inscricoes',this)">📋 Inscrições</button>
+      <button class="atab-btn" id="atab-turmas" onclick="switchAdminTab('turmas',this)">🏫 Definir Turmas</button>
+      <button class="atab-btn" id="atab-equipe" onclick="switchAdminTab('equipe',this)">🔧 Equipe de Trabalho</button>
+      <button class="atab-btn" id="atab-config" onclick="switchAdminTab('config',this)">⚙ Configuração dos Polos</button>
+      <button class="atab-btn" id="atab-usuarios" onclick="switchAdminTab('usuarios',this)">👥 Coordenadores</button>
+    </div>
+    <div class="admin-panel active" id="apanel-inscricoes">
+      <div class="summary-grid" id="summary-grid"></div>
+      <div id="polo-panels"></div>
+    </div>
+    <div class="admin-panel" id="apanel-turmas">
+      <div id="turmas-wrap"></div>
+    </div>
+    <div class="admin-panel" id="apanel-equipe">
+      <div id="equipe-wrap"></div>
+    </div>
+    <div class="admin-panel" id="apanel-config">
+      <div class="config-actions-bar">
+        <h3>Polos cadastrados</h3>
+        <button class="btn-add-polo" onclick="abrirAddPolo()">+ Adicionar polo</button>
+      </div>
+      <div class="config-grid" id="config-grid"></div>
+    </div>
+    <div class="admin-panel" id="apanel-usuarios">
+      <div class="users-header">
+        <h3>Gestão de usuários</h3>
+        <button class="btn-add-user" onclick="abrirUserModal()">+ Novo usuário</button>
+      </div>
+      <!-- Administradores -->
+      <div class="users-table-wrap">
+        <div class="users-table-title">🔒 Administradores gerais</div>
+        <div class="users-table-scroll">
+        <table class="users-table">
+          <thead><tr><th>Usuário</th><th>Nome</th><th>Acesso</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="tbody-admins"></tbody>
+        </table>
+        </div>
+      </div>
+      <!-- Coordenadores -->
+      <div class="users-table-wrap">
+        <div class="users-table-title">👤 Coordenadores de polo</div>
+        <div class="users-table-scroll">
+        <table class="users-table">
+          <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="tbody-coords"></tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: USUÁRIO -->
+<div class="overlay" id="user-modal-overlay" onclick="if(event.target===this)fecharUserModal()">
+  <div class="modal modal-sm" style="max-width:460px">
+    <div class="modal-hd">
+      <div><h3 id="user-modal-title">Novo usuário</h3></div>
+      <button class="modal-close" onclick="fecharUserModal()">×</button>
+    </div>
+    <div class="user-modal-body">
+      <div class="user-modal-err" id="user-modal-err"></div>
+      <div class="user-field">
+        <label>Tipo de acesso *</label>
+        <select id="u-role" onchange="onRoleChange()">
+          <option value="admin">Administrador geral</option>
+          <option value="coord">Coordenador de polo</option>
+        </select>
+      </div>
+      <div class="user-field">
+        <label>Nome completo *</label>
+        <input type="text" id="u-nome" placeholder="Ex: Maria Silva">
+      </div>
+      <div class="user-field">
+        <label>Usuário (login) *</label>
+        <input type="text" id="u-login" placeholder="Ex: maria.silva" autocomplete="off">
+      </div>
+      <div class="user-field">
+        <label id="u-senha-label">Senha *</label>
+        <div class="pw-wrap">
+          <input type="password" id="u-senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+          <button class="pw-toggle" onclick="toggleSenhaUser()">👁</button>
+        </div>
+      </div>
+      <div class="user-field" id="u-polos-field" style="display:none">
+        <label>Polos atribuídos *</label>
+        <div class="polo-checkboxes" id="u-polos-checkboxes"></div>
+        <div class="coord-scope-note">O coordenador terá acesso total (visualizar, exportar e fechar inscrições) apenas nos polos selecionados.</div>
+      </div>
+      <div class="user-field">
+        <label>Status</label>
+        <select id="u-status">
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="fecharUserModal()">Cancelar</button>
+      <button class="btn-ok" id="user-modal-btn" onclick="salvarUsuario()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PIX -->
+<div class="overlay modal-md" id="pix-overlay" onclick="if(event.target===this)fecharPix()">
+  <div class="modal modal-md">
+    <div class="modal-hd">
+      <div>
+        <h3>✅ Inscrição confirmada!</h3>
+        <p id="pix-subtitulo"></p>
+      </div>
+      <button class="modal-close" onclick="fecharPix()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="pix-step">
+        <div class="pix-step-num">1</div>
+        <div class="pix-step-content">
+          <div class="pix-step-title">Valor a pagar</div>
+          <div class="pix-breakdown" id="pix-breakdown">
+            <!-- preenchido por JS -->
+          </div>
+          <div class="pix-valor-box" style="margin-top:8px">
+            <span style="font-size:12px;color:var(--green-800);font-weight:500">Total</span>
+            <span class="pix-valor-num" id="pix-valor">R$ —,—</span>
+          </div>
+        </div>
+      </div>
+      <div class="pix-step">
+        <div class="pix-step-num">2</div>
+        <div class="pix-step-content">
+          <div class="pix-step-title">Chave PIX do destinatário</div>
+          <div class="pix-chave-box">
+            <span class="pix-chave-val" id="pix-chave">—</span>
+            <button class="pix-copy-btn" id="btn-copiar" onclick="copiarChave()">Copiar</button>
+          </div>
+          <div class="pix-nome-box" id="pix-nome">Beneficiário: —</div>
+        </div>
+      </div>
+      <div class="pix-step">
+        <div class="pix-step-num">3</div>
+        <div class="pix-step-content">
+          <div class="pix-step-title">Identificação no comprovante</div>
+          <div class="pix-step-text">Use seu <strong>nome completo</strong> como descrição/mensagem do PIX.</div>
+        </div>
+      </div>
+      <div class="pix-divider"></div>
+      <div class="pix-obs">⚠ Guarde o comprovante. A confirmação da vaga será enviada por e-mail em até 2 dias úteis.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="fecharPix()">Fechar</button>
+      <button class="btn-ok" onclick="fecharPix()">Entendi, vou pagar ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-hd">
+      <div class="login-icon">🔐</div>
+      <h3>Área restrita</h3>
+      <p>Acesso exclusivo para administradores</p>
+    </div>
+    <div class="login-body">
+      <div class="login-err" id="login-err">Usuário ou senha incorretos.</div>
+      <div class="login-field">
+        <label>Usuário</label>
+        <input type="text" id="login-user" placeholder="Digite seu usuário" autocomplete="username">
+      </div>
+      <div class="login-field">
+        <label>Senha</label>
+        <div class="pw-wrap">
+          <input type="password" id="login-pass" placeholder="Digite sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()">
+          <button class="pw-toggle" onclick="toggleSenha()" id="pw-toggle-btn">👁</button>
+        </div>
+      </div>
+      <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+      <button class="login-cancel" onclick="fecharLogin()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADICIONAR POLO -->
+<div class="overlay" id="addpolo-overlay" onclick="if(event.target===this)fecharAddPolo()">
+  <div class="modal modal-sm">
+    <div class="modal-hd">
+      <div><h3>Adicionar novo polo</h3></div>
+      <button class="modal-close" onclick="fecharAddPolo()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="addpolo-err" id="addpolo-err"></div>
+      <div class="addpolo-field">
+        <label>Nome do polo *</label>
+        <input type="text" id="addpolo-nome" placeholder="Ex: Botafogo" onkeydown="if(event.key==='Enter')confirmarAddPolo()">
+      </div>
+      <div class="addpolo-field">
+        <label>Endereço</label>
+        <input type="text" id="addpolo-endereco" placeholder="Rua, número, bairro, CEP">
+      </div>
+      <div class="addpolo-field">
+        <label>Valor da inscrição</label>
+        <input type="text" id="addpolo-valor" placeholder="Ex: R$ 50,00">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="fecharAddPolo()">Cancelar</button>
+      <button class="btn-ok" onclick="confirmarAddPolo()">Adicionar polo</button>
+    </div>
+  </div>
+</div>
+
+<footer>MCJ 2026 · 20 de setembro de 2026 · Rio de Janeiro</footer>
+
+<script>
+/* ================================================================
+   PALETA DINÂMICA DE CORES
+================================================================ */
+const PALETA = [
+  {bg:'#E6F1FB',border:'#B5D4F4',text:'#0C447C',badge:'#378ADD'},
+  {bg:'#E1F5EE',border:'#9FE1CB',text:'#085041',badge:'#1D9E75'},
+  {bg:'#FAEEDA',border:'#FAC775',text:'#633806',badge:'#EF9F27'},
+  {bg:'#FAECE7',border:'#F5C4B3',text:'#4A1B0C',badge:'#D85A30'},
+  {bg:'#F0EAF8',border:'#D4B8EF',text:'#4A1575',badge:'#8B44CC'},
+  {bg:'#E8F4F0',border:'#A8D9CC',text:'#0D4A3C',badge:'#2E8B6E'},
+  {bg:'#FFF0E0',border:'#FFD09B',text:'#6B3A00',badge:'#E08020'},
+  {bg:'#EAF0F8',border:'#B3C8E8',text:'#1A3A6B',badge:'#3A6BC8'},
+];
+const cor = i => PALETA[i % PALETA.length];
+
+/* ================================================================
+   DADOS PADRÃO E CONFIGURAÇÃO
+================================================================ */
+const KEY_AUTH = 'mcj2026_admin_session';
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'mcj2026@rj';
+
+/* ================================================================
+   ██████╗  ██████╗   SUPABASE CONFIG
+   Preencha com suas credenciais do projeto Supabase
+================================================================ */
+const SUPA_URL  = 'https://sdwxwdqnfukxeofscmpd.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
+/* ============================================================== */
+
+const SUPA_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPA_KEY,
+  'Authorization': 'Bearer ' + SUPA_KEY,
+};
+
+// Cache local — fonte de verdade durante a sessão
+let _cache = { inscricoes: null, config: null, users: null };
+// Fila de escritas para config/users — evita chamadas paralelas
+let _savingCfg = false;
+let _savingUsr = false;
+
+function supaConfigurado(){
+  return SUPA_URL !== 'COLE_AQUI_A_URL_DO_PROJETO' && SUPA_KEY !== 'COLE_AQUI_A_ANON_KEY_PUBLICA';
+}
+
+/* ── Indicador de loading ─────────────────────────────────── */
+let _loadingCount = 0;
+function showLoading(msg){
+  _loadingCount++;
+  let el = document.getElementById('supa-loading');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'supa-loading';
+    el.style.cssText = 'position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--blue-900);color:white;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:500;z-index:9999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.25);transition:opacity .2s;white-space:nowrap';
+    document.body.appendChild(el);
+  }
+  el.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0"></span> '+(msg||'Salvando...');
+  el.style.opacity = '1';
+}
+function hideLoading(){
+  _loadingCount = Math.max(0, _loadingCount-1);
+  if(_loadingCount === 0){
+    const el = document.getElementById('supa-loading');
+    if(el){ el.style.opacity='0'; setTimeout(()=>{ if(el.parentNode) el.remove(); },300); }
+  }
+}
+function showError(msg){
+  hideLoading();
+  _loadingCount = 0;
+  let el = document.getElementById('supa-loading');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'supa-loading';
+    el.style.cssText = 'position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);color:white;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.25);white-space:nowrap';
+    document.body.appendChild(el);
+  }
+  el.style.background = 'var(--red-800)';
+  el.innerHTML = '⚠ ' + msg;
+  el.style.opacity = '1';
+  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>{ if(el.parentNode) el.remove(); },300); }, 3500);
+}
+
+/* ── Spinner CSS ──────────────────────────────────────────── */
+const _spinStyle = document.createElement('style');
+_spinStyle.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(_spinStyle);
+
+/* ================================================================
+   FUNÇÕES SUPABASE GENÉRICAS
+================================================================ */
+async function supa(method, path, body){
+  const r = await fetch(SUPA_URL + '/rest/v1/' + path, {
+    method,
+    headers: {
+      ...SUPA_HEADERS,
+      'Prefer': method==='POST' ? 'return=representation,resolution=merge-duplicates'
+               : method==='PATCH' ? 'return=minimal'
+               : 'return=minimal'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if(!r.ok){
+    const txt = await r.text();
+    throw new Error(`[${r.status}] ${txt}`);
+  }
+  const ct = r.headers.get('content-type')||'';
+  if(ct.includes('json') && r.status !== 204){
+    return r.json().catch(()=>null);
+  }
+  return null;
+}
+
+/* ================================================================
+   STORAGE — INSCRIÇÕES
+================================================================ */
+function getIns(){ return _cache.inscricoes || []; }
+
+// Nunca chamar setIns para mandar tudo ao banco — usar inserirInscricao / atualizarInscricao
+function _setCacheIns(d){ _cache.inscricoes = d; }
+
+async function carregarInscricoes(){
+  if(!supaConfigurado()){ _cache.inscricoes=[]; return; }
+  try {
+    const rows = await supa('GET', 'inscricoes?select=*&order=created_at.asc');
+    _cache.inscricoes = rows || [];
+  } catch(e){ _cache.inscricoes=[]; console.error('Erro ao carregar inscrições:', e.message); }
+}
+
+/* INSERT de uma nova inscrição */
+/* Campos que existem na tabela inscricoes do Supabase */
+const SUPA_INS_COLS = ['nome','nascimento','email','telefone','instituicao','cracha','turma','polo',
+  'almoco','almoco_valor','sala','setores','pagamento','pagamento_em','trabalhador','data_inscricao'];
+
+function filtrarColunas(obj){
+  const out = {};
+  SUPA_INS_COLS.forEach(k=>{ if(obj[k]!==undefined) out[k]=obj[k]; });
+  return out;
+}
+
+async function inserirInscricao(ins){
+  // Atualiza cache imediatamente (optimistic update)
+  _cache.inscricoes = [...getIns(), ins];
+  if(!supaConfigurado()) return;
+  showLoading('Inscrevendo...');
+  try {
+    const payload = filtrarColunas(ins);
+    const rows = await supa('POST', 'inscricoes', [payload]);
+    // Guarda o id gerado pelo banco no cache
+    if(rows && rows[0]?.id){
+      const d = getIns();
+      const idx = d.findIndex(x=>x.email===ins.email && x.polo===ins.polo);
+      if(idx>=0) d[idx].id = rows[0].id;
+      _cache.inscricoes = d;
+    }
+    hideLoading();
+  } catch(e){
+    hideLoading();
+    // Reverte o optimistic update em caso de erro
+    _cache.inscricoes = getIns().filter(x=>!(x.email===ins.email && x.polo===ins.polo));
+    const msg = e.message||'';
+    if(msg.includes('setores') || msg.includes('column')){
+      showError('Erro: execute o SQL de migração no Supabase (ver guia).');
+    } else {
+      showError('Erro ao inscrever. Verifique a conexão.');
+    }
+    console.error('inserirInscricao:', e.message);
+    throw e;
+  }
+}
+
+/* PATCH de campos específicos de uma inscrição — nunca manda o registro inteiro */
+async function atualizarInscricao(email, polo, campos){
+  const d = getIns();
+  const idx = d.findIndex(x=>x.email===email && x.polo===polo);
+  if(idx<0) return;
+  // Optimistic update no cache
+  Object.assign(d[idx], campos);
+  _cache.inscricoes = d;
+  if(!supaConfigurado()) return;
+  try {
+    const id = d[idx].id;
+    const filter = id
+      ? `inscricoes?id=eq.${id}`
+      : `inscricoes?email=eq.${encodeURIComponent(email)}&polo=eq.${encodeURIComponent(polo)}`;
+    await supa('PATCH', filter, filtrarColunas(campos));
+  } catch(e){ showError('Erro ao atualizar'); console.error(e.message); }
+}
+
+/* DELETE de uma inscrição */
+async function deletarInscricao(email, polo){
+  const d = getIns();
+  const ins = d.find(x=>x.email===email && x.polo===polo);
+  _cache.inscricoes = d.filter(x=>!(x.email===email && x.polo===polo));
+  if(!supaConfigurado()) return;
+  showLoading('Excluindo...');
+  try {
+    const filter = ins?.id
+      ? `inscricoes?id=eq.${ins.id}`
+      : `inscricoes?email=eq.${encodeURIComponent(email)}&polo=eq.${encodeURIComponent(polo)}`;
+    await supa('DELETE', filter);
+    hideLoading();
+  } catch(e){ hideLoading(); showError('Erro ao excluir'); console.error(e.message); throw e; }
+}
+
+/* ================================================================
+   STORAGE — CONFIGURAÇÃO DE POLOS  (1 linha JSON no banco)
+================================================================ */
+function getCfg(){ return _cache.config; }
+
+async function setCfg(){
+  _cache.config = JSON.parse(JSON.stringify(POLOS)); // cópia
+  if(!supaConfigurado() || _savingCfg) return;
+  _savingCfg = true;
+  try {
+    await supa('POST', 'config', [{id:'main', dados: POLOS}]);
+  } catch(e){ showError('Erro ao salvar configuração'); console.error(e.message); }
+  finally { _savingCfg = false; }
+}
+
+async function carregarConfig(){
+  if(!supaConfigurado()) return;
+  try {
+    const rows = await supa('GET', 'config?select=dados&id=eq.main');
+    if(rows && rows[0]?.dados) _cache.config = rows[0].dados;
+  } catch(e){ console.error('Erro ao carregar config:', e.message); }
+}
+
+/* ================================================================
+   STORAGE — USUÁRIOS  (1 linha JSON no banco)
+================================================================ */
+function getUsers(){ return _cache.users || []; }
+
+async function setUsers(u){
+  _cache.users = u;
+  if(!supaConfigurado() || _savingUsr) return;
+  _savingUsr = true;
+  try {
+    await supa('POST', 'usuarios', [{id:'main', dados: u}]);
+  } catch(e){ showError('Erro ao salvar usuários'); console.error(e.message); }
+  finally { _savingUsr = false; }
+}
+
+async function carregarUsuarios(){
+  if(!supaConfigurado()) return;
+  try {
+    const rows = await supa('GET', 'usuarios?select=dados&id=eq.main');
+    if(rows && rows[0]?.dados) _cache.users = rows[0].dados;
+  } catch(e){ console.error('Erro ao carregar usuários:', e.message); }
+}
+
+/* ================================================================
+   SESSÃO (sessionStorage — local)
+================================================================ */
+function saveSessao(s){ sessionStorage.setItem(KEY_AUTH, JSON.stringify(s)); }
+function loadSessao(){ try{ const s=sessionStorage.getItem(KEY_AUTH); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function clearSessao(){ sessionStorage.removeItem(KEY_AUTH); }
+
+/* ================================================================
+   CARREGAMENTO INICIAL
+================================================================ */
+async function carregarTudo(){
+  const tela = document.getElementById('supa-init-screen');
+  if(tela) tela.style.display='flex';
+
+  if(!supaConfigurado()){
+    console.warn('Supabase não configurado — modo offline.');
+    _cache = { inscricoes:[], config:null, users:[] };
+    carregarPolos(); renderPoloGrid(); atualizarBanner();
+    if(tela) tela.style.display='none';
+    mostrarAvisoSupa();
+    const s = loadSessao();
+    if(s?.logado) SESSION = s;
+    return;
+  }
+
+  try {
+    // Paralelo: todas as três tabelas ao mesmo tempo
+    await Promise.all([carregarInscricoes(), carregarConfig(), carregarUsuarios()]);
+  } catch(e){ console.error('Erro no carregamento inicial:', e); }
+
+  carregarPolos(); renderPoloGrid(); atualizarBanner();
+  if(tela) tela.style.display='none';
+  const s = loadSessao();
+  if(s?.logado) SESSION = s;
+}
+
+function mostrarAvisoSupa(){
+  const aviso = document.createElement('div');
+  aviso.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#EF9F27;color:#3A1F00;padding:8px 14px;font-size:12px;font-weight:600;text-align:center;z-index:9998;';
+  aviso.textContent = '⚠ Modo offline — dados não serão persistidos.';
+  document.body.prepend(aviso);
+}
+
+/* ================================================================
+   POLOS_DEFAULT E VARIÁVEIS GLOBAIS
+================================================================ */
+const POLOS_DEFAULT = [
+  {nome:'Campo Grande', endereco:'',valorExibir:'R$ —,—',pixChave:'pix@mcj2026.com.br',pixNome:'MCJ 2026 — Campo Grande',responsavel:'',telefone_polo:'',email_polo:'',capacidade:'',obs:'',inscricoes_abertas:true,almoco_ativo:false,almoco_valor:'',msg_pagamento:'',salas_adulto:[],salas_mocidade:[],setores:[],expositores:[],expositores_salas:{}},
+  {nome:'Jacarepaguá',  endereco:'',valorExibir:'R$ —,—',pixChave:'pix@mcj2026.com.br',pixNome:'MCJ 2026 — Jacarepaguá', responsavel:'',telefone_polo:'',email_polo:'',capacidade:'',obs:'',inscricoes_abertas:true,almoco_ativo:false,almoco_valor:'',msg_pagamento:'',salas_adulto:[],salas_mocidade:[],setores:[],expositores:[],expositores_salas:{}},
+  {nome:'Vila Isabel',  endereco:'',valorExibir:'R$ —,—',pixChave:'pix@mcj2026.com.br',pixNome:'MCJ 2026 — Vila Isabel', responsavel:'',telefone_polo:'',email_polo:'',capacidade:'',obs:'',inscricoes_abertas:true,almoco_ativo:false,almoco_valor:'',msg_pagamento:'',salas_adulto:[],salas_mocidade:[],setores:[],expositores:[],expositores_salas:{}},
+  {nome:'Teresópolis',  endereco:'',valorExibir:'R$ —,—',pixChave:'pix@mcj2026.com.br',pixNome:'MCJ 2026 — Teresópolis', responsavel:'',telefone_polo:'',email_polo:'',capacidade:'',obs:'',inscricoes_abertas:true,almoco_ativo:false,almoco_valor:'',msg_pagamento:'',salas_adulto:[],salas_mocidade:[],setores:[],expositores:[],expositores_salas:{}},
+];
+
+let POLOS = [];
+let poloSel = null;
+let poloSelCfg = null;
+let _loginPendingBtn = null;
+let SESSION = { logado:false, role:null, login:null, nome:null, polos:[] };
+let _editingUserId = null;
+
+function carregarPolos(){
+  const saved = getCfg();
+  POLOS = saved ? saved : JSON.parse(JSON.stringify(POLOS_DEFAULT));
+  POLOS.forEach(p=>{
+    if(p.inscricoes_abertas===undefined) p.inscricoes_abertas=true;
+    if(p.almoco_ativo===undefined) p.almoco_ativo=false;
+    if(p.almoco_valor===undefined) p.almoco_valor='';
+    if(p.msg_pagamento===undefined) p.msg_pagamento='';
+    if(p.salas_adulto===undefined) p.salas_adulto=[];
+    if(p.salas_mocidade===undefined) p.salas_mocidade=[];
+    if(p.setores===undefined) p.setores=[];
+    if(p.expositores===undefined) p.expositores=[];
+    if(p.expositores_salas===undefined) p.expositores_salas={};
+  });
+}
+
+/* ================================================================
+   GESTÃO DE USUÁRIOS — helpers
+================================================================ */
+function gerarId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+function isAdminMaster(login){ return login===ADMIN_USER; }
+
+// verifica se um polo está dentro do escopo do usuário logado
+function poloNoEscopo(nomeOuIdx){
+  if(SESSION.role==='admin') return true;
+  if(SESSION.role==='coord'){
+    const nome = typeof nomeOuIdx==='number' ? POLOS[nomeOuIdx]?.nome : nomeOuIdx;
+    return SESSION.polos.includes(nome);
+  }
+  return false;
+}
+
+/* ================================================================
+   GESTÃO DE USUÁRIOS — RENDER
+================================================================ */
+function renderUsuarios(){
+  const users = getUsers();
+  const admins = users.filter(u=>u.role==='admin');
+  const coords = users.filter(u=>u.role==='coord');
+
+  // tabela admins
+  const tbA = document.getElementById('tbody-admins');
+  if(tbA){
+    const allAdmins = [{id:'__master__', login:ADMIN_USER, nome:'Administrador Principal', role:'admin', status:'ativo', polos:[]},...admins];
+    tbA.innerHTML = allAdmins.map(u=>`
+      <tr>
+        <td><strong>${u.login}</strong></td>
+        <td>${u.nome}</td>
+        <td><span class="role-badge role-admin">Admin geral</span></td>
+        <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
+        <td>${u.id==='__master__'
+          ? '<span style="font-size:11px;color:var(--gray-400)">conta principal</span>'
+          : `<button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button><button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button>`
+        }</td>
+      </tr>`).join('');
+  }
+
+  // tabela coords
+  const tbC = document.getElementById('tbody-coords');
+  if(tbC){
+    if(coords.length===0){
+      tbC.innerHTML='<tr class="empty-row"><td colspan="5">Nenhum coordenador cadastrado ainda.</td></tr>';
+    } else {
+      tbC.innerHTML = coords.map(u=>`
+        <tr>
+          <td><strong>${u.login}</strong></td>
+          <td>${u.nome}</td>
+          <td><div class="user-polo-tags">${(u.polos||[]).map(p=>`<span class="user-polo-tag">${p}</span>`).join('') || '<span style="color:var(--gray-400);font-size:12px">Nenhum polo</span>'}</div></td>
+          <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
+          <td><button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button><button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button></td>
+        </tr>`).join('');
+    }
+  }
+}
+
+/* ================================================================
+   GESTÃO DE USUÁRIOS — MODAL
+================================================================ */
+function abrirUserModal(id){
+  _editingUserId = id||null;
+  const users = getUsers();
+  const u = id ? users.find(x=>x.id===id) : null;
+
+  document.getElementById('user-modal-title').textContent = u ? 'Editar usuário' : 'Novo usuário';
+  document.getElementById('u-role').value   = u?.role||'coord';
+  document.getElementById('u-nome').value   = u?.nome||'';
+  document.getElementById('u-login').value  = u?.login||'';
+  document.getElementById('u-senha').value  = '';
+  document.getElementById('u-status').value = u?.status||'ativo';
+  document.getElementById('u-senha-label').textContent = u ? 'Nova senha (deixe em branco para manter)' : 'Senha *';
+  document.getElementById('user-modal-err').classList.remove('show');
+
+  // checkboxes de polo
+  const box = document.getElementById('u-polos-checkboxes');
+  box.innerHTML = POLOS.map((p,i)=>{
+    const cl = cor(i);
+    const chk = (u?.polos||[]).includes(p.nome);
+    return `<label class="polo-checkbox-label${chk?' checked':''}" id="pclbl-${i}">
+      <input type="checkbox" value="${p.nome}" ${chk?'checked':''} onchange="this.closest('label').classList.toggle('checked',this.checked)">
+      <span class="polo-dot" style="background:${cl.badge};margin-bottom:0;flex-shrink:0"></span>
+      ${p.nome}
+    </label>`;
+  }).join('');
+
+  onRoleChange();
+  document.getElementById('user-modal-overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('u-nome').focus(),150);
+}
+
+function fecharUserModal(){
+  document.getElementById('user-modal-overlay').classList.remove('show');
+  document.body.style.overflow='';
+  _editingUserId=null;
+}
+
+function onRoleChange(){
+  const r = document.getElementById('u-role').value;
+  document.getElementById('u-polos-field').style.display = r==='coord'?'flex':'none';
+}
+
+function toggleSenhaUser(){
+  const inp=document.getElementById('u-senha');
+  inp.type=inp.type==='password'?'text':'password';
+}
+
+function salvarUsuario(){
+  const errEl = document.getElementById('user-modal-err');
+  errEl.classList.remove('show');
+
+  const role   = document.getElementById('u-role').value;
+  const nome   = document.getElementById('u-nome').value.trim();
+  const login  = document.getElementById('u-login').value.trim().toLowerCase().replace(/\s+/g,'');
+  const senha  = document.getElementById('u-senha').value;
+  const status = document.getElementById('u-status').value;
+  const polos  = role==='coord'
+    ? [...document.querySelectorAll('#u-polos-checkboxes input:checked')].map(c=>c.value)
+    : [];
+
+  if(!nome){ errEl.textContent='Informe o nome.'; errEl.classList.add('show'); return; }
+  if(!login){ errEl.textContent='Informe o usuário de login.'; errEl.classList.add('show'); return; }
+  if(!_editingUserId && !senha){ errEl.textContent='Informe a senha.'; errEl.classList.add('show'); return; }
+  if(senha && senha.length<6){ errEl.textContent='A senha deve ter ao menos 6 caracteres.'; errEl.classList.add('show'); return; }
+  if(role==='coord' && polos.length===0){ errEl.textContent='Selecione ao menos um polo para o coordenador.'; errEl.classList.add('show'); return; }
+
+  // login não pode ser igual ao admin master nem duplicado
+  if(login===ADMIN_USER){ errEl.textContent='Este usuário é reservado.'; errEl.classList.add('show'); return; }
+
+  let users = getUsers();
+  const dup = users.find(u=>u.login===login && u.id!==_editingUserId);
+  if(dup){ errEl.textContent='Já existe um usuário com este login.'; errEl.classList.add('show'); return; }
+
+  if(_editingUserId){
+    const idx = users.findIndex(u=>u.id===_editingUserId);
+    if(idx>=0){
+      users[idx] = {...users[idx], role, nome, login, status, polos};
+      if(senha) users[idx].senha=senha;
+    }
+  } else {
+    users.push({id:gerarId(), role, nome, login, senha, status, polos});
+  }
+
+  setUsers(users);
+  fecharUserModal();
+  renderUsuarios();
+}
+
+function editarUsuario(id){ abrirUserModal(id); }
+
+function excluirUsuario(id){
+  const users=getUsers();
+  const u=users.find(x=>x.id===id);
+  if(!u) return;
+  if(!confirm(`Remover o usuário "${u.nome}" (${u.login})?`)) return;
+  setUsers(users.filter(x=>x.id!==id));
+  renderUsuarios();
+}
+
+/* ================================================================
+   RENDER GRID DE POLOS (tela de inscrição)
+================================================================ */
+function renderPoloGrid(){
+  const d = getIns();
+  const grid = document.getElementById('polo-grid');
+  if(!grid) return;
+  if(POLOS.length === 0){
+    grid.innerHTML = '<p style="color:var(--gray-400);font-size:14px;padding:1rem 0">Nenhum polo cadastrado no momento.</p>';
+    return;
+  }
+  grid.innerHTML = '';
+  POLOS.forEach((p,i)=>{
+    const c = cor(i);
+    const n = d.filter(x=>x.polo===p.nome).length;
+    const fechado = p.inscricoes_abertas === false;
+    const card = document.createElement('div');
+    card.className = 'polo-card' + (fechado ? '' : '');
+    card.id = 'polo-card-'+i;
+    card.style.cssText = fechado ? 'opacity:.55;pointer-events:none' : '';
+    card.innerHTML = `
+      <div class="polo-dot" style="background:${c.badge}"></div>
+      <div class="polo-name">${p.nome}</div>
+      <div class="polo-valor" style="color:${c.badge}">${p.valorExibir||'R$ —,—'}</div>
+      ${p.almoco_ativo?`<div style="font-size:11px;color:#E08020;font-weight:500;margin-top:3px">🍽 Almoço${p.almoco_valor?' — '+p.almoco_valor:''}</div>`:''}
+      <div class="polo-count" id="count-polo-${i}">${n} inscrito${n!==1?'s':''}</div>
+      <div class="polo-check" style="color:${c.badge}">✓</div>
+      ${fechado?'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.75);border-radius:12px;font-size:11px;font-weight:700;color:var(--red-400);text-align:center">Inscrições<br>encerradas</div>':''}`;
+    card.addEventListener('click', ()=>{
+      if(fechado) return;
+      document.querySelectorAll('.polo-card').forEach(c=>{
+        c.classList.remove('selected');
+        c.style.borderColor='';
+        c.style.background='';
+      });
+      card.classList.add('selected');
+      card.style.borderColor = c.badge;
+      card.style.background  = c.bg;
+      poloSel = p.nome;
+      poloSelCfg = p;
+      document.getElementById('polo-msg').classList.remove('show');
+      // mostrar/ocultar campo almoço
+      const almocoField = document.getElementById('almoco-field');
+      const almocoTag   = document.getElementById('almoco-valor-tag');
+      const almocoChk   = document.getElementById('f-almoco');
+      const almocoLbl   = document.getElementById('lbl-almoco');
+      if(p.almoco_ativo){
+        almocoField.style.display='block';
+        almocoTag.textContent = p.almoco_valor || '';
+      } else {
+        almocoField.style.display='none';
+        if(almocoChk){ almocoChk.checked=false; almocoLbl.classList.remove('sel'); }
+      }
+    });
+    grid.appendChild(card);
+  });
+}
+
+function atualizarContadores(){
+  const d = getIns();
+  POLOS.forEach((p,i)=>{
+    const el = document.getElementById('count-polo-'+i);
+    if(el){ const n=d.filter(x=>x.polo===p.nome).length; el.textContent=n+' inscrito'+(n!==1?'s':''); }
+  });
+}
+
+function atualizarBanner(){
+  const fechados = POLOS.filter(p=>p.inscricoes_abertas===false);
+  const banner = document.getElementById('banner-fechado');
+  const txt    = document.getElementById('banner-fechado-text');
+  if(!banner||!txt) return;
+  if(fechados.length===0){ banner.classList.remove('show'); return; }
+  txt.textContent = fechados.length===POLOS.length
+    ? 'As inscrições estão encerradas para todos os polos.'
+    : 'Inscrições encerradas para: '+fechados.map(p=>p.nome).join(', ')+'.';
+  banner.classList.add('show');
+}
+
+/* ================================================================
+   VIEWS
+================================================================ */
+function showView(id, btn){
+  if(id==='admin'){
+    if(!SESSION.logado){ _loginPendingBtn=btn; abrirLogin(); return; }
+    _ativarView('admin');
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    aplicarEscopoAdmin();
+    renderAdmin();
+    return;
+  }
+  _ativarView(id);
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function _ativarView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+}
+
+// Aplica restrições visuais conforme o papel do usuário logado
+function aplicarEscopoAdmin(){
+  const isAdmin = SESSION.role==='admin';
+  const isCoord = SESSION.role==='coord';
+
+  // barras de sessão
+  document.getElementById('bar-admin').style.display = isAdmin?'flex':'none';
+  document.getElementById('bar-coord').style.display = isCoord?'flex':'none';
+  if(isAdmin){
+    document.getElementById('admin-user-nome').textContent = SESSION.nome||SESSION.login;
+  } else {
+    document.getElementById('coord-user-nome').textContent = SESSION.nome||SESSION.login;
+    const tagsEl = document.getElementById('coord-polo-tags-bar');
+    tagsEl.innerHTML = SESSION.polos.map(p=>`<span class="coord-polo-tag-bar">${p}</span>`).join('');
+  }
+
+  // aba coordenadores: só admin | config e turmas: ambos | exportar todos: só admin
+  document.getElementById('atab-usuarios').style.display  = isAdmin?'':'none';
+  document.getElementById('atab-config').style.display    = ''; // ambos veem config
+  document.getElementById('atab-turmas').style.display    = ''; // ambos veem turmas
+  document.getElementById('atab-equipe').style.display    = ''; // ambos veem equipe
+  document.getElementById('btn-exportar-todos').style.display = isAdmin?'':'none';
+  document.getElementById('admin-panel-title').textContent = isAdmin
+    ? 'Painel de inscrições'
+    : 'Inscrições — '+SESSION.polos.join(', ');
+}
+
+function switchAdminTab(id, btn){
+  // coordenador pode ver inscrições, turmas e config; não pode ver usuários
+  if(SESSION.role==='coord' && id==='usuarios') return;
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.atab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('apanel-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='config') renderConfig();
+  if(id==='inscricoes') renderAdmin();
+  if(id==='turmas') renderTurmas();
+  if(id==='equipe') renderEquipe();
+  if(id==='usuarios') renderUsuarios();
+}
+
+/* ================================================================
+   LOGIN / LOGOUT
+================================================================ */
+function abrirLogin(){
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-err').classList.remove('show');
+  document.getElementById('login-overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('login-user').focus(),200);
+}
+function fecharLogin(){
+  document.getElementById('login-overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function fazerLogin(){
+  const loginInput = document.getElementById('login-user').value.trim().toLowerCase();
+  const senhaInput = document.getElementById('login-pass').value;
+
+  let sessao = null;
+
+  // admin master
+  if(loginInput===ADMIN_USER && senhaInput===ADMIN_PASS){
+    sessao = {logado:true, role:'admin', login:ADMIN_USER, nome:'Administrador Principal', polos:[]};
+  }
+
+  // usuários cadastrados
+  if(!sessao){
+    const users=getUsers();
+    const u=users.find(x=>x.login===loginInput && x.senha===senhaInput && x.status==='ativo');
+    if(u) sessao={logado:true, role:u.role, login:u.login, nome:u.nome, polos:u.polos||[]};
+  }
+
+  if(sessao){
+    SESSION=sessao;
+    saveSessao(sessao);
+    fecharLogin();
+    _ativarView('admin');
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tab-admin').classList.add('active');
+    // reset to inscricoes tab
+    document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.atab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('apanel-inscricoes').classList.add('active');
+    document.getElementById('atab-inscricoes').classList.add('active');
+    aplicarEscopoAdmin();
+    renderAdmin();
+  } else {
+    document.getElementById('login-err').classList.add('show');
+    document.getElementById('login-pass').value='';
+    document.getElementById('login-pass').focus();
+    setTimeout(()=>document.getElementById('login-err').classList.remove('show'),4000);
+  }
+}
+
+function fazerLogout(){
+  if(!confirm('Deseja encerrar a sessão?')) return;
+  SESSION={logado:false,role:null,login:null,nome:null,polos:[]};
+  clearSessao();
+  _ativarView('inscricao');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-inscricao').classList.add('active');
+}
+
+function toggleSenha(){
+  const inp=document.getElementById('login-pass');
+  const btn=document.getElementById('pw-toggle-btn');
+  inp.type=inp.type==='password'?'text':'password';
+  btn.textContent=inp.type==='password'?'👁':'🙈';
+}
+
+/* ================================================================
+   FORMULÁRIO
+================================================================ */
+document.getElementById('f-telefone').addEventListener('input',function(){
+  let v=this.value.replace(/\D/g,'');
+  if(v.length<=2) this.value=v.length?'('+v:'';
+  else if(v.length<=6) this.value='('+v.slice(0,2)+') '+v.slice(2);
+  else if(v.length<=10) this.value='('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
+  else this.value='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7,11);
+});
+
+document.querySelectorAll('input[name="turma"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    document.getElementById('lbl-adulto').classList.toggle('sel', document.querySelector('input[value="Adulto"]').checked);
+    document.getElementById('lbl-mocidade').classList.toggle('sel', document.querySelector('input[value="Mocidade"]').checked);
+  });
+});
+
+document.getElementById('f-almoco').addEventListener('change', function(){
+  document.getElementById('lbl-almoco').classList.toggle('sel', this.checked);
+});
+
+function alerta(tipo,msg){
+  const el=document.getElementById('alert');
+  el.className='alert '+tipo; el.textContent=msg; el.style.display='block';
+  setTimeout(()=>el.style.display='none',6000);
+}
+
+async function inscrever(){
+  const nome       = document.getElementById('f-nome').value.trim();
+  const nascimento = document.getElementById('f-nascimento').value;
+  const email      = document.getElementById('f-email').value.trim();
+  const tel        = document.getElementById('f-telefone').value.trim();
+  const inst       = document.getElementById('f-instituicao').value.trim();
+  const cracha     = document.getElementById('f-cracha').value.trim();
+  const turma      = document.querySelector('input[name="turma"]:checked')?.value;
+  const almocoChk  = document.getElementById('f-almoco');
+  const almoco     = poloSelCfg?.almoco_ativo && almocoChk?.checked ? true : false;
+
+  if(!poloSel){ document.getElementById('polo-msg').classList.add('show'); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  if(poloSelCfg?.inscricoes_abertas===false){ alerta('err','As inscrições para este polo estão encerradas.'); return; }
+  if(!nome){ alerta('err','Informe o nome completo.'); return; }
+  if(!nascimento){ alerta('err','Informe a data de nascimento.'); return; }
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alerta('err','Informe um e-mail válido.'); return; }
+  if(!tel||tel.replace(/\D/g,'').length<10){ alerta('err','Informe um telefone válido com DDD.'); return; }
+  if(!turma){ alerta('err','Selecione uma turma: Adulto ou Mocidade.'); return; }
+
+  const d = getIns();
+  if(d.find(x=>x.email.toLowerCase()===email.toLowerCase())){ alerta('err','Este e-mail já está inscrito.'); return; }
+
+  const [ano,mes,dia]=nascimento.split('-');
+  const novaIns = {
+    nome, nascimento:`${dia}/${mes}/${ano}`, email, telefone:tel,
+    instituicao:inst||'—', cracha: cracha||'', turma, polo:poloSel,
+    almoco: almoco ? 'Sim' : 'Não',
+    almoco_valor: almoco ? (poloSelCfg?.almoco_valor||'') : '',
+    pagamento: 'Pendente', sala: '', setores: [],
+    data_inscricao: new Date().toLocaleString('pt-BR')
+  };
+
+  const btn = document.querySelector('.btn-primary');
+  if(btn){ btn.disabled=true; btn.textContent='Aguarde...'; }
+
+  try {
+    await inserirInscricao(novaIns);
+  } catch(e){
+    if(btn){ btn.disabled=false; btn.textContent='Confirmar inscrição'; }
+    alerta('err','Erro ao salvar inscrição. Tente novamente.');
+    return;
+  }
+
+  if(btn){ btn.disabled=false; btn.textContent='Confirmar inscrição'; }
+  atualizarContadores();
+
+  // limpa form
+  document.getElementById('f-nome').value='';
+  document.getElementById('f-nascimento').value='';
+  document.getElementById('f-email').value='';
+  document.getElementById('f-telefone').value='';
+  document.getElementById('f-instituicao').value='';
+  document.getElementById('f-cracha').value='';
+  document.querySelectorAll('input[name="turma"]').forEach(r=>r.checked=false);
+  document.getElementById('lbl-adulto').classList.remove('sel');
+  document.getElementById('lbl-mocidade').classList.remove('sel');
+  if(almocoChk){ almocoChk.checked=false; document.getElementById('lbl-almoco').classList.remove('sel'); }
+  document.getElementById('almoco-field').style.display='none';
+
+  abrirPix(nome, almoco);
+}
+
+/* ================================================================
+   PIX MODAL
+================================================================ */
+function parseBRL(str){
+  if(!str) return null;
+  const n = parseFloat(str.replace(/[^\d,]/g,'').replace(',','.'));
+  return isNaN(n) ? null : n;
+}
+function formatBRL(n){
+  return 'R$ '+n.toFixed(2).replace('.',',');
+}
+
+function abrirPix(nomeInscrito, almoco){
+  const cfg = poloSelCfg;
+  document.getElementById('pix-subtitulo').textContent = cfg.nome+' · Conclua o pagamento via PIX para garantir sua vaga.';
+
+  // calcular breakdown
+  const vInscricao = parseBRL(cfg.valorExibir);
+  const vAlmoco    = almoco ? parseBRL(cfg.almoco_valor) : null;
+  const breakdown  = document.getElementById('pix-breakdown');
+
+  let totalNum = null;
+  let html = '';
+
+  if(vInscricao !== null){
+    html += `<div class="pix-line"><span class="pix-line-label">🎫 Inscrição</span><span>${cfg.valorExibir}</span></div>`;
+    totalNum = vInscricao;
+  } else {
+    html += `<div class="pix-line"><span class="pix-line-label">🎫 Inscrição</span><span>${cfg.valorExibir||'—'}</span></div>`;
+  }
+
+  if(almoco){
+    if(vAlmoco !== null){
+      html += `<div class="pix-line pix-almoco-line"><span class="pix-line-label">🍽 Almoço</span><span>${cfg.almoco_valor}</span></div>`;
+      if(totalNum !== null) totalNum += vAlmoco;
+    } else {
+      html += `<div class="pix-line pix-almoco-line"><span class="pix-line-label">🍽 Almoço</span><span>${cfg.almoco_valor||'—'}</span></div>`;
+    }
+  }
+
+  breakdown.innerHTML = html;
+  document.getElementById('pix-valor').textContent = totalNum !== null ? formatBRL(totalNum) : (cfg.valorExibir||'R$ —,—');
+
+  document.getElementById('pix-chave').textContent = cfg.pixChave||'—';
+  document.getElementById('pix-nome').textContent  = 'Beneficiário: '+(cfg.pixNome||'—');
+  document.getElementById('btn-copiar').textContent='Copiar';
+  document.getElementById('btn-copiar').classList.remove('copied');
+  document.getElementById('pix-overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function fecharPix(){
+  document.getElementById('pix-overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+function copiarChave(){
+  const chave=document.getElementById('pix-chave').textContent;
+  const btn=document.getElementById('btn-copiar');
+  const done=()=>{ btn.textContent='Copiado!'; btn.classList.add('copied'); setTimeout(()=>{ btn.textContent='Copiar'; btn.classList.remove('copied'); },2500); };
+  navigator.clipboard?.writeText(chave).then(done).catch(()=>{ const t=document.createElement('textarea'); t.value=chave; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); done(); });
+}
+
+/* ================================================================
+   ADMIN — PAINEL INSCRIÇÕES
+================================================================ */
+function renderAdmin(){
+  renderSummary();
+  renderPanels();
+}
+
+function renderSummary(){
+  const d=getIns();
+  const g=document.getElementById('summary-grid');
+  if(!g) return;
+  const polosVisiveis = SESSION.role==='admin' ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+  let html='';
+  if(SESSION.role==='admin'){
+    const pagoTotal = d.filter(x=>x.pagamento==='Confirmado').length;
+    html+=`<div class="summary-card"><div class="summary-dot" style="background:var(--gray-400)"></div><div><div class="summary-num">${d.length}</div><div class="summary-lbl">Total geral</div></div></div>`;
+    html+=`<div class="summary-card"><div class="summary-dot" style="background:var(--teal-400)"></div><div><div class="summary-num">${pagoTotal}</div><div class="summary-lbl">Pgto confirmado</div></div></div>`;
+  }
+  polosVisiveis.forEach((p)=>{
+    const i=POLOS.indexOf(p);
+    const cl=cor(i);
+    const lista=d.filter(x=>x.polo===p.nome);
+    const n=lista.length;
+    const pago=lista.filter(x=>x.pagamento==='Confirmado').length;
+    html+=`<div class="summary-card"><div class="summary-dot" style="background:${cl.badge}"></div><div><div class="summary-num">${n}</div><div class="summary-lbl">${p.nome}</div><div style="font-size:11px;color:var(--teal-600);margin-top:2px;font-weight:500">✓ ${pago} pago${pago!==1?'s':''}</div></div></div>`;
+  });
+  g.innerHTML=html;
+}
+
+/* ================================================================
+   SALAS — defaults e opções por turma
+================================================================ */
+const SALAS_ADULTO_DEFAULT   = ['A','B','C','D','E','F','G'];
+const SALAS_MOCIDADE_DEFAULT = ['1','2','3','4','5'];
+
+function getSalasAdulto(poloNome){
+  const p = POLOS.find(x=>x.nome===poloNome);
+  return (p?.salas_adulto && p.salas_adulto.length) ? p.salas_adulto : SALAS_ADULTO_DEFAULT;
+}
+function getSalasMocidade(poloNome){
+  const p = POLOS.find(x=>x.nome===poloNome);
+  return (p?.salas_mocidade && p.salas_mocidade.length) ? p.salas_mocidade : SALAS_MOCIDADE_DEFAULT;
+}
+
+function salaOpts(turma, salaSelecionada, poloNome){
+  const lista = turma==='Mocidade' ? getSalasMocidade(poloNome) : getSalasAdulto(poloNome);
+  const opts = ['',...lista];
+  return opts.map(s=>{
+    const label = s==='' ? '— Sem sala —' : s;
+    return `<option value="${s}" ${s===salaSelecionada?'selected':''}>${label}</option>`;
+  }).join('');
+}
+
+function atribuirSala(email, poloNome, sala){
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
+  atualizarInscricao(email, poloNome, {sala});
+  renderSummary();
+}
+
+/* ================================================================
+   IDADE — data do evento: 20/09/2026
+================================================================ */
+const DATA_EVENTO = new Date(2026, 8, 20); // mês 0-indexado
+
+function calcularIdade(nascFormatado){
+  // aceita dd/mm/aaaa
+  if(!nascFormatado || nascFormatado==='—') return '—';
+  const partes = nascFormatado.split('/');
+  if(partes.length !== 3) return '—';
+  const [d, m, a] = partes.map(Number);
+  if(!d || !m || !a || a < 1900) return '—';
+  const nasc = new Date(a, m-1, d);
+  if(isNaN(nasc)) return '—';
+  let idade = DATA_EVENTO.getFullYear() - nasc.getFullYear();
+  const mDiff = DATA_EVENTO.getMonth() - nasc.getMonth();
+  if(mDiff < 0 || (mDiff === 0 && DATA_EVENTO.getDate() < nasc.getDate())) idade--;
+  return idade >= 0 ? idade : '—';
+}
+
+function renderPanels(){
+  const d=getIns();
+  const c=document.getElementById('polo-panels');
+  if(!c) return;
+  const polosVisiveis = SESSION.role==='admin' ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+  c.innerHTML=polosVisiveis.map((polo)=>{
+    const i=POLOS.indexOf(polo);
+    const cl=cor(i);
+    const lista=d.filter(x=>x.polo===polo.nome);
+    const pagoCount  = lista.filter(x=>x.pagamento==='Confirmado').length;
+    const salaCount  = lista.filter(x=>x.sala&&x.sala!=='').length;
+
+    const rows=lista.length===0
+      ?`<tr class="empty-row"><td colspan="13">Nenhuma inscrição neste polo.</td></tr>`
+      :lista.map((p,j)=>{
+        const emailSafe  = p.email.replace(/'/g,"\\'");
+        const poloSafe   = polo.nome.replace(/'/g,"\\'");
+        const pago       = p.pagamento==='Confirmado';
+        const trab       = p.trabalhador===true || p.trabalhador==='true';
+        const tel        = (p.telefone||'').replace(/\D/g,'');
+        const waLink     = (pago && tel.length>=10)
+          ? `<a class="btn-whatsapp" href="${montarLinkWA(tel, p.nome, polo.nome)}" target="_blank" rel="noopener">💬 WA</a>`
+          : '';
+        return `<tr style="${trab?'background:#FAF5FF':''}">
+          <td><span class="num-badge">${j+1}</span></td>
+          <td>${p.nome}</td>
+          <td style="font-weight:500;color:var(--blue-700)">${p.cracha||'—'}</td>
+          <td>${p.nascimento||'—'}</td>
+          <td style="text-align:center;font-weight:600;color:var(--blue-600)">${calcularIdade(p.nascimento)}</td>
+          <td>${p.email}</td>
+          <td>${p.telefone}</td>
+          <td>${p.turma||'—'}</td>
+          <td>${p.almoco||'Não'}${p.almoco==='Sim'&&p.almoco_valor?' ('+p.almoco_valor+')':''}</td>
+          <td>${p.instituicao}</td>
+          <td>
+            <button class="btn-trabalhador ${trab?'sim':'nao'}" onclick="toggleTrabalhador('${emailSafe}','${poloSafe}')">
+              ${trab?'🔧 Trabalhador':'👤 Participante'}
+            </button>
+          </td>
+          <td><div class="pago-cell">
+            <button class="btn-pago ${pago?'sim':'nao'}" onclick="togglePagamento('${emailSafe}','${poloSafe}')">
+              ${pago?'✓ Confirmado':'⏳ Pendente'}
+            </button>${waLink}
+          </div></td>
+          <td>
+            <button class="btn-excluir" onclick="excluirInscricao('${emailSafe}','${poloSafe}')" title="Excluir inscrição">🗑</button>
+          </td>
+        </tr>`;
+      }).join('');
+
+    const trabCount    = lista.filter(x=>x.trabalhador===true||x.trabalhador==='true').length;
+
+    const nomeSafe   = polo.nome.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const extraActions = `<button class="btn-export-polo" onclick="exportarPolo('${nomeSafe}')">⬇ Excel</button>`;
+    const fecharBtn    = `<button class="btn-export-polo" style="color:${polo.inscricoes_abertas===false?'var(--teal-600)':'var(--red-400)'};border-color:${polo.inscricoes_abertas===false?'var(--teal-100)':'var(--red-100)'}" onclick="toggleInscricoesPolo(${i})">${polo.inscricoes_abertas===false?'🔓 Reabrir':'🔒 Fechar'}</button>`;
+    const pagoResumo   = lista.length>0
+      ? `<span class="pago-resumo"><span class="pago-count-sim">✓ ${pagoCount} pago${pagoCount!==1?'s':''}</span><span class="pago-count-nao">· ${lista.length-pagoCount} pendente${lista.length-pagoCount!==1?'s':''}</span></span>`
+      : '';
+    const trabResumo   = trabCount>0
+      ? `<span class="trab-resumo">🔧 ${trabCount} trabalhador${trabCount!==1?'es':''}</span>`
+      : '';
+
+    return `<div class="polo-panel">
+      <div class="polo-panel-header">
+        <div class="polo-panel-title">
+          <span class="polo-badge" style="background:${cl.bg};color:${cl.text};border:1px solid ${cl.border}">${polo.nome}</span>
+          ${lista.length} inscrito${lista.length!==1?'s':''}
+          ${polo.inscricoes_abertas===false?'<span class="polo-status-badge polo-status-fechado">Encerradas</span>':''}
+          ${pagoResumo}${trabResumo}
+        </div>
+        <div style="display:flex;gap:6px">${extraActions}${fecharBtn}</div>
+      </div>
+      <div class="table-scroll">
+      <table class="list-table">
+        <thead><tr><th>#</th><th>Nome</th><th>Crachá</th><th>Nascimento</th><th>Idade</th><th>E-mail</th><th>Telefone</th><th>Turma</th><th>Almoço</th><th>Instituição</th><th>Função</th><th>Pagamento</th><th>Ações</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ================================================================
+   DEFINIR TURMAS — drag and drop
+================================================================ */
+let _turmaPoloAtivo = null; // polo sendo exibido nas turmas
+let _turmaTurmaAtiva = 'Adulto'; // Adulto | Mocidade
+let _dragEmail = null;
+let _dragPolo  = null;
+
+function renderTurmas(){
+  const d   = getIns();
+  const wrap = document.getElementById('turmas-wrap');
+  if(!wrap) return;
+
+  // polos visíveis conforme escopo
+  const polosVis = SESSION.role==='admin'
+    ? POLOS
+    : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+
+  if(polosVis.length===0){
+    wrap.innerHTML='<p style="color:var(--gray-400);padding:1rem 0;font-size:14px">Nenhum polo disponível.</p>';
+    return;
+  }
+
+  // selector de polo (se mais de 1)
+  if(!_turmaPoloAtivo || !polosVis.find(p=>p.nome===_turmaPoloAtivo)){
+    _turmaPoloAtivo = polosVis[0].nome;
+  }
+
+  const poloTabsHtml = polosVis.length>1
+    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem">${
+        polosVis.map(p=>{
+          const i=POLOS.indexOf(p); const c=cor(i);
+          return `<button onclick="selecionarTurmaPolo('${p.nome.replace(/'/g,"\\'")}',this)"
+            style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${_turmaPoloAtivo===p.nome?c.badge:'var(--gray-100)'};background:${_turmaPoloAtivo===p.nome?c.bg:'white'};color:${_turmaPoloAtivo===p.nome?c.text:'var(--gray-600)'};transition:all .15s">
+            ${p.nome}
+          </button>`;
+        }).join('')
+      }</div>`
+    : '';
+
+  const polo = polosVis.find(p=>p.nome===_turmaPoloAtivo) || polosVis[0];
+  const inscritos = d.filter(x=>x.polo===polo.nome);
+
+  const salasAdulto   = getSalasAdulto(polo.nome);
+  const salasMocidade = getSalasMocidade(polo.nome);
+  const salasAtivas   = _turmaTurmaAtiva==='Adulto' ? salasAdulto : salasMocidade;
+
+  // filtrar por turma ativa
+  const inscrFiltrados = inscritos.filter(p=>p.turma===_turmaTurmaAtiva);
+  const semSala   = inscrFiltrados.filter(p=>!p.sala||p.sala==='');
+  const comSala   = inscrFiltrados.filter(p=>p.sala&&p.sala!=='');
+
+  function pessoaCardHtml(p, mostraBtnRemover){
+    const nomeExibir = p.cracha && p.cracha.trim() ? p.cracha.trim() : p.nome;
+    const iniciais   = nomeExibir.split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+    const idade      = calcularIdade(p.nascimento);
+    const emailAttr  = p.email.replace(/"/g,'&quot;');
+    const poloAttr   = polo.nome.replace(/"/g,'&quot;');
+    const btnRemover = mostraBtnRemover
+      ? `<button class="btn-remover-atrib" title="Remover da sala"
+           onclick="removerAtribuicao('${p.email.replace(/'/g,"\\'")}','${polo.nome.replace(/'/g,"\\'")}',event)">×</button>`
+      : '';
+    return `<div class="pessoa-card"
+      draggable="true"
+      data-email="${emailAttr}"
+      data-polo="${poloAttr}"
+      ontouchstart="touchStart(event,this)"
+      ontouchmove="touchMove(event)"
+      ontouchend="touchEnd(event)"
+      onmousedown="dragMouseDown(event,this)">
+      <div class="pessoa-avatar">${iniciais}</div>
+      <div class="pessoa-info">
+        <div class="pessoa-nome">${nomeExibir}</div>
+        ${idade!=='—'?`<div class="pessoa-meta">${idade} anos</div>`:''}
+        ${p.instituicao&&p.instituicao!=='—'?`<div class="pessoa-meta" style="color:var(--gray-500);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.instituicao}</div>`:''}
+      </div>
+      ${btnRemover}
+    </div>`;
+  }
+
+  const unassignedHtml = `
+    <div class="turmas-unassigned drop-zone" data-sala=""
+      ondragover="dragOver(event)" ondrop="drop(event,'')" ondragleave="dragLeave(event)">
+      <div class="turmas-unassigned-title">Sem sala atribuída (${semSala.length})</div>
+      <div class="turmas-unassigned-list drop-zone" data-sala="">
+        ${semSala.map(p=>pessoaCardHtml(p,false)).join('')||'<p style="color:var(--gray-400);font-size:12px;padding:.5rem">Todos atribuídos!</p>'}
+      </div>
+    </div>`;
+
+  const salasHtml = salasAtivas.length===0
+    ? `<div style="color:var(--gray-400);font-size:13px;padding:1rem;background:white;border-radius:12px;border:1px solid var(--gray-100)">
+        Configure as salas na aba ⚙ Configuração dos Polos.
+      </div>`
+    : `<div class="turmas-salas-grid">
+        ${salasAtivas.map(sala=>{
+          const nesta = comSala.filter(p=>p.sala===sala);
+          const c = cor(salasAtivas.indexOf(sala));
+          const expList  = polo.expositores && polo.expositores.length ? polo.expositores : [];
+          const expSalas = polo.expositores_salas || {};
+          const expManha = expSalas[sala]?.manha || '';
+          const expTarde = expSalas[sala]?.tarde || '';
+          const optExp = (sel)=> `<option value="">— Sem expositor —</option>`
+            + expList.map(e=>`<option value="${e.replace(/"/g,'&quot;')}" ${sel===e?'selected':''}>${e}</option>`).join('');
+          const salaKey = sala.replace(/'/g,"\\'");
+          const poloKey = polo.nome.replace(/'/g,"\\'");
+          const expBlock = expList.length>0 ? `
+            <div style="padding:6px 8px;border-top:1px solid ${c.border};background:${c.bg}20;display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-size:10px;font-weight:600;color:${c.text};min-width:44px;opacity:.8">🌅 Manhã</span>
+                <select style="flex:1;font-size:11px;padding:3px 6px;border-radius:6px;border:1px solid ${c.border};background:white;color:var(--gray-800);font-family:Inter,sans-serif"
+                  onchange="atribuirExpositor('${poloKey}','${salaKey}','manha',this.value)">${optExp(expManha)}</select>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-size:10px;font-weight:600;color:${c.text};min-width:44px;opacity:.8">🌆 Tarde</span>
+                <select style="flex:1;font-size:11px;padding:3px 6px;border-radius:6px;border:1px solid ${c.border};background:white;color:var(--gray-800);font-family:Inter,sans-serif"
+                  onchange="atribuirExpositor('${poloKey}','${salaKey}','tarde',this.value)">${optExp(expTarde)}</select>
+              </div>
+            </div>` : '';
+          return `<div class="turmas-sala-card drop-zone" data-sala="${sala}"
+            ondragover="dragOver(event)" ondrop="drop(event,'${sala.replace(/'/g,"\\'")}',this)" ondragleave="dragLeave(event)">
+            <div class="turmas-sala-header" style="background:${c.bg};color:${c.text};border-color:${c.border}">
+              <span>${sala}</span>
+              <span class="turmas-sala-count">${nesta.length} pessoa${nesta.length!==1?'s':''}</span>
+            </div>
+            ${expBlock}
+            <div class="turmas-sala-list drop-zone" data-sala="${sala}"
+              ondragover="dragOver(event)" ondrop="drop(event,'${sala.replace(/'/g,"\\'")}',this)" ondragleave="dragLeave(event)">
+              ${nesta.map(p=>pessoaCardHtml(p,true)).join('')||'<p style="color:var(--gray-200);font-size:11px;padding:.25rem">Arraste aqui</p>'}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+  const totalAtribuidos = comSala.length;
+  const totalFiltrados  = inscrFiltrados.length;
+
+  wrap.innerHTML = `
+    <div class="turmas-polo-section">
+      ${poloTabsHtml}
+      <div class="turmas-polo-title">
+        <span style="background:${cor(POLOS.indexOf(polo)).bg};color:${cor(POLOS.indexOf(polo)).text};border:1px solid ${cor(POLOS.indexOf(polo)).border};padding:3px 10px;border-radius:20px;font-size:13px">${polo.nome}</span>
+        Definir Turmas
+        <span style="font-size:12px;font-weight:400;color:var(--gray-400)">${totalAtribuidos}/${totalFiltrados} atribuídos</span>
+        <button onclick="imprimirListagemTurmas('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
+          style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--blue-600);color:white;border:none;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap"
+          onmouseover="this.style.background='var(--blue-800)'" onmouseout="this.style.background='var(--blue-600)'">
+          🖨 Imprimir listagem
+        </button>
+      </div>
+      <div class="turmas-turma-tabs">
+        <button class="turma-tab ${_turmaTurmaAtiva==='Adulto'?'active':''}" onclick="selecionarTurmaTipo('Adulto',this)">👤 Adulto (${inscritos.filter(p=>p.turma==='Adulto').length})</button>
+        <button class="turma-tab ${_turmaTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarTurmaTipo('Mocidade',this)">🌟 Mocidade (${inscritos.filter(p=>p.turma==='Mocidade').length})</button>
+      </div>
+      <div class="turmas-layout">
+        ${unassignedHtml}
+        ${salasHtml}
+      </div>
+    </div>`;
+
+  // Adiciona event listeners de drag depois de inserir no DOM
+  wrap.querySelectorAll('.pessoa-card').forEach(card=>{
+    card.addEventListener('dragstart', e=>{
+      _dragEmail = card.dataset.email;
+      _dragPolo  = card.dataset.polo;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    card.addEventListener('dragend', ()=>card.classList.remove('dragging'));
+  });
+}
+
+function selecionarTurmaPolo(nomeP, btn){
+  _turmaPoloAtivo = nomeP;
+  renderTurmas();
+}
+
+function selecionarTurmaTipo(tipo, btn){
+  _turmaTurmaAtiva = tipo;
+  renderTurmas();
+}
+
+function imprimirListagemTurmas(poloNome, tipoTurma){
+  const d          = getIns();
+  const polo       = POLOS.find(p=>p.nome===poloNome);
+  const inscritos  = d.filter(x=>x.polo===poloNome && x.turma===tipoTurma);
+  const salas      = tipoTurma==='Mocidade' ? getSalasMocidade(poloNome) : getSalasAdulto(poloNome);
+
+  // Agrupa inscritos por sala, ordena alfabeticamente pelo crachá dentro de cada sala
+  const grupos = {};
+  salas.forEach(s=>{ grupos[s]=[]; });
+  grupos['__sem_sala__'] = [];
+
+  inscritos.forEach(p=>{
+    const sala = p.sala && p.sala !== '' ? p.sala : '__sem_sala__';
+    if(grupos[sala]) grupos[sala].push(p);
+    else grupos['__sem_sala__'].push(p);
+  });
+
+  // Ordena cada grupo por nome do crachá
+  const ordenar = arr => [...arr].sort((a,b)=>{
+    const nA = (a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
+    const nB = (b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
+    return nA.localeCompare(nB,'pt-BR');
+  });
+
+  // Gera linhas da tabela
+  function tabelaHtml(lista){
+    if(lista.length===0) return '<p style="color:#888;font-size:13px;margin:8px 0">Nenhum inscrito nesta sala.</p>';
+    return `<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:6px">
+      <thead>
+        <tr style="background:#f0f4f8;border-bottom:2px solid #c8d8e8">
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">#</th>
+          <th style="padding:7px 10px;text-align:center;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">$</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">Crachá</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">Nome completo</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">Telefone</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">E-mail</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">Instituição</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lista.map((p,j)=>{
+          const pago = p.pagamento==='Confirmado';
+          const bgRow = j%2===0?'white':'#f9fafc';
+          return `<tr style="border-bottom:1px solid #e8edf2;background:${bgRow}">
+            <td style="padding:7px 10px;color:#718096;font-weight:600">${j+1}</td>
+            <td style="padding:7px 10px;text-align:center">${pago?'':'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#e53e3e;vertical-align:middle" title="Pagamento pendente"></span>'}</td>
+            <td style="padding:7px 10px;font-weight:700;color:#2d3748">${(p.cracha&&p.cracha.trim())?p.cracha:p.nome}</td>
+            <td style="padding:7px 10px;color:#4a5568">${p.nome}</td>
+            <td style="padding:7px 10px;color:#4a5568;white-space:nowrap">${p.telefone||'—'}</td>
+            <td style="padding:7px 10px;color:#4a5568">${p.email||'—'}</td>
+            <td style="padding:7px 10px;color:#4a5568;font-style:italic">${p.instituicao&&p.instituicao!=='—'?p.instituicao:'—'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  // Monta as páginas
+  const expSalasCfg = polo?.expositores_salas || {};
+
+  const paginasSalas = salas.map(sala=>{
+    const lista = ordenar(grupos[sala]||[]);
+    const c = cor(salas.indexOf(sala));
+    const expManha = expSalasCfg[sala]?.manha || '';
+    const expTarde = expSalasCfg[sala]?.tarde || '';
+    const expBlock = (expManha||expTarde) ? `
+      <div style="display:flex;gap:24px;margin-top:6px;flex-wrap:wrap">
+        ${expManha?`<div style="font-size:13px;color:#4a5568"><span style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#a0aec0;font-weight:600;margin-right:5px">🌅 Manhã</span>${expManha}</div>`:''}
+        ${expTarde?`<div style="font-size:13px;color:#4a5568"><span style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#a0aec0;font-weight:600;margin-right:5px">🌆 Tarde</span>${expTarde}</div>`:''}
+      </div>` : '';
+    return `
+    <div class="pagina">
+      <div class="pagina-header">
+        <div>
+          <div class="evento-nome">MCJ 2026 — ${poloNome}</div>
+          <div class="turma-nome">${tipoTurma==='Mocidade'?'Turma de Mocidade':'Turma de Adulto'} · <strong>${sala}</strong></div>
+          ${expBlock}
+        </div>
+        <div class="pagina-meta">${lista.length} inscrito${lista.length!==1?'s':''} · 20 set 2026</div>
+      </div>
+      <div style="height:1px;background:${c.badge};margin-bottom:12px;opacity:.5;margin-top:10px"></div>
+      ${tabelaHtml(lista)}
+      <div class="pagina-footer">MCJ 2026 · Polo ${poloNome} · ${tipoTurma} · Sala ${sala}</div>
+    </div>`;
+  });
+
+  // Página extra: sem sala atribuída
+  const semSalaLista = ordenar(grupos['__sem_sala__']||[]);
+  const paginaSemSala = semSalaLista.length>0 ? `
+    <div class="pagina">
+      <div class="pagina-header">
+        <div>
+          <div class="evento-nome">MCJ 2026 — ${poloNome}</div>
+          <div class="turma-nome">${tipoTurma==='Mocidade'?'Turma de Mocidade':'Turma de Adulto'} · <strong>Sem sala atribuída</strong></div>
+        </div>
+        <div class="pagina-meta">${semSalaLista.length} inscrito${semSalaLista.length!==1?'s':''} · 20 set 2026</div>
+      </div>
+      <div style="height:1px;background:#ccc;margin-bottom:12px"></div>
+      ${tabelaHtml(semSalaLista)}
+      <div class="pagina-footer">MCJ 2026 · Polo ${poloNome} · ${tipoTurma} · Sem sala</div>
+    </div>` : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>MCJ 2026 — ${poloNome} · ${tipoTurma} — Listagem por Sala</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:white;color:#2d3748}
+  .pagina{
+    min-height:100vh;
+    padding:28px 32px 24px;
+    page-break-after:always;
+    display:flex;
+    flex-direction:column;
+  }
+  .pagina:last-child{page-break-after:avoid}
+  .pagina-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .evento-nome{font-size:13px;font-weight:600;color:#718096;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .turma-nome{font-size:22px;font-weight:800;color:#1a202c;letter-spacing:-.3px}
+  .pagina-meta{font-size:12px;color:#a0aec0;text-align:right;padding-top:4px;white-space:nowrap}
+  .pagina-footer{margin-top:auto;padding-top:16px;font-size:10px;color:#cbd5e0;text-align:center;border-top:1px solid #edf2f7}
+  table{page-break-inside:auto}
+  tr{page-break-inside:avoid;page-break-after:auto}
+  @media print{
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .pagina{min-height:100vh}
+    @page{margin:1.5cm}
+  }
+</style>
+</head>
+<body>
+${paginasSalas.join('')}
+${paginaSemSala}
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  if(!win){ alert('Permita pop-ups para imprimir.'); return; }
+  win.document.write(html);
+  win.document.close();
+  win.onload = ()=>{ win.focus(); win.print(); };
+}
+
+/* ================================================================
+   EQUIPE DE TRABALHO — drag-and-drop (trabalhador pode estar em N setores)
+================================================================ */
+let _equipePoloAtivo = null;
+
+function renderEquipe(){
+  const d   = getIns();
+  const wrap = document.getElementById('equipe-wrap');
+  if(!wrap) return;
+
+  const polosVis = SESSION.role==='admin'
+    ? POLOS
+    : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+
+  if(polosVis.length===0){
+    wrap.innerHTML='<p style="color:var(--gray-400);padding:1rem 0;font-size:14px">Nenhum polo disponível.</p>';
+    return;
+  }
+
+  if(!_equipePoloAtivo || !polosVis.find(p=>p.nome===_equipePoloAtivo)){
+    _equipePoloAtivo = polosVis[0].nome;
+  }
+
+  const poloTabsHtml = polosVis.length>1
+    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem">${
+        polosVis.map(p=>{
+          const idx=POLOS.indexOf(p); const c=cor(idx);
+          return `<button onclick="selecionarEquipePolo('${p.nome.replace(/'/g,"\\'")}',this)"
+            style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${_equipePoloAtivo===p.nome?c.badge:'var(--gray-100)'};background:${_equipePoloAtivo===p.nome?c.bg:'white'};color:${_equipePoloAtivo===p.nome?c.text:'var(--gray-600)'};transition:all .15s">
+            ${p.nome}
+          </button>`;
+        }).join('')
+      }</div>`
+    : '';
+
+  const polo        = polosVis.find(p=>p.nome===_equipePoloAtivo) || polosVis[0];
+  const setores     = polo.setores && polo.setores.length ? polo.setores : [];
+  const todos       = d.filter(x=>x.polo===polo.nome);
+  const trabalhadores = todos.filter(x=>x.trabalhador===true||x.trabalhador==='true');
+  const cl          = cor(POLOS.indexOf(polo));
+
+  /* ---------- card de trabalhador draggable ---------- */
+  function trabCardHtml(p, setor){
+    const nomeExibir = p.cracha && p.cracha.trim() ? p.cracha.trim() : p.nome;
+    const iniciais   = nomeExibir.split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+    const idade      = calcularIdade(p.nascimento);
+    const rmBtn = setor
+      ? `<button class="btn-remover-atrib" title="Remover do setor"
+           onclick="removerDoSetor('${p.email.replace(/'/g,"\\'")}','${polo.nome.replace(/'/g,"\\'")}','${setor.replace(/'/g,"\\'")}',event)">×</button>`
+      : '';
+    return `<div class="setor-membro">
+      <div class="pessoa-avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0">${iniciais}</div>
+      <div class="pessoa-info">
+        <div class="pessoa-nome">${nomeExibir}</div>
+        ${idade!=='—'?`<div class="pessoa-meta">${idade} anos</div>`:''}
+        ${p.instituicao&&p.instituicao!=='—'?`<div class="pessoa-meta" style="color:var(--gray-500);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.instituicao}</div>`:''}
+      </div>
+      ${rmBtn}
+    </div>`;
+  }
+
+  /* ---------- painel esquerdo: todos os trabalhadores ---------- */
+  const workersHtml = trabalhadores.length===0
+    ? '<p style="color:var(--gray-400);font-size:13px;padding:1rem">Nenhum trabalhador inscrito neste polo.</p>'
+    : trabalhadores.map(p=>{
+        const nomeExibir = p.cracha && p.cracha.trim() ? p.cracha.trim() : p.nome;
+        const setoresP   = Array.isArray(p.setores) ? p.setores : [];
+        const iniciais   = nomeExibir.split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+        const idade      = calcularIdade(p.nascimento);
+        return `<div class="equipe-worker-row">
+          <div class="pessoa-avatar" style="width:32px;height:32px;font-size:12px;flex-shrink:0">${iniciais}</div>
+          <div class="equipe-worker-info">
+            <div class="equipe-worker-nome">${nomeExibir}</div>
+            ${idade!=='—'?`<div class="equipe-worker-meta">${idade} anos</div>`:''}
+            ${p.instituicao&&p.instituicao!=='—'?`<div class="equipe-worker-meta" style="font-style:italic">${p.instituicao}</div>`:''}
+            ${setoresP.length>0
+              ? `<div class="equipe-worker-setores">${setoresP.map(s=>`<span class="equipe-setor-mini">${s}</span>`).join('')}</div>`
+              : '<div class="equipe-worker-meta" style="color:var(--gray-200)">Sem setor</div>'}
+          </div>
+        </div>`;
+      }).join('');
+
+  /* ---------- aviso para arrastar ---------- */
+  const dragHint = '';
+
+  /* ---------- grid de setores ---------- */
+  const setoresHtml = setores.length===0
+    ? `<div style="color:var(--gray-400);font-size:13px;padding:1rem;background:white;border-radius:12px;border:1px solid var(--gray-100)">
+        Configure os setores na aba ⚙ Configuração dos Polos.
+      </div>`
+    : `<div class="equipe-setores-grid">
+        ${setores.map((setor,si)=>{
+          const cSetor    = cor(si);
+          const membros   = trabalhadores.filter(p=>(Array.isArray(p.setores)?p.setores:[]).includes(setor));
+          const disponiveis = trabalhadores.filter(p=>!(Array.isArray(p.setores)?p.setores:[]).includes(setor));
+          const setorSafe = setor.replace(/'/g,"\\'");
+          const ddId      = 'ddE-'+si+'-'+POLOS.indexOf(polo);
+          const dropdownHtml = `
+            <div class="setor-add-wrap" style="margin-top:4px">
+              <button class="btn-setor-add" onclick="toggleDropdownSetor('${ddId}',event)">
+                + Adicionar trabalhador
+              </button>
+              <div class="setor-dropdown" id="${ddId}">
+                ${disponiveis.length===0
+                  ? `<div class="setor-dropdown-empty">Todos já estão neste setor</div>`
+                  : disponiveis.map(p=>{
+                      const nE = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
+                      const iE = nE.split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+                      return `<div class="setor-dropdown-item"
+                        onclick="adicionarAoSetor('${p.email.replace(/'/g,"\\'")}','${polo.nome.replace(/'/g,"\\'")}','${setorSafe}','${ddId}')">
+                        <div class="pessoa-avatar" style="width:24px;height:24px;font-size:10px;flex-shrink:0">${iE}</div>
+                        ${nE}
+                      </div>`;
+                    }).join('')}
+              </div>
+            </div>`;
+          return `<div class="equipe-setor-card" data-setor="${setor}">
+            <div class="equipe-setor-header" style="background:${cSetor.bg};color:${cSetor.text};border-bottom:1px solid ${cSetor.border}">
+              <span>${setor}</span>
+              <span style="font-size:11px;font-weight:500;opacity:.75">${membros.length} membro${membros.length!==1?'s':''}</span>
+            </div>
+            <div class="equipe-setor-list">
+              ${membros.length===0
+                ? '<p style="color:var(--gray-200);font-size:11px;padding:.5rem;text-align:center">Nenhum membro ainda</p>'
+                : membros.map(p=>trabCardHtml(p, setor)).join('')}
+            </div>
+            ${dropdownHtml}
+          </div>`;
+        }).join('')}
+      </div>`;
+
+  const totalComSetor = trabalhadores.filter(p=>Array.isArray(p.setores)&&p.setores.length>0).length;
+
+  wrap.innerHTML = `
+    <div class="turmas-polo-section">
+      ${poloTabsHtml}
+      <div class="turmas-polo-title">
+        <span style="background:${cl.bg};color:${cl.text};border:1px solid ${cl.border};padding:3px 10px;border-radius:20px;font-size:13px">${polo.nome}</span>
+        Equipe de Trabalho
+        <span style="font-size:12px;font-weight:400;color:var(--gray-400)">${totalComSetor}/${trabalhadores.length} alocado${totalComSetor!==1?'s':''}</span>
+        <button onclick="imprimirListagemEquipe('${polo.nome.replace(/'/g,"\\'")}' )"
+          style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--blue-600);color:white;border:none;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap"
+          onmouseover="this.style.background='var(--blue-800)'" onmouseout="this.style.background='var(--blue-600)'">
+          🖨 Imprimir listagem
+        </button>
+      </div>
+      <div class="equipe-layout">
+        <div class="equipe-workers-panel">
+          <div class="equipe-workers-title">👷 Trabalhadores (${trabalhadores.length})</div>
+          ${workersHtml}
+          ${dragHint}
+        </div>
+        ${setoresHtml}
+      </div>
+    </div>`;
+
+}
+
+function selecionarEquipePolo(nomeP){
+  _equipePoloAtivo = nomeP;
+  renderEquipe();
+}
+
+function imprimirListagemEquipe(poloNome){
+  const d          = getIns();
+  const polo       = POLOS.find(p=>p.nome===poloNome);
+  const setores    = polo?.setores && polo.setores.length ? polo.setores : [];
+  const trabalhadores = d.filter(x=>x.polo===poloNome && (x.trabalhador===true||x.trabalhador==='true'));
+
+  const ordenar = arr => [...arr].sort((a,b)=>{
+    const nA = (a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
+    const nB = (b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
+    return nA.localeCompare(nB,'pt-BR');
+  });
+
+  function tabelaEquipeHtml(lista){
+    if(lista.length===0) return '<p style="color:#888;font-size:13px;margin:8px 0">Nenhum trabalhador neste setor.</p>';
+    return `<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:6px">
+      <thead>
+        <tr style="background:#f0f4f8;border-bottom:2px solid #c8d8e8">
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">#</th>
+          <th style="padding:7px 10px;text-align:center;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">$</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">Crachá</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">Nome completo</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">Telefone</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">E-mail</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:700;color:#4a5568;text-transform:uppercase;letter-spacing:.4px">Instituição</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lista.map((p,j)=>{
+          const pago   = p.pagamento==='Confirmado';
+          const bgRow  = j%2===0?'white':'#f9fafc';
+          const nomeExibir = (p.cracha&&p.cracha.trim())?p.cracha:p.nome;
+          return `<tr style="border-bottom:1px solid #e8edf2;background:${bgRow}">
+            <td style="padding:7px 10px;color:#718096;font-weight:600">${j+1}</td>
+            <td style="padding:7px 10px;text-align:center">${pago?'':'<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#e53e3e;vertical-align:middle" title="Pagamento pendente"></span>'}</td>
+            <td style="padding:7px 10px;font-weight:700;color:#2d3748">${nomeExibir}</td>
+            <td style="padding:7px 10px;color:#4a5568">${p.nome}</td>
+            <td style="padding:7px 10px;color:#4a5568;white-space:nowrap">${p.telefone||'—'}</td>
+            <td style="padding:7px 10px;color:#4a5568">${p.email||'—'}</td>
+            <td style="padding:7px 10px;color:#4a5568;font-style:italic">${p.instituicao&&p.instituicao!=='—'?p.instituicao:'—'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  // Uma página por setor
+  const paginasSetores = setores.map((setor,si)=>{
+    const membros = ordenar(trabalhadores.filter(p=>(Array.isArray(p.setores)?p.setores:[]).includes(setor)));
+    const c = cor(si);
+    return `
+    <div class="pagina">
+      <div class="pagina-header">
+        <div>
+          <div class="evento-nome">MCJ 2026 — ${poloNome}</div>
+          <div class="turma-nome">Equipe de Trabalho · <strong>${setor}</strong></div>
+        </div>
+        <div class="pagina-meta">${membros.length} trabalhador${membros.length!==1?'es':''} · 20 set 2026</div>
+      </div>
+      <div style="height:1px;background:${c.badge};margin-bottom:12px;opacity:.5"></div>
+      ${tabelaEquipeHtml(membros)}
+      <div class="pagina-footer">MCJ 2026 · Polo ${poloNome} · Setor ${setor}</div>
+    </div>`;
+  });
+
+  // Página extra: trabalhadores sem setor
+  const semSetor = ordenar(trabalhadores.filter(p=>!(Array.isArray(p.setores)&&p.setores.length>0)));
+  const paginaSemSetor = semSetor.length>0 ? `
+    <div class="pagina">
+      <div class="pagina-header">
+        <div>
+          <div class="evento-nome">MCJ 2026 — ${poloNome}</div>
+          <div class="turma-nome">Equipe de Trabalho · <strong>Sem setor atribuído</strong></div>
+        </div>
+        <div class="pagina-meta">${semSetor.length} trabalhador${semSetor.length!==1?'es':''} · 20 set 2026</div>
+      </div>
+      <div style="height:1px;background:#ccc;margin-bottom:12px"></div>
+      ${tabelaEquipeHtml(semSetor)}
+      <div class="pagina-footer">MCJ 2026 · Polo ${poloNome} · Sem setor</div>
+    </div>` : '';
+
+  if(paginasSetores.length===0 && !paginaSemSetor){
+    alert('Nenhum setor configurado e nenhum trabalhador cadastrado.');
+    return;
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>MCJ 2026 — ${poloNome} · Equipe de Trabalho — Listagem por Setor</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:white;color:#2d3748}
+  .pagina{min-height:100vh;padding:28px 32px 24px;page-break-after:always;display:flex;flex-direction:column}
+  .pagina:last-child{page-break-after:avoid}
+  .pagina-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+  .evento-nome{font-size:13px;font-weight:600;color:#718096;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .turma-nome{font-size:22px;font-weight:800;color:#1a202c;letter-spacing:-.3px}
+  .pagina-meta{font-size:12px;color:#a0aec0;text-align:right;padding-top:4px;white-space:nowrap}
+  .pagina-footer{margin-top:auto;padding-top:16px;font-size:10px;color:#cbd5e0;text-align:center;border-top:1px solid #edf2f7}
+  table{page-break-inside:auto}
+  tr{page-break-inside:avoid;page-break-after:auto}
+  @media print{
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .pagina{min-height:100vh}
+    @page{margin:1.5cm}
+  }
+</style>
+</head>
+<body>
+${paginasSetores.join('')}
+${paginaSemSetor}
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  if(!win){ alert('Permita pop-ups para imprimir.'); return; }
+  win.document.write(html);
+  win.document.close();
+  win.onload = ()=>{ win.focus(); win.print(); };
+}
+
+/* Abre/fecha o dropdown de adicionar trabalhador ao setor */
+function toggleDropdownSetor(id, event){
+  event.stopPropagation();
+  const dd = document.getElementById(id);
+  if(!dd) return;
+  const isOpen = dd.classList.contains('open');
+  // fecha todos os outros dropdowns abertos
+  document.querySelectorAll('.setor-dropdown.open').forEach(el=>el.classList.remove('open'));
+  if(!isOpen) dd.classList.add('open');
+}
+
+// fecha qualquer dropdown aberto ao clicar fora
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.setor-dropdown.open').forEach(el=>el.classList.remove('open'));
+});
+
+/* Adiciona trabalhador ao setor */
+function adicionarAoSetor(email, poloNome, setor, dropdownId){
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão.'); return; }
+  const d   = getIns();
+  const idx = d.findIndex(x=>x.email===email && x.polo===poloNome);
+  if(idx<0) return;
+  let setoresP = Array.isArray(d[idx].setores) ? [...d[idx].setores] : [];
+  if(!setoresP.includes(setor)) setoresP.push(setor);
+  d[idx].setores = setoresP;
+  _cache.inscricoes = d;
+  atualizarInscricao(email, poloNome, {setores: setoresP});
+  if(dropdownId){ const dd=document.getElementById(dropdownId); if(dd) dd.classList.remove('open'); }
+  renderEquipe();
+}
+
+/* Remove trabalhador do setor */
+function removerDoSetor(email, poloNome, setor, event){
+  if(event && event.stopPropagation) event.stopPropagation();
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão.'); return; }
+  const d   = getIns();
+  const idx = d.findIndex(x=>x.email===email && x.polo===poloNome);
+  if(idx<0) return;
+  let setoresP = Array.isArray(d[idx].setores) ? [...d[idx].setores] : [];
+  setoresP = setoresP.filter(s=>s!==setor);
+  d[idx].setores = setoresP;
+  _cache.inscricoes = d;
+  atualizarInscricao(email, poloNome, {setores: setoresP});
+  renderEquipe();
+}
+
+function removerAtribuicao(email, poloNome, event){
+  // evita que o clique no × dispare o drag do card pai
+  event.stopPropagation();
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
+  atualizarInscricao(email, poloNome, {sala:''});
+  renderTurmas();
+}
+
+function atribuirExpositor(poloNome, sala, periodo, expositor){
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
+  const p = POLOS.find(x=>x.nome===poloNome);
+  if(!p) return;
+  if(!p.expositores_salas) p.expositores_salas={};
+  if(!p.expositores_salas[sala]) p.expositores_salas[sala]={manha:'',tarde:''};
+  p.expositores_salas[sala][periodo] = expositor;
+  setCfg(); // salva no Supabase/cache silenciosamente
+}
+
+/* ---- Drag events (desktop) ---- */
+function dragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  const zone = e.currentTarget;
+  zone.classList.add('drag-over');
+}
+function dragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+function drop(e, sala, el){
+  e.preventDefault();
+  if(el) el.classList.remove('drag-over');
+  // também remove do target pai
+  e.currentTarget.classList.remove('drag-over');
+  if(!_dragEmail) return;
+  const email = _dragEmail;
+  const polo  = _dragPolo;
+  _dragEmail = null; _dragPolo = null;
+  if(!poloNoEscopo(polo)){ alert('Sem permissão para este polo.'); return; }
+  atualizarInscricao(email, polo, {sala: sala||''});
+  renderTurmas();
+}
+
+/* ---- Touch drag (mobile) ---- */
+let _touchCard = null;
+let _touchClone = null;
+let _touchEmailM = null;
+let _touchPoloM  = null;
+
+function touchStart(e, card){
+  _touchCard = card;
+  _touchEmailM = card.dataset.email;
+  _touchPoloM  = card.dataset.polo;
+  const rect = card.getBoundingClientRect();
+  _touchClone = card.cloneNode(true);
+  _touchClone.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;opacity:.85;z-index:9999;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.2);transform:scale(1.03)`;
+  document.body.appendChild(_touchClone);
+  card.style.opacity='.3';
+}
+function touchMove(e){
+  if(!_touchClone) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  _touchClone.style.left = (t.clientX-70)+'px';
+  _touchClone.style.top  = (t.clientY-24)+'px';
+  // highlight drop zone under finger
+  _touchClone.style.display='none';
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  _touchClone.style.display='';
+  document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
+  const zone = el?.closest('.drop-zone');
+  if(zone) zone.classList.add('drag-over');
+}
+function touchEnd(e){
+  if(!_touchClone){ _touchCard=null; return; }
+  const t = e.changedTouches[0];
+  _touchClone.style.display='none';
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  _touchClone.style.display='';
+  if(_touchCard) _touchCard.style.opacity='';
+  _touchClone.remove(); _touchClone=null;
+  document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
+
+  const zone = el?.closest('[data-sala]');
+  if(zone && _touchEmailM){
+    const sala = zone.dataset.sala||'';
+    if(!poloNoEscopo(_touchPoloM)){ alert('Sem permissão.'); _touchEmailM=null; return; }
+    atualizarInscricao(_touchEmailM, _touchPoloM, {sala});
+    renderTurmas();
+  }
+  _touchEmailM=null; _touchPoloM=null; _touchCard=null;
+}
+
+/* fake mousedown for desktop fallback */
+function dragMouseDown(e, card){
+  // only fire if it's a proper click (not drag)
+  // dragging is handled by native HTML5 drag
+}
+const MSG_WA_PADRAO =
+  'Olá, *{nome}*! 🙌\n\n' +
+  'Seu pagamento referente à inscrição no *MCJ 2026* — *{polo}* foi *confirmado* com sucesso! ✅\n\n' +
+  '📅 Data do evento: *{data}*\n' +
+  '📍 Polo: *{polo}*\n\n' +
+  'Fique atento às próximas informações. Nos vemos lá! 🎉';
+
+function resolverMsg(template, nome, polo){
+  return (template||MSG_WA_PADRAO)
+    .replace(/\{nome\}/g, nome)
+    .replace(/\{polo\}/g, polo)
+    .replace(/\{data\}/g, '20 de setembro de 2026');
+}
+
+function montarLinkWA(telNumeros, nomeInscrito, poloNome){
+  let num = telNumeros.replace(/\D/g,'');
+  if(num.startsWith('0')) num = num.slice(1);
+  if(!num.startsWith('55')) num = '55'+num;
+  const cfgPolo = POLOS.find(p=>p.nome===poloNome);
+  const msg = resolverMsg(cfgPolo?.msg_pagamento||'', nomeInscrito, poloNome);
+  return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+}
+
+function restaurarMsgPadrao(i){
+  const ta = document.getElementById('cfg-msg-pag-'+i);
+  if(ta){ ta.value=''; atualizarPrevia(i); }
+}
+
+function atualizarPrevia(i){
+  const ta  = document.getElementById('cfg-msg-pag-'+i);
+  const pre = document.getElementById('cfg-msg-previa-'+i);
+  if(!ta||!pre) return;
+  const polo = POLOS[i]?.nome || 'Polo';
+  pre.textContent = resolverMsg(ta.value.trim(), 'Nome do Participante', polo);
+}
+
+// inicializa prévias ao abrir renderConfig (chamado por switchAdminTab)
+function inicializarPrevias(){
+  POLOS.forEach((_,i)=>{ setTimeout(()=>atualizarPrevia(i),50); });
+}
+
+function toggleTrabalhador(email, poloNome){
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
+  const d = getIns();
+  const idx = d.findIndex(x=>x.email===email && x.polo===poloNome);
+  if(idx<0) return;
+  const novoValor = !(d[idx].trabalhador===true || d[idx].trabalhador==='true');
+  atualizarInscricao(email, poloNome, { trabalhador: novoValor });
+  renderPanels(); renderSummary();
+}
+
+async function excluirInscricao(email, poloNome){
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
+  const ins = getIns().find(x=>x.email===email && x.polo===poloNome);
+  if(!ins) return;
+  if(!confirm(`Excluir a inscrição de "${ins.nome}"?\n\nEsta ação não pode ser desfeita.`)) return;
+  try {
+    await deletarInscricao(email, poloNome);
+    renderPanels(); renderSummary(); atualizarContadores();
+  } catch(e){ /* erro já mostrado em deletarInscricao */ }
+}
+
+function togglePagamento(email, poloNome){
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
+  const d = getIns();
+  const idx = d.findIndex(x=>x.email===email && x.polo===poloNome);
+  if(idx<0) return;
+
+  const atual = d[idx].pagamento==='Confirmado';
+
+  if(!atual){
+    const campos = { pagamento:'Confirmado', pagamento_em: new Date().toLocaleString('pt-BR') };
+    atualizarInscricao(email, poloNome, campos);
+    renderPanels(); renderSummary();
+    const tel = (d[idx].telefone||'').replace(/\D/g,'');
+    if(tel.length >= 10) window.open(montarLinkWA(tel, d[idx].nome, poloNome), '_blank', 'noopener');
+  } else {
+    if(!confirm(`Desfazer confirmação de pagamento de ${d[idx].nome}?`)) return;
+    atualizarInscricao(email, poloNome, { pagamento:'Pendente', pagamento_em:'' });
+    renderPanels(); renderSummary();
+  }
+}
+
+function toggleInscricoesPolo(i){
+  if(!poloNoEscopo(i)){ alert('Sem permissão para este polo.'); return; }
+  POLOS[i].inscricoes_abertas = !POLOS[i].inscricoes_abertas;
+  setCfg();
+  renderPoloGrid(); atualizarBanner(); renderAdmin();
+  if(document.getElementById('apanel-config').classList.contains('active')) renderConfig();
+}
+
+/* ================================================================
+   ADMIN — CONFIG DE POLOS
+================================================================ */
+function renderConfig(){
+  const d=getIns();
+  const c=document.getElementById('config-grid');
+  if(!c) return;
+  const isAdmin = SESSION.role==='admin';
+
+  // coordenador só vê seus polos; admin vê todos
+  const polosVisiveis = isAdmin ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+
+  if(polosVisiveis.length===0){
+    c.innerHTML='<p style="color:var(--gray-400);font-size:14px;padding:1rem 0">Nenhum polo disponível para configuração.</p>';
+    return;
+  }
+
+  c.innerHTML=polosVisiveis.map((p)=>{
+    const i=POLOS.indexOf(p); // índice real no array global
+    const cl=cor(i);
+    const aberto=p.inscricoes_abertas!==false;
+    const inscritos=d.filter(x=>x.polo===p.nome).length;
+    const badge=aberto
+      ?'<span class="polo-status-badge polo-status-aberto">● Abertas</span>'
+      :'<span class="polo-status-badge polo-status-fechado">● Encerradas</span>';
+
+    // botão remover: só admin, e só se sem inscrições
+    const removeBtn = isAdmin
+      ? (inscritos===0
+          ?`<button class="btn-remove-polo" onclick="removerPolo(${i})">🗑 Remover</button>`
+          :`<span style="font-size:11px;color:${cl.text}">${inscritos} inscrito${inscritos!==1?'s':''}</span>`)
+      : '';
+
+    // campos que só admin pode alterar
+    const camposAdmin = isAdmin ? `
+        <div class="cfg-field"><label>Nome do polo</label><input type="text" id="cfg-nome-${i}" value="${esc(p.nome)}" placeholder="Ex: Campo Grande"></div>
+        <div class="cfg-row">
+          <div class="cfg-field"><label>Valor da inscrição</label><input type="text" id="cfg-valor-${i}" value="${p.valorExibir!=='R$ —,—'?esc(p.valorExibir):''}" placeholder="R$ 0,00"><span style="font-size:11px;color:var(--gray-400)">Ex: R$ 50,00</span></div>
+          <div class="cfg-field"><label>Capacidade (vagas)</label><input type="number" id="cfg-cap-${i}" value="${esc(p.capacidade||'')}" placeholder="Ex: 200" min="1"></div>
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-field"><label>Chave PIX</label><input type="text" id="cfg-pix-chave-${i}" value="${esc(p.pixChave||'')}" placeholder="CPF, e-mail ou chave aleatória"></div>
+          <div class="cfg-field"><label>Beneficiário PIX</label><input type="text" id="cfg-pix-nome-${i}" value="${esc(p.pixNome||'')}" placeholder="Nome do recebedor"></div>
+        </div>` : `
+        <input type="hidden" id="cfg-nome-${i}" value="${esc(p.nome)}">
+        <input type="hidden" id="cfg-valor-${i}" value="${esc(p.valorExibir||'')}">
+        <input type="hidden" id="cfg-cap-${i}" value="${esc(p.capacidade||'')}">
+        <input type="hidden" id="cfg-pix-chave-${i}" value="${esc(p.pixChave||'')}">
+        <input type="hidden" id="cfg-pix-nome-${i}" value="${esc(p.pixNome||'')}">
+        <div style="background:var(--blue-50);border:1px solid var(--blue-100);border-radius:8px;padding:9px 13px;font-size:12px;color:var(--blue-800)">
+          ✏️ Você pode editar endereço, responsável, contato, almoço, observações e a mensagem de confirmação de pagamento deste polo.
+        </div>`;
+
+    return `<div class="config-polo-card">
+      <div class="config-polo-head" style="background:${cl.bg};border-bottom:1px solid ${cl.border}">
+        <div class="polo-dot" style="background:${cl.badge};margin-bottom:0;flex-shrink:0"></div>
+        <div class="config-polo-head-name">Polo ${POLOS.indexOf(p)+1} — ${p.nome} ${badge}</div>
+        ${removeBtn}
+      </div>
+      <div class="config-polo-body">
+
+        <!-- ── SEÇÃO 1: STATUS ─────────────────────────────── -->
+        <div class="cfg-section">
+          <div class="cfg-section-title">⚙ Status</div>
+          <div class="toggle-wrap">
+            <div><div class="toggle-lbl-main">Inscrições abertas</div><div class="toggle-lbl-sub">Desative para encerrar inscrições neste polo</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="cfg-toggle-${i}" ${aberto?'checked':''}><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-wrap" style="border-color:#FFD09B;margin-top:8px">
+            <div><div class="toggle-lbl-main">🍽 Almoço disponível</div><div class="toggle-lbl-sub">Ative para oferecer opção de almoço neste polo</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="cfg-almoco-${i}" ${p.almoco_ativo?'checked':''} onchange="toggleAlmocoValor(${i})"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="cfg-field" id="cfg-almoco-valor-wrap-${i}" style="display:${p.almoco_ativo?'flex':'none'};flex-direction:column;gap:5px;margin-top:8px">
+            <label>Valor do almoço</label>
+            <input type="text" id="cfg-almoco-valor-${i}" value="${esc(p.almoco_valor||'')}" placeholder="Ex: R$ 35,00">
+          </div>
+        </div>
+
+        <!-- ── SEÇÃO 2: IDENTIFICAÇÃO ─────────────────────── -->
+        <div class="cfg-section">
+          <div class="cfg-section-title">📋 Identificação</div>
+          ${camposAdmin}
+        </div>
+
+        <!-- ── SEÇÃO 3: LOCALIZAÇÃO & CONTATO ─────────────── -->
+        <div class="cfg-section">
+          <div class="cfg-section-title">📍 Localização & Contato</div>
+          <div class="cfg-field"><label>Endereço completo</label><textarea id="cfg-endereco-${i}" placeholder="Rua, número, bairro, cidade — CEP">${esc(p.endereco||'')}</textarea></div>
+          <div class="cfg-row" style="margin-top:8px">
+            <div class="cfg-field"><label>Responsável pelo polo</label><input type="text" id="cfg-resp-${i}" value="${esc(p.responsavel||'')}" placeholder="Nome do coordenador"></div>
+            <div class="cfg-field"><label>Telefone do polo</label><input type="tel" id="cfg-tel-${i}" value="${esc(p.telefone_polo||'')}" placeholder="(00) 00000-0000"></div>
+          </div>
+          <div class="cfg-field" style="margin-top:8px"><label>E-mail do polo</label><input type="email" id="cfg-email-${i}" value="${esc(p.email_polo||'')}" placeholder="email@polo.com.br"></div>
+          <div class="cfg-field" style="margin-top:8px"><label>Observações / Informações adicionais</label><textarea id="cfg-obs-${i}" placeholder="Estacionamento, transporte, horário de credenciamento, etc.">${esc(p.obs||'')}</textarea></div>
+        </div>
+
+        <!-- ── SEÇÃO 4: SALAS ─────────────────────────────── -->
+        <div class="cfg-section">
+          <div class="cfg-section-title">🏫 Salas por Turma</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">👤 Adulto</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Qtd:</label>
+                <select id="cfg-qtd-adulto-${i}" style="width:70px;font-size:14px;padding:5px 8px;border-radius:7px" onchange="atualizarCamposSalas(${i},'adulto')">
+                  ${[...Array(12)].map((_,n)=>`<option value="${n+1}" ${(p.salas_adulto&&p.salas_adulto.length?p.salas_adulto.length:SALAS_ADULTO_DEFAULT.length)===(n+1)?'selected':''}>${n+1}</option>`).join('')}
+                </select>
+              </div>
+              <div id="cfg-salas-adulto-campos-${i}" style="display:flex;flex-direction:column;gap:6px">
+                ${(p.salas_adulto&&p.salas_adulto.length?p.salas_adulto:SALAS_ADULTO_DEFAULT).map((nome,j)=>`
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
+                    <input type="text" id="cfg-sala-adulto-${i}-${j}" value="${esc(nome)}" placeholder="Sala ${j+1}" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px">
+                  </div>`).join('')}
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🌟 Mocidade</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Qtd:</label>
+                <select id="cfg-qtd-mocidade-${i}" style="width:70px;font-size:14px;padding:5px 8px;border-radius:7px" onchange="atualizarCamposSalas(${i},'mocidade')">
+                  ${[...Array(10)].map((_,n)=>`<option value="${n+1}" ${(p.salas_mocidade&&p.salas_mocidade.length?p.salas_mocidade.length:SALAS_MOCIDADE_DEFAULT.length)===(n+1)?'selected':''}>${n+1}</option>`).join('')}
+                </select>
+              </div>
+              <div id="cfg-salas-mocidade-campos-${i}" style="display:flex;flex-direction:column;gap:6px">
+                ${(p.salas_mocidade&&p.salas_mocidade.length?p.salas_mocidade:SALAS_MOCIDADE_DEFAULT).map((nome,j)=>`
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
+                    <input type="text" id="cfg-sala-mocidade-${i}-${j}" value="${esc(nome)}" placeholder="Sala ${j+1}" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px">
+                  </div>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SEÇÃO 5: EXPOSITORES ──────────────────────── -->
+        <div class="cfg-section">
+          <div class="cfg-section-title">🎤 Expositores</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Quantidade:</label>
+            <select id="cfg-qtd-exp-${i}" style="width:70px;font-size:14px;padding:5px 8px;border-radius:7px" onchange="atualizarCamposExpositores(${i})">
+              ${[...Array(20)].map((_,n)=>`<option value="${n+1}" ${(p.expositores&&p.expositores.length?p.expositores.length:3)===(n+1)?'selected':''}>${n+1}</option>`).join('')}
+            </select>
+          </div>
+          <div id="cfg-exp-campos-${i}" style="display:flex;flex-direction:column;gap:6px">
+            ${(p.expositores&&p.expositores.length?p.expositores:['Expositor 1','Expositor 2','Expositor 3']).map((nome,j)=>`
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
+                <input type="text" id="cfg-exp-${i}-${j}" value="${esc(nome)}" placeholder="Nome do expositor ${j+1}" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px">
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- ── SEÇÃO 6: EQUIPE DE TRABALHO ───────────────── -->
+        <div class="cfg-section">
+          <div class="cfg-section-title">🔧 Equipe de Trabalho — Setores</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Quantidade de setores:</label>
+            <select id="cfg-qtd-setor-${i}" style="width:70px;font-size:14px;padding:5px 8px;border-radius:7px" onchange="atualizarCamposSetores(${i})">
+              ${[...Array(15)].map((_,n)=>`<option value="${n+1}" ${(p.setores&&p.setores.length?p.setores.length:3)===(n+1)?'selected':''}>${n+1}</option>`).join('')}
+            </select>
+          </div>
+          <div id="cfg-setores-campos-${i}" style="display:flex;flex-direction:column;gap:6px">
+            ${(p.setores&&p.setores.length?p.setores:['Recepção','Som e Mídia','Limpeza']).map((nome,j)=>`
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
+                <input type="text" id="cfg-setor-${i}-${j}" value="${esc(nome)}" placeholder="Nome do setor ${j+1}" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px">
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- ── SEÇÃO 7: MENSAGEM WHATSAPP ─────────────────── -->
+        <div class="cfg-section">
+          <div class="cfg-section-title">💬 Mensagem WhatsApp</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="font-size:11px;color:var(--gray-400);line-height:1.5">
+              Variáveis: <code style="background:var(--gray-50);padding:1px 5px;border-radius:4px;font-size:11px">{nome}</code> <code style="background:var(--gray-50);padding:1px 5px;border-radius:4px;font-size:11px">{polo}</code> <code style="background:var(--gray-50);padding:1px 5px;border-radius:4px;font-size:11px">{data}</code>
+            </div>
+            <button type="button" onclick="restaurarMsgPadrao(${i})" style="font-size:11px;font-weight:500;color:var(--blue-600);background:none;border:none;cursor:pointer;white-space:nowrap;padding:0;flex-shrink:0;margin-left:8px">↺ Restaurar padrão</button>
+          </div>
+          <textarea id="cfg-msg-pag-${i}" rows="6" style="font-size:13px;font-family:monospace;resize:vertical" oninput="atualizarPrevia(${i})" placeholder="Deixe em branco para usar o texto padrão">${esc(p.msg_pagamento||'')}</textarea>
+          <div style="margin-top:8px">
+            <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Prévia:</div>
+            <div id="cfg-msg-previa-${i}" style="font-size:12px;color:var(--gray-700);background:var(--gray-50);border:1px solid var(--gray-100);border-radius:8px;padding:10px 12px;line-height:1.7;white-space:pre-wrap;word-break:break-word;min-height:60px"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="config-polo-footer">
+        <span class="cfg-saved-msg" id="cfg-saved-${i}">✓ Salvo com sucesso</span>
+        <button class="btn-cfg-save" onclick="salvarPolo(${i})">Salvar alterações</button>
+      </div>
+    </div>`;
+  }).join('');
+  inicializarPrevias();
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function toggleAlmocoValor(i){
+  const chk = document.getElementById('cfg-almoco-'+i);
+  const wrap = document.getElementById('cfg-almoco-valor-wrap-'+i);
+  if(wrap) wrap.style.display = chk?.checked ? 'flex' : 'none';
+}
+
+/* Lê os campos de nome das salas do formulário */
+function lerSalas(i, tipo){
+  const qtd = parseInt(document.getElementById('cfg-qtd-'+tipo+'-'+i)?.value||'0');
+  const result = [];
+  for(let j=0; j<qtd; j++){
+    const v = document.getElementById('cfg-sala-'+tipo+'-'+i+'-'+j)?.value.trim();
+    result.push(v || (tipo==='adulto' ? SALAS_ADULTO_DEFAULT[j]||String.fromCharCode(65+j) : String(j+1)));
+  }
+  return result;
+}
+
+function lerSetores(i){
+  const qtd = parseInt(document.getElementById('cfg-qtd-setor-'+i)?.value||'0');
+  const SETORES_DEFAULT = ['Recepção','Som e Mídia','Limpeza'];
+  const result = [];
+  for(let j=0; j<qtd; j++){
+    const v = document.getElementById('cfg-setor-'+i+'-'+j)?.value.trim();
+    result.push(v || SETORES_DEFAULT[j] || 'Setor '+(j+1));
+  }
+  return result;
+}
+
+function lerExpositores(i){
+  const qtd = parseInt(document.getElementById('cfg-qtd-exp-'+i)?.value||'0');
+  const result = [];
+  for(let j=0; j<qtd; j++){
+    const v = document.getElementById('cfg-exp-'+i+'-'+j)?.value.trim();
+    result.push(v || 'Expositor '+(j+1));
+  }
+  return result;
+}
+
+function atualizarCamposSetores(i){
+  const qtd = parseInt(document.getElementById('cfg-qtd-setor-'+i)?.value||'0');
+  const SETORES_DEFAULT = ['Recepção','Som e Mídia','Limpeza'];
+  const valoresAtuais = [];
+  for(let j=0; j<20; j++){
+    const el = document.getElementById('cfg-setor-'+i+'-'+j);
+    if(!el) break;
+    valoresAtuais.push(el.value);
+  }
+  const container = document.getElementById('cfg-setores-campos-'+i);
+  if(!container) return;
+  container.innerHTML = [...Array(qtd)].map((_,j)=>{
+    const val = valoresAtuais[j] !== undefined ? valoresAtuais[j] : (SETORES_DEFAULT[j]||'');
+    return `<div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
+      <input type="text" id="cfg-setor-${i}-${j}" value="${esc(val)}"
+        placeholder="Nome do setor ${j+1}"
+        style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px;font-family:Inter,sans-serif;color:var(--gray-900);background:var(--gray-50);border:1px solid var(--gray-100);outline:none">
+    </div>`;
+  }).join('');
+}
+
+function atualizarCamposExpositores(i){
+  const qtd = parseInt(document.getElementById('cfg-qtd-exp-'+i)?.value||'0');
+  const valoresAtuais = [];
+  for(let j=0; j<25; j++){
+    const el = document.getElementById('cfg-exp-'+i+'-'+j);
+    if(!el) break;
+    valoresAtuais.push(el.value);
+  }
+  const container = document.getElementById('cfg-exp-campos-'+i);
+  if(!container) return;
+  container.innerHTML = [...Array(qtd)].map((_,j)=>{
+    const val = valoresAtuais[j] !== undefined ? valoresAtuais[j] : '';
+    return `<div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
+      <input type="text" id="cfg-exp-${i}-${j}" value="${esc(val)}"
+        placeholder="Nome do expositor ${j+1}"
+        style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px;font-family:Inter,sans-serif;color:var(--gray-900);background:var(--gray-50);border:1px solid var(--gray-100);outline:none">
+    </div>`;
+  }).join('');
+}
+
+/* Reconstrói os campos de nome quando a quantidade muda */
+function atualizarCamposSalas(i, tipo){
+  const qtd = parseInt(document.getElementById('cfg-qtd-'+tipo+'-'+i)?.value||'0');
+  const defaults = tipo==='adulto' ? SALAS_ADULTO_DEFAULT : SALAS_MOCIDADE_DEFAULT;
+  // lê valores atuais antes de reconstruir
+  const valoresAtuais = [];
+  for(let j=0; j<20; j++){
+    const el = document.getElementById('cfg-sala-'+tipo+'-'+i+'-'+j);
+    if(!el) break;
+    valoresAtuais.push(el.value);
+  }
+  const container = document.getElementById('cfg-salas-'+tipo+'-campos-'+i);
+  if(!container) return;
+  container.innerHTML = [...Array(qtd)].map((_,j)=>{
+    const val = valoresAtuais[j] !== undefined ? valoresAtuais[j] : (defaults[j]||'');
+    return `<div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
+      <input type="text" id="cfg-sala-${tipo}-${i}-${j}" value="${esc(val)}"
+        placeholder="Nome da sala ${j+1}"
+        style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px;font-family:Inter,sans-serif;color:var(--gray-900);background:var(--gray-50);border:1px solid var(--gray-100);outline:none">
+    </div>`;
+  }).join('');
+}
+
+function salvarPolo(i){
+  const p=POLOS[i]; if(!p) return;
+  p.nome              = document.getElementById('cfg-nome-'+i).value.trim()||p.nome;
+  p.endereco          = document.getElementById('cfg-endereco-'+i).value.trim();
+  p.valorExibir       = document.getElementById('cfg-valor-'+i).value.trim()||'R$ —,—';
+  p.pixChave          = document.getElementById('cfg-pix-chave-'+i).value.trim();
+  p.pixNome           = document.getElementById('cfg-pix-nome-'+i).value.trim();
+  p.responsavel       = document.getElementById('cfg-resp-'+i).value.trim();
+  p.telefone_polo     = document.getElementById('cfg-tel-'+i).value.trim();
+  p.email_polo        = document.getElementById('cfg-email-'+i).value.trim();
+  p.capacidade        = document.getElementById('cfg-cap-'+i).value.trim();
+  p.obs               = document.getElementById('cfg-obs-'+i).value.trim();
+  p.inscricoes_abertas= document.getElementById('cfg-toggle-'+i).checked;
+  p.almoco_ativo      = document.getElementById('cfg-almoco-'+i).checked;
+  p.almoco_valor      = document.getElementById('cfg-almoco-valor-'+i).value.trim();
+  p.msg_pagamento     = document.getElementById('cfg-msg-pag-'+i).value.trim();
+  p.salas_adulto   = lerSalas(i, 'adulto');
+  p.salas_mocidade = lerSalas(i, 'mocidade');
+  p.setores        = lerSetores(i);
+  p.expositores    = lerExpositores(i);
+  // expositores_salas is saved separately via atribuirExpositor — don't overwrite here
+  if(!p.expositores_salas) p.expositores_salas={};
+  setCfg();
+  renderPoloGrid(); atualizarBanner(); renderAdmin(); renderConfig();
+  const m=document.getElementById('cfg-saved-'+i);
+  if(m){ m.classList.add('show'); setTimeout(()=>m.classList.remove('show'),2500); }
+}
+
+/* ================================================================
+   ADICIONAR / REMOVER POLO
+================================================================ */
+function abrirAddPolo(){
+  document.getElementById('addpolo-nome').value='';
+  document.getElementById('addpolo-endereco').value='';
+  document.getElementById('addpolo-valor').value='';
+  document.getElementById('addpolo-err').classList.remove('show');
+  document.getElementById('addpolo-overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('addpolo-nome').focus(),150);
+}
+function fecharAddPolo(){
+  document.getElementById('addpolo-overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+function confirmarAddPolo(){
+  const nome=document.getElementById('addpolo-nome').value.trim();
+  const errEl=document.getElementById('addpolo-err');
+  if(!nome){ errEl.textContent='O nome do polo é obrigatório.'; errEl.classList.add('show'); return; }
+  if(POLOS.find(p=>p.nome.toLowerCase()===nome.toLowerCase())){ errEl.textContent='Já existe um polo com este nome.'; errEl.classList.add('show'); return; }
+  POLOS.push({
+    nome, endereco:document.getElementById('addpolo-endereco').value.trim(),
+    valorExibir:document.getElementById('addpolo-valor').value.trim()||'R$ —,—',
+    pixChave:'pix@mcj2026.com.br', pixNome:'MCJ 2026 — '+nome,
+    responsavel:'', telefone_polo:'', email_polo:'', capacidade:'', obs:'',
+    inscricoes_abertas:true, almoco_ativo:false, almoco_valor:'', msg_pagamento:'', salas_adulto:[], salas_mocidade:[], setores:[], expositores:[], expositores_salas:{}
+  });
+  setCfg();
+  fecharAddPolo();
+  renderPoloGrid(); atualizarBanner(); renderAdmin(); renderConfig();
+}
+function removerPolo(i){
+  const p=POLOS[i]; if(!p) return;
+  const n=getIns().filter(x=>x.polo===p.nome).length;
+  if(n>0){ alert(`Não é possível remover "${p.nome}" — há ${n} inscrição(ões) registrada(s).`); return; }
+  if(!confirm(`Remover o polo "${p.nome}"? Esta ação não pode ser desfeita.`)) return;
+  POLOS.splice(i,1); setCfg();
+  renderPoloGrid(); atualizarBanner(); renderAdmin(); renderConfig();
+}
+
+/* ================================================================
+   EXPORTAÇÃO EXCEL
+================================================================ */
+function exportarPolo(polo){
+  const d=getIns().filter(x=>x.polo===polo);
+  if(!d.length){ alert('Nenhuma inscrição neste polo.'); return; }
+  const rows=d.map((p,i)=>({'#':i+1,'Nome':p.nome,'Crachá':p.cracha||p.nome,'Nascimento':p.nascimento||'—','Idade':calcularIdade(p.nascimento),'E-mail':p.email,'Telefone':p.telefone,'Turma':p.turma||'—','Função':(p.trabalhador===true||p.trabalhador==='true')?'Trabalhador':'Participante','Setores':(Array.isArray(p.setores)&&p.setores.length)?p.setores.join(', '):'—','Sala':p.sala?'Sala '+p.sala:'—','Almoço':p.almoco||'Não','Valor Almoço':p.almoco==='Sim'?(p.almoco_valor||'—'):'—','Instituição':p.instituicao,'Polo':p.polo,'Pagamento':p.pagamento||'Pendente','Confirmado em':p.pagamento_em||'—','Data inscrição':p.data_inscricao}));
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.json_to_sheet(rows);
+  ws['!cols']=[{wch:4},{wch:32},{wch:14},{wch:30},{wch:16},{wch:12},{wch:10},{wch:8},{wch:14},{wch:28},{wch:14},{wch:14},{wch:20},{wch:20}];
+  XLSX.utils.book_append_sheet(wb,ws,polo.slice(0,31));
+  XLSX.writeFile(wb,`MCJ_2026_${polo.replace(/ /g,'_')}.xlsx`);
+}
+function exportarTodos(){
+  const d=getIns();
+  if(!d.length){ alert('Nenhuma inscrição cadastrada.'); return; }
+  const wb=XLSX.utils.book_new();
+  const mkRow=(p,i)=>({'#':i+1,'Nome':p.nome,'Crachá':p.cracha||p.nome,'Nascimento':p.nascimento||'—','Idade':calcularIdade(p.nascimento),'E-mail':p.email,'Telefone':p.telefone,'Turma':p.turma||'—','Função':(p.trabalhador===true||p.trabalhador==='true')?'Trabalhador':'Participante','Setores':(Array.isArray(p.setores)&&p.setores.length)?p.setores.join(', '):'—','Sala':p.sala?'Sala '+p.sala:'—','Almoço':p.almoco||'Não','Valor Almoço':p.almoco==='Sim'?(p.almoco_valor||'—'):'—','Instituição':p.instituicao,'Polo':p.polo,'Pagamento':p.pagamento||'Pendente','Confirmado em':p.pagamento_em||'—','Data inscrição':p.data_inscricao});
+  const cols=[{wch:4},{wch:32},{wch:14},{wch:30},{wch:16},{wch:12},{wch:10},{wch:8},{wch:14},{wch:28},{wch:14},{wch:14},{wch:20},{wch:20}];
+  const wsG=XLSX.utils.json_to_sheet(d.map(mkRow));
+  wsG['!cols']=cols;
+  XLSX.utils.book_append_sheet(wb,wsG,'Todos os inscritos');
+  POLOS.forEach(polo=>{
+    const lista=d.filter(x=>x.polo===polo.nome); if(!lista.length) return;
+    const ws=XLSX.utils.json_to_sheet(lista.map(mkRow));
+    ws['!cols']=cols;
+    XLSX.utils.book_append_sheet(wb,ws,polo.nome.slice(0,31));
+  });
+  XLSX.writeFile(wb,'MCJ_2026_Inscricoes_Completas.xlsx');
+}
+
+/* ================================================================
+   INIT
+================================================================ */
+carregarTudo();
+</script>
+</body>
+</html>
