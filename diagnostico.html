@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Diagnóstico MCJ</title>
+<style>
+body{font-family:monospace;padding:20px;background:#111;color:#0f0;font-size:13px}
+.ok{color:#0f0}.err{color:#f44}.warn{color:#fa0}.info{color:#0af}
+h2{color:white;border-bottom:1px solid #333;padding-bottom:8px}
+pre{background:#1a1a1a;padding:10px;border-radius:6px;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+</style>
+</head>
+<body>
+<h2>🔍 Diagnóstico MCJ 2026</h2>
+<pre id="log"></pre>
+
+<script>
+const log = document.getElementById('log');
+function write(msg, cls=''){
+  const line = document.createElement('div');
+  line.className = cls;
+  line.textContent = msg;
+  log.appendChild(line);
+}
+
+// Captura TODOS os erros JS
+window.onerror = function(msg, src, line, col, err){
+  write(`❌ ERRO JS: ${msg}`, 'err');
+  write(`   Arquivo: ${src}`, 'err');
+  write(`   Linha: ${line}, Coluna: ${col}`, 'err');
+  if(err?.stack) write(`   Stack: ${err.stack}`, 'err');
+  return true;
+};
+
+window.addEventListener('unhandledrejection', function(e){
+  write(`❌ PROMISE REJEITADA: ${e.reason}`, 'err');
+});
+
+write('Diagnóstico iniciado...', 'info');
+
+// Testa carregar o HTML principal via fetch
+async function run(){
+  write('\n--- Testando arquivo MCJ ---', 'info');
+  
+  // 1. Testa fetch básico
+  try {
+    write('1. Testando conexão com Supabase...', 'info');
+    const SUPA_URL = 'https://sdwxwdqnfukxeofscmpd.supabase.co';
+    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
+    
+    const ctrl = new AbortController();
+    setTimeout(()=>ctrl.abort(), 5000);
+    
+    const r = await fetch(SUPA_URL+'/rest/v1/inscricoes?select=count&limit=1', {
+      signal: ctrl.signal,
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer '+SUPA_KEY,
+      }
+    });
+    write(`   Status: ${r.status} ${r.statusText}`, r.ok ? 'ok' : 'err');
+    const txt = await r.text();
+    write(`   Resposta: ${txt.slice(0,100)}`, 'ok');
+  } catch(e){
+    write(`   FALHOU: ${e.message}`, 'err');
+  }
+
+  // 2. Testa se o arquivo principal existe no GitHub
+  write('\n2. Testando acesso ao index.html no GitHub Pages...', 'info');
+  try {
+    const url = window.location.origin + window.location.pathname.replace('diagnostico.html','') + 'index.html';
+    write(`   URL: ${url}`, 'info');
+    const ctrl2 = new AbortController();
+    setTimeout(()=>ctrl2.abort(), 5000);
+    const r2 = await fetch(url, {signal: ctrl2.signal});
+    write(`   Status: ${r2.status}`, r2.ok?'ok':'err');
+    const html = await r2.text();
+    write(`   Tamanho: ${html.length} chars`, 'ok');
+    
+    // Verifica elementos críticos no HTML
+    const checks = [
+      ['carregarTudo', 'function carregarTudo'],
+      ['SESSION', 'let SESSION'],
+      ['POLOS', 'let POLOS'],
+      ['selecionarPolo', 'function selecionarPolo'],
+      ['saveSessao', 'function saveSessao'],
+      ['TEMAS_DESIGN', 'const TEMAS_DESIGN'],
+      ['f-polo', 'id="f-polo"'],
+      ['view-inscricao', 'id="view-inscricao"'],
+    ];
+    write('\n3. Verificando conteúdo do index.html:', 'info');
+    checks.forEach(([name, search])=>{
+      const found = html.includes(search);
+      write(`   ${found?'✅':'❌'} ${name}: ${search}`, found?'ok':'err');
+    });
+
+    // Tenta extrair e avaliar o JS
+    write('\n4. Verificando erros de sintaxe no JS:', 'info');
+    const jsMatch = html.match(/<script>([\s\S]*?)<\/script>\s*<\/body>/);
+    if(jsMatch){
+      write(`   JS encontrado: ${jsMatch[1].length} chars`, 'ok');
+      try {
+        new Function(jsMatch[1]);
+        write('   ✅ Sintaxe JS OK', 'ok');
+      } catch(e){
+        write(`   ❌ ERRO SINTAXE: ${e.message}`, 'err');
+      }
+    } else {
+      write('   ❌ Script principal não encontrado', 'err');
+    }
+
+  } catch(e){
+    write(`   FALHOU: ${e.message}`, 'err');
+  }
+
+  write('\n--- Diagnóstico concluído ---', 'info');
+  write('Copie este resultado e envie para o Claudio!', 'warn');
+}
+
+run().catch(e => write('ERRO GERAL: '+e.message, 'err'));
+</script>
+</body>
+</html>
