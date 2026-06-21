@@ -1190,6 +1190,57 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   </div>
 </div>
 
+<!-- MODAL: EDITAR INSCRIÇÃO -->
+<div class="login-overlay" id="edit-ins-overlay" style="align-items:center;padding:1rem">
+  <div class="login-box" style="max-width:520px;max-height:90vh;overflow-y:auto">
+    <div style="font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:700;color:var(--mcj-dark);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--mcj-sand)">
+      ✏️ Editar Inscrição
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="cfg-row">
+        <div class="cfg-field"><label>Nome completo *</label><input type="text" id="ei-nome" placeholder="Nome completo"></div>
+        <div class="cfg-field"><label>Data de nascimento</label><input type="text" id="ei-nascimento" placeholder="DD/MM/AAAA"></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-field"><label>E-mail</label><input type="email" id="ei-email" placeholder="email@exemplo.com"></div>
+        <div class="cfg-field"><label>Telefone</label><input type="tel" id="ei-telefone" placeholder="(00) 00000-0000"></div>
+      </div>
+      <div class="cfg-field"><label>Nome para o crachá</label><input type="text" id="ei-cracha" placeholder="Como deseja ser chamado(a)" maxlength="40"></div>
+      <div class="cfg-field"><label>Instituição de origem</label><input type="text" id="ei-instituicao" placeholder="Igreja, escola ou organização"></div>
+      <div class="cfg-row">
+        <div class="cfg-field">
+          <label>Turma</label>
+          <select id="ei-turma">
+            <option value="Adulto">👤 Adulto</option>
+            <option value="Mocidade">🌟 Mocidade</option>
+          </select>
+        </div>
+        <div class="cfg-field">
+          <label>Polo</label>
+          <select id="ei-polo">
+            ${POLOS.map(p=>`<option value="${esc(p.nome)}">${p.nome}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-field">
+          <label>Almoço</label>
+          <select id="ei-almoco">
+            <option value="Não">Não</option>
+            <option value="Sim">Sim</option>
+          </select>
+        </div>
+        <div class="cfg-field"><label>Valor almoço</label><input type="text" id="ei-almoco-valor" placeholder="R$ 35,00"></div>
+      </div>
+    </div>
+    <div id="ei-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800);margin-top:10px"></div>
+    <div style="display:flex;gap:8px;margin-top:1.25rem">
+      <button class="btn-cancel" onclick="fecharEditarInscricao()">Cancelar</button>
+      <button class="btn-ok" onclick="salvarEdicaoInscricao()">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="fecharLightbox()">
   <button class="lightbox-close" onclick="fecharLightbox()">×</button>
@@ -1238,6 +1289,445 @@ const SUPA_HEADERS = {
 
 // Cache local — fonte de verdade durante a sessão
 let _cache = { inscricoes: null, config: null, users: null };
+
+/* ================================================================
+   SESSÃO E AUTENTICAÇÃO
+================================================================ */
+let SESSION = { role: null, login: null, nome: null, polos: [] };
+
+/* ================================================================
+   POLOS — dados globais carregados do Supabase
+================================================================ */
+let POLOS = [];
+
+const POLOS_DEFAULT = [
+  { nome:'Campo Grande', salas_adulto:['A','B','C'], salas_mocidade:['D','E'],
+    logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
+    fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
+    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'' },
+  { nome:'Jacarepaguá', salas_adulto:['A','B','C'], salas_mocidade:['D','E'],
+    logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
+    fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
+    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'' },
+  { nome:'Vila Isabel', salas_adulto:['A','B'], salas_mocidade:['C'],
+    logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
+    fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
+    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'' },
+  { nome:'Teresópolis', salas_adulto:['A','B'], salas_mocidade:['C'],
+    logradouro:'', cep:'', cidade:'Teresópolis', estado:'RJ', contato:'', apresentacao:'',
+    fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
+    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'' },
+];
+
+/* ================================================================
+   STORAGE — CARREGAR / SALVAR
+================================================================ */
+function getCfg()  { return _cache.config; }
+function getUsers(){ return _cache.users  || []; }
+
+async function setCfg(){
+  if(_savingCfg) return;
+  _savingCfg = true;
+  try {
+    if(supaConfigurado())
+      await supa('POST','config', [{ id:'main', dados: POLOS }]);
+  } catch(e){ console.error('setCfg error:', e); }
+  _savingCfg = false;
+}
+
+async function setUsers(){
+  if(_savingUsr) return;
+  _savingUsr = true;
+  try {
+    if(supaConfigurado())
+      await supa('POST','usuarios', [{ id:'main', dados: _cache.users }]);
+  } catch(e){ console.error('setUsers error:', e); }
+  _savingUsr = false;
+}
+
+async function setCfgEvento(){
+  try {
+    if(supaConfigurado())
+      await supa('POST','config', [{ id:'evento', dados: _cfgEvento }]);
+  } catch(e){ console.error('setCfgEvento error:', e); }
+}
+
+async function carregarConfig(){
+  if(!supaConfigurado()){ POLOS=[...POLOS_DEFAULT]; return; }
+  try {
+    const rows = await supa('GET','config?select=dados&id=eq.main');
+    if(rows && rows[0]?.dados && Array.isArray(rows[0].dados)){
+      POLOS = rows[0].dados;
+    } else {
+      POLOS = JSON.parse(JSON.stringify(POLOS_DEFAULT));
+    }
+  } catch(e){ POLOS=JSON.parse(JSON.stringify(POLOS_DEFAULT)); console.error('carregarConfig:',e); }
+  _cache.config = POLOS;
+}
+
+async function carregarUsuarios(){
+  if(!supaConfigurado()){ _cache.users=[]; return; }
+  try {
+    const rows = await supa('GET','usuarios?select=dados&id=eq.main');
+    _cache.users = (rows && rows[0]?.dados) ? rows[0].dados : [];
+  } catch(e){ _cache.users=[]; console.error('carregarUsuarios:',e); }
+}
+
+async function carregarCfgEvento(){
+  if(!supaConfigurado()) return;
+  try {
+    const rows = await supa('GET','config?select=dados&id=eq.evento');
+    if(rows && rows[0]?.dados){
+      _cfgEvento = { ..._cfgEvento, ...rows[0].dados };
+      if(!_cfgEvento.design) _cfgEvento.design = { ...TEMAS_DESIGN[0] };
+    }
+  } catch(e){ console.error('carregarCfgEvento:',e); }
+}
+
+/* ================================================================
+   SESSÃO — salvar/restaurar do localStorage
+================================================================ */
+function saveSessao(s){
+  try { localStorage.setItem('mcj2026_sess', JSON.stringify(s)); } catch(e){}
+}
+function clearSessao(){
+  try { localStorage.removeItem('mcj2026_sess'); } catch(e){}
+}
+function restaurarSessao(){
+  try {
+    const s = localStorage.getItem('mcj2026_sess');
+    if(s){ const obj=JSON.parse(s); if(obj?.logado) return obj; }
+  } catch(e){}
+  return null;
+}
+
+/* ================================================================
+   POLO GRID — mini cards na tela pública de inscrição
+================================================================ */
+function renderPoloGrid(){
+  const grid = document.getElementById('polo-grid');
+  if(!grid) return;
+  const abertos = POLOS.filter(p=>p.inscricoes_abertas!==false);
+  grid.innerHTML = abertos.map((p,i)=>{
+    const c = cor(i);
+    const sel = document.getElementById('f-polo')?.value === p.nome;
+    return `<div class="polo-card ${sel?'selected':''}" onclick="selecionarPolo('${p.nome.replace(/'/g,"\\'")}')">
+      <div class="polo-dot" style="background:${c.badge}"></div>
+      <div class="polo-name">${p.nome}</div>
+      ${p.cidade?`<div class="polo-cidade">${p.cidade}</div>`:''}
+    </div>`;
+  }).join('') || '<div style="color:var(--gray-400);font-size:13px;padding:.5rem">Nenhum polo disponível no momento.</div>';
+}
+
+/* ================================================================
+   CONTADORES E BANNER DE INSCRIÇÕES
+================================================================ */
+function atualizarBanner(){
+  const abertos = POLOS.filter(p=>p.inscricoes_abertas!==false);
+  const banner = document.getElementById('banner-fechado');
+  if(!banner) return;
+  if(abertos.length===0){
+    banner.classList.add('show');
+    const txt = document.getElementById('banner-fechado-text');
+    if(txt) txt.textContent = 'As inscrições estão encerradas.';
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+function atualizarContadores(){
+  // Atualiza campo de polo selecionado e contadores do form
+  const poloSel = document.getElementById('f-polo')?.value;
+  const polo = POLOS.find(p=>p.nome===poloSel);
+  // Mostra/esconde campos de almoço se polo tiver configuração
+  const almocoRow = document.getElementById('almoco-row');
+  if(almocoRow && polo){
+    almocoRow.style.display = '';
+  }
+}
+async function carregarTudo(){
+  // Renderiza a página IMEDIATAMENTE com dados padrão
+  // para não bloquear o usuário enquanto carrega do Supabase
+  aplicarDesign();
+  renderHeroSocial();
+  renderBannerAvaliacao();
+  renderPoloGrid();
+  atualizarBanner();
+  renderSobre();
+
+  // Restaura sessão do localStorage (instantâneo)
+  const sess = restaurarSessao();
+  if(sess){
+    SESSION = sess;
+    aplicarEscopoAdmin();
+  }
+
+  // URL param: avaliação
+  if(new URLSearchParams(window.location.search).get('avaliacao')==='1'){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    _ativarView('avaliacao');
+    renderAvaliacao();
+  }
+
+  // Carrega dados do Supabase em background (com timeout de 8s)
+  if(!supaConfigurado()) return;
+
+  showLoading('Sincronizando...');
+  const timeout = new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
+  try {
+    await Promise.race([
+      Promise.all([
+        carregarInscricoes(),
+        carregarConfig(),
+        carregarUsuarios(),
+        carregarCfgEvento(),
+      ]),
+      timeout
+    ]);
+    // Re-renderiza com dados do servidor
+    aplicarDesign();
+    renderHeroSocial();
+    renderBannerAvaliacao();
+    renderPoloGrid();
+    atualizarBanner();
+    renderSobre();
+    if(sess) renderAdmin();
+  } catch(e){
+    console.warn('carregarTudo:', e.message);
+  }
+  hideLoading();
+}
+
+/* ================================================================
+   HERO — SOCIAL E BANNER AVALIAÇÃO
+================================================================ */
+function renderHeroSocial(){
+  const el = document.getElementById('hero-social-links');
+  if(!el) return;
+  const ig = _cfgEvento.instagram||'';
+  const fb = _cfgEvento.facebook||'';
+  if(!ig && !fb){ el.style.display='none'; return; }
+  el.style.display='flex';
+  el.innerHTML =
+    (ig?`<a href="${ig}" target="_blank" rel="noopener" class="hero-social-btn" title="Instagram">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    </a>`:'') +
+    (fb?`<a href="${fb}" target="_blank" rel="noopener" class="hero-social-btn" title="Facebook">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    </a>`:'');
+}
+
+function renderBannerAvaliacao(){
+  const aberta = _cfgEvento.aval_aberta===true;
+  const banner = document.getElementById('banner-avaliacao');
+  const tabBtn = document.getElementById('tab-avaliacao');
+  if(banner) banner.style.display = aberta?'flex':'none';
+  if(tabBtn) tabBtn.style.display = aberta?'':'none';
+}
+
+/* ================================================================
+   NAVEGAÇÃO ENTRE VIEWS
+================================================================ */
+function showView(id, btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  _ativarView(id);
+  if(btn) btn.classList.add('active');
+  if(id==='polos')       renderPolos();
+  if(id==='sobre')       renderSobre();
+  if(id==='expositores') renderExpositores();
+  if(id==='avaliacao')   renderAvaliacao();
+}
+
+/* ================================================================
+   SCOPE / PERMISSÕES
+================================================================ */
+function poloNoEscopo(nomeOuIdx){
+  if(SESSION.role==='admin') return true;
+  if(SESSION.role==='admin_polo'||SESSION.role==='coord'){
+    const nome = typeof nomeOuIdx==='number' ? POLOS[nomeOuIdx]?.nome : nomeOuIdx;
+    return SESSION.polos.includes(nome);
+  }
+  return false;
+}
+
+/* ================================================================
+   RENDER — SOBRE O EVENTO
+================================================================ */
+function renderSobre(){
+  const wrap = document.getElementById('sobre-content');
+  if(!wrap) return;
+  const e = _cfgEvento;
+  const polosAbertos = POLOS.filter(p=>p.inscricoes_abertas!==false);
+  wrap.innerHTML=`
+    <div class="polo-section" style="max-width:860px;margin:0 auto;padding:1.5rem 1rem 3rem">
+      <div style="display:flex;flex-direction:column;gap:1.5rem">
+        ${e.descricao?`<div style="font-size:16px;line-height:1.8;color:var(--gray-700)">${e.descricao}</div>`:''}
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          ${e.data?`<span class="hero-pill" style="background:var(--mcj-dark);color:var(--mcj-gold)">📅 ${e.data}</span>`:''}
+          ${e.horario?`<span class="hero-pill" style="background:var(--mcj-dark);color:rgba(255,255,255,.8)">⏰ ${e.horario}</span>`:''}
+          ${e.local?`<span class="hero-pill" style="background:var(--mcj-dark);color:rgba(255,255,255,.8)">📍 ${e.local}</span>`:''}
+          ${polosAbertos.map((p,i)=>{const c=cor(i);return `<span class="hero-pill" style="background:${c.bg};color:${c.text};border:1px solid ${c.border}">${p.nome}</span>`;}).join('')}
+        </div>
+        ${(e.tema_manha||e.tema_tarde)?`
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+          ${e.tema_manha?`<div style="background:white;border-radius:12px;border:1px solid var(--mcj-sand);padding:1rem 1.25rem">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--mcj-gold);margin-bottom:6px">Tema da Manhã</div>
+            <div style="font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:var(--mcj-dark)">${e.tema_manha}</div>
+          </div>`:''}
+          ${e.tema_tarde?`<div style="background:white;border-radius:12px;border:1px solid var(--mcj-sand);padding:1rem 1.25rem">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--mcj-gold);margin-bottom:6px">Tema da Tarde</div>
+            <div style="font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:var(--mcj-dark)">${e.tema_tarde}</div>
+          </div>`:''}
+        </div>`:''}
+        ${e.livreto_url?`
+        <div style="background:white;border-radius:12px;border:1px solid var(--mcj-sand);padding:1.25rem;text-align:center">
+          <div style="font-size:14px;color:var(--gray-600);margin-bottom:1rem">O livreto do MCJ 2026 está disponível para download.</div>
+          <a href="${e.livreto_url}" target="_blank" rel="noopener"
+            style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--mcj-gold);color:white;border-radius:10px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;text-decoration:none">
+            📥 Baixar Livreto
+          </a>
+        </div>`:''}
+      </div>
+    </div>`;
+}
+
+/* ================================================================
+   RENDER — EXPOSITORES
+================================================================ */
+function renderExpositores(){
+  const wrap = document.getElementById('expositores-content');
+  if(!wrap) return;
+  const exps = _cfgEvento.expositores_lista||[];
+  if(!exps.length){
+    wrap.innerHTML=`<div class="polo-section" style="max-width:860px;margin:0 auto;padding:2rem 1rem;text-align:center;color:var(--gray-400)">Nenhum expositor cadastrado ainda.</div>`;
+    return;
+  }
+  wrap.innerHTML=`<div class="polo-section" style="max-width:860px;margin:0 auto;padding:1.5rem 1rem 3rem">
+    <div class="section-eyebrow">Expositores</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px">
+      ${exps.map((ex,i)=>`
+        <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+          ${ex.foto?`<img src="${ex.foto}" alt="${ex.nome}" style="width:100%;height:180px;object-fit:cover;cursor:pointer" onclick="abrirLightbox('${ex.foto}','${ex.nome}')" onerror="this.style.display='none'">`:''}
+          <div style="padding:1rem">
+            <div style="font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:var(--mcj-dark);margin-bottom:6px">${ex.nome}</div>
+            ${ex.bio?`<div style="font-size:13px;color:var(--gray-600);line-height:1.6">${ex.bio}</div>`:''}
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ================================================================
+   RENDER — EVENTO ADMIN
+================================================================ */
+function renderEventoAdmin(){
+  const wrap = document.getElementById('evento-admin-wrap');
+  if(!wrap) return;
+  const e = _cfgEvento;
+  const d = _cfgEvento.design||{};
+  const exps = _cfgEvento.expositores_lista||[];
+
+  wrap.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:1.5rem;max-width:760px">
+
+      <!-- DESIGN VISUAL -->
+      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;gap:8px">
+          <span style="color:var(--mcj-gold);font-size:16px">🎨</span>
+          <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Design Visual</span>
+        </div>
+        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:14px">
+          <div class="cfg-field">
+            <label>Link do vídeo de capa</label>
+            <input type="url" id="dsg-video" value="${esc(d.video_url||'')}" placeholder="https://raw.githubusercontent.com/.../capa.mp4">
+          </div>
+          <div>
+            <div class="cfg-section-title" style="margin-bottom:12px">Escolha um tema</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+              ${TEMAS_DESIGN.map((t,i)=>`
+                <div onclick="aplicarTema(${i})" id="tema-card-${i}"
+                  style="border-radius:12px;border:2.5px solid ${(d.tema_ativo||0)===i?'var(--mcj-gold)':'var(--gray-100)'};padding:12px;cursor:pointer;background:${(d.tema_ativo||0)===i?'#FFFBF0':'white'};transition:all .15s">
+                  <div style="display:flex;gap:4px;margin-bottom:8px">
+                    <div style="width:20px;height:20px;border-radius:4px;background:${t.cor_primaria}"></div>
+                    <div style="width:20px;height:20px;border-radius:4px;background:${t.cor_destaque}"></div>
+                    <div style="width:20px;height:20px;border-radius:4px;background:${t.cor_fundo};border:1px solid var(--gray-100)"></div>
+                    <div style="width:20px;height:20px;border-radius:4px;background:${t.cor_texto}"></div>
+                  </div>
+                  <div style="font-size:13px;font-weight:700;color:var(--mcj-dark)">${t.nome}</div>
+                  <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${t.descricao}</div>
+                  ${(d.tema_ativo||0)===i?'<div style="font-size:10px;font-weight:700;color:var(--mcj-gold);margin-top:4px;text-transform:uppercase;letter-spacing:.5px">✓ Ativo</div>':''}
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;justify-content:flex-end">
+          <button class="btn-cfg-save" onclick="salvarDesign()">Salvar e aplicar</button>
+        </div>
+      </div>
+
+      <!-- SOBRE O EVENTO -->
+      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;gap:8px">
+          <span style="color:var(--mcj-gold);font-size:16px">✨</span>
+          <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Sobre o Evento</span>
+        </div>
+        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
+          <div class="cfg-row">
+            <div class="cfg-field"><label>Título</label><input type="text" id="ev-titulo" value="${esc(e.titulo||'MCJ 2026')}"></div>
+            <div class="cfg-field"><label>Subtítulo</label><input type="text" id="ev-subtitulo" value="${esc(e.subtitulo||'')}"></div>
+          </div>
+          <div class="cfg-row">
+            <div class="cfg-field"><label>Data</label><input type="text" id="ev-data" value="${esc(e.data||'')}"></div>
+            <div class="cfg-field"><label>Horário</label><input type="text" id="ev-horario" value="${esc(e.horario||'')}"></div>
+          </div>
+          <div class="cfg-field"><label>Local</label><input type="text" id="ev-local" value="${esc(e.local||'')}"></div>
+          <div class="cfg-row">
+            <div class="cfg-field"><label>Tema da Manhã</label><input type="text" id="ev-tema-manha" value="${esc(e.tema_manha||'')}"></div>
+            <div class="cfg-field"><label>Tema da Tarde</label><input type="text" id="ev-tema-tarde" value="${esc(e.tema_tarde||'')}"></div>
+          </div>
+          <div class="cfg-field"><label>Descrição do evento</label><textarea id="ev-descricao" rows="4">${esc(e.descricao||'')}</textarea></div>
+          <div class="cfg-row">
+            <div class="cfg-field"><label>Instagram (URL)</label><input type="url" id="ev-instagram" value="${esc(e.instagram||'')}" placeholder="https://instagram.com/mcj2026"></div>
+            <div class="cfg-field"><label>Facebook (URL)</label><input type="url" id="ev-facebook" value="${esc(e.facebook||'')}" placeholder="https://facebook.com/mcj2026"></div>
+          </div>
+        </div>
+        <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;justify-content:flex-end">
+          <button class="btn-cfg-save" onclick="salvarEventoCfg()">Salvar informações</button>
+        </div>
+      </div>
+
+      <!-- EXPOSITORES -->
+      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:var(--mcj-gold);font-size:16px">🎤</span>
+            <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Expositores (${exps.length})</span>
+          </div>
+          <button onclick="abrirModalExpositor(null)" style="padding:6px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer">+ Adicionar</button>
+        </div>
+        <div style="padding:1.25rem">
+          ${exps.length===0
+            ? '<div style="text-align:center;color:var(--gray-400);font-size:13px;padding:1rem">Nenhum expositor cadastrado. Clique em + Adicionar.</div>'
+            : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+                ${exps.map((ex,i)=>`
+                  <div style="border-radius:10px;border:1px solid var(--mcj-sand);overflow:hidden">
+                    ${ex.foto?`<img src="${ex.foto}" style="width:100%;height:120px;object-fit:cover" onerror="this.style.display='none'">`:''}
+                    <div style="padding:10px 12px">
+                      <div style="font-weight:700;font-size:14px;color:var(--mcj-dark)">${ex.nome}</div>
+                      ${ex.bio?`<div style="font-size:12px;color:var(--gray-500);margin-top:3px;line-height:1.4">${ex.bio.substring(0,80)}${ex.bio.length>80?'...':''}</div>`:''}
+                      <div style="display:flex;gap:6px;margin-top:8px">
+                        <button onclick="editarExpositor(${i})" style="flex:1;padding:4px 0;font-size:11px;font-weight:600;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:6px;cursor:pointer">✏️ Editar</button>
+                        <button onclick="excluirExpositor(${i})" style="flex:1;padding:4px 0;font-size:11px;font-weight:600;background:white;border:1px solid var(--red-100);color:var(--red-400);border-radius:6px;cursor:pointer">🗑 Remover</button>
+                      </div>
+                    </div>
+                  </div>`).join('')}
+              </div>`}
+        </div>
+      </div>
+
+    </div>`;
+}
 // Fila de escritas para config/users — evita chamadas paralelas
 let _savingCfg = false;
 let _savingUsr = false;
@@ -1292,25 +1782,34 @@ document.head.appendChild(_spinStyle);
    FUNÇÕES SUPABASE GENÉRICAS
 ================================================================ */
 async function supa(method, path, body){
-  const r = await fetch(SUPA_URL + '/rest/v1/' + path, {
-    method,
-    headers: {
-      ...SUPA_HEADERS,
-      'Prefer': method==='POST' ? 'return=representation,resolution=merge-duplicates'
-               : method==='PATCH' ? 'return=minimal'
-               : 'return=minimal'
-    },
-    body: body ? JSON.stringify(body) : undefined
-  });
-  if(!r.ok){
-    const txt = await r.text();
-    throw new Error(`[${r.status}] ${txt}`);
+  const controller = new AbortController();
+  const timer = setTimeout(()=>controller.abort(), 10000); // 10s timeout
+  try {
+    const r = await fetch(SUPA_URL + '/rest/v1/' + path, {
+      method,
+      signal: controller.signal,
+      headers: {
+        ...SUPA_HEADERS,
+        'Prefer': method==='POST' ? 'return=representation,resolution=merge-duplicates'
+                 : method==='PATCH' ? 'return=minimal'
+                 : 'return=minimal'
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    clearTimeout(timer);
+    if(!r.ok){
+      const txt = await r.text();
+      throw new Error(`[${r.status}] ${txt}`);
+    }
+    const ct = r.headers.get('content-type')||'';
+    if(ct.includes('json') && r.status !== 204){
+      return r.json().catch(()=>null);
+    }
+    return null;
+  } catch(e){
+    clearTimeout(timer);
+    throw e;
   }
-  const ct = r.headers.get('content-type')||'';
-  if(ct.includes('json') && r.status !== 204){
-    return r.json().catch(()=>null);
-  }
-  return null;
 }
 
 /* ================================================================
@@ -1408,8 +1907,6 @@ async function deletarInscricao(email, polo){
 /* ================================================================
    STORAGE — CONFIGURAÇÃO DE POLOS  (1 linha JSON no banco)
 ================================================================ */
-function getCfg(){ return _cache.config; }
-
 /* CONFIG DO EVENTO (sobre + expositores globais) */
 let _cfgEvento = {
   // Textos
@@ -1440,890 +1937,87 @@ let _cfgEvento = {
   }
 };
 
-function getDesign(){ return _cfgEvento.design || {}; }
 
-function aplicarDesign(){
-  const d = getDesign();
-  const root = document.documentElement;
-
-  // Cores via CSS variables
-  if(d.cor_primaria){ root.style.setProperty('--mcj-dark',   d.cor_primaria); root.style.setProperty('--blue-900', d.cor_primaria); }
-  if(d.cor_destaque){ root.style.setProperty('--mcj-gold',   d.cor_destaque); root.style.setProperty('--mcj-gold2', d.cor_destaque); }
-  if(d.cor_fundo)   { root.style.setProperty('--mcj-cream',  d.cor_fundo); }
-  if(d.cor_texto)   { root.style.setProperty('--mcj-text',   d.cor_texto); root.style.setProperty('--mcj-mid', d.cor_texto); }
-
-  // Vídeo de capa
-  if(d.video_url){
-    document.querySelectorAll('.hero-video source').forEach(s=>{ s.src=d.video_url; });
-    document.querySelectorAll('.hero-video').forEach(v=>v.load());
-  }
-
-  // Fontes — injeta @import dinamicamente
-  const fontesTitulo = {
-    'EB Garamond':       'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap',
-    'Playfair Display':  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&display=swap',
-    'Cormorant Garamond':'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap',
-    'Libre Baskerville': 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap',
-    'Lora':              'https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap',
-    'Cinzel':            'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
-  };
-  const fontesTexto = {
-    'Raleway':      'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap',
-    'Nunito':       'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap',
-    'Lato':         'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap',
-    'Source Sans 3':'https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&display=swap',
-    'Inter':        'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap',
-  };
-
-  function carregarFonte(url, id){
-    if(!url || document.getElementById(id)) return;
-    const link = document.createElement('link');
-    link.rel='stylesheet'; link.href=url; link.id=id;
-    document.head.appendChild(link);
-  }
-
-  if(d.fonte_titulo && fontesTitulo[d.fonte_titulo]){
-    carregarFonte(fontesTitulo[d.fonte_titulo], 'font-titulo-custom');
-    document.querySelectorAll('.hero h1, .nav-logo, .admin-header h2, .aval-hero-title, .polo-detalhe-nome, .evento-section-title, .turmas-polo-title')
-      .forEach(el=>el.style.fontFamily=`'${d.fonte_titulo}',Georgia,serif`);
-  }
-  if(d.fonte_texto && fontesTexto[d.fonte_texto]){
-    carregarFonte(fontesTexto[d.fonte_texto], 'font-texto-custom');
-    document.body.style.fontFamily=`'${d.fonte_texto}',sans-serif`;
-  }
-
-  // Tamanho título capa
-  if(d.titulo_size){
-    document.querySelectorAll('.hero h1').forEach(el=>el.style.fontSize=d.titulo_size);
-  }
-
-  // Tagline da capa
-  if(d.hero_tagline){
-    document.querySelectorAll('.hero-tag').forEach(el=>el.textContent=d.hero_tagline);
-  }
-}
-
-function getExpositores(){ return _cfgEvento.expositores_lista || []; }
-function getExpByNome(nome){ return getExpositores().find(e=>e.nome===nome)||null; }
-
-function renderBannerAvaliacao(){
-  const aberta = _cfgEvento.aval_aberta === true;
-  const banner = document.getElementById('banner-avaliacao');
-  const tabBtn = document.getElementById('tab-avaliacao');
-  if(banner) banner.style.display = aberta ? 'flex' : 'none';
-  if(tabBtn) tabBtn.style.display = aberta ? '' : 'none';
-}
-
-function renderHeroSocial(){
-  const el = document.getElementById('hero-social-links');
-  if(!el) return;
-  const ig = _cfgEvento.instagram||'';
-  const fb = _cfgEvento.facebook||'';
-  if(!ig && !fb){ el.style.display='none'; return; }
-  el.style.display='flex';
-  el.innerHTML = `
-    ${ig ? `<a href="${ig}" target="_blank" rel="noopener" class="hero-social-btn" title="Instagram" aria-label="Instagram">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-      </svg></a>` : ''}
-    ${fb ? `<a href="${fb}" target="_blank" rel="noopener" class="hero-social-btn" title="Facebook" aria-label="Facebook">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-      </svg></a>` : ''}`;
-}
-
-async function setCfgEvento(){
-  if(!supaConfigurado()) return;
-  try { await supa('POST','config',[{id:'evento', dados:_cfgEvento}]); }
-  catch(e){ showError('Erro ao salvar config do evento'); console.error(e.message); }
-}
-
-async function carregarCfgEvento(){
-  if(!supaConfigurado()) return;
-  try {
-    const rows = await supa('GET','config?select=dados&id=eq.evento');
-    if(rows && rows[0]?.dados) _cfgEvento = {..._cfgEvento, ...rows[0].dados};
-  } catch(e){ console.error('Erro ao carregar config evento:', e.message); }
-}
-
-async function setCfg(){
-  _cache.config = JSON.parse(JSON.stringify(POLOS)); // cópia
-  if(!supaConfigurado() || _savingCfg) return;
-  _savingCfg = true;
-  try {
-    await supa('POST', 'config', [{id:'main', dados: POLOS}]);
-  } catch(e){ showError('Erro ao salvar configuração'); console.error(e.message); }
-  finally { _savingCfg = false; }
-}
-
-async function carregarConfig(){
-  if(!supaConfigurado()) return;
-  try {
-    const rows = await supa('GET', 'config?select=dados&id=eq.main');
-    if(rows && rows[0]?.dados) _cache.config = rows[0].dados;
-  } catch(e){ console.error('Erro ao carregar config:', e.message); }
-}
-
-/* ================================================================
-   STORAGE — USUÁRIOS  (1 linha JSON no banco)
-================================================================ */
-function getUsers(){ return _cache.users || []; }
-
-async function setUsers(u){
-  _cache.users = u;
-  if(!supaConfigurado() || _savingUsr) return;
-  _savingUsr = true;
-  try {
-    await supa('POST', 'usuarios', [{id:'main', dados: u}]);
-  } catch(e){ showError('Erro ao salvar usuários'); console.error(e.message); }
-  finally { _savingUsr = false; }
-}
-
-async function carregarUsuarios(){
-  if(!supaConfigurado()) return;
-  try {
-    const rows = await supa('GET', 'usuarios?select=dados&id=eq.main');
-    if(rows && rows[0]?.dados) _cache.users = rows[0].dados;
-  } catch(e){ console.error('Erro ao carregar usuários:', e.message); }
-}
-
-/* ================================================================
-   SESSÃO (sessionStorage — local)
-================================================================ */
-function saveSessao(s){ sessionStorage.setItem(KEY_AUTH, JSON.stringify(s)); }
-function loadSessao(){ try{ const s=sessionStorage.getItem(KEY_AUTH); return s?JSON.parse(s):null; }catch(e){ return null; } }
-function clearSessao(){ sessionStorage.removeItem(KEY_AUTH); }
-
-/* ================================================================
-   CARREGAMENTO INICIAL
-================================================================ */
-async function carregarTudo(){
-  const tela = document.getElementById('supa-init-screen');
-  if(tela) tela.style.display='flex';
-
-  if(!supaConfigurado()){
-    console.warn('Supabase não configurado — modo offline.');
-    _cache = { inscricoes:[], config:null, users:[] };
-    carregarPolos(); renderPoloGrid(); atualizarBanner();
-    if(tela) tela.style.display='none';
-    mostrarAvisoSupa();
-    const s = loadSessao();
-    if(s?.logado) SESSION = s;
-    return;
-  }
-
-  try {
-    // Paralelo: todas as três tabelas ao mesmo tempo
-    await Promise.all([carregarInscricoes(), carregarConfig(), carregarUsuarios(), carregarCfgEvento()]);
-    renderHeroSocial();
-    renderBannerAvaliacao();
-    aplicarDesign();
-    // Detecta ?avaliacao=1 na URL — abre direto na avaliação
-    if(new URLSearchParams(window.location.search).get('avaliacao')==='1'){
-      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-      _ativarView('avaliacao');
-      renderAvaliacao();
-    }
-  } catch(e){ console.error('Erro no carregamento inicial:', e); }
-
-  carregarPolos(); renderPoloGrid(); atualizarBanner();
-  if(tela) tela.style.display='none';
-  const s = loadSessao();
-  if(s?.logado) SESSION = s;
-}
-
-function mostrarAvisoSupa(){
-  const aviso = document.createElement('div');
-  aviso.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#EF9F27;color:#3A1F00;padding:8px 14px;font-size:12px;font-weight:600;text-align:center;z-index:9998;';
-  aviso.textContent = '⚠ Modo offline — dados não serão persistidos.';
-  document.body.prepend(aviso);
-}
-
-/* ================================================================
-   POLOS_DEFAULT E VARIÁVEIS GLOBAIS
-================================================================ */
-const POLOS_DEFAULT = [
-  {nome:'Campo Grande', endereco:'',valorExibir:'R$ —,—',pixChave:'pix@mcj2026.com.br',pixNome:'MCJ 2026 — Campo Grande',responsavel:'',telefone_polo:'',email_polo:'',capacidade:'',obs:'',inscricoes_abertas:true,almoco_ativo:false,almoco_valor:'',msg_pagamento:'',salas_adulto:[],salas_mocidade:[],setores:[],expositores:[],expositores_salas:{},apresentacao:'',fotos:[],maps_link:''},
-  {nome:'Jacarepaguá',  endereco:'',valorExibir:'R$ —,—',pixChave:'pix@mcj2026.com.br',pixNome:'MCJ 2026 — Jacarepaguá', responsavel:'',telefone_polo:'',email_polo:'',capacidade:'',obs:'',inscricoes_abertas:true,almoco_ativo:false,almoco_valor:'',msg_pagamento:'',salas_adulto:[],salas_mocidade:[],setores:[],expositores:[],expositores_salas:{},apresentacao:'',fotos:[],maps_link:''},
-  {nome:'Vila Isabel',  endereco:'',valorExibir:'R$ —,—',pixChave:'pix@mcj2026.com.br',pixNome:'MCJ 2026 — Vila Isabel', responsavel:'',telefone_polo:'',email_polo:'',capacidade:'',obs:'',inscricoes_abertas:true,almoco_ativo:false,almoco_valor:'',msg_pagamento:'',salas_adulto:[],salas_mocidade:[],setores:[],expositores:[],expositores_salas:{},apresentacao:'',fotos:[],maps_link:''},
-  {nome:'Teresópolis',  endereco:'',valorExibir:'R$ —,—',pixChave:'pix@mcj2026.com.br',pixNome:'MCJ 2026 — Teresópolis', responsavel:'',telefone_polo:'',email_polo:'',capacidade:'',obs:'',inscricoes_abertas:true,almoco_ativo:false,almoco_valor:'',msg_pagamento:'',salas_adulto:[],salas_mocidade:[],setores:[],expositores:[],expositores_salas:{},apresentacao:'',fotos:[],maps_link:''},
+const TEMAS_DESIGN = [
+  { nome:'Terra Santa', descricao:'Clássico e espiritual',
+    cor_primaria:'#3D2410', cor_destaque:'#C8873A', cor_fundo:'#F2EDE4', cor_texto:'#2C1A08',
+    fonte_titulo:'EB Garamond', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+  { nome:'Céu Profundo', descricao:'Sereno e contemplativo',
+    cor_primaria:'#0D2B4E', cor_destaque:'#7EB8D4', cor_fundo:'#F0F4F8', cor_texto:'#0A1E35',
+    fonte_titulo:'Cormorant Garamond', fonte_texto:'Lato', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+  { nome:'Verde Esperança', descricao:'Renovação e vida',
+    cor_primaria:'#1B4332', cor_destaque:'#D4A843', cor_fundo:'#F0FAF4', cor_texto:'#0D2B1E',
+    fonte_titulo:'Playfair Display', fonte_texto:'Nunito', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+  { nome:'Púrpura Real', descricao:'Majestoso e sagrado',
+    cor_primaria:'#3B1F5E', cor_destaque:'#C4A8E8', cor_fundo:'#F5F0FF', cor_texto:'#1E0E33',
+    fonte_titulo:'Cinzel', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+  { nome:'Amanhecer', descricao:'Quente e acolhedor',
+    cor_primaria:'#6B1E2E', cor_destaque:'#E8A87C', cor_fundo:'#FDF5F0', cor_texto:'#3D0E18',
+    fonte_titulo:'Lora', fonte_texto:'Source Sans 3', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
 ];
 
-let POLOS = [];
-let poloSel = null;
-let poloSelCfg = null;
-let _loginPendingBtn = null;
-let SESSION = { logado:false, role:null, login:null, nome:null, polos:[] };
-let _editingUserId = null;
+function getDesign(){ return _cfgEvento.design || TEMAS_DESIGN[0]; }
 
-function carregarPolos(){
-  const saved = getCfg();
-  POLOS = saved ? saved : JSON.parse(JSON.stringify(POLOS_DEFAULT));
-  POLOS.forEach(p=>{
-    if(p.inscricoes_abertas===undefined) p.inscricoes_abertas=true;
-    if(p.almoco_ativo===undefined) p.almoco_ativo=false;
-    if(p.almoco_valor===undefined) p.almoco_valor='';
-    if(p.msg_pagamento===undefined) p.msg_pagamento='';
-    if(p.salas_adulto===undefined) p.salas_adulto=[];
-    if(p.salas_mocidade===undefined) p.salas_mocidade=[];
-    if(p.setores===undefined) p.setores=[];
-    if(p.expositores===undefined) p.expositores=[];
-    if(p.expositores_salas===undefined) p.expositores_salas={};
-    if(p.apresentacao===undefined) p.apresentacao='';
-    if(p.fotos===undefined) p.fotos=[];
-    if(p.maps_link===undefined) p.maps_link='';
+function aplicarTema(idx){
+  if(!_cfgEvento.design) _cfgEvento.design={};
+  _cfgEvento.design.tema_ativo = idx;
+  const t = TEMAS_DESIGN[idx];
+  Object.assign(_cfgEvento.design, {
+    cor_primaria:t.cor_primaria, cor_destaque:t.cor_destaque, cor_fundo:t.cor_fundo, cor_texto:t.cor_texto,
+    fonte_titulo:t.fonte_titulo, fonte_texto:t.fonte_texto, titulo_size:t.titulo_size, hero_tagline:t.hero_tagline,
   });
-}
-
-/* ================================================================
-   GESTÃO DE USUÁRIOS — helpers
-================================================================ */
-function gerarId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-
-function isAdminMaster(login){ return login===ADMIN_USER; }
-
-// verifica se um polo está dentro do escopo do usuário logado
-function poloNoEscopo(nomeOuIdx){
-  if(SESSION.role==='admin') return true;
-  if(SESSION.role==='admin_polo' || SESSION.role==='coord'){
-    const nome = typeof nomeOuIdx==='number' ? POLOS[nomeOuIdx]?.nome : nomeOuIdx;
-    return SESSION.polos.includes(nome);
-  }
-  return false;
-}
-
-/* ================================================================
-   GESTÃO DE USUÁRIOS — RENDER
-================================================================ */
-function renderUsuarios(){
-  const users = getUsers();
-  const admins      = users.filter(u=>u.role==='admin');
-  const adminPolos  = users.filter(u=>u.role==='admin_polo');
-  const coords      = users.filter(u=>u.role==='coord');
-
-  function rowsFor(list, showPolos){
-    if(list.length===0) return '<tr class="empty-row"><td colspan="5">Nenhum usuário nesta categoria.</td></tr>';
-    return list.map(u=>`<tr>
-      <td><strong>${u.login}</strong></td>
-      <td>${u.nome}</td>
-      ${showPolos?`<td><div class="user-polo-tags">${(u.polos||[]).map(p=>`<span class="user-polo-tag">${p}</span>`).join('')||'<span style="color:var(--gray-400);font-size:12px">Nenhum polo</span>'}</div></td>`:'<td>—</td>'}
-      <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
-      <td><button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button><button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button></td>
-    </tr>`).join('');
-  }
-
-  // Admins gerais
-  const tbA = document.getElementById('tbody-admins');
-  if(tbA){
-    const allAdmins = [{id:'__master__', login:ADMIN_USER, nome:'Administrador Principal', role:'admin', status:'ativo', polos:[]},...admins];
-    tbA.innerHTML = allAdmins.map(u=>`<tr>
-      <td><strong>${u.login}</strong></td>
-      <td>${u.nome}</td>
-      <td><span class="role-badge role-admin">Admin geral</span></td>
-      <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
-      <td>${u.id==='__master__'
-        ? '<span style="font-size:11px;color:var(--gray-400)">conta principal</span>'
-        : `<button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button><button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button>`
-      }</td>
-    </tr>`).join('');
-  }
-
-  // Admins de polo
-  const tbP = document.getElementById('tbody-admin-polos');
-  if(tbP) tbP.innerHTML = rowsFor(adminPolos, true);
-
-  // Coordenadores
-  const tbC = document.getElementById('tbody-coords');
-  if(tbC) tbC.innerHTML = rowsFor(coords, true);
-}
-
-/* ================================================================
-   GESTÃO DE USUÁRIOS — MODAL
-================================================================ */
-function abrirUserModal(id){
-  _editingUserId = id||null;
-  const users = getUsers();
-  const u = id ? users.find(x=>x.id===id) : null;
-
-  document.getElementById('user-modal-title').textContent = u ? 'Editar usuário' : 'Novo usuário';
-  document.getElementById('u-role').value   = u?.role||'coord';
-  document.getElementById('u-nome').value   = u?.nome||'';
-  document.getElementById('u-login').value  = u?.login||'';
-  document.getElementById('u-senha').value  = '';
-  document.getElementById('u-status').value = u?.status||'ativo';
-  document.getElementById('u-senha-label').textContent = u ? 'Nova senha (deixe em branco para manter)' : 'Senha *';
-  document.getElementById('user-modal-err').classList.remove('show');
-
-  // checkboxes de polo
-  const box = document.getElementById('u-polos-checkboxes');
-  box.innerHTML = POLOS.map((p,i)=>{
-    const cl = cor(i);
-    const chk = (u?.polos||[]).includes(p.nome);
-    return `<label class="polo-checkbox-label${chk?' checked':''}" id="pclbl-${i}">
-      <input type="checkbox" value="${p.nome}" ${chk?'checked':''} onchange="this.closest('label').classList.toggle('checked',this.checked)">
-      <span class="polo-dot" style="background:${cl.badge};margin-bottom:0;flex-shrink:0"></span>
-      ${p.nome}
-    </label>`;
-  }).join('');
-
-  onRoleChange();
-  document.getElementById('user-modal-overlay').classList.add('show');
-  document.body.style.overflow='hidden';
-  setTimeout(()=>document.getElementById('u-nome').focus(),150);
-}
-
-function fecharUserModal(){
-  document.getElementById('user-modal-overlay').classList.remove('show');
-  document.body.style.overflow='';
-  _editingUserId=null;
-}
-
-function onRoleChange(){
-  const r = document.getElementById('u-role').value;
-  document.getElementById('u-polos-field').style.display = (r==='admin_polo'||r==='coord')?'flex':'none';
-  const note = document.getElementById('coord-scope-note');
-  if(note){
-    if(r==='admin_polo') note.textContent='O administrador de polo terá acesso total ao polo (inscrições, turmas, equipe, recepção e configuração).';
-    else if(r==='coord') note.textContent='O coordenador poderá acessar inscrições, recepção, turmas e equipe nos polos selecionados.';
-  }
-}
-
-function toggleSenhaUser(){
-  const inp=document.getElementById('u-senha');
-  inp.type=inp.type==='password'?'text':'password';
-}
-
-function salvarUsuario(){
-  const errEl = document.getElementById('user-modal-err');
-  errEl.classList.remove('show');
-
-  const role   = document.getElementById('u-role').value;
-  const nome   = document.getElementById('u-nome').value.trim();
-  const login  = document.getElementById('u-login').value.trim().toLowerCase().replace(/\s+/g,'');
-  const senha  = document.getElementById('u-senha').value;
-  const status = document.getElementById('u-status').value;
-  const polos  = (role==='admin_polo'||role==='coord')
-    ? [...document.querySelectorAll('#u-polos-checkboxes input:checked')].map(c=>c.value)
-    : [];
-
-  if(!nome){ errEl.textContent='Informe o nome.'; errEl.classList.add('show'); return; }
-  if(!login){ errEl.textContent='Informe o usuário de login.'; errEl.classList.add('show'); return; }
-  if(!_editingUserId && !senha){ errEl.textContent='Informe a senha.'; errEl.classList.add('show'); return; }
-  if(senha && senha.length<6){ errEl.textContent='A senha deve ter ao menos 6 caracteres.'; errEl.classList.add('show'); return; }
-  if((role==='admin_polo'||role==='coord') && polos.length===0){ errEl.textContent='Selecione ao menos um polo.'; errEl.classList.add('show'); return; }
-
-  // login não pode ser igual ao admin master nem duplicado
-  if(login===ADMIN_USER){ errEl.textContent='Este usuário é reservado.'; errEl.classList.add('show'); return; }
-
-  let users = getUsers();
-  const dup = users.find(u=>u.login===login && u.id!==_editingUserId);
-  if(dup){ errEl.textContent='Já existe um usuário com este login.'; errEl.classList.add('show'); return; }
-
-  if(_editingUserId){
-    const idx = users.findIndex(u=>u.id===_editingUserId);
-    if(idx>=0){
-      users[idx] = {...users[idx], role, nome, login, status, polos};
-      if(senha) users[idx].senha=senha;
-    }
-  } else {
-    users.push({id:gerarId(), role, nome, login, senha, status, polos});
-  }
-
-  setUsers(users);
-  fecharUserModal();
-  renderUsuarios();
-}
-
-function editarUsuario(id){ abrirUserModal(id); }
-
-function excluirUsuario(id){
-  const users=getUsers();
-  const u=users.find(x=>x.id===id);
-  if(!u) return;
-  if(!confirm(`Remover o usuário "${u.nome}" (${u.login})?`)) return;
-  setUsers(users.filter(x=>x.id!==id));
-  renderUsuarios();
-}
-
-/* ================================================================
-   RENDER GRID DE POLOS (tela de inscrição)
-================================================================ */
-function selecionarPolo(nomeP){
-  // Encontra o índice e simula o clique no card
-  const idx = POLOS.findIndex(p=>p.nome===nomeP);
-  if(idx<0) return;
-  const card = document.getElementById('polo-card-'+idx);
-  if(card) card.click();
-  // Scroll suave até o formulário
-  setTimeout(()=>{
-    document.querySelector('.form-wrap')?.scrollIntoView({behavior:'smooth', block:'start'});
-  }, 100);
-}
-
-function renderPoloGrid(){
-  const d = getIns();
-  const grid = document.getElementById('polo-grid');
-  if(!grid) return;
-  if(POLOS.length === 0){
-    grid.innerHTML = '<p style="color:var(--gray-400);font-size:14px;padding:1rem 0">Nenhum polo cadastrado no momento.</p>';
-    return;
-  }
-  grid.innerHTML = '';
-  POLOS.forEach((p,i)=>{
-    const c = cor(i);
-    const n = d.filter(x=>x.polo===p.nome).length;
-    const fechado = p.inscricoes_abertas === false;
-    const card = document.createElement('div');
-    card.className = 'polo-card' + (fechado ? '' : '');
-    card.id = 'polo-card-'+i;
-    card.style.cssText = fechado ? 'opacity:.55;pointer-events:none' : '';
-    card.innerHTML = `
-      <div class="polo-dot" style="background:${c.badge}"></div>
-      <div class="polo-name">${p.nome}</div>
-      <div class="polo-valor" style="color:${c.badge}">${p.valorExibir||'R$ —,—'}</div>
-      ${p.almoco_ativo?`<div style="font-size:11px;color:#E08020;font-weight:500;margin-top:3px">🍽 Almoço${p.almoco_valor?' — '+p.almoco_valor:''}</div>`:''}
-      <div class="polo-count" id="count-polo-${i}">${n} inscrito${n!==1?'s':''}</div>
-      <div class="polo-check" style="color:${c.badge}">✓</div>
-      ${fechado?'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.75);border-radius:12px;font-size:11px;font-weight:700;color:var(--red-400);text-align:center">Inscrições<br>encerradas</div>':''}`;
-    card.addEventListener('click', ()=>{
-      if(fechado) return;
-      document.querySelectorAll('.polo-card').forEach(c=>{
-        c.classList.remove('selected');
-        c.style.borderColor='';
-        c.style.background='';
-      });
-      card.classList.add('selected');
-      card.style.borderColor = c.badge;
-      card.style.background  = c.bg;
-      poloSel = p.nome;
-      poloSelCfg = p;
-      document.getElementById('polo-msg').classList.remove('show');
-      // mostrar/ocultar campo almoço
-      const almocoField = document.getElementById('almoco-field');
-      const almocoTag   = document.getElementById('almoco-valor-tag');
-      const almocoChk   = document.getElementById('f-almoco');
-      const almocoLbl   = document.getElementById('lbl-almoco');
-      if(p.almoco_ativo){
-        almocoField.style.display='block';
-        almocoTag.textContent = p.almoco_valor || '';
-      } else {
-        almocoField.style.display='none';
-        if(almocoChk){ almocoChk.checked=false; almocoLbl.classList.remove('sel'); }
-      }
-    });
-    grid.appendChild(card);
+  document.querySelectorAll('[id^="tema-card-"]').forEach((el,i)=>{
+    const ativo=i===idx;
+    el.style.border=ativo?'2.5px solid var(--mcj-gold)':'2.5px solid var(--gray-100)';
+    el.style.background=ativo?'#FFFBF0':'white';
+    let badge=el.querySelector('[data-tema-badge]');
+    if(ativo&&!badge){badge=document.createElement('div');badge.setAttribute('data-tema-badge','');badge.style.cssText='font-size:10px;font-weight:700;color:#C8873A;margin-top:6px;text-transform:uppercase;letter-spacing:.5px';badge.textContent='✓ Tema ativo';el.appendChild(badge);}
+    else if(!ativo&&badge){badge.remove();}
   });
+  aplicarDesign();
 }
-
-function atualizarContadores(){
-  const d = getIns();
-  POLOS.forEach((p,i)=>{
-    const el = document.getElementById('count-polo-'+i);
-    if(el){ const n=d.filter(x=>x.polo===p.nome).length; el.textContent=n+' inscrito'+(n!==1?'s':''); }
-  });
-}
-
-function atualizarBanner(){
-  const fechados = POLOS.filter(p=>p.inscricoes_abertas===false);
-  const banner = document.getElementById('banner-fechado');
-  const txt    = document.getElementById('banner-fechado-text');
-  if(!banner||!txt) return;
-  if(fechados.length===0){ banner.classList.remove('show'); return; }
-  txt.textContent = fechados.length===POLOS.length
-    ? 'As inscrições estão encerradas para todos os polos.'
-    : 'Inscrições encerradas para: '+fechados.map(p=>p.nome).join(', ')+'.';
-  banner.classList.add('show');
-}
-
-/* ================================================================
-   VIEWS
-================================================================ */
-function showView(id, btn){
-  if(id==='admin'){
-    if(!SESSION.logado){ _loginPendingBtn=btn; abrirLogin(); return; }
-    _ativarView('admin');
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    aplicarEscopoAdmin();
-    renderAdmin();
-    return;
-  }
-  if(id==='polos'){ renderPolos(); }
-  if(id==='sobre'){ renderSobre(); }
-  if(id==='expositores'){ renderExpositores(); }
-  if(id==='avaliacao'){ renderAvaliacao(); }
-  _ativarView(id);
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-/* ================================================================
-   SOBRE O EVENTO — página pública
-================================================================ */
-function renderSobre(){
-  const wrap = document.getElementById('sobre-content');
-  if(!wrap) return;
-  const e = _cfgEvento;
-
-  // atualiza hero
-  const tagEl = document.getElementById('sobre-tag-hero');
-  if(tagEl) tagEl.textContent = e.subtitulo || 'MCJ 2026';
-  const tituloEl = document.getElementById('sobre-titulo-hero');
-  if(tituloEl) tituloEl.innerHTML = e.titulo ? e.titulo.replace(/MCJ/,'<em>MCJ</em>') : 'Sobre o <em>Evento</em>';
-
-  wrap.innerHTML = `
-    <!-- Livreto -->
-    ${e.livreto_url ? `
-    <div class="evento-section">
-      <div class="evento-section-header">
-        <span class="evento-section-icon">📖</span>
-        <span class="evento-section-title">Material do Evento</span>
-      </div>
-      <div class="evento-section-body" style="text-align:center;padding:1.5rem">
-        <p style="font-size:14px;color:var(--gray-600);margin-bottom:1rem">O livreto do MCJ 2026 está disponível para download.</p>
-        <a href="${e.livreto_url}" target="_blank" rel="noopener"
-          style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--mcj-gold);color:white;border-radius:10px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;text-decoration:none;transition:background .15s">
-          📥 Baixar Livreto
-        </a>
-      </div>
-    </div>` : ''}
-
-    <!-- Informações gerais -->
-    <div class="evento-section">
-      <div class="evento-section-header">
-        <span class="evento-section-icon">📅</span>
-        <span class="evento-section-title">Informações Gerais</span>
-      </div>
-      <div class="evento-section-body">
-        <div class="evento-info-grid">
-          <div class="evento-info-item">
-            <div class="evento-info-label">Data</div>
-            <div class="evento-info-valor">${e.data||'20 de setembro de 2026'}</div>
-          </div>
-          <div class="evento-info-item">
-            <div class="evento-info-label">Horário</div>
-            <div class="evento-info-valor">${e.horario||'8h às 17h30'}</div>
-          </div>
-          <div class="evento-info-item" style="grid-column:1/-1">
-            <div class="evento-info-label">Polos</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
-              ${POLOS.map((p,i)=>{const c=cor(i);return `<span style="font-size:13px;font-weight:600;padding:4px 12px;border-radius:20px;background:${c.bg};color:${c.text};border:1px solid ${c.border}">${p.nome}</span>`;}).join('')}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sobre -->
-    ${e.descricao ? `
-    <div class="evento-section">
-      <div class="evento-section-header">
-        <span class="evento-section-icon">✨</span>
-        <span class="evento-section-title">Sobre o Evento</span>
-      </div>
-      <div class="evento-section-body">
-        <div class="evento-texto">${e.descricao.replace(/\n/g,'<br>')}</div>
-      </div>
-    </div>` : ''}
-
-    <!-- Temas -->
-    ${(e.tema_manha||e.tema_tarde) ? `
-    <div class="evento-section">
-      <div class="evento-section-header">
-        <span class="evento-section-icon">📖</span>
-        <span class="evento-section-title">Temas do Dia</span>
-      </div>
-      <div class="evento-section-body">
-        ${e.tema_manha ? `
-        <div class="evento-tema-card">
-          <div>
-            <div class="evento-tema-periodo">🌅 Tema da Manhã</div>
-            <div class="evento-tema-titulo">"${e.tema_manha}"</div>
-          </div>
-        </div>` : ''}
-        ${e.tema_tarde ? `
-        <div class="evento-tema-card">
-          <div>
-            <div class="evento-tema-periodo">🌆 Tema da Tarde</div>
-            <div class="evento-tema-titulo">"${e.tema_tarde}"</div>
-          </div>
-        </div>` : ''}
-      </div>
-    </div>` : ''}`;
-}
-
-/* ================================================================
-   EXPOSITORES CONVIDADOS — página pública
-================================================================ */
-function renderExpositores(){
-  const wrap = document.getElementById('expositores-content');
-  if(!wrap) return;
-
-  const exps = getExpositores();
-
-  if(exps.length===0){
-    wrap.innerHTML='<div style="text-align:center;padding:3rem;color:var(--gray-400);font-size:14px">Nenhum expositor cadastrado ainda.</div>';
-    return;
-  }
-
-  // Para cada expositor, descobre em quais polos/salas/horários aparece
-  wrap.innerHTML = `<div class="expositores-grid" style="max-width:1000px;margin:1.5rem auto;padding:0 1rem 3rem">
-    ${exps.map(exp=>{
-      const horarios = [];
-      POLOS.forEach(polo=>{
-        if(!(polo.expositores||[]).includes(exp.nome)) return;
-        const cl = cor(POLOS.indexOf(polo));
-        const expSalas = polo.expositores_salas||{};
-        Object.entries(expSalas).forEach(([sala,turnos])=>{
-          if(turnos.manha===exp.nome) horarios.push({periodo:'🌅 Manhã',sala,polo:polo.nome,cl});
-          if(turnos.tarde===exp.nome)  horarios.push({periodo:'🌆 Tarde',sala,polo:polo.nome,cl});
-        });
-        // se vinculado ao polo mas sem sala atribuída ainda
-        const temHorario = horarios.some(h=>h.polo===polo.nome);
-        if(!temHorario) horarios.push({periodo:'',sala:'',polo:polo.nome,cl});
-      });
-      return `<div class="expositor-card">
-        <div class="expositor-foto-wrap">
-          ${exp.foto
-            ? `<img class="expositor-foto" src="${esc(exp.foto)}" alt="${esc(exp.nome)}" loading="lazy" style="cursor:zoom-in" onclick="abrirLightbox('${exp.foto.replace(/'/g,"\\'")}','${exp.nome.replace(/'/g,"\\'")}' )" onerror="this.parentElement.innerHTML='<div class=expositor-foto-placeholder>🎤</div>'">`
-            : '<div class="expositor-foto-placeholder">🎤</div>'}
-        </div>
-        <div class="expositor-body">
-          <div class="expositor-nome">${esc(exp.nome)}</div>
-          ${horarios.length ? `
-          <div class="expositor-horarios">
-            ${horarios.map(h=>`
-              <span class="expositor-horario-badge" style="background:${h.cl.bg};color:${h.cl.text};border-color:${h.cl.border}">
-                ${h.periodo?h.periodo+' · ':''}${h.polo}${h.sala?' · '+h.sala:''}
-              </span>`).join('')}
-          </div>` : ''}
-          ${exp.bio ? `<div class="expositor-bio">${esc(exp.bio)}</div>` : ''}
-        </div>
-      </div>`;
-    }).join('')}
-  </div>`;
-}
-
-/* ================================================================
-   ADMIN — SOBRE O EVENTO & EXPOSITORES
-================================================================ */
-function renderEventoAdmin(){
-  const wrap = document.getElementById('evento-admin-wrap');
-  if(!wrap) return;
-  const e    = _cfgEvento;
-  const d    = _cfgEvento.design || {};
-  const exps = getExpositores();
-
-  wrap.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:1.5rem;max-width:760px">
-
-      <!-- SEÇÃO: DESIGN VISUAL -->
-      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
-        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;gap:8px">
-          <span style="color:var(--mcj-gold);font-size:16px">🎨</span>
-          <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Design Visual</span>
-        </div>
-        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:14px">
-
-          <!-- Vídeo de capa -->
-          <div class="cfg-section" style="padding-top:0;border-top:none">
-            <div class="cfg-section-title">🎬 Vídeo de capa</div>
-            <div class="cfg-field">
-              <label>URL do vídeo (GitHub raw link)</label>
-              <input type="url" id="dsg-video" value="${esc(d.video_url||'')}" placeholder="https://raw.githubusercontent.com/.../capa.mp4">
-            </div>
-          </div>
-
-          <!-- Cores -->
-          <div class="cfg-section">
-            <div class="cfg-section-title">🎨 Cores</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px">
-              ${[
-                ['dsg-cor-primaria','Cor primária (navbar/topo)', d.cor_primaria||'#3D2410'],
-                ['dsg-cor-destaque','Cor de destaque (botões/dourado)', d.cor_destaque||'#C8873A'],
-                ['dsg-cor-fundo','Cor de fundo geral', d.cor_fundo||'#F2EDE4'],
-                ['dsg-cor-texto','Cor do texto principal', d.cor_texto||'#2C1A08'],
-              ].map(([id,label,val])=>`
-                <div class="cfg-field" style="margin-bottom:0">
-                  <label style="font-size:11px">${label}</label>
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <input type="color" id="${id}" value="${val}"
-                      style="width:44px;height:36px;padding:2px 3px;border-radius:6px;border:1px solid var(--gray-100);cursor:pointer">
-                    <input type="text" id="${id}-hex" value="${val}"
-                      style="flex:1;font-size:12px;padding:6px 8px;border-radius:6px;font-family:monospace"
-                      oninput="document.getElementById('${id}').value=this.value">
-                    <script>document.getElementById('${id}').addEventListener('input',function(){document.getElementById('${id}-hex').value=this.value})<\/script>
-                  </div>
-                </div>`).join('')}
-            </div>
-          </div>
-
-          <!-- Tipografia -->
-          <div class="cfg-section">
-            <div class="cfg-section-title">✍ Tipografia</div>
-            <div class="cfg-row">
-              <div class="cfg-field">
-                <label>Fonte dos títulos</label>
-                <select id="dsg-fonte-titulo" style="font-size:13px;padding:8px 10px">
-                  ${['EB Garamond','Playfair Display','Cormorant Garamond','Libre Baskerville','Lora','Cinzel']
-                    .map(f=>`<option value="${f}" ${(d.fonte_titulo||'EB Garamond')===f?'selected':''}>${f}</option>`).join('')}
-                </select>
-              </div>
-              <div class="cfg-field">
-                <label>Fonte do texto geral</label>
-                <select id="dsg-fonte-texto" style="font-size:13px;padding:8px 10px">
-                  ${['Raleway','Nunito','Lato','Source Sans 3','Inter']
-                    .map(f=>`<option value="${f}" ${(d.fonte_texto||'Raleway')===f?'selected':''}>${f}</option>`).join('')}
-                </select>
-              </div>
-            </div>
-            <div class="cfg-field">
-              <label>Tamanho do título na capa</label>
-              <select id="dsg-titulo-size" style="font-size:13px;padding:8px 10px">
-                ${[
-                  ['clamp(2rem,7vw,4rem)','Pequeno'],
-                  ['clamp(2.5rem,9vw,5rem)','Médio'],
-                  ['clamp(3rem,11vw,6.5rem)','Grande (padrão)'],
-                  ['clamp(3.5rem,13vw,8rem)','Muito grande'],
-                ].map(([val,lbl])=>`<option value="${val}" ${(d.titulo_size||'clamp(3rem,11vw,6.5rem)')===val?'selected':''}>${lbl}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-
-          <!-- Tagline da capa -->
-          <div class="cfg-section">
-            <div class="cfg-section-title">🏷 Tagline da capa</div>
-            <div class="cfg-field">
-              <label>Texto da tag acima do título</label>
-              <input type="text" id="dsg-tagline" value="${esc(d.hero_tagline||'Jornada de Estudos Espíritas do Evangelho')}" placeholder="Ex: Jornada de Estudos Espíritas do Evangelho">
-            </div>
-          </div>
-
-        </div>
-        <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;align-items:center;justify-content:space-between">
-          <button onclick="restaurarDesignPadrao()" style="padding:8px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">↺ Restaurar padrão</button>
-          <button class="btn-cfg-save" onclick="salvarDesign()">Salvar e aplicar</button>
-        </div>
-      </div>
-
-      <!-- SEÇÃO: SOBRE O EVENTO -->
-      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
-        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;gap:8px">
-          <span style="color:var(--mcj-gold);font-size:16px">✨</span>
-          <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Sobre o Evento</span>
-        </div>
-        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
-          <div class="cfg-field"><label>Subtítulo / tagline</label><input type="text" id="ev-subtitulo" value="${esc(e.subtitulo||'Momentos com Jesus')}" placeholder="Ex: Jornada de Estudos Espíritas do Evangelho"></div>
-          <div class="cfg-row">
-            <div class="cfg-field"><label>Data</label><input type="text" id="ev-data" value="${esc(e.data||'20 de setembro de 2026')}"></div>
-            <div class="cfg-field"><label>Horário</label><input type="text" id="ev-horario" value="${esc(e.horario||'8h às 17h30')}"></div>
-          </div>
-          <div class="cfg-field"><label>Local</label><input type="text" id="ev-local" value="${esc(e.local||'Rio de Janeiro')}"></div>
-          <div class="cfg-field"><label>Tema da Manhã</label><input type="text" id="ev-tema-manha" value="${esc(e.tema_manha||'O Renascer de Nicodemos')}"></div>
-          <div class="cfg-field"><label>Tema da Tarde</label><input type="text" id="ev-tema-tarde" value="${esc(e.tema_tarde||'Jesus Forja Pedro para o Futuro')}"></div>
-          <div class="cfg-field"><label>Texto de apresentação</label><textarea id="ev-descricao" rows="5" placeholder="Fale sobre o evento, sua proposta, público...">${esc(e.descricao||'')}</textarea></div>
-          <div class="cfg-row">
-            <div class="cfg-field">
-              <label>Instagram (URL)</label>
-              <input type="url" id="ev-instagram" value="${esc(e.instagram||'')}" placeholder="https://instagram.com/mcj2026">
-            </div>
-            <div class="cfg-field">
-              <label>Facebook (URL)</label>
-              <input type="url" id="ev-facebook" value="${esc(e.facebook||'')}" placeholder="https://facebook.com/mcj2026">
-            </div>
-          </div>
-        </div>
-        <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;justify-content:flex-end">
-          <button class="btn-cfg-save" onclick="salvarEventoCfg()">Salvar informações</button>
-        </div>
-      </div>
-
-      <!-- SEÇÃO: EXPOSITORES CONVIDADOS -->
-      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
-        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="color:var(--mcj-gold);font-size:16px">🎤</span>
-            <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Expositores Convidados</span>
-          </div>
-          <button onclick="abrirModalExpositor()" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">+ Adicionar</button>
-        </div>
-        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:10px" id="expositores-lista-admin">
-          ${exps.length===0
-            ? '<p style="color:var(--gray-400);font-size:13px;text-align:center;padding:1rem">Nenhum expositor cadastrado ainda.</p>'
-            : exps.map((exp,ei)=>`
-              <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--mcj-sand);border-radius:10px;background:var(--mcj-cream)">
-                ${exp.foto
-                  ? `<img src="${esc(exp.foto)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--mcj-sand)" onerror="this.style.display='none'">`
-                  : `<div style="width:44px;height:44px;border-radius:50%;background:var(--mcj-sand);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🎤</div>`}
-                <div style="flex:1;min-width:0">
-                  <div style="font-weight:700;color:var(--mcj-dark);font-size:14px">${esc(exp.nome)}</div>
-                  ${exp.bio?`<div style="font-size:11px;color:var(--gray-400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(exp.bio)}</div>`:''}
-                </div>
-                <button onclick="editarExpositor(${ei})" style="padding:5px 10px;border:1px solid var(--mcj-sand);background:white;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:var(--mcj-mid);font-family:Inter,sans-serif">Editar</button>
-                <button onclick="excluirExpositor(${ei})" style="padding:5px 10px;border:1px solid var(--red-100);background:white;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:var(--red-400);font-family:Inter,sans-serif">Remover</button>
-              </div>`).join('')}
-        </div>
-      </div>
-
-    </div>
-
-    <!-- MODAL: EXPOSITOR -->
-    <div id="modal-expositor-overlay" style="display:none;position:fixed;inset:0;background:rgba(61,36,16,.6);z-index:700;align-items:center;justify-content:center;padding:1rem">
-      <div style="background:white;border-radius:16px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)">
-        <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
-          <span id="modal-exp-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Novo Expositor</span>
-          <button onclick="fecharModalExpositor()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer;line-height:1">×</button>
-        </div>
-        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
-          <div class="cfg-field"><label>Nome completo *</label><input type="text" id="mexp-nome" placeholder="Nome do expositor"></div>
-          <div class="cfg-field"><label>Foto (URL)</label><input type="url" id="mexp-foto" placeholder="https://...jpg"><span style="font-size:11px;color:var(--gray-400);margin-top:3px">Link direto de imagem (jpg, png, webp)</span></div>
-          <div class="cfg-field"><label>Mini bio</label><textarea id="mexp-bio" rows="3" placeholder="Breve apresentação do expositor..."></textarea></div>
-          <div id="mexp-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:7px;padding:8px 12px;font-size:13px;color:var(--red-800)"></div>
-        </div>
-        <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
-          <button onclick="fecharModalExpositor()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Cancelar</button>
-          <button onclick="salvarExpositor()" class="btn-cfg-save">Salvar</button>
-        </div>
-      </div>
-    </div>`;
-}
-
-let _editExpIdx = null;
 
 function salvarDesign(){
-  if(!_cfgEvento.design) _cfgEvento.design={};
-  const d = _cfgEvento.design;
-  d.video_url    = document.getElementById('dsg-video')?.value.trim()||d.video_url||'';
-  d.cor_primaria = document.getElementById('dsg-cor-primaria')?.value||d.cor_primaria||'#3D2410';
-  d.cor_destaque = document.getElementById('dsg-cor-destaque')?.value||d.cor_destaque||'#C8873A';
-  d.cor_fundo    = document.getElementById('dsg-cor-fundo')?.value||d.cor_fundo||'#F2EDE4';
-  d.cor_texto    = document.getElementById('dsg-cor-texto')?.value||d.cor_texto||'#2C1A08';
-  d.fonte_titulo = document.getElementById('dsg-fonte-titulo')?.value||d.fonte_titulo||'EB Garamond';
-  d.fonte_texto  = document.getElementById('dsg-fonte-texto')?.value||d.fonte_texto||'Raleway';
-  d.titulo_size  = document.getElementById('dsg-titulo-size')?.value||d.titulo_size||'clamp(3rem,11vw,6.5rem)';
-  d.hero_tagline = document.getElementById('dsg-tagline')?.value.trim()||d.hero_tagline||'';
+  if(!_cfgEvento.design) _cfgEvento.design={...TEMAS_DESIGN[0]};
+  const v=document.getElementById('dsg-video')?.value.trim();
+  if(v) _cfgEvento.design.video_url=v;
   setCfgEvento();
   aplicarDesign();
   const btn=document.querySelector('#evento-admin-wrap .btn-cfg-save');
-  if(btn){ const t=btn.textContent; btn.textContent='✓ Aplicado!'; setTimeout(()=>btn.textContent=t,2000); }
+  if(btn){const t=btn.textContent;btn.textContent='✓ Salvo!';setTimeout(()=>btn.textContent=t,2000);}
 }
 
 function restaurarDesignPadrao(){
-  if(!confirm('Restaurar o design padrão do sistema?')) return;
-  _cfgEvento.design = {
-    video_url:    'https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4',
-    cor_primaria: '#3D2410',
-    cor_destaque: '#C8873A',
-    cor_fundo:    '#F2EDE4',
-    cor_texto:    '#2C1A08',
-    fonte_titulo: 'EB Garamond',
-    fonte_texto:  'Raleway',
-    titulo_size:  'clamp(3rem,11vw,6.5rem)',
-    hero_tagline: 'Jornada de Estudos Espíritas do Evangelho',
+  if(!confirm('Restaurar o tema padrão (Terra Santa)?')) return;
+  _cfgEvento.design={...TEMAS_DESIGN[0],tema_ativo:0,video_url:'https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4'};
+  setCfgEvento(); aplicarDesign(); renderEventoAdmin();
+}
+
+function aplicarDesign(){
+  const d=getDesign();
+  const r=document.documentElement;
+  if(d.cor_primaria){r.style.setProperty('--mcj-dark',d.cor_primaria);}
+  if(d.cor_destaque){r.style.setProperty('--mcj-gold',d.cor_destaque);r.style.setProperty('--mcj-gold2',d.cor_destaque);}
+  if(d.cor_fundo)   {r.style.setProperty('--mcj-cream',d.cor_fundo);}
+  if(d.cor_texto)   {r.style.setProperty('--mcj-text',d.cor_texto);r.style.setProperty('--mcj-mid',d.cor_texto);}
+  if(d.video_url){document.querySelectorAll('.hero-video source').forEach(s=>s.src=d.video_url);document.querySelectorAll('.hero-video').forEach(v=>v.load());}
+  const fontMap={
+    'EB Garamond':'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap',
+    'Cormorant Garamond':'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap',
+    'Playfair Display':'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&display=swap',
+    'Cinzel':'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+    'Lora':'https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap',
+    'Raleway':'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap',
+    'Lato':'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap',
+    'Nunito':'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap',
+    'Source Sans 3':'https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&display=swap',
+    'Inter':'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap',
   };
-  setCfgEvento();
-  aplicarDesign();
-  renderEventoAdmin();
+  function lf(nome,id){const u=fontMap[nome];if(!u||document.getElementById(id))return;const l=document.createElement('link');l.rel='stylesheet';l.href=u;l.id=id;document.head.appendChild(l);}
+  if(d.fonte_titulo){lf(d.fonte_titulo,'gf-titulo');document.querySelectorAll('.hero h1,.nav-logo,.admin-header h2,.aval-hero-title,.polo-detalhe-nome,.evento-section-title').forEach(el=>el.style.fontFamily="'"+d.fonte_titulo+"',Georgia,serif");}
+  if(d.fonte_texto){lf(d.fonte_texto,'gf-texto');document.body.style.fontFamily="'"+d.fonte_texto+"',sans-serif";}
+  if(d.titulo_size){document.querySelectorAll('.hero h1').forEach(el=>el.style.fontSize=d.titulo_size);}
+  if(d.hero_tagline){document.querySelectorAll('.hero-tag').forEach(el=>el.textContent=d.hero_tagline);}
 }
 
 function salvarEventoCfg(){
@@ -2636,6 +2330,132 @@ function toggleSenha(){
   btn.textContent=inp.type==='password'?'👁':'🙈';
 }
 
+function toggleSenhaUser(){
+  const inp=document.getElementById('u-senha');
+  if(!inp) return;
+  inp.type=inp.type==='password'?'text':'password';
+}
+
+/* ================================================================
+   POLO SELECTOR — formulário de inscrição
+================================================================ */
+function selecionarPolo(nome){
+  const inp = document.getElementById('f-polo');
+  if(inp) inp.value = nome;
+  // Atualiza visual dos cards
+  document.querySelectorAll('.polo-card').forEach(c=>{
+    c.classList.toggle('selected', c.querySelector('.polo-name')?.textContent===nome);
+  });
+  // Limpa mensagem de polo obrigatório
+  const msg = document.getElementById('polo-msg');
+  if(msg) msg.style.display = 'none';
+}
+
+/* ================================================================
+   USUÁRIOS — CRUD
+================================================================ */
+let _editingUserId = null;
+
+function abrirUserModal(id){
+  _editingUserId = id||null;
+  const users = getUsers();
+  const u = id ? users.find(x=>x.id===id) : null;
+  const modal = document.getElementById('user-modal-overlay');
+  if(!modal) return;
+
+  document.getElementById('u-nome').value    = u?.nome||'';
+  document.getElementById('u-login').value   = u?.login||'';
+  document.getElementById('u-senha').value   = u?.senha||'';
+  document.getElementById('u-role').value    = u?.role||'coord';
+  document.getElementById('u-status').value  = u?.status||'ativo';
+
+  // Gera checkboxes dos polos
+  const chkWrap = document.getElementById('u-polos-checkboxes');
+  if(chkWrap){
+    chkWrap.innerHTML = POLOS.map((p,i)=>{
+      const cl = cor(i);
+      const chk = (u?.polos||[]).includes(p.nome);
+      return `<label class="polo-checkbox-label${chk?' checked':''}" id="pclbl-${i}">
+        <input type="checkbox" value="${esc(p.nome)}" ${chk?'checked':''} onchange="this.closest('label').classList.toggle('checked',this.checked)">
+        <span class="polo-dot" style="background:${cl.badge};margin-bottom:0;flex-shrink:0"></span>
+        ${p.nome}
+      </label>`;
+    }).join('');
+  }
+
+  const errEl = document.getElementById('user-modal-error');
+  if(errEl) errEl.classList.remove('show');
+
+  onRoleChange();
+  modal.classList.add('show');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('u-nome')?.focus(),150);
+}
+
+function fecharUserModal(){
+  document.getElementById('user-modal-overlay')?.classList.remove('show');
+  document.body.style.overflow='';
+  _editingUserId = null;
+}
+
+function onRoleChange(){
+  const r = document.getElementById('u-role')?.value;
+  const polosField = document.getElementById('u-polos-field');
+  if(polosField) polosField.style.display = (r==='admin_polo'||r==='coord')?'flex':'none';
+  const note = document.getElementById('coord-scope-note');
+  if(note){
+    if(r==='admin_polo') note.textContent='O administrador de polo terá acesso total ao polo (inscrições, turmas, equipe, recepção e configuração).';
+    else if(r==='coord') note.textContent='O coordenador poderá acessar inscrições, recepção, turmas e equipe nos polos selecionados.';
+  }
+}
+
+async function salvarUsuario(){
+  const nome  = document.getElementById('u-nome')?.value.trim()||'';
+  const login = document.getElementById('u-login')?.value.trim().toLowerCase()||'';
+  const senha = document.getElementById('u-senha')?.value.trim()||'';
+  const role  = document.getElementById('u-role')?.value||'coord';
+  const status= document.getElementById('u-status')?.value||'ativo';
+  const polos = (role==='admin_polo'||role==='coord')
+    ? [...document.querySelectorAll('#u-polos-checkboxes input:checked')].map(c=>c.value)
+    : [];
+
+  const errEl = document.getElementById('user-modal-error');
+  const showErr = (msg)=>{ if(errEl){errEl.textContent=msg;errEl.classList.add('show');} };
+
+  if(!nome)  return showErr('O nome é obrigatório.');
+  if(!login) return showErr('O login é obrigatório.');
+  if(!_editingUserId && !senha) return showErr('A senha é obrigatória.');
+  if((role==='admin_polo'||role==='coord') && !polos.length) return showErr('Selecione ao menos um polo.');
+
+  const users = getUsers();
+  if(!_editingUserId && users.find(u=>u.login===login)) return showErr('Este login já existe.');
+
+  if(_editingUserId){
+    const idx = users.findIndex(u=>u.id===_editingUserId);
+    if(idx>=0){
+      users[idx] = {...users[idx], nome, login, role, status, polos};
+      if(senha) users[idx].senha = senha;
+    }
+  } else {
+    users.push({ id: Date.now().toString(36)+Math.random().toString(36).slice(2),
+                 nome, login, senha, role, status, polos });
+  }
+
+  _cache.users = users;
+  await setUsers();
+  fecharUserModal();
+  renderUsuarios();
+}
+
+function editarUsuario(id){ abrirUserModal(id); }
+
+async function excluirUsuario(id){
+  if(!confirm('Remover este usuário?')) return;
+  _cache.users = getUsers().filter(u=>u.id!==id);
+  await setUsers();
+  renderUsuarios();
+}
+
 /* ================================================================
    FORMULÁRIO
 ================================================================ */
@@ -2911,7 +2731,8 @@ function renderPanels(){
               ${pago?'✓ Confirmado':'⏳ Pendente'}
             </button>${waLink}
           </div></td>
-          <td>
+          <td style="display:flex;gap:4px;align-items:center">
+            <button class="btn-excluir" style="color:var(--mcj-mid);border-color:rgba(107,76,42,.2);background:white" onclick="editarInscricao('${emailSafe}','${poloSafe}')" title="Editar inscrição">✏️</button>
             <button class="btn-excluir" onclick="excluirInscricao('${emailSafe}','${poloSafe}')" title="Excluir inscrição">🗑</button>
           </td>
         </tr>`;
@@ -4145,6 +3966,76 @@ function toggleTrabalhador(email, poloNome){
   const novoValor = !(d[idx].trabalhador===true || d[idx].trabalhador==='true');
   atualizarInscricao(email, poloNome, { trabalhador: novoValor });
   renderPanels(); renderSummary();
+}
+
+/* ================================================================
+   EDITAR INSCRIÇÃO
+================================================================ */
+let _editInsEmail = null;
+let _editInsPolo  = null;
+
+function editarInscricao(email, poloNome){
+  if(!poloNoEscopo(poloNome)){ alert('Sem permissão para editar inscrições deste polo.'); return; }
+  const d = getIns();
+  const p = d.find(x=>x.email===email && x.polo===poloNome);
+  if(!p){ alert('Inscrito não encontrado.'); return; }
+
+  _editInsEmail = email;
+  _editInsPolo  = poloNome;
+
+  document.getElementById('ei-nome').value       = p.nome||'';
+  document.getElementById('ei-nascimento').value = p.nascimento||'';
+  document.getElementById('ei-email').value      = p.email||'';
+  document.getElementById('ei-telefone').value   = p.telefone||'';
+  document.getElementById('ei-cracha').value     = p.cracha||'';
+  document.getElementById('ei-instituicao').value= p.instituicao&&p.instituicao!=='—'?p.instituicao:'';
+  document.getElementById('ei-turma').value      = p.turma||'Adulto';
+  document.getElementById('ei-polo').value       = p.polo||poloNome;
+  document.getElementById('ei-almoco').value     = p.almoco||'Não';
+  document.getElementById('ei-almoco-valor').value = p.almoco_valor||'';
+  document.getElementById('ei-erro').style.display='none';
+
+  const ov = document.getElementById('edit-ins-overlay');
+  ov.classList.add('show');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('ei-nome').focus(),100);
+}
+
+function fecharEditarInscricao(){
+  document.getElementById('edit-ins-overlay').classList.remove('show');
+  document.body.style.overflow='';
+  _editInsEmail=null; _editInsPolo=null;
+}
+
+async function salvarEdicaoInscricao(){
+  const nome = document.getElementById('ei-nome').value.trim();
+  const errEl = document.getElementById('ei-erro');
+  if(!nome){ errEl.textContent='O nome é obrigatório.'; errEl.style.display='block'; return; }
+
+  const campos = {
+    nome,
+    nascimento: document.getElementById('ei-nascimento').value.trim(),
+    email:      document.getElementById('ei-email').value.trim(),
+    telefone:   document.getElementById('ei-telefone').value.trim(),
+    cracha:     document.getElementById('ei-cracha').value.trim(),
+    instituicao:document.getElementById('ei-instituicao').value.trim()||'—',
+    turma:      document.getElementById('ei-turma').value,
+    polo:       document.getElementById('ei-polo').value,
+    almoco:     document.getElementById('ei-almoco').value,
+    almoco_valor:document.getElementById('ei-almoco-valor').value.trim(),
+  };
+
+  // Optimistic update no cache
+  const d   = getIns();
+  const idx = d.findIndex(x=>x.email===_editInsEmail && x.polo===_editInsPolo);
+  if(idx>=0) Object.assign(d[idx], campos);
+  _cache.inscricoes = d;
+
+  // Salva no Supabase
+  atualizarInscricao(_editInsEmail, _editInsPolo, campos);
+
+  fecharEditarInscricao();
+  renderAdmin();
 }
 
 async function excluirInscricao(email, poloNome){
