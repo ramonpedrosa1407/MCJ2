@@ -701,6 +701,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
     <div class="section-eyebrow">Dados do participante</div>
     <div class="polo-required-msg" id="polo-msg">⚠ Selecione um polo antes de enviar a inscrição.</div>
+    <input type="hidden" id="f-polo" value="">
     <div class="form-card">
       <div class="form-grid">
         <div class="field">
@@ -2459,24 +2460,29 @@ async function excluirUsuario(id){
 /* ================================================================
    FORMULÁRIO
 ================================================================ */
-document.getElementById('f-telefone').addEventListener('input',function(){
-  let v=this.value.replace(/\D/g,'');
-  if(v.length<=2) this.value=v.length?'('+v:'';
-  else if(v.length<=6) this.value='('+v.slice(0,2)+') '+v.slice(2);
-  else if(v.length<=10) this.value='('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
-  else this.value='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7,11);
-});
-
-document.querySelectorAll('input[name="turma"]').forEach(r=>{
-  r.addEventListener('change',()=>{
-    document.getElementById('lbl-adulto').classList.toggle('sel', document.querySelector('input[value="Adulto"]').checked);
-    document.getElementById('lbl-mocidade').classList.toggle('sel', document.querySelector('input[value="Mocidade"]').checked);
+// Listeners do formulário — wrappados para não quebrar se elemento não existir
+(function(){
+  const tel = document.getElementById('f-telefone');
+  if(tel) tel.addEventListener('input',function(){
+    let v=this.value.replace(/\D/g,'');
+    if(v.length<=2) this.value=v.length?'('+v:'';
+    else if(v.length<=6) this.value='('+v.slice(0,2)+') '+v.slice(2);
+    else if(v.length<=10) this.value='('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
+    else this.value='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7,11);
   });
-});
 
-document.getElementById('f-almoco').addEventListener('change', function(){
-  document.getElementById('lbl-almoco').classList.toggle('sel', this.checked);
-});
+  document.querySelectorAll('input[name="turma"]').forEach(r=>{
+    r.addEventListener('change',()=>{
+      document.getElementById('lbl-adulto')?.classList.toggle('sel', document.querySelector('input[value="Adulto"]')?.checked||false);
+      document.getElementById('lbl-mocidade')?.classList.toggle('sel', document.querySelector('input[value="Mocidade"]')?.checked||false);
+    });
+  });
+
+  const alm = document.getElementById('f-almoco');
+  if(alm) alm.addEventListener('change', function(){
+    document.getElementById('lbl-almoco')?.classList.toggle('sel', this.checked);
+  });
+})();
 
 function alerta(tipo,msg){
   const el=document.getElementById('alert');
@@ -2485,15 +2491,17 @@ function alerta(tipo,msg){
 }
 
 async function inscrever(){
-  const nome       = document.getElementById('f-nome').value.trim();
-  const nascimento = document.getElementById('f-nascimento').value;
-  const email      = document.getElementById('f-email').value.trim();
-  const tel        = document.getElementById('f-telefone').value.trim();
-  const inst       = document.getElementById('f-instituicao').value.trim();
-  const cracha     = document.getElementById('f-cracha').value.trim();
-  const turma      = document.querySelector('input[name="turma"]:checked')?.value;
+  const poloSel    = document.getElementById('f-polo')?.value||'';
+  const poloSelCfg = POLOS.find(p=>p.nome===poloSel)||null;
+  const nome       = document.getElementById('f-nome')?.value.trim()||'';
+  const nascimento = document.getElementById('f-nascimento')?.value||'';
+  const email      = document.getElementById('f-email')?.value.trim()||'';
+  const tel        = document.getElementById('f-telefone')?.value.trim()||'';
+  const inst       = document.getElementById('f-instituicao')?.value.trim()||'';
+  const cracha     = document.getElementById('f-cracha')?.value.trim()||'';
+  const turma      = document.querySelector('input[name="turma"]:checked')?.value||'';
   const almocoChk  = document.getElementById('f-almoco');
-  const almoco     = poloSelCfg?.almoco_ativo && almocoChk?.checked ? true : false;
+  const almoco     = almocoChk?.checked || false;
 
   if(!poloSel){ document.getElementById('polo-msg').classList.add('show'); window.scrollTo({top:0,behavior:'smooth'}); return; }
   if(poloSelCfg?.inscricoes_abertas===false){ alerta('err','As inscrições para este polo estão encerradas.'); return; }
@@ -2559,7 +2567,8 @@ function formatBRL(n){
 }
 
 function abrirPix(nomeInscrito, almoco){
-  const cfg = poloSelCfg;
+  const poloNome = document.getElementById('f-polo')?.value||'';
+  const cfg = POLOS.find(p=>p.nome===poloNome)||{};
   document.getElementById('pix-subtitulo').textContent = cfg.nome+' · Conclua o pagamento via PIX para garantir sua vaga.';
 
   // calcular breakdown
