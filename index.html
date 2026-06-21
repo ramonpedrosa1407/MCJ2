@@ -40,8 +40,8 @@ body{font-family:'Raleway',sans-serif;background:var(--mcj-cream);color:var(--mc
 
 /* ── NAV ───────────────────────────────────────────────── */
 nav{background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;padding-left:calc(1rem + var(--safe-left));padding-right:calc(1rem + var(--safe-right));height:56px;position:sticky;top:0;top:var(--safe-top);z-index:200;border-bottom:2px solid var(--mcj-gold)}
-.nav-logo{font-family:'EB Garamond',Georgia,serif;font-weight:600;font-size:20px;color:white;letter-spacing:.5px;font-style:italic}
-.nav-logo span{color:var(--mcj-gold);font-style:normal}
+.nav-logo{font-family:'EB Garamond',Georgia,serif;font-weight:800;font-size:20px;color:white;letter-spacing:-.5px}
+.nav-logo span{color:var(--mcj-gold)}
 .nav-date{font-size:11px;color:var(--mcj-gold2);font-weight:500;border:1px solid rgba(200,135,58,.35);padding:4px 10px;border-radius:20px;white-space:nowrap}
 
 /* ── TABS ───────────────────────────────────────────────── */
@@ -64,11 +64,14 @@ nav{background:var(--mcj-dark);display:flex;align-items:center;justify-content:s
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(61,36,16,.72) 0%,rgba(61,36,16,.45) 50%,rgba(200,135,58,.2) 100%);z-index:1}
 .hero-content{position:relative;z-index:2;max-width:600px;margin:0 auto}
 .hero-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--mcj-gold2);border:1px solid rgba(200,135,58,.45);padding:4px 14px;border-radius:20px;margin-bottom:1rem;backdrop-filter:blur(4px);background:rgba(61,36,16,.3)}
-.hero h1{font-family:'EB Garamond',Georgia,serif;font-size:clamp(2.4rem,9vw,5rem);font-weight:600;color:white;letter-spacing:.5px;line-height:1.1;margin-bottom:.75rem;text-shadow:0 2px 20px rgba(0,0,0,.4);font-style:italic}
-.hero h1 em{font-style:normal;color:var(--mcj-gold);font-weight:400}
-.hero-sub{font-size:15px;color:rgba(255,255,255,.88);margin-bottom:1.5rem;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;text-shadow:0 1px 8px rgba(0,0,0,.4);font-weight:300;letter-spacing:.3px}
+.hero h1{font-family:'EB Garamond',Georgia,serif;font-size:clamp(3rem,11vw,6.5rem);font-weight:800;color:white;letter-spacing:-1px;line-height:1.05;margin-bottom:.75rem;text-shadow:0 2px 20px rgba(0,0,0,.4)}
+.hero h1 em{font-style:normal;color:var(--mcj-gold)}
+.hero-sub{font-size:16px;color:rgba(255,255,255,.85);margin-bottom:1.5rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.7;text-shadow:0 1px 8px rgba(0,0,0,.4);font-weight:400;letter-spacing:.2px}
 .hero-pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
 .hero-pill{background:rgba(61,36,16,.5);color:rgba(255,255,255,.85);font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid rgba(200,135,58,.3);backdrop-filter:blur(4px)}
+.hero-social{display:flex;justify-content:center;gap:10px;margin-top:1rem}
+.hero-social-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;text-decoration:none;backdrop-filter:blur(4px);transition:background .15s,transform .15s}
+.hero-social-btn:hover{background:rgba(200,135,58,.5);transform:scale(1.1)}
 
 /* POLO SELECTOR */
 .polo-section{max-width:860px;margin:1.5rem auto 0;padding:0 1rem}
@@ -165,8 +168,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 /* ADMIN INTERNAL TABS */
 .admin-tabs{display:flex;border-bottom:2px solid var(--mcj-sand);margin-bottom:1.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .admin-tabs::-webkit-scrollbar{display:none}
-.atab-btn{background:none;border:none;border-bottom:2px solid transparent;padding:12px 16px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:500;color:var(--gray-400);cursor:pointer;white-space:nowrap;margin-bottom:-2px;min-height:44px;-webkit-appearance:none}
-.atab-btn.active{color:var(--mcj-gold);border-bottom-color:var(--mcj-gold);font-weight:600}
+.atab-btn{background:none;border:none;border-bottom:2px solid transparent;padding:10px 10px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:500;color:var(--gray-400);cursor:pointer;white-space:nowrap;margin-bottom:-2px;min-height:44px;-webkit-appearance:none;transition:color .15s}
+.atab-btn.active{color:var(--mcj-gold);border-bottom-color:var(--mcj-gold);font-weight:700}
 .admin-panel{display:none}.admin-panel.active{display:block}
 
 /* SUMMARY */
@@ -276,6 +279,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .users-table tr:last-child td{border-bottom:none}
 .role-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
 .role-admin{background:var(--blue-50);color:var(--blue-800);border:1px solid var(--blue-100)}
+.role-admin-polo{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
 .role-coord{background:var(--amber-50);color:var(--amber-800);border:1px solid var(--amber-100)}
 .user-polo-tags{display:flex;flex-wrap:wrap;gap:4px}
 .user-polo-tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:12px;background:var(--gray-50);border:1px solid var(--gray-100);color:var(--gray-600)}
@@ -473,6 +477,112 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 .polo-mapa-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--mcj-sand);height:200px}
 .polo-mapa-wrap iframe{width:100%;height:100%;border:none;display:block}
 .polo-mapa-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--mcj-gold);text-decoration:none;margin-top:6px}
+/* ================================================================
+   PAINEL DE CONFIGURAÇÃO DE CRACHÁS
+================================================================ */
+/* ================================================================
+   RECEPÇÃO
+================================================================ */
+.rec-polo-section{margin-bottom:2rem}
+.rec-turma-section{margin-bottom:1.5rem}
+.rec-sala-section{margin-bottom:1.25rem}
+.rec-sala-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-400);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.rec-sala-title::after{content:'';flex:1;height:1px;background:var(--gray-100)}
+.rec-table{width:100%;border-collapse:collapse;font-size:13px;background:white;border-radius:12px;overflow:hidden;border:1px solid var(--gray-100)}
+.rec-table th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;background:var(--gray-50);border-bottom:1px solid var(--gray-100)}
+.rec-table th.th-check{width:36px;text-align:center}
+.rec-table td{padding:9px 12px;border-bottom:1px solid var(--gray-50);vertical-align:middle}
+.rec-table tr:last-child td{border-bottom:none}
+.rec-table tr:hover td{background:#FAFAF8}
+.rec-table tr.selecionado td{background:#FFFBF0}
+.rec-check{width:16px;height:16px;accent-color:var(--mcj-gold);cursor:pointer}
+.rec-sem-sala{font-size:11px;color:var(--gray-300);font-style:italic}
+.rec-pago-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--teal-400);margin-right:4px}
+.rec-pendente-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gray-200);margin-right:4px}
+.rec-actions-bar{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.rec-select-count{font-size:13px;color:var(--gray-600);font-weight:500}
+.rec-turma-badge{font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px}
+
+/* ================================================================
+   PAINEL DE CRACHÁS
+================================================================ */
+.cracha-panel-overlay{position:fixed;inset:0;background:rgba(61,36,16,.5);z-index:600;display:none;align-items:stretch}
+.cracha-panel-overlay.open{display:flex}
+.cracha-panel{background:white;width:min(520px,100vw);margin-left:auto;display:flex;flex-direction:column;overflow:hidden;box-shadow:-4px 0 30px rgba(0,0,0,.15)}
+.cracha-panel-header{background:var(--mcj-dark);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--mcj-gold);flex-shrink:0}
+.cracha-panel-title{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white}
+.cracha-panel-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0}
+.cracha-panel-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1.25rem;display:flex;flex-direction:column;gap:1.25rem}
+.cracha-panel-footer{padding:1rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;background:var(--mcj-cream)}
+.cracha-cfg-group{display:flex;flex-direction:column;gap:8px}
+.cracha-cfg-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);display:flex;align-items:center;gap:6px}
+.cracha-cfg-group-title::after{content:'';flex:1;height:1px;background:var(--gray-100)}
+.cracha-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0}
+.cracha-toggle-label{font-size:13px;font-weight:500;color:var(--gray-800)}
+
+/* Preview do crachá */
+.cracha-preview-wrap{background:var(--gray-50);border:1px solid var(--gray-100);border-radius:12px;padding:1rem;display:flex;align-items:center;justify-content:center}
+.cracha-preview{width:180px;border-radius:8px;overflow:hidden;border:1.5px solid #D4B8A0;box-shadow:0 2px 12px rgba(0,0,0,.12);font-family:Georgia,serif;display:flex;flex-direction:column;position:relative;background:white}
+.cp-topo{padding:10px 12px 8px;text-align:center;position:relative;background-size:cover;background-position:center}
+.cp-evento{font-size:22px;font-weight:bold;line-height:1;letter-spacing:1px}
+.cp-ano{font-size:11px;font-weight:bold;letter-spacing:4px;margin-top:1px;opacity:.7}
+.cp-sub{font-size:6px;letter-spacing:1px;text-transform:uppercase;margin-top:3px;opacity:.5}
+.cp-corpo{padding:10px 12px 8px;flex:1;display:flex;flex-direction:column;gap:5px;background-size:cover;background-position:center}
+.cp-nome{font-weight:bold;text-align:center;line-height:1.2}
+.cp-nome-completo{font-size:7px;text-align:center;font-style:italic;color:#A08060;margin-top:-2px}
+.cp-divider{height:1px;background:linear-gradient(to right,transparent,#D4B8A0,transparent);margin:2px 0}
+.cp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.cp-item{background:#FAF5EF;border-radius:4px;padding:3px 4px;text-align:center}
+.cp-item-label{font-size:5.5px;text-transform:uppercase;letter-spacing:.5px;color:#A08060;font-weight:bold}
+.cp-item-val{font-size:7.5px;font-weight:bold;color:#2C1A08}
+.cp-inst{font-size:6.5px;text-align:center;font-style:italic;color:#7A5A3A;border-top:1px solid #F0E8DC;padding-top:4px;margin-top:2px}
+.cp-rodape{padding:5px 10px;background:#FAF5EF;border-top:1px solid #E8DDD0;display:flex;align-items:center;justify-content:space-between}
+.cp-funcao{font-size:6px;font-weight:bold;padding:1px 5px;border-radius:8px;text-transform:uppercase;letter-spacing:.3px}
+.cp-data{font-size:6px;color:#A08060;letter-spacing:.5px}
+
+/* ================================================================
+   AVALIAÇÃO DO EVENTO
+================================================================ */
+.aval-page{max-width:560px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.aval-hero{background:var(--mcj-dark);padding:2rem 1rem 1.5rem;text-align:center;border-bottom:3px solid var(--mcj-gold)}
+.aval-hero-title{font-family:'EB Garamond',Georgia,serif;font-size:clamp(1.4rem,5vw,2.2rem);font-weight:700;color:white;margin-bottom:.4rem}
+.aval-hero-sub{font-size:13px;color:rgba(255,255,255,.6);letter-spacing:.3px}
+.aval-card{background:white;border-radius:14px;border:1px solid var(--mcj-sand);padding:1.25rem;margin-bottom:1rem}
+.aval-criterio-label{font-size:14px;font-weight:600;color:var(--mcj-dark);margin-bottom:.75rem}
+.aval-stars{display:flex;gap:6px}
+.aval-star{font-size:28px;cursor:pointer;color:var(--mcj-sand);transition:color .1s,transform .1s;user-select:none;-webkit-user-select:none;touch-action:manipulation;pointer-events:all;display:inline-block;line-height:1}
+.aval-star.on{color:var(--mcj-gold)}
+.aval-star:hover{transform:scale(1.15)}
+.aval-comment{width:100%;padding:10px 12px;border:1px solid var(--gray-100);border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;resize:vertical;min-height:80px;background:var(--gray-50);color:var(--mcj-text)}
+.aval-comment:focus{border-color:var(--mcj-gold);background:white;outline:none}
+.aval-submit{width:100%;padding:14px;background:var(--mcj-gold);color:white;border:none;border-radius:12px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:.5rem;transition:background .15s}
+.aval-submit:hover{background:var(--mcj-mid)}
+.aval-submit:disabled{background:var(--gray-200);cursor:default}
+.aval-success{text-align:center;padding:3rem 1rem;display:none}
+.aval-success-icon{font-size:56px;margin-bottom:1rem}
+.aval-success-title{font-family:'EB Garamond',Georgia,serif;font-size:24px;font-weight:700;color:var(--mcj-dark);margin-bottom:.5rem}
+.aval-success-sub{font-size:14px;color:var(--gray-400)}
+
+/* Admin resultados */
+.aval-result-card{background:white;border-radius:14px;border:1px solid var(--mcj-sand);padding:1.25rem;margin-bottom:1rem}
+.aval-result-label{font-size:13px;font-weight:600;color:var(--mcj-dark);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.aval-result-media{font-size:18px;font-weight:800;color:var(--mcj-gold)}
+.aval-bar-wrap{height:10px;background:var(--gray-50);border-radius:20px;overflow:hidden;margin-bottom:4px}
+.aval-bar{height:100%;background:var(--mcj-gold);border-radius:20px;transition:width .4s}
+.aval-dist{display:flex;gap:4px;align-items:center;font-size:11px;color:var(--gray-400)}
+.aval-dist-star{color:var(--mcj-gold)}
+
+/* QR code no crachá */
+.cracha-qr{display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:4px}
+.cracha-qr-label{font-size:6px;text-transform:uppercase;letter-spacing:.5px;color:#A08060}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:800;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.lightbox.open{opacity:1;pointer-events:all}
+.lightbox img{max-width:100%;max-height:80vh;border-radius:10px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.lightbox-caption{color:rgba(255,255,255,.7);font-size:13px;font-weight:500;text-align:center}
+.lightbox-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.15);border:none;color:white;width:40px;height:40px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background .15s}
+.lightbox-close:hover{background:rgba(255,255,255,.3)}
 .polo-obs{font-size:12px;color:var(--gray-600);line-height:1.6;padding:8px 12px;background:var(--gray-50);border-radius:8px;border:1px solid var(--gray-100)}
 .btn-inscrever-polo{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;background:var(--mcj-gold);color:white;border:none;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;margin-top:auto;-webkit-appearance:none;align-self:flex-start}
 .btn-inscrever-polo:hover{background:var(--mcj-mid)}
@@ -538,6 +648,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   <button class="tab-btn" id="tab-sobre" onclick="showView('sobre',this)">✨ Sobre o Evento</button>
   <button class="tab-btn" id="tab-expositores" onclick="showView('expositores',this)">🎤 Expositores</button>
   <button class="tab-btn" id="tab-polos" onclick="showView('polos',this)">📍 Conheça os Polos</button>
+  <button class="tab-btn" id="tab-avaliacao" onclick="showView('avaliacao',this)" style="display:none">⭐ Avaliação</button>
   <button class="tab-btn admin-tab" id="tab-admin" onclick="showView('admin',this)">⚙ Administração</button>
 </div>
 
@@ -557,6 +668,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         <div class="hero-pill">⏰ 8h às 17h30</div>
         <div class="hero-pill">📍 Polos no Rio de Janeiro</div>
       </div>
+      <div class="hero-social" id="hero-social-links"></div>
     </div>
   </div>
 
@@ -566,6 +678,19 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   </div>
 
   <div class="form-wrap">
+    <div id="banner-avaliacao" style="display:none;background:linear-gradient(135deg,#065F46,#047857);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:24px">⭐</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:white">Avaliação do evento disponível!</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:2px">Compartilhe sua opinião sobre o MCJ 2026</div>
+        </div>
+      </div>
+      <button onclick="showView('avaliacao',document.getElementById('tab-avaliacao'))"
+        style="padding:9px 18px;background:white;border:none;border-radius:9px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;color:#065F46;cursor:pointer;white-space:nowrap;flex-shrink:0">
+        Avaliar agora →
+      </button>
+    </div>
     <div class="inscricoes-fechadas-banner" id="banner-fechado">
       <span style="font-size:22px">🔒</span>
       <div class="banner-text" id="banner-fechado-text"></div>
@@ -657,6 +782,22 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   <div class="expositores-page-wrap" id="expositores-content"></div>
 </div>
 
+<!-- VIEW: AVALIAÇÃO -->
+<div class="view" id="view-avaliacao">
+  <div class="aval-hero">
+    <div class="aval-hero-title">⭐ Avaliação do Evento</div>
+    <div class="aval-hero-sub">MCJ 2026 · Momentos com Jesus</div>
+  </div>
+  <div class="aval-page">
+    <div id="aval-form-wrap"></div>
+    <div class="aval-success" id="aval-success">
+      <div class="aval-success-icon">🙏</div>
+      <div class="aval-success-title">Obrigado pela avaliação!</div>
+      <div class="aval-success-sub">Sua opinião é muito importante para continuarmos melhorando o MCJ.</div>
+    </div>
+  </div>
+</div>
+
 <!-- VIEW: CONHEÇA OS POLOS -->
 <div class="view" id="view-polos">
   <div class="hero" style="min-height:clamp(180px,30vw,320px)">
@@ -695,11 +836,13 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
     <div class="admin-tabs" id="admin-tabs-bar">
       <button class="atab-btn active" id="atab-inscricoes" onclick="switchAdminTab('inscricoes',this)">📋 Inscrições</button>
-      <button class="atab-btn" id="atab-turmas" onclick="switchAdminTab('turmas',this)">🏫 Definir Turmas</button>
-      <button class="atab-btn" id="atab-equipe" onclick="switchAdminTab('equipe',this)">🔧 Equipe de Trabalho</button>
-      <button class="atab-btn" id="atab-config" onclick="switchAdminTab('config',this)">⚙ Configuração dos Polos</button>
-      <button class="atab-btn" id="atab-evento" onclick="switchAdminTab('evento',this)">✨ Sobre / Expositores</button>
-      <button class="atab-btn" id="atab-usuarios" onclick="switchAdminTab('usuarios',this)">👥 Coordenadores</button>
+      <button class="atab-btn" id="atab-turmas" onclick="switchAdminTab('turmas',this)">🏫 Turmas</button>
+      <button class="atab-btn" id="atab-equipe" onclick="switchAdminTab('equipe',this)">🔧 Equipe</button>
+      <button class="atab-btn" id="atab-recepcao" onclick="switchAdminTab('recepcao',this)">🎫 Recepção</button>
+      <button class="atab-btn" id="atab-config" onclick="switchAdminTab('config',this)">⚙ Polos</button>
+      <button class="atab-btn" id="atab-evento" onclick="switchAdminTab('evento',this)">✨ Evento / Expositores</button>
+      <button class="atab-btn" id="atab-avaliacao" onclick="switchAdminTab('avaliacao',this)">⭐ Avaliações</button>
+      <button class="atab-btn" id="atab-usuarios" onclick="switchAdminTab('usuarios',this)">👥 Usuários</button>
     </div>
     <div class="admin-panel active" id="apanel-inscricoes">
       <div class="summary-grid" id="summary-grid"></div>
@@ -718,6 +861,12 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       </div>
       <div class="config-grid" id="config-grid"></div>
     </div>
+    <div class="admin-panel" id="apanel-recepcao">
+      <div id="recepcao-wrap"></div>
+    </div>
+    <div class="admin-panel" id="apanel-avaliacao">
+      <div id="avaliacao-admin-wrap"></div>
+    </div>
     <div class="admin-panel" id="apanel-evento">
       <div id="evento-admin-wrap"></div>
     </div>
@@ -726,24 +875,37 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         <h3>Gestão de usuários</h3>
         <button class="btn-add-user" onclick="abrirUserModal()">+ Novo usuário</button>
       </div>
-      <!-- Administradores -->
+
+      <!-- Administradores Gerais -->
       <div class="users-table-wrap">
-        <div class="users-table-title">🔒 Administradores gerais</div>
+        <div class="users-table-title">🔒 Administradores Gerais — acesso total ao sistema</div>
         <div class="users-table-scroll">
-        <table class="users-table">
-          <thead><tr><th>Usuário</th><th>Nome</th><th>Acesso</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody id="tbody-admins"></tbody>
-        </table>
+          <table class="users-table">
+            <thead><tr><th>Usuário</th><th>Nome</th><th>Acesso</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="tbody-admins"></tbody>
+          </table>
         </div>
       </div>
+
+      <!-- Administradores de Polo -->
+      <div class="users-table-wrap">
+        <div class="users-table-title">🏫 Administradores de Polo — tudo referente ao polo</div>
+        <div class="users-table-scroll">
+          <table class="users-table">
+            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="tbody-admin-polos"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Coordenadores -->
       <div class="users-table-wrap">
-        <div class="users-table-title">👤 Coordenadores de polo</div>
+        <div class="users-table-title">👤 Coordenadores — inscrição, recepção, turmas e equipe</div>
         <div class="users-table-scroll">
-        <table class="users-table">
-          <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody id="tbody-coords"></tbody>
-        </table>
+          <table class="users-table">
+            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="tbody-coords"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -762,8 +924,9 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <div class="user-field">
         <label>Tipo de acesso *</label>
         <select id="u-role" onchange="onRoleChange()">
-          <option value="admin">Administrador geral</option>
-          <option value="coord">Coordenador de polo</option>
+          <option value="admin">Administrador Geral</option>
+          <option value="admin_polo">Administrador de Polo</option>
+          <option value="coord">Coordenador</option>
         </select>
       </div>
       <div class="user-field">
@@ -784,7 +947,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <div class="user-field" id="u-polos-field" style="display:none">
         <label>Polos atribuídos *</label>
         <div class="polo-checkboxes" id="u-polos-checkboxes"></div>
-        <div class="coord-scope-note">O coordenador terá acesso total (visualizar, exportar e fechar inscrições) apenas nos polos selecionados.</div>
+        <div class="coord-scope-note" id="coord-scope-note">Selecione os polos que este usuário poderá gerenciar.</div>
       </div>
       <div class="user-field">
         <label>Status</label>
@@ -907,6 +1070,123 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <button class="btn-ok" onclick="confirmarAddPolo()">Adicionar polo</button>
     </div>
   </div>
+</div>
+
+<!-- PAINEL CRACHÁS -->
+<div class="cracha-panel-overlay" id="cracha-panel-overlay" onclick="if(event.target===this)fecharPainelCracha()">
+  <div class="cracha-panel">
+    <div class="cracha-panel-header">
+      <div class="cracha-panel-title">🪪 Configurar Crachás</div>
+      <button class="cracha-panel-close" onclick="fecharPainelCracha()">×</button>
+    </div>
+    <div class="cracha-panel-body">
+
+      <!-- PREVIEW -->
+      <div class="cracha-cfg-group">
+        <div class="cracha-cfg-group-title">Pré-visualização</div>
+        <div class="cracha-preview-wrap">
+          <div class="cracha-preview" id="cracha-preview-card">
+            <!-- renderizado por JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGEM DE FUNDO -->
+      <div class="cracha-cfg-group">
+        <div class="cracha-cfg-group-title">🖼 Imagem de fundo</div>
+        <div class="cfg-field">
+          <label>URL da imagem (jpg/png — GitHub ou outro host)</label>
+          <input type="url" id="cc-bg-url" placeholder="https://raw.githubusercontent.com/..." oninput="atualizarPreviewCracha()">
+          <span style="font-size:11px;color:var(--gray-400);margin-top:3px">A imagem será usada como fundo do crachá inteiro. Tamanho ideal: 400×600px.</span>
+        </div>
+        <div class="cfg-field">
+          <label>Opacidade do overlay escuro sobre a imagem</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="range" id="cc-overlay" min="0" max="85" value="40" style="flex:1;accent-color:var(--mcj-gold)" oninput="document.getElementById('cc-overlay-val').textContent=this.value+'%';atualizarPreviewCracha()">
+            <span id="cc-overlay-val" style="font-size:12px;font-weight:600;color:var(--gray-600);min-width:32px">40%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CORES E TEXTO -->
+      <div class="cracha-cfg-group">
+        <div class="cracha-cfg-group-title">🎨 Cores e Texto</div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>Cor do topo</label>
+            <input type="color" id="cc-topo-bg" value="#2C1A08" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
+          </div>
+          <div class="cfg-field">
+            <label>Cor do título MCJ</label>
+            <input type="color" id="cc-titulo-cor" value="#C8873A" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
+          </div>
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>Cor do nome</label>
+            <input type="color" id="cc-nome-cor" value="#2C1A08" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
+          </div>
+          <div class="cfg-field">
+            <label>Tamanho do nome</label>
+            <select id="cc-nome-size" oninput="atualizarPreviewCracha()">
+              <option value="16">Pequeno</option>
+              <option value="20" selected>Médio</option>
+              <option value="26">Grande</option>
+              <option value="32">Muito grande</option>
+            </select>
+          </div>
+        </div>
+        <div class="cfg-field">
+          <label>Texto do rodapé (direita)</label>
+          <input type="text" id="cc-rodape-texto" value="20 · 09 · 2026" oninput="atualizarPreviewCracha()">
+        </div>
+        <div class="cfg-row">
+          <div class="cfg-field">
+            <label>Cor do rodapé</label>
+            <input type="color" id="cc-rodape-cor" value="#A08060" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
+          </div>
+          <div class="cfg-field">
+            <label>Fundo do rodapé</label>
+            <input type="color" id="cc-rodape-bg" value="#FAF5EF" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
+          </div>
+        </div>
+      </div>
+
+      <!-- CAMPOS VISÍVEIS -->
+      <div class="cracha-cfg-group">
+        <div class="cracha-cfg-group-title">👁 Campos visíveis</div>
+        ${[
+          ['cc-show-subtitulo','Subtítulo "Momentos com Jesus"',true],
+          ['cc-show-nome-completo','Nome completo (abaixo do crachá)',true],
+          ['cc-show-polo','Polo',true],
+          ['cc-show-turma','Turma',true],
+          ['cc-show-sala','Sala',true],
+          ['cc-show-instituicao','Instituição de origem',true],
+          ['cc-show-funcao','Função (Trabalhador/Participante)',true],
+          ['cc-show-data','Data no rodapé',true],
+        ].map(([id,label,checked])=>`
+          <div class="cracha-toggle-row">
+            <span class="cracha-toggle-label">${label}</span>
+            <label class="toggle-switch" style="transform:scale(.8)">
+              <input type="checkbox" id="${id}" ${checked?'checked':''} onchange="atualizarPreviewCracha()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>`).join('')}
+      </div>
+
+    </div>
+    <div class="cracha-panel-footer">
+      <button onclick="fecharPainelCracha()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">Cancelar</button>
+      <button onclick="gerarCrachas()" class="btn-cfg-save" style="display:flex;align-items:center;gap:7px">🖨 Gerar e Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="fecharLightbox()">
+  <button class="lightbox-close" onclick="fecharLightbox()">×</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
 </div>
 
 <footer>MCJ 2026 · 20 de setembro de 2026 · Rio de Janeiro</footer>
@@ -1129,11 +1409,40 @@ let _cfgEvento = {
   tema_tarde: 'Jesus Forja Pedro para o Futuro',
   data: '20 de setembro de 2026', horario: '8h às 17h30',
   local: 'Rio de Janeiro',
+  instagram: '', facebook: '',
+  aval_criterios: null, // null = usa AVAL_CRITERIOS_DEFAULT
+  aval_aberta: false,   // avaliação aberta ao público
   expositores_lista: []  // [{ nome, foto, bio }]
 };
 
 function getExpositores(){ return _cfgEvento.expositores_lista || []; }
 function getExpByNome(nome){ return getExpositores().find(e=>e.nome===nome)||null; }
+
+function renderBannerAvaliacao(){
+  const aberta = _cfgEvento.aval_aberta === true;
+  const banner = document.getElementById('banner-avaliacao');
+  const tabBtn = document.getElementById('tab-avaliacao');
+  if(banner) banner.style.display = aberta ? 'flex' : 'none';
+  if(tabBtn) tabBtn.style.display = aberta ? '' : 'none';
+}
+
+function renderHeroSocial(){
+  const el = document.getElementById('hero-social-links');
+  if(!el) return;
+  const ig = _cfgEvento.instagram||'';
+  const fb = _cfgEvento.facebook||'';
+  if(!ig && !fb){ el.style.display='none'; return; }
+  el.style.display='flex';
+  el.innerHTML = `
+    ${ig ? `<a href="${ig}" target="_blank" rel="noopener" class="hero-social-btn" title="Instagram" aria-label="Instagram">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      </svg></a>` : ''}
+    ${fb ? `<a href="${fb}" target="_blank" rel="noopener" class="hero-social-btn" title="Facebook" aria-label="Facebook">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+      </svg></a>` : ''}`;
+}
 
 async function setCfgEvento(){
   if(!supaConfigurado()) return;
@@ -1218,6 +1527,14 @@ async function carregarTudo(){
   try {
     // Paralelo: todas as três tabelas ao mesmo tempo
     await Promise.all([carregarInscricoes(), carregarConfig(), carregarUsuarios(), carregarCfgEvento()]);
+    renderHeroSocial();
+    renderBannerAvaliacao();
+    // Detecta ?avaliacao=1 na URL — abre direto na avaliação
+    if(new URLSearchParams(window.location.search).get('avaliacao')==='1'){
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      _ativarView('avaliacao');
+      renderAvaliacao();
+    }
   } catch(e){ console.error('Erro no carregamento inicial:', e); }
 
   carregarPolos(); renderPoloGrid(); atualizarBanner();
@@ -1279,7 +1596,7 @@ function isAdminMaster(login){ return login===ADMIN_USER; }
 // verifica se um polo está dentro do escopo do usuário logado
 function poloNoEscopo(nomeOuIdx){
   if(SESSION.role==='admin') return true;
-  if(SESSION.role==='coord'){
+  if(SESSION.role==='admin_polo' || SESSION.role==='coord'){
     const nome = typeof nomeOuIdx==='number' ? POLOS[nomeOuIdx]?.nome : nomeOuIdx;
     return SESSION.polos.includes(nome);
   }
@@ -1291,42 +1608,44 @@ function poloNoEscopo(nomeOuIdx){
 ================================================================ */
 function renderUsuarios(){
   const users = getUsers();
-  const admins = users.filter(u=>u.role==='admin');
-  const coords = users.filter(u=>u.role==='coord');
+  const admins      = users.filter(u=>u.role==='admin');
+  const adminPolos  = users.filter(u=>u.role==='admin_polo');
+  const coords      = users.filter(u=>u.role==='coord');
 
-  // tabela admins
+  function rowsFor(list, showPolos){
+    if(list.length===0) return '<tr class="empty-row"><td colspan="5">Nenhum usuário nesta categoria.</td></tr>';
+    return list.map(u=>`<tr>
+      <td><strong>${u.login}</strong></td>
+      <td>${u.nome}</td>
+      ${showPolos?`<td><div class="user-polo-tags">${(u.polos||[]).map(p=>`<span class="user-polo-tag">${p}</span>`).join('')||'<span style="color:var(--gray-400);font-size:12px">Nenhum polo</span>'}</div></td>`:'<td>—</td>'}
+      <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
+      <td><button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button><button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button></td>
+    </tr>`).join('');
+  }
+
+  // Admins gerais
   const tbA = document.getElementById('tbody-admins');
   if(tbA){
     const allAdmins = [{id:'__master__', login:ADMIN_USER, nome:'Administrador Principal', role:'admin', status:'ativo', polos:[]},...admins];
-    tbA.innerHTML = allAdmins.map(u=>`
-      <tr>
-        <td><strong>${u.login}</strong></td>
-        <td>${u.nome}</td>
-        <td><span class="role-badge role-admin">Admin geral</span></td>
-        <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
-        <td>${u.id==='__master__'
-          ? '<span style="font-size:11px;color:var(--gray-400)">conta principal</span>'
-          : `<button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button><button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button>`
-        }</td>
-      </tr>`).join('');
+    tbA.innerHTML = allAdmins.map(u=>`<tr>
+      <td><strong>${u.login}</strong></td>
+      <td>${u.nome}</td>
+      <td><span class="role-badge role-admin">Admin geral</span></td>
+      <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
+      <td>${u.id==='__master__'
+        ? '<span style="font-size:11px;color:var(--gray-400)">conta principal</span>'
+        : `<button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button><button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button>`
+      }</td>
+    </tr>`).join('');
   }
 
-  // tabela coords
+  // Admins de polo
+  const tbP = document.getElementById('tbody-admin-polos');
+  if(tbP) tbP.innerHTML = rowsFor(adminPolos, true);
+
+  // Coordenadores
   const tbC = document.getElementById('tbody-coords');
-  if(tbC){
-    if(coords.length===0){
-      tbC.innerHTML='<tr class="empty-row"><td colspan="5">Nenhum coordenador cadastrado ainda.</td></tr>';
-    } else {
-      tbC.innerHTML = coords.map(u=>`
-        <tr>
-          <td><strong>${u.login}</strong></td>
-          <td>${u.nome}</td>
-          <td><div class="user-polo-tags">${(u.polos||[]).map(p=>`<span class="user-polo-tag">${p}</span>`).join('') || '<span style="color:var(--gray-400);font-size:12px">Nenhum polo</span>'}</div></td>
-          <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
-          <td><button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button><button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button></td>
-        </tr>`).join('');
-    }
-  }
+  if(tbC) tbC.innerHTML = rowsFor(coords, true);
 }
 
 /* ================================================================
@@ -1372,7 +1691,12 @@ function fecharUserModal(){
 
 function onRoleChange(){
   const r = document.getElementById('u-role').value;
-  document.getElementById('u-polos-field').style.display = r==='coord'?'flex':'none';
+  document.getElementById('u-polos-field').style.display = (r==='admin_polo'||r==='coord')?'flex':'none';
+  const note = document.getElementById('coord-scope-note');
+  if(note){
+    if(r==='admin_polo') note.textContent='O administrador de polo terá acesso total ao polo (inscrições, turmas, equipe, recepção e configuração).';
+    else if(r==='coord') note.textContent='O coordenador poderá acessar inscrições, recepção, turmas e equipe nos polos selecionados.';
+  }
 }
 
 function toggleSenhaUser(){
@@ -1389,7 +1713,7 @@ function salvarUsuario(){
   const login  = document.getElementById('u-login').value.trim().toLowerCase().replace(/\s+/g,'');
   const senha  = document.getElementById('u-senha').value;
   const status = document.getElementById('u-status').value;
-  const polos  = role==='coord'
+  const polos  = (role==='admin_polo'||role==='coord')
     ? [...document.querySelectorAll('#u-polos-checkboxes input:checked')].map(c=>c.value)
     : [];
 
@@ -1397,7 +1721,7 @@ function salvarUsuario(){
   if(!login){ errEl.textContent='Informe o usuário de login.'; errEl.classList.add('show'); return; }
   if(!_editingUserId && !senha){ errEl.textContent='Informe a senha.'; errEl.classList.add('show'); return; }
   if(senha && senha.length<6){ errEl.textContent='A senha deve ter ao menos 6 caracteres.'; errEl.classList.add('show'); return; }
-  if(role==='coord' && polos.length===0){ errEl.textContent='Selecione ao menos um polo para o coordenador.'; errEl.classList.add('show'); return; }
+  if((role==='admin_polo'||role==='coord') && polos.length===0){ errEl.textContent='Selecione ao menos um polo.'; errEl.classList.add('show'); return; }
 
   // login não pode ser igual ao admin master nem duplicado
   if(login===ADMIN_USER){ errEl.textContent='Este usuário é reservado.'; errEl.classList.add('show'); return; }
@@ -1538,6 +1862,7 @@ function showView(id, btn){
   if(id==='polos'){ renderPolos(); }
   if(id==='sobre'){ renderSobre(); }
   if(id==='expositores'){ renderExpositores(); }
+  if(id==='avaliacao'){ renderAvaliacao(); }
   _ativarView(id);
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -1655,7 +1980,7 @@ function renderExpositores(){
       return `<div class="expositor-card">
         <div class="expositor-foto-wrap">
           ${exp.foto
-            ? `<img class="expositor-foto" src="${esc(exp.foto)}" alt="${esc(exp.nome)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=expositor-foto-placeholder>🎤</div>'">`
+            ? `<img class="expositor-foto" src="${esc(exp.foto)}" alt="${esc(exp.nome)}" loading="lazy" style="cursor:zoom-in" onclick="abrirLightbox('${exp.foto.replace(/'/g,"\\'")}','${exp.nome.replace(/'/g,"\\'")}' )" onerror="this.parentElement.innerHTML='<div class=expositor-foto-placeholder>🎤</div>'">`
             : '<div class="expositor-foto-placeholder">🎤</div>'}
         </div>
         <div class="expositor-body">
@@ -1702,6 +2027,16 @@ function renderEventoAdmin(){
           <div class="cfg-field"><label>Tema da Manhã</label><input type="text" id="ev-tema-manha" value="${esc(e.tema_manha||'O Renascer de Nicodemos')}"></div>
           <div class="cfg-field"><label>Tema da Tarde</label><input type="text" id="ev-tema-tarde" value="${esc(e.tema_tarde||'Jesus Forja Pedro para o Futuro')}"></div>
           <div class="cfg-field"><label>Texto de apresentação</label><textarea id="ev-descricao" rows="5" placeholder="Fale sobre o evento, sua proposta, público...">${esc(e.descricao||'')}</textarea></div>
+          <div class="cfg-row">
+            <div class="cfg-field">
+              <label>Instagram (URL)</label>
+              <input type="url" id="ev-instagram" value="${esc(e.instagram||'')}" placeholder="https://instagram.com/mcj2026">
+            </div>
+            <div class="cfg-field">
+              <label>Facebook (URL)</label>
+              <input type="url" id="ev-facebook" value="${esc(e.facebook||'')}" placeholder="https://facebook.com/mcj2026">
+            </div>
+          </div>
         </div>
         <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;justify-content:flex-end">
           <button class="btn-cfg-save" onclick="salvarEventoCfg()">Salvar informações</button>
@@ -1759,6 +2094,22 @@ function renderEventoAdmin(){
 }
 
 let _editExpIdx = null;
+
+function salvarEventoCfg(){
+  _cfgEvento.subtitulo  = document.getElementById('ev-subtitulo')?.value.trim()||'';
+  _cfgEvento.data       = document.getElementById('ev-data')?.value.trim()||'';
+  _cfgEvento.horario    = document.getElementById('ev-horario')?.value.trim()||'';
+  _cfgEvento.local      = document.getElementById('ev-local')?.value.trim()||'';
+  _cfgEvento.tema_manha = document.getElementById('ev-tema-manha')?.value.trim()||'';
+  _cfgEvento.tema_tarde = document.getElementById('ev-tema-tarde')?.value.trim()||'';
+  _cfgEvento.descricao  = document.getElementById('ev-descricao')?.value.trim()||'';
+  _cfgEvento.instagram  = document.getElementById('ev-instagram')?.value.trim()||'';
+  _cfgEvento.facebook   = document.getElementById('ev-facebook')?.value.trim()||'';
+  setCfgEvento();
+  renderHeroSocial();
+  const btns = document.querySelectorAll('#evento-admin-wrap .btn-cfg-save');
+  if(btns[0]){ const t=btns[0].textContent; btns[0].textContent='✓ Salvo!'; setTimeout(()=>btns[0].textContent=t,2000); }
+}
 
 function abrirModalExpositor(idx){
   _editExpIdx = idx ?? null;
@@ -1843,7 +2194,7 @@ function renderPolos(){
 
     // fotos
     const fotosHtml = (p.fotos&&p.fotos.length)
-      ? p.fotos.map(url=>`<img class="polo-foto" src="${url}" alt="Foto do polo ${p.nome}" loading="lazy" onerror="this.style.display='none'">`).join('')
+      ? p.fotos.map(url=>`<img class="polo-foto" src="${url}" alt="Foto do polo ${p.nome}" loading="lazy" onclick="abrirLightbox('${url.replace(/'/g,"\\'")}','${p.nome.replace(/'/g,"\\'")}' )" style="cursor:zoom-in" onerror="this.style.display='none'">`).join('')
       : `<div class="polo-foto-placeholder">📷<br>Fotos em breve</div>`;
 
     // mapa embed — tenta extrair query do link do maps
@@ -1924,26 +2275,36 @@ function _ativarView(id){
 
 // Aplica restrições visuais conforme o papel do usuário logado
 function aplicarEscopoAdmin(){
-  const isAdmin = SESSION.role==='admin';
-  const isCoord = SESSION.role==='coord';
+  const isAdmin     = SESSION.role==='admin';
+  const isAdminPolo = SESSION.role==='admin_polo';
+  const isCoord     = SESSION.role==='coord';
+  const temPolo     = isAdminPolo || isCoord;
 
-  // barras de sessão
   document.getElementById('bar-admin').style.display = isAdmin?'flex':'none';
-  document.getElementById('bar-coord').style.display = isCoord?'flex':'none';
+  document.getElementById('bar-coord').style.display = temPolo?'flex':'none';
+
   if(isAdmin){
     document.getElementById('admin-user-nome').textContent = SESSION.nome||SESSION.login;
   } else {
     document.getElementById('coord-user-nome').textContent = SESSION.nome||SESSION.login;
+    const label = isAdminPolo ? 'Admin de Polo' : 'Coordenador';
     const tagsEl = document.getElementById('coord-polo-tags-bar');
-    tagsEl.innerHTML = SESSION.polos.map(p=>`<span class="coord-polo-tag-bar">${p}</span>`).join('');
+    tagsEl.innerHTML = `<span style="font-size:11px;opacity:.7;margin-right:4px">${label}:</span>`
+      + SESSION.polos.map(p=>`<span class="coord-polo-tag-bar">${p}</span>`).join('');
   }
 
-  // aba coordenadores: só admin | config e turmas: ambos | exportar todos: só admin
-  document.getElementById('atab-usuarios').style.display  = isAdmin?'':'none';
-  document.getElementById('atab-config').style.display    = '';
-  document.getElementById('atab-turmas').style.display    = '';
-  document.getElementById('atab-equipe').style.display    = '';
-  document.getElementById('atab-evento').style.display    = isAdmin?'':'none';
+  // admin geral: tudo
+  // admin_polo: inscrições, turmas, equipe, recepção, ⚙ Polos (só seus)  — sem evento/usuários
+  // coord: inscrições, turmas, equipe, recepção — sem ⚙ Polos, evento, usuários
+  document.getElementById('atab-inscricoes').style.display = '';
+  document.getElementById('atab-turmas').style.display     = '';
+  document.getElementById('atab-equipe').style.display     = '';
+  document.getElementById('atab-recepcao').style.display   = '';
+  document.getElementById('atab-config').style.display     = (isAdmin||isAdminPolo)?'':'none';
+  document.getElementById('atab-evento').style.display     = isAdmin?'':'none';
+  document.getElementById('atab-avaliacao').style.display  = isAdmin?'':'none';
+  document.getElementById('atab-usuarios').style.display   = isAdmin?'':'none';
+
   document.getElementById('btn-exportar-todos').style.display = isAdmin?'':'none';
   document.getElementById('admin-panel-title').textContent = isAdmin
     ? 'Painel de inscrições'
@@ -1951,17 +2312,23 @@ function aplicarEscopoAdmin(){
 }
 
 function switchAdminTab(id, btn){
-  // coordenador pode ver inscrições, turmas e config; não pode ver usuários
-  if(SESSION.role==='coord' && id==='usuarios') return;
+  const role = SESSION.role;
+  // bloqueios por papel
+  if(role==='coord'      && (id==='usuarios'||id==='config'||id==='evento'||id==='avaliacao')) return;
+  if(role==='admin_polo' && (id==='usuarios'||id==='evento'||id==='avaliacao')) return;
+
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.atab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('apanel-'+id).classList.add('active');
   btn.classList.add('active');
-  if(id==='config') renderConfig();
+
+  if(id==='avaliacao') renderAvaliacaoAdmin();
+  if(id==='recepcao') renderRecepcao();
+  if(id==='config')   renderConfig();
   if(id==='inscricoes') renderAdmin();
-  if(id==='turmas') renderTurmas();
-  if(id==='equipe') renderEquipe();
-  if(id==='evento') renderEventoAdmin();
+  if(id==='turmas')   renderTurmas();
+  if(id==='equipe')   renderEquipe();
+  if(id==='evento')   renderEventoAdmin();
   if(id==='usuarios') renderUsuarios();
 }
 
@@ -2493,11 +2860,16 @@ function renderTurmas(){
         <span style="background:${cor(POLOS.indexOf(polo)).bg};color:${cor(POLOS.indexOf(polo)).text};border:1px solid ${cor(POLOS.indexOf(polo)).border};padding:3px 10px;border-radius:20px;font-size:13px">${polo.nome}</span>
         Definir Turmas
         <span style="font-size:12px;font-weight:400;color:var(--gray-400)">${totalAtribuidos}/${totalFiltrados} atribuídos</span>
-        <button onclick="imprimirListagemTurmas('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
-          style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--blue-600);color:white;border:none;border-radius:8px;font-family:Inter,sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap"
-          onmouseover="this.style.background='var(--blue-800)'" onmouseout="this.style.background='var(--blue-600)'">
-          🖨 Imprimir listagem
-        </button>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button onclick="imprimirListagemTurmas('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-mid);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+            🖨 Listagem
+          </button>
+          <button onclick="abrirPainelCracha('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+            🪪 Crachás
+          </button>
+        </div>
       </div>
       <div class="turmas-turma-tabs">
         <button class="turma-tab ${_turmaTurmaAtiva==='Adulto'?'active':''}" onclick="selecionarTurmaTipo('Adulto',this)">👤 Adulto (${inscritos.filter(p=>p.turma==='Adulto').length})</button>
@@ -2529,6 +2901,378 @@ function selecionarTurmaPolo(nomeP, btn){
 function selecionarTurmaTipo(tipo, btn){
   _turmaTurmaAtiva = tipo;
   renderTurmas();
+}
+
+/* ================================================================
+   RECEPÇÃO
+================================================================ */
+let _recPoloAtivo   = null;
+let _recTurmaAtiva  = 'Adulto';
+let _recSelecionados = new Set(); // emails selecionados
+
+function renderRecepcao(){
+  const wrap = document.getElementById('recepcao-wrap');
+  if(!wrap) return;
+  const d = getIns();
+
+  const polosVis = SESSION.role==='admin'
+    ? POLOS
+    : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+
+  if(polosVis.length===0){
+    wrap.innerHTML='<p style="color:var(--gray-400);padding:1rem 0">Nenhum polo disponível.</p>';
+    return;
+  }
+
+  if(!_recPoloAtivo || !polosVis.find(p=>p.nome===_recPoloAtivo)){
+    _recPoloAtivo = polosVis[0].nome;
+  }
+
+  // Seletor de polo
+  const poloTabsHtml = polosVis.length>1
+    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">${
+        polosVis.map(p=>{
+          const idx=POLOS.indexOf(p); const c=cor(idx);
+          return `<button onclick="selecionarRecPolo('${p.nome.replace(/'/g,"\\'")}',this)"
+            style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${_recPoloAtivo===p.nome?c.badge:'var(--gray-100)'};background:${_recPoloAtivo===p.nome?c.bg:'white'};color:${_recPoloAtivo===p.nome?c.text:'var(--gray-600)'}">
+            ${p.nome}
+          </button>`;
+        }).join('')
+      }</div>`
+    : '';
+
+  const polo = polosVis.find(p=>p.nome===_recPoloAtivo)||polosVis[0];
+  const todos = d.filter(x=>x.polo===polo.nome);
+  const cl    = cor(POLOS.indexOf(polo));
+
+  // Abas Adulto/Mocidade
+  const turmaTabs = `
+    <div style="display:flex;gap:8px;margin-bottom:1rem">
+      <button class="turma-tab ${_recTurmaAtiva==='Adulto'?'active':''}" onclick="selecionarRecTurma('Adulto')">👤 Adulto (${todos.filter(p=>p.turma==='Adulto').length})</button>
+      <button class="turma-tab ${_recTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarRecTurma('Mocidade')">🌟 Mocidade (${todos.filter(p=>p.turma==='Mocidade').length})</button>
+    </div>`;
+
+  const inscritos = todos.filter(x=>x.turma===_recTurmaAtiva);
+
+  // Agrupa por sala (sem sala no final)
+  const salas = [...new Set(inscritos.filter(x=>x.sala&&x.sala!=='').map(x=>x.sala))].sort();
+  const semSala = inscritos.filter(x=>!x.sala||x.sala==='');
+
+  function linhaHtml(p,j){
+    const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
+    const pago = p.pagamento==='Confirmado';
+    const trab = p.trabalhador===true||p.trabalhador==='true';
+    const sel  = _recSelecionados.has(p.email+'|'+p.polo);
+    return `<tr class="${sel?'selecionado':''}">
+      <td class="th-check" style="text-align:center">
+        <input type="checkbox" class="rec-check" ${sel?'checked':''}
+          onchange="toggleRecSel('${p.email.replace(/'/g,"\\'")}','${p.polo.replace(/'/g,"\\'")}',this.checked,this.closest('tr'))"
+          onclick="event.stopPropagation()">
+      </td>
+      <td style="font-weight:700;color:var(--mcj-dark)">${nomeExibir}</td>
+      <td style="color:var(--gray-600);font-size:12px">${p.nome}</td>
+      <td style="text-align:center;font-size:12px">${calcularIdade(p.nascimento)!=='—'?calcularIdade(p.nascimento)+' a':'—'}</td>
+      <td><span class="${pago?'rec-pago-dot':'rec-pendente-dot'}"></span>${pago?'<span style="font-size:11px;color:var(--teal-600)">Pago</span>':'<span style="font-size:11px;color:var(--gray-400)">Pendente</span>'}</td>
+      <td style="font-size:12px;color:var(--gray-500);font-style:italic">${p.instituicao!=='—'?p.instituicao:''}</td>
+      <td style="font-size:11px;font-weight:600;color:${trab?'#4A1575':'var(--gray-400)'}">${trab?'🔧 Trab.':'Partic.'}</td>
+    </tr>`;
+  }
+
+  function salaBlock(nomeSala, lista){
+    if(!lista.length) return '';
+    return `<div class="rec-sala-section">
+      <div class="rec-sala-title">${nomeSala?`Sala ${nomeSala}`:'Sem sala atribuída'}</div>
+      <div class="table-scroll">
+      <table class="rec-table">
+        <thead><tr>
+          <th class="th-check"><input type="checkbox" class="rec-check" onchange="selecionarSala(this,'${nomeSala}','${polo.nome.replace(/'/g,"\\'")}','${_recTurmaAtiva}')"></th>
+          <th>Crachá</th><th>Nome completo</th><th>Idade</th><th>Pgto</th><th>Instituição</th><th>Função</th>
+        </tr></thead>
+        <tbody>${lista.map((p,j)=>linhaHtml(p,j)).join('')}</tbody>
+      </table>
+      </div>
+    </div>`;
+  }
+
+  const selectedCount = [..._recSelecionados].filter(k=>k.endsWith('|'+polo.nome)).length;
+
+  wrap.innerHTML = `
+    ${poloTabsHtml}
+    <div class="rec-actions-bar">
+      <span class="rec-select-count">${selectedCount>0?`<strong>${selectedCount}</strong> selecionado${selectedCount!==1?'s':''}`:'Selecione os inscritos para gerar crachás'}</span>
+      ${selectedCount>0?`
+        <button onclick="gerarCrachasSelecao('${polo.nome.replace(/'/g,"\\'")}','${_recTurmaAtiva}')"
+          style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">
+          🪪 Gerar Crachás (${selectedCount})
+        </button>
+        <button onclick="limparSelecao()" style="padding:8px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">Limpar seleção</button>`:''}
+      <button onclick="selecionarTodos('${polo.nome.replace(/'/g,"\\'")}','${_recTurmaAtiva}')"
+        style="margin-left:auto;padding:8px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">
+        Selecionar todos
+      </button>
+    </div>
+    ${turmaTabs}
+    <div class="rec-polo-section">
+      ${salas.map(s=>salaBlock(s, inscritos.filter(x=>x.sala===s).sort((a,b)=>{
+        const nA=(a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
+        const nB=(b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
+        return nA.localeCompare(nB,'pt-BR');
+      }))).join('')}
+      ${salaBlock('', semSala.sort((a,b)=>{
+        const nA=(a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
+        const nB=(b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
+        return nA.localeCompare(nB,'pt-BR');
+      }))}
+    </div>`;
+}
+
+function selecionarRecPolo(nome){ _recPoloAtivo=nome; renderRecepcao(); }
+function selecionarRecTurma(t){ _recTurmaAtiva=t; renderRecepcao(); }
+
+function toggleRecSel(email, polo, checked, row){
+  const key=email+'|'+polo;
+  if(checked) _recSelecionados.add(key);
+  else _recSelecionados.delete(key);
+  if(row) row.classList.toggle('selecionado',checked);
+  atualizarContadorRec(polo);
+}
+
+function atualizarContadorRec(polo){
+  const count=[..._recSelecionados].filter(k=>k.endsWith('|'+polo)).length;
+  const el=document.querySelector('.rec-select-count');
+  if(el) el.innerHTML=count>0?`<strong>${count}</strong> selecionado${count!==1?'s':''}`: 'Selecione os inscritos para gerar crachás';
+  // re-render só a barra de ações para mostrar/ocultar botões
+  renderRecepcao();
+}
+
+function selecionarSala(chkAll, sala, polo, turma){
+  const d=getIns();
+  const lista=d.filter(x=>x.polo===polo&&x.turma===turma&&(sala?x.sala===sala:(!x.sala||x.sala==='')));
+  lista.forEach(p=>{
+    const key=p.email+'|'+p.polo;
+    if(chkAll.checked) _recSelecionados.add(key);
+    else _recSelecionados.delete(key);
+  });
+  renderRecepcao();
+}
+
+function selecionarTodos(polo, turma){
+  const d=getIns();
+  d.filter(x=>x.polo===polo&&x.turma===turma).forEach(p=>_recSelecionados.add(p.email+'|'+p.polo));
+  renderRecepcao();
+}
+
+function limparSelecao(){ _recSelecionados.clear(); renderRecepcao(); }
+
+function gerarCrachasSelecao(polo, turma){
+  const d=getIns();
+  const selecionados=d.filter(x=>{
+    const key=x.email+'|'+x.polo;
+    return _recSelecionados.has(key) && x.polo===polo && x.turma===turma;
+  });
+  if(!selecionados.length){ alert('Nenhum inscrito selecionado.'); return; }
+  // Abre o painel de configuração de crachás com os selecionados
+  _crachaPoloAtivo  = polo;
+  _crachaTurmaAtiva = turma;
+  _crachaSelecao    = selecionados; // passa a seleção
+  document.getElementById('cracha-panel-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  atualizarPreviewCracha();
+}
+
+let _crachaPoloAtivo  = null;
+let _crachaTurmaAtiva = null;
+let _crachaSelecao    = null; // null = todos com sala; array = selecionados da recepção
+
+function abrirPainelCracha(poloNome, turma){
+  _crachaPoloAtivo  = poloNome;
+  _crachaTurmaAtiva = turma;
+  document.getElementById('cracha-panel-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  atualizarPreviewCracha();
+}
+function fecharPainelCracha(){
+  document.getElementById('cracha-panel-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function getCrachaCfg(){
+  return {
+    bgUrl:        document.getElementById('cc-bg-url')?.value.trim()||'',
+    overlay:      parseInt(document.getElementById('cc-overlay')?.value||40),
+    topoBg:       document.getElementById('cc-topo-bg')?.value||'#2C1A08',
+    tituloCor:    document.getElementById('cc-titulo-cor')?.value||'#C8873A',
+    nomeCor:      document.getElementById('cc-nome-cor')?.value||'#2C1A08',
+    nomeSize:     parseInt(document.getElementById('cc-nome-size')?.value||20),
+    rodapeTexto:  document.getElementById('cc-rodape-texto')?.value||'20 · 09 · 2026',
+    rodapeCor:    document.getElementById('cc-rodape-cor')?.value||'#A08060',
+    rodapeBg:     document.getElementById('cc-rodape-bg')?.value||'#FAF5EF',
+    showSubtitulo:document.getElementById('cc-show-subtitulo')?.checked!==false,
+    showNomeCompleto:document.getElementById('cc-show-nome-completo')?.checked!==false,
+    showPolo:     document.getElementById('cc-show-polo')?.checked!==false,
+    showTurma:    document.getElementById('cc-show-turma')?.checked!==false,
+    showSala:     document.getElementById('cc-show-sala')?.checked!==false,
+    showInstituicao:document.getElementById('cc-show-instituicao')?.checked!==false,
+    showFuncao:   document.getElementById('cc-show-funcao')?.checked!==false,
+    showData:     document.getElementById('cc-show-data')?.checked!==false,
+  };
+}
+
+function atualizarPreviewCracha(){
+  const cfg = getCrachaCfg();
+  const card = document.getElementById('cracha-preview-card');
+  if(!card) return;
+
+  const bgStyle = cfg.bgUrl
+    ? `background-image:linear-gradient(rgba(0,0,0,${cfg.overlay/100}),rgba(0,0,0,${cfg.overlay/100})),url('${cfg.bgUrl}');background-size:cover;background-position:center`
+    : '';
+  const topoStyle = cfg.bgUrl ? bgStyle : `background:${cfg.topoBg}`;
+  const corpoStyle = cfg.bgUrl ? bgStyle : '';
+
+  card.innerHTML = `
+    <div class="cp-topo" style="${topoStyle}">
+      <div class="cp-evento" style="color:${cfg.tituloCor}">MCJ</div>
+      <div class="cp-ano" style="color:white">2026</div>
+      ${cfg.showSubtitulo?`<div class="cp-sub" style="color:white">Momentos com Jesus</div>`:''}
+    </div>
+    <div class="cp-corpo" style="${corpoStyle}">
+      <div class="cp-nome" style="color:${cfg.bgUrl?'white':cfg.nomeCor};font-size:${Math.round(cfg.nomeSize*0.55)}px">Nome do Crachá</div>
+      ${cfg.showNomeCompleto?`<div class="cp-nome-completo">Nome Completo da Pessoa</div>`:''}
+      <div class="cp-divider"></div>
+      <div class="cp-grid">
+        ${cfg.showPolo?`<div class="cp-item"><div class="cp-item-label">Polo</div><div class="cp-item-val" style="color:${cfg.bgUrl?'white':'#2C1A08'}">${_crachaPoloAtivo||'Polo'}</div></div>`:''}
+        ${cfg.showTurma?`<div class="cp-item"><div class="cp-item-label">Turma</div><div class="cp-item-val" style="color:${cfg.bgUrl?'white':'#2C1A08'}">${_crachaTurmaAtiva||'Turma'}</div></div>`:''}
+        ${cfg.showSala?`<div class="cp-item"><div class="cp-item-label">Sala</div><div class="cp-item-val" style="color:${cfg.bgUrl?'white':'#2C1A08'}">A</div></div>`:''}
+      </div>
+      ${cfg.showInstituicao?`<div class="cp-inst" style="color:${cfg.bgUrl?'rgba(255,255,255,.8)':'#7A5A3A'}">Instituição de Origem</div>`:''}
+    </div>
+    <div class="cp-rodape" style="background:${cfg.bgUrl?'rgba(0,0,0,.4)':cfg.rodapeBg}">
+      ${cfg.showFuncao?`<span class="cp-funcao" style="background:#F0EAF8;color:#5B21B6">Participante</span>`:'<span></span>'}
+      ${cfg.showData?`<span class="cp-data" style="color:${cfg.bgUrl?'rgba(255,255,255,.7)':cfg.rodapeCor}">${cfg.rodapeTexto}</span>`:''}
+    </div>`;
+}
+
+function gerarCrachas(){
+  const cfg = getCrachaCfg();
+  const d   = getIns();
+
+  // Se vier da recepção usa a seleção; se vier das turmas filtra por sala
+  const inscritos = _crachaSelecao
+    ? _crachaSelecao
+    : d.filter(x=>
+        x.polo===_crachaPoloAtivo &&
+        x.turma===_crachaTurmaAtiva &&
+        x.sala && x.sala!==''
+      );
+
+  _crachaSelecao = null; // limpa após usar
+
+  if(inscritos.length===0){
+    alert('Nenhum inscrito com sala atribuída neste polo/turma.');
+    return;
+  }
+
+  const ordenados = [...inscritos].sort((a,b)=>{
+    if((a.sala||'')!==(b.sala||'')) return (a.sala||'').localeCompare(b.sala||'','pt-BR');
+    const nA=(a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
+    const nB=(b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
+    return nA.localeCompare(nB,'pt-BR');
+  });
+
+  const bgCss = cfg.bgUrl
+    ? `background-image:linear-gradient(rgba(0,0,0,${cfg.overlay/100}),rgba(0,0,0,${cfg.overlay/100})),url('${cfg.bgUrl}');background-size:cover;background-position:center`
+    : '';
+  const topoStyle = cfg.bgUrl ? bgCss : `background:${cfg.topoBg}`;
+  const corpoStyle = cfg.bgUrl ? bgCss : 'background:white';
+  const nomeColor = cfg.bgUrl ? 'white' : cfg.nomeCor;
+  const gridItemStyle = cfg.bgUrl ? 'background:rgba(255,255,255,.15);' : 'background:#FAF5EF;';
+  const gridValColor = cfg.bgUrl ? 'white' : '#2C1A08';
+  const instColor = cfg.bgUrl ? 'rgba(255,255,255,.8)' : '#7A5A3A';
+  const rodapeStyle = cfg.bgUrl ? 'background:rgba(0,0,0,.4);border-top:1px solid rgba(255,255,255,.15)' : `background:${cfg.rodapeBg};border-top:1px solid #E8DDD0`;
+  const dataColor = cfg.bgUrl ? 'rgba(255,255,255,.7)' : cfg.rodapeCor;
+
+  function crachaHtml(p){
+    const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
+    const trab = p.trabalhador===true||p.trabalhador==='true';
+    const funcaoLabel = trab?'Trabalhador':'Participante';
+    const funcaoCor   = trab?'#5B21B6':'#1A6630';
+    const funcaoBg    = trab?'#F0EAF8':'#F0FAF1';
+    const gridCols = [cfg.showPolo,cfg.showTurma,cfg.showSala].filter(Boolean).length;
+
+    return `
+    <div class="cracha">
+      <div class="cracha-topo" style="${topoStyle}">
+        <div class="cracha-evento" style="color:${cfg.tituloCor}">MCJ</div>
+        <div class="cracha-ano" style="color:${cfg.bgUrl?'rgba(255,255,255,.7)':'rgba(255,255,255,.7)'}">2026</div>
+        ${cfg.showSubtitulo?`<div class="cracha-subtitulo" style="color:rgba(255,255,255,.5)">Momentos com Jesus</div>`:''}
+      </div>
+      <div class="cracha-corpo" style="${corpoStyle}">
+        <div class="cracha-nome" style="color:${nomeColor};font-size:${cfg.nomeSize}px">${nomeExibir}</div>
+        ${cfg.showNomeCompleto&&p.nome!==nomeExibir?`<div class="cracha-nome-completo">${p.nome}</div>`:''}
+        <div class="cracha-divider"></div>
+        ${gridCols>0?`<div class="cracha-info-grid" style="grid-template-columns:repeat(${gridCols},1fr)">
+          ${cfg.showPolo?`<div class="cracha-info-item" style="${gridItemStyle}"><div class="cracha-info-label">Polo</div><div class="cracha-info-valor" style="color:${gridValColor}">${p.polo}</div></div>`:''}
+          ${cfg.showTurma?`<div class="cracha-info-item" style="${gridItemStyle}"><div class="cracha-info-label">Turma</div><div class="cracha-info-valor" style="color:${gridValColor}">${p.turma}</div></div>`:''}
+          ${cfg.showSala?`<div class="cracha-info-item" style="${gridItemStyle}"><div class="cracha-info-label">Sala</div><div class="cracha-info-valor" style="color:${gridValColor}">${p.sala}</div></div>`:''}
+        </div>`:''}
+        ${cfg.showInstituicao&&p.instituicao&&p.instituicao!=='—'?`<div class="cracha-instituicao" style="color:${instColor};border-top:1px solid ${cfg.bgUrl?'rgba(255,255,255,.2)':'#F0E8DC'}">${p.instituicao}</div>`:''}
+      </div>
+      <div class="cracha-rodape" style="${rodapeStyle}">
+        ${cfg.showFuncao?`<span class="cracha-funcao" style="background:${funcaoBg};color:${funcaoCor}">${funcaoLabel}</span>`:'<span></span>'}
+        <div class="cracha-qr">
+          <img src="${gerarQRCodeUrl(p.polo)}" width="48" height="48" alt="QR Avaliação" style="border-radius:4px;background:white;padding:2px">
+          <div class="cracha-qr-label" style="color:${cfg.bgUrl?'rgba(255,255,255,.5)':cfg.rodapeCor}">Avaliar evento</div>
+        </div>
+        ${cfg.showData?`<span class="cracha-data" style="color:${dataColor}">${cfg.rodapeTexto}</span>`:'<span></span>'}
+      </div>
+    </div>`;
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Crachás MCJ 2026 — ${_crachaPoloAtivo} · ${_crachaTurmaAtiva}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Georgia',serif;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pagina{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10mm;padding:12mm;width:210mm;min-height:297mm;page-break-after:always}
+.pagina:last-child{page-break-after:avoid}
+.cracha{border:1.5px solid #D4B8A0;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;background:white;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.cracha-topo{padding:16px 16px 12px;text-align:center;background-size:cover;background-position:center}
+.cracha-evento{font-family:'Georgia',serif;font-size:40px;font-weight:bold;line-height:1;letter-spacing:2px}
+.cracha-ano{font-size:18px;font-weight:bold;letter-spacing:6px;margin-top:2px}
+.cracha-subtitulo{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
+.cracha-corpo{padding:14px 16px 10px;flex:1;display:flex;flex-direction:column;gap:8px;background-size:cover;background-position:center}
+.cracha-nome{font-weight:bold;line-height:1.15;text-align:center}
+.cracha-nome-completo{font-size:10px;color:#A08060;text-align:center;font-style:italic;margin-top:-4px}
+.cracha-divider{height:1px;background:linear-gradient(to right,transparent,#D4B8A0,transparent);margin:2px 0}
+.cracha-info-grid{display:grid;gap:6px}
+.cracha-info-item{border-radius:6px;padding:5px 6px;text-align:center}
+.cracha-info-label{font-size:8px;font-weight:bold;text-transform:uppercase;letter-spacing:.8px;color:#A08060;margin-bottom:2px}
+.cracha-info-valor{font-size:11px;font-weight:bold}
+.cracha-instituicao{font-size:9.5px;text-align:center;font-style:italic;padding-top:6px;margin-top:2px}
+.cracha-rodape{padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
+.cracha-funcao{font-size:9px;font-weight:bold;padding:2px 8px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
+.cracha-data{font-size:9px;letter-spacing:1px}
+@media print{@page{size:A4 portrait;margin:0}body{margin:0}}
+</style>
+</head>
+<body>
+${(()=>{
+  let pages='';
+  for(let i=0;i<ordenados.length;i+=4){
+    pages+=`<div class="pagina">${ordenados.slice(i,i+4).map(crachaHtml).join('')}</div>`;
+  }
+  return pages;
+})()}
+</body></html>`;
+
+  const win=window.open('','_blank');
+  if(!win){alert('Permita pop-ups para imprimir.');return;}
+  win.document.write(html);
+  win.document.close();
+  win.onload=()=>{win.focus();win.print();};
 }
 
 function imprimirListagemTurmas(poloNome, tipoTurma){
@@ -3717,6 +4461,726 @@ function exportarTodos(){
   });
   XLSX.writeFile(wb,'MCJ_2026_Inscricoes_Completas.xlsx');
 }
+
+/* ================================================================
+   AVALIAÇÃO DO EVENTO
+================================================================ */
+const AVAL_CRITERIOS_DEFAULT = {
+  evento: [
+    'Divulgação','Inscrição','Recepção','Abertura','Temas abordados',
+    'Material virtual (Livreto)','Monitores de sala','Organização geral',
+    'Almoço / Cantina','O evento correspondeu às suas expectativas',
+  ],
+  manha: [
+    'Domínio sobre o assunto','Sequência dos assuntos','Uso do tempo disponível',
+    'Clareza na exposição','Esclarecimento de dúvidas','Relacionamento com a turma','Material Didático',
+  ],
+  tarde: [
+    'Domínio sobre o assunto','Sequência dos assuntos','Uso do tempo disponível',
+    'Clareza na exposição','Esclarecimento de dúvidas','Relacionamento com a turma','Material Didático',
+  ],
+};
+
+function getAvalCriterios(){
+  return _cfgEvento.aval_criterios || AVAL_CRITERIOS_DEFAULT;
+}
+
+let _avalPolo  = '';
+let _avalSala  = '';
+let _avalNotas = {};
+let _avalComentario = '';
+
+function renderAvaliacao(){
+  const wrap = document.getElementById('aval-form-wrap');
+  if(!wrap) return;
+
+  if(!_cfgEvento.aval_aberta){
+    wrap.innerHTML = `
+      <div style="text-align:center;padding:3rem 1rem">
+        <div style="font-size:48px;margin-bottom:1rem">🔒</div>
+        <div style="font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:700;color:var(--mcj-dark);margin-bottom:.5rem">Avaliação não disponível</div>
+        <div style="font-size:14px;color:var(--gray-400);line-height:1.6">A avaliação do evento ainda não foi liberada.<br>Aguarde as instruções da coordenação.</div>
+      </div>`;
+    return;
+  }
+
+  // Monta opções de polo
+  const poloOpts = POLOS.map(p=>
+    `<option value="${esc(p.nome)}" ${_avalPolo===p.nome?'selected':''}>${p.nome}</option>`
+  ).join('');
+
+  // Monta opções de sala do polo selecionado
+  function getSalasOpts(poloNome){
+    if(!poloNome) return '<option value="">Selecione o polo primeiro</option>';
+    const polo = POLOS.find(p=>p.nome===poloNome);
+    if(!polo) return '<option value="">—</option>';
+    const todasSalas = [...(polo.salas_adulto||[]), ...(polo.salas_mocidade||[])];
+    if(!todasSalas.length) return '<option value="">Nenhuma sala configurada</option>';
+    return `<option value="">Selecione sua sala...</option>`
+      + todasSalas.map(s=>`<option value="${esc(s)}" ${_avalSala===s?'selected':''}>${s}</option>`).join('');
+  }
+
+  // Expositores da sala selecionada
+  function getExpsDaSala(poloNome, sala){
+    if(!poloNome || !sala) return {manha:'', tarde:''};
+    const polo = POLOS.find(p=>p.nome===poloNome);
+    if(!polo) return {manha:'', tarde:''};
+    const cfg = (polo.expositores_salas||{})[sala] || {};
+    return {manha: cfg.manha||'', tarde: cfg.tarde||''};
+  }
+
+  const exps = getExpsDaSala(_avalPolo, _avalSala);
+  const tituloManha = exps.manha ? `🌅 Expositor da Manhã — ${exps.manha}` : '🌅 Expositor da Manhã';
+  const tituloTarde = exps.tarde ? `🌆 Expositor da Tarde — ${exps.tarde}`  : '🌆 Expositor da Tarde';
+
+  const identificacaoHtml = `
+    <div class="aval-card">
+      <div style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:var(--mcj-dark);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--mcj-sand)">📍 Identificação</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <div class="aval-criterio-label" style="margin-bottom:6px">Seu polo</div>
+          <select id="aval-polo" onchange="aval_onPoloChange()"
+            style="width:100%;padding:9px 12px;border:1px solid var(--gray-100);border-radius:9px;font-family:'Raleway',sans-serif;font-size:13px;background:var(--gray-50);color:var(--mcj-dark)">
+            <option value="">Selecione seu polo...</option>
+            ${poloOpts}
+          </select>
+        </div>
+        <div>
+          <div class="aval-criterio-label" style="margin-bottom:6px">Sua turma (sala)</div>
+          <select id="aval-sala" onchange="aval_onSalaChange()"
+            style="width:100%;padding:9px 12px;border:1px solid var(--gray-100);border-radius:9px;font-family:'Raleway',sans-serif;font-size:13px;background:var(--gray-50);color:var(--mcj-dark)">
+            ${getSalasOpts(_avalPolo)}
+          </select>
+        </div>
+      </div>
+    </div>`;
+
+  function secaoHtml(chave, titulo, criterios, extraAttr=''){
+    return `
+    <div class="aval-card">
+      <div ${extraAttr} style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:var(--mcj-dark);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--mcj-sand)">${titulo}</div>
+      ${criterios.map((c,j)=>`
+        <div style="margin-bottom:1rem">
+          <div class="aval-criterio-label">${c}</div>
+          <div class="aval-stars" id="stars-${chave}-${j}">
+            ${[1,2,3,4,5].map(n=>`
+              <span class="aval-star${(_avalNotas[chave+'_'+j]||0)>=n?' on':''}"
+                data-chave="${chave}" data-idx="${j}" data-val="${n}"
+                onmouseover="hoverStars('${chave}',${j},${n})"
+                onmouseout="resetHoverStars('${chave}',${j})"
+                onclick="setNota('${chave}',${j},${n})">★</span>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  wrap.innerHTML = `
+    ${identificacaoHtml}
+    ${secaoHtml('evento','📋 Avaliação do Evento', getAvalCriterios().evento)}
+    <div id="aval-expositores-wrap">
+      ${secaoHtml('manha', tituloManha, getAvalCriterios().manha, 'data-titulo-exp="manha"')}
+      ${secaoHtml('tarde', tituloTarde, getAvalCriterios().tarde, 'data-titulo-exp="tarde"')}
+    </div>
+    <div class="aval-card">
+      <div class="aval-criterio-label">💬 Comentários e sugestões (opcional)</div>
+      <textarea class="aval-comment" id="aval-comentario" placeholder="Escreva aqui suas impressões, sugestões ou críticas...">${_avalComentario}</textarea>
+    </div>
+    <button class="aval-submit" onclick="enviarAvaliacao()">Enviar avaliação ✓</button>`;
+}
+
+function setNota(chave, idx, nota){
+  _avalNotas[chave+'_'+idx] = nota;
+  atualizarStars(chave, idx, nota);
+}
+function hoverStars(chave, idx, nota){
+  const stars=document.querySelectorAll(`#stars-${chave}-${idx} .aval-star`);
+  stars.forEach((s,i)=>s.classList.toggle('on',i<nota));
+}
+function resetHoverStars(chave, idx){
+  atualizarStars(chave, idx, _avalNotas[chave+'_'+idx]||0);
+}
+function atualizarStars(chave, idx, nota){
+  const stars=document.querySelectorAll(`#stars-${chave}-${idx} .aval-star`);
+  stars.forEach((s,i)=>s.classList.toggle('on',i<nota));
+}
+
+// Touch para mobile
+document.addEventListener('touchstart',function(e){
+  const star=e.target.closest('.aval-star');
+  if(!star) return;
+  const chave=star.dataset.chave;
+  const idx=parseInt(star.dataset.idx);
+  const val=parseInt(star.dataset.val);
+  if(chave&&!isNaN(idx)&&!isNaN(val)){ e.preventDefault(); setNota(chave,idx,val); }
+},{passive:false});
+
+function aval_onPoloChange(){
+  _avalPolo = document.getElementById('aval-polo')?.value||'';
+  _avalSala = '';
+  // atualiza select de sala
+  const selSala = document.getElementById('aval-sala');
+  if(selSala){
+    const polo = POLOS.find(p=>p.nome===_avalPolo);
+    if(!polo){ selSala.innerHTML='<option value="">Selecione o polo primeiro</option>'; return; }
+    const todasSalas = [...(polo.salas_adulto||[]), ...(polo.salas_mocidade||[])];
+    selSala.innerHTML = `<option value="">Selecione sua sala...</option>`
+      + todasSalas.map(s=>`<option value="${esc(s)}">${s}</option>`).join('');
+  }
+  aval_atualizarTitulosExp();
+}
+
+function aval_onSalaChange(){
+  _avalSala = document.getElementById('aval-sala')?.value||'';
+  aval_atualizarTitulosExp();
+}
+
+function aval_atualizarTitulosExp(){
+  const polo = POLOS.find(p=>p.nome===_avalPolo);
+  const cfg  = (polo?.expositores_salas||{})[_avalSala] || {};
+  const manha = cfg.manha||'';
+  const tarde  = cfg.tarde||'';
+
+  const tituloManha = manha ? `🌅 Expositor da Manhã — ${manha}` : '🌅 Expositor da Manhã';
+  const tituloTarde = tarde  ? `🌆 Expositor da Tarde — ${tarde}`  : '🌆 Expositor da Tarde';
+
+  document.querySelectorAll('[data-titulo-exp="manha"]').forEach(el=>el.textContent=tituloManha);
+  document.querySelectorAll('[data-titulo-exp="tarde"]').forEach(el=>el.textContent=tituloTarde);
+}
+
+async function enviarAvaliacao(){
+  if(!_avalPolo || !_avalSala){
+    alert('Por favor, selecione seu polo e sua turma antes de enviar.');
+    return;
+  }
+  let faltando = [];
+  Object.entries(getAvalCriterios()).forEach(([chave,crit])=>{
+    crit.forEach((_,j)=>{ if(!_avalNotas[chave+'_'+j]) faltando.push(chave+'_'+j); });
+  });
+  if(faltando.length>0){
+    alert(`Por favor, avalie todos os itens antes de enviar.\n(${faltando.length} item(ns) sem nota)`);
+    return;
+  }
+
+  const btn = document.querySelector('.aval-submit');
+  if(btn){ btn.disabled=true; btn.textContent='Enviando...'; }
+
+  const polo  = POLOS.find(p=>p.nome===_avalPolo);
+  const cfg   = (polo?.expositores_salas||{})[_avalSala]||{};
+  const comentario = document.getElementById('aval-comentario')?.value.trim()||'';
+
+  const payload = {
+    polo: _avalPolo,
+    turma: _avalSala,
+    expositor_manha: cfg.manha||'',
+    expositor_tarde:  cfg.tarde||'',
+    notas: _avalNotas,
+    comentario,
+    data_resposta: new Date().toISOString(),
+  };
+
+  try {
+    if(supaConfigurado()) await supa('POST','avaliacoes',[payload]);
+    document.getElementById('aval-form-wrap').style.display='none';
+    document.getElementById('aval-success').style.display='block';
+  } catch(e){
+    console.error(e);
+    alert('Erro ao enviar avaliação. Tente novamente.');
+    if(btn){ btn.disabled=false; btn.textContent='Enviar avaliação ✓'; }
+  }
+}
+
+/* ── Admin: resultados ──────────────────────────────────────── */
+let _avalAdminTab = 'resultados'; // 'config' | 'resultados'
+
+let _avalFiltroTipo = 'geral';
+let _avalFiltroValor = '';
+let _avalAllRows = [];
+
+async function renderAvaliacaoAdmin(){
+  const wrap = document.getElementById('avaliacao-admin-wrap');
+  if(!wrap) return;
+
+  const subTabsHtml = `
+    <div style="display:flex;gap:0;border-bottom:2px solid var(--mcj-sand);margin-bottom:1.5rem">
+      <button onclick="mudarAvalTab('resultados')"
+        style="padding:10px 18px;background:none;border:none;border-bottom:${_avalAdminTab==='resultados'?'2px solid var(--mcj-gold)':'2px solid transparent'};font-family:'Raleway',sans-serif;font-size:13px;font-weight:${_avalAdminTab==='resultados'?'700':'500'};color:${_avalAdminTab==='resultados'?'var(--mcj-gold)':'var(--gray-400)'};cursor:pointer;margin-bottom:-2px">
+        📊 Resultados
+      </button>
+      <button onclick="mudarAvalTab('config')"
+        style="padding:10px 18px;background:none;border:none;border-bottom:${_avalAdminTab==='config'?'2px solid var(--mcj-gold)':'2px solid transparent'};font-family:'Raleway',sans-serif;font-size:13px;font-weight:${_avalAdminTab==='config'?'700':'500'};color:${_avalAdminTab==='config'?'var(--mcj-gold)':'var(--gray-400)'};cursor:pointer;margin-bottom:-2px">
+        ⚙ Configurar avaliação
+      </button>
+    </div>`;
+
+  if(_avalAdminTab==='config'){
+    wrap.innerHTML = subTabsHtml + renderAvalConfig();
+    return;
+  }
+
+  wrap.innerHTML = subTabsHtml + '<p style="color:var(--gray-400);font-size:13px">Carregando...</p>';
+
+  if(!_avalAllRows.length){
+    try {
+      if(supaConfigurado()) _avalAllRows = await supa('GET','avaliacoes?select=*') || [];
+    } catch(e){ _avalAllRows=[]; }
+  }
+
+  if(!_avalAllRows.length){
+    wrap.innerHTML = subTabsHtml + '<div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);padding:2rem;text-align:center;color:var(--gray-400)">Nenhuma avaliação recebida ainda.</div>';
+    return;
+  }
+
+  const criterios = getAvalCriterios();
+  const polos      = [...new Set(_avalAllRows.map(r=>r.polo).filter(Boolean))].sort();
+  const salas      = [...new Set(_avalAllRows.map(r=>r.turma).filter(Boolean))].sort();
+  const expM       = [...new Set(_avalAllRows.map(r=>r.expositor_manha).filter(Boolean))].sort();
+  const expT       = [...new Set(_avalAllRows.map(r=>r.expositor_tarde).filter(Boolean))].sort();
+  const expositores= [...new Set([...expM,...expT])].sort();
+
+  let rows = _avalAllRows;
+  if(_avalFiltroTipo==='polo'      && _avalFiltroValor) rows=rows.filter(r=>r.polo===_avalFiltroValor);
+  else if(_avalFiltroTipo==='sala' && _avalFiltroValor) rows=rows.filter(r=>r.turma===_avalFiltroValor);
+  else if(_avalFiltroTipo==='expositor' && _avalFiltroValor) rows=rows.filter(r=>r.expositor_manha===_avalFiltroValor||r.expositor_tarde===_avalFiltroValor);
+
+  window._avalRows = rows;
+  const total = rows.length;
+
+  function valoresSelect(){
+    if(_avalFiltroTipo==='geral') return '';
+    const opts={polo:polos,sala:salas,expositor:expositores}[_avalFiltroTipo]||[];
+    return `<select onchange="avalFiltroValor(this.value)"
+      style="padding:7px 12px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;font-size:13px;background:white;color:var(--mcj-dark);min-width:160px">
+      <option value="">Todos</option>
+      ${opts.map(v=>`<option value="${v}" ${_avalFiltroValor===v?'selected':''}>${v}</option>`).join('')}
+    </select>`;
+  }
+
+  function mediaDeNotas(chave,idx){
+    const notas=rows.map(r=>(r.notas||{})[chave+'_'+idx]).filter(n=>n>0);
+    return notas.length?notas.reduce((a,b)=>a+b,0)/notas.length:0;
+  }
+  function distribuicao(chave,idx){
+    const d=[0,0,0,0,0];
+    rows.forEach(r=>{const n=(r.notas||{})[chave+'_'+idx];if(n>=1&&n<=5)d[n-1]++;});
+    return d;
+  }
+  function secaoResultado(chave,titulo,crit){
+    const medias=crit.map((_,j)=>mediaDeNotas(chave,j));
+    const mg=medias.length?medias.reduce((a,b)=>a+b,0)/medias.length:0;
+    return `<div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden;margin-bottom:1.25rem">
+      <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-family:'EB Garamond',Georgia,serif;font-size:16px;font-weight:700;color:white">${titulo}</span>
+        <span style="font-size:18px;font-weight:800;color:var(--mcj-gold)">${mg.toFixed(1)} ⭐</span>
+      </div>
+      <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.875rem">
+        ${crit.map((c,j)=>{
+          const m=medias[j];const d=distribuicao(chave,j);
+          return `<div class="aval-result-card" style="margin-bottom:0">
+            <div class="aval-result-label"><span>${c}</span><span class="aval-result-media">${m.toFixed(1)} ★</span></div>
+            <div class="aval-bar-wrap"><div class="aval-bar" style="width:${(m/5*100).toFixed(0)}%"></div></div>
+            <div class="aval-dist">${[1,2,3,4,5].map(n=>`<span>${n}<span class="aval-dist-star">★</span> ${total?((d[n-1]/total)*100).toFixed(0):0}%</span>`).join(' · ')}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  const comentarios=rows.filter(r=>r.comentario&&r.comentario.trim());
+  const filtroHtml=`
+    <div style="background:white;border-radius:12px;border:1px solid var(--mcj-sand);padding:1rem 1.25rem;margin-bottom:1.25rem">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);margin-bottom:10px">Visualizar por</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        ${[['geral','🌐 Geral'],['polo','📍 Polo'],['sala','🏫 Sala'],['expositor','🎤 Expositor']].map(([t,l])=>`
+          <button onclick="avalFiltroTipo('${t}')"
+            style="padding:6px 14px;border-radius:20px;border:1.5px solid ${_avalFiltroTipo===t?'var(--mcj-gold)':'var(--gray-100)'};background:${_avalFiltroTipo===t?'#FFFBF0':'white'};color:${_avalFiltroTipo===t?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer">
+            ${l}
+          </button>`).join('')}
+        ${valoresSelect()}
+        <span style="font-size:12px;color:var(--gray-400);margin-left:auto">${total} resposta${total!==1?'s':''}</span>
+      </div>
+    </div>`;
+
+  wrap.innerHTML = subTabsHtml + `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <h2 style="font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:700;color:var(--mcj-dark)">Resultados das Avaliações</h2>
+      <div style="display:flex;gap:8px">
+        <button onclick="exportarAvaliacaoExcel()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#217346;color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer">📊 Excel</button>
+        <button onclick="exportarAvaliacaoPDF()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--mcj-dark);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer">📄 PDF</button>
+      </div>
+    </div>
+    ${filtroHtml}
+    <div style="max-width:760px">
+      ${total===0
+        ? '<div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);padding:2rem;text-align:center;color:var(--gray-400)">Nenhuma avaliação para este filtro.</div>'
+        : secaoResultado('evento','📋 Avaliação do Evento',criterios.evento)
+          +secaoResultado('manha','🌅 Expositor da Manhã',criterios.manha)
+          +secaoResultado('tarde','🌆 Expositor da Tarde',criterios.tarde)}
+      ${comentarios.length?`
+      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark)">
+          <span style="font-family:'EB Garamond',Georgia,serif;font-size:16px;font-weight:700;color:white">💬 Comentários (${comentarios.length})</span>
+        </div>
+        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:10px">
+          ${comentarios.map(r=>`<div style="background:var(--mcj-cream);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--gray-700);line-height:1.6;border-left:3px solid var(--mcj-gold)">${r.comentario}<div style="font-size:10px;color:var(--gray-400);margin-top:4px">${r.polo||''} ${r.turma?'· '+r.turma:''} · ${r.data_resposta?new Date(r.data_resposta).toLocaleDateString('pt-BR'):''}</div></div>`).join('')}
+        </div>
+      </div>`:''}
+    </div>`;
+}
+
+function mudarAvalTab(tab){
+  _avalAdminTab=tab;
+  _avalAllRows=[];
+  renderAvaliacaoAdmin();
+}
+function avalFiltroTipo(tipo){ _avalFiltroTipo=tipo; _avalFiltroValor=''; renderAvaliacaoAdmin(); }
+function avalFiltroValor(val){ _avalFiltroValor=val; renderAvaliacaoAdmin(); }
+
+
+/* ── Exportar avaliações em Excel ───────────────────────────── */
+function exportarAvaliacaoExcel(){
+  const rows = window._avalRows || [];
+  if(!rows.length){ alert('Nenhuma avaliação para exportar.'); return; }
+  const criterios = getAvalCriterios();
+
+  // Monta cabeçalho dinâmico
+  const header = ['#','Data','Polo','Turma (Sala)','Expositor Manhã','Expositor Tarde'];
+  criterios.evento.forEach(c=>header.push('Evento: '+c));
+  criterios.manha.forEach(c=>header.push('Manhã: '+c));
+  criterios.tarde.forEach(c=>header.push('Tarde: '+c));
+  header.push('Comentário');
+
+  const dataRows = rows.map((r,i)=>{
+    const row = [
+      i+1,
+      r.data_resposta ? new Date(r.data_resposta).toLocaleString('pt-BR') : '—',
+      r.polo||'—',
+      r.turma||'—',
+      r.expositor_manha||'—',
+      r.expositor_tarde||'—',
+    ];
+    criterios.evento.forEach((_,j)=>row.push((r.notas||{})['evento_'+j]||''));
+    criterios.manha.forEach((_,j)=>row.push((r.notas||{})['manha_'+j]||''));
+    criterios.tarde.forEach((_,j)=>row.push((r.notas||{})['tarde_'+j]||''));
+    row.push(r.comentario||'');
+    return row;
+  });
+
+  // Linha de médias
+  const mediaRow = ['','','MÉDIA GERAL','','',''];
+  criterios.evento.forEach((_,j)=>{
+    const notas=rows.map(r=>(r.notas||{})['evento_'+j]).filter(n=>n>0);
+    mediaRow.push(notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2):'');
+  });
+  criterios.manha.forEach((_,j)=>{
+    const notas=rows.map(r=>(r.notas||{})['manha_'+j]).filter(n=>n>0);
+    mediaRow.push(notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2):'');
+  });
+  criterios.tarde.forEach((_,j)=>{
+    const notas=rows.map(r=>(r.notas||{})['tarde_'+j]).filter(n=>n>0);
+    mediaRow.push(notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2):'');
+  });
+  mediaRow.push('');
+
+  const wb = XLSX.utils.book_new();
+  // Aba respostas
+  const ws1 = XLSX.utils.aoa_to_sheet([header, ...dataRows, [], mediaRow]);
+  ws1['!cols'] = header.map((_,i)=>({wch: i<6?18:12}));
+  XLSX.utils.book_append_sheet(wb, ws1, 'Respostas');
+
+  // Aba resumo (médias por critério)
+  const resumoRows = [['Seção','Critério','Média','1★','2★','3★','4★','5★']];
+  [['evento','📋 Evento'],['manha','🌅 Manhã'],['tarde','🌆 Tarde']].forEach(([chave,label])=>{
+    criterios[chave].forEach((c,j)=>{
+      const notas=rows.map(r=>(r.notas||{})[chave+'_'+j]).filter(n=>n>0);
+      const media=notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2):'—';
+      const dist=[1,2,3,4,5].map(n=>notas.filter(v=>v===n).length);
+      resumoRows.push([label,c,media,...dist]);
+    });
+  });
+  const ws2 = XLSX.utils.aoa_to_sheet(resumoRows);
+  ws2['!cols']=[{wch:14},{wch:36},{wch:8},{wch:5},{wch:5},{wch:5},{wch:5},{wch:5}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Resumo por critério');
+
+  XLSX.writeFile(wb,`MCJ_2026_Avaliacoes_${_avalFiltroTipo==='geral'?'Geral':(_avalFiltroValor||_avalFiltroTipo)}.xlsx`);
+}
+
+/* ── Exportar resultado em PDF ──────────────────────────────── */
+function exportarAvaliacaoPDF(){
+  const rows = window._avalRows || [];
+  if(!rows.length){ alert('Nenhuma avaliação para exportar.'); return; }
+  const criterios = getAvalCriterios();
+  const total = rows.length;
+
+  function media(chave, idx){
+    const notas=rows.map(r=>(r.notas||{})[chave+'_'+idx]).filter(n=>n>0);
+    return notas.length ? notas.reduce((a,b)=>a+b,0)/notas.length : 0;
+  }
+  function dist(chave, idx){
+    return [1,2,3,4,5].map(n=>rows.filter(r=>(r.notas||{})[chave+'_'+idx]===n).length);
+  }
+  function estrelas(m){ return '★'.repeat(Math.round(m))+'☆'.repeat(5-Math.round(m)); }
+
+  function secaoHtml(titulo, chave, crit){
+    const medias = crit.map((_,j)=>media(chave,j));
+    const mg = medias.length ? medias.reduce((a,b)=>a+b,0)/medias.length : 0;
+    return `
+      <div class="sec">
+        <div class="sec-head">
+          <span>${titulo}</span>
+          <span class="sec-media">${mg.toFixed(1)} ★</span>
+        </div>
+        <table>
+          <thead><tr><th>Critério</th><th>Média</th><th>Estrelas</th><th>1★</th><th>2★</th><th>3★</th><th>4★</th><th>5★</th></tr></thead>
+          <tbody>
+            ${crit.map((c,j)=>{
+              const m=medias[j]; const d=dist(chave,j);
+              return `<tr>
+                <td>${c}</td>
+                <td style="font-weight:700;color:#C8873A">${m.toFixed(1)}</td>
+                <td style="color:#C8873A;letter-spacing:1px">${estrelas(m)}</td>
+                ${d.map(v=>`<td style="text-align:center">${v}</td>`).join('')}
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  const comentarios = rows.filter(r=>r.comentario&&r.comentario.trim());
+
+  // Monta descrição do filtro ativo
+  const filtroLabels = {geral:'Geral — todas as respostas', polo:'Polo', sala:'Sala', expositor:'Expositor'};
+  const filtroDesc = _avalFiltroTipo==='geral'
+    ? 'Visão geral — todas as respostas'
+    : `${filtroLabels[_avalFiltroTipo]}: ${_avalFiltroValor||'Todos'}`;
+  const filtroAtivo = _avalFiltroTipo!=='geral';
+
+  const html=`<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<title>MCJ 2026 — Resultado das Avaliações</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Georgia',serif;color:#2C1A08;background:white;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.capa{background:#2C1A08;color:white;padding:40px 32px;text-align:center;margin-bottom:24px}
+.capa h1{font-size:36px;font-weight:bold;color:#C8873A;letter-spacing:1px}
+.capa p{font-size:14px;color:rgba(255,255,255,.7);margin-top:8px}
+.capa .filtro-badge{display:inline-block;margin-top:12px;background:rgba(200,135,58,.25);border:1px solid rgba(200,135,58,.5);border-radius:20px;padding:5px 16px;font-size:13px;font-weight:bold;color:#E8A855;letter-spacing:.3px}
+.total{background:#F5F0E8;border:1px solid #D4B8A0;border-radius:10px;padding:14px 20px;margin:0 24px 20px;display:flex;align-items:center;gap:16px}
+.total-num{font-size:36px;font-weight:bold;color:#C8873A}
+.total-label{font-size:13px;color:#6B4C2A}
+.sec{margin:0 24px 20px;border:1px solid #D4B8A0;border-radius:10px;overflow:hidden;page-break-inside:avoid}
+.sec-head{background:#3D2410;color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:bold}
+.sec-media{font-size:20px;color:#C8873A;font-weight:bold}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:7px 10px;background:#F5F0E8;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6B4C2A;border-bottom:1px solid #D4B8A0}
+td{padding:7px 10px;border-bottom:1px solid #F0E8DC}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#FDFAF6}
+.coment-sec{margin:0 24px 20px;border:1px solid #D4B8A0;border-radius:10px;overflow:hidden;page-break-inside:avoid}
+.coment-item{padding:10px 14px;border-bottom:1px solid #F0E8DC;font-size:12px;color:#4A3520;line-height:1.6;border-left:3px solid #C8873A;margin:8px 10px;border-radius:4px;background:#FDFAF6}
+.coment-item:last-child{border-bottom:none}
+.coment-data{font-size:10px;color:#A08060;margin-top:4px}
+.footer{text-align:center;font-size:10px;color:#A08060;padding:16px;border-top:1px solid #F0E8DC;margin-top:8px}
+@media print{@page{size:A4;margin:1cm}body{padding:0}}
+</style></head><body>
+<div class="capa">
+  <h1>MCJ 2026</h1>
+  <p>Resultado das Avaliações · Momentos com Jesus</p>
+  <p style="margin-top:4px;font-size:12px">Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+  <div class="filtro-badge">🔍 ${filtroDesc}</div>
+</div>
+<div class="total">
+  <div class="total-num">${total}</div>
+  <div class="total-label">avaliação${total!==1?'ões':''} recebida${total!==1?'s':''}${filtroAtivo?' (filtrado)':''}</div>
+</div>
+${secaoHtml('📋 Avaliação do Evento','evento',criterios.evento)}
+${secaoHtml('🌅 Expositor da Manhã','manha',criterios.manha)}
+${secaoHtml('🌆 Expositor da Tarde','tarde',criterios.tarde)}
+${comentarios.length?`
+<div class="coment-sec">
+  <div class="sec-head"><span>💬 Comentários (${comentarios.length})</span></div>
+  <div style="padding:4px 0">
+    ${comentarios.map(r=>`<div class="coment-item">${r.comentario}<div class="coment-data">${r.polo||''} ${r.turma?'· '+r.turma:''} · ${r.data_resposta?new Date(r.data_resposta).toLocaleDateString('pt-BR'):''}</div></div>`).join('')}
+  </div>
+</div>`:''}
+<div class="footer">MCJ 2026 · Momentos com Jesus · Relatório de Avaliações</div>
+</body></html>`;
+
+  const win=window.open('','_blank');
+  if(!win){alert('Permita pop-ups para exportar.');return;}
+  win.document.write(html);
+  win.document.close();
+  win.onload=()=>{win.focus();win.print();};
+}
+
+/* ── Config da avaliação ──────────────────────────────────────── */
+function renderAvalConfig(){
+  const c      = getAvalCriterios();
+  const aberta = _cfgEvento.aval_aberta === true;
+
+  function secaoConfigHtml(chave, titulo, criterios){
+    return `
+      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden;margin-bottom:1.25rem">
+        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark)">
+          <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">${titulo}</span>
+        </div>
+        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:6px" id="aval-cfg-list-${chave}">
+          ${criterios.map((nome,j)=>`
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0" id="aval-cfg-item-${chave}-${j}">
+              <span style="font-size:11px;font-weight:700;color:var(--gray-300);min-width:18px;text-align:right">${j+1}.</span>
+              <input type="text" value="${esc(nome)}" id="aval-cfg-input-${chave}-${j}"
+                style="flex:1;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--gray-100);background:var(--gray-50);font-family:'Raleway',sans-serif;color:var(--mcj-dark)">
+              <button onclick="removerCriterio('${chave}',${j})"
+                style="background:none;border:none;color:var(--gray-300);font-size:18px;cursor:pointer;line-height:1;transition:color .12s;flex-shrink:0"
+                onmouseover="this.style.color='var(--red-400)'" onmouseout="this.style.color='var(--gray-300)'">×</button>
+            </div>`).join('')}
+        </div>
+        <div style="padding:0 1.25rem 1.25rem">
+          <button onclick="adicionarCriterio('${chave}')"
+            style="display:flex;align-items:center;gap:5px;width:100%;padding:8px 12px;border-radius:8px;border:1.5px dashed var(--gray-100);background:transparent;color:var(--gray-400);font-size:12px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif;transition:all .15s"
+            onmouseover="this.style.borderColor='var(--mcj-gold)';this.style.color='var(--mcj-mid)'"
+            onmouseout="this.style.borderColor='var(--gray-100)';this.style.color='var(--gray-400)'">
+            + Adicionar critério
+          </button>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div style="max-width:760px">
+      <!-- Status da avaliação -->
+      <div style="background:${aberta?'#ECFDF5':'#FFF7ED'};border:1.5px solid ${aberta?'#6EE7B7':'#FED7AA'};border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:${aberta?'#065F46':'#92400E'}">
+            ${aberta?'🟢 Avaliação ABERTA ao público':'🔴 Avaliação FECHADA'}
+          </div>
+          <div style="font-size:12px;color:${aberta?'#047857':'#B45309'};margin-top:3px">
+            ${aberta
+              ? 'Os participantes já podem acessar via QR Code no crachá.'
+              : 'O formulário de avaliação está bloqueado para os participantes.'}
+          </div>
+        </div>
+        <button onclick="toggleAvaliacaoAberta()"
+          style="padding:9px 20px;border:none;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;background:${aberta?'#EF4444':'#10B981'};color:white;white-space:nowrap;transition:opacity .15s"
+          onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          ${aberta?'🔒 Fechar avaliação':'🔓 Abrir avaliação'}
+        </button>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+        <div>
+          <h2 style="font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:700;color:var(--mcj-dark)">Configurar Avaliação</h2>
+          <div style="font-size:13px;color:var(--gray-400);margin-top:2px">Edite, adicione ou remova critérios de cada seção</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="restaurarCriteriosPadrao()"
+            style="padding:8px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">
+            ↺ Restaurar padrão
+          </button>
+          <button onclick="zerarRespostasAvaliacao()"
+            style="padding:8px 14px;background:white;border:1px solid var(--red-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--red-400);font-family:'Raleway',sans-serif">
+            🗑 Zerar respostas
+          </button>
+          <button onclick="salvarCriterios()" class="btn-cfg-save">Salvar critérios</button>
+        </div>
+      </div>
+      ${secaoConfigHtml('evento','📋 Avaliação do Evento', c.evento)}
+      ${secaoConfigHtml('manha','🌅 Expositor da Manhã', c.manha)}
+      ${secaoConfigHtml('tarde','🌆 Expositor da Tarde', c.tarde)}
+    </div>`;
+}
+
+function adicionarCriterio(chave){
+  const c = JSON.parse(JSON.stringify(getAvalCriterios()));
+  c[chave].push('');
+  _cfgEvento.aval_criterios = c;
+  renderAvaliacaoAdmin();
+  // foca no novo campo
+  setTimeout(()=>{
+    const idx = c[chave].length-1;
+    document.getElementById(`aval-cfg-input-${chave}-${idx}`)?.focus();
+  },50);
+}
+
+function removerCriterio(chave, idx){
+  const c = JSON.parse(JSON.stringify(getAvalCriterios()));
+  if(c[chave].length<=1){ alert('A seção precisa ter ao menos 1 critério.'); return; }
+  c[chave].splice(idx,1);
+  _cfgEvento.aval_criterios = c;
+  renderAvaliacaoAdmin();
+}
+
+function lerCriteriosDoDOM(){
+  const c = JSON.parse(JSON.stringify(getAvalCriterios()));
+  ['evento','manha','tarde'].forEach(chave=>{
+    const novos = [];
+    c[chave].forEach((_,j)=>{
+      const val = document.getElementById(`aval-cfg-input-${chave}-${j}`)?.value.trim();
+      if(val) novos.push(val);
+    });
+    c[chave] = novos.length ? novos : c[chave];
+  });
+  return c;
+}
+
+function salvarCriterios(){
+  const c = lerCriteriosDoDOM();
+  _cfgEvento.aval_criterios = c;
+  setCfgEvento();
+  const btn = document.querySelector('#avaliacao-admin-wrap .btn-cfg-save');
+  if(btn){ const t=btn.textContent; btn.textContent='✓ Salvo!'; setTimeout(()=>{btn.textContent=t; renderAvaliacaoAdmin();},1500); }
+}
+
+function restaurarCriteriosPadrao(){
+  if(!confirm('Restaurar os critérios padrão? Os critérios atuais serão substituídos.')) return;
+  _cfgEvento.aval_criterios = JSON.parse(JSON.stringify(AVAL_CRITERIOS_DEFAULT));
+  setCfgEvento();
+  renderAvaliacaoAdmin();
+}
+
+async function zerarRespostasAvaliacao(){
+  if(!confirm('⚠ Atenção!\n\nEsta ação irá APAGAR permanentemente todas as respostas de avaliação recebidas.\n\nTem certeza que deseja continuar?')) return;
+  if(!confirm('Confirme novamente: apagar TODAS as respostas?')) return;
+  try {
+    if(supaConfigurado()) await supa('DELETE','avaliacoes?id=neq.00000000-0000-0000-0000-000000000000');
+    _avalAllRows = [];
+    window._avalRows = [];
+    alert('✓ Todas as respostas foram apagadas.');
+    renderAvaliacaoAdmin();
+  } catch(e){
+    console.error(e);
+    alert('Erro ao zerar respostas. Tente novamente.');
+  }
+}
+
+function toggleAvaliacaoAberta(){
+  _cfgEvento.aval_aberta = !(_cfgEvento.aval_aberta===true);
+  setCfgEvento();
+  renderBannerAvaliacao();
+  renderAvaliacaoAdmin();
+}
+
+/* ── QR Code no crachá ──────────────────────────────────────── */
+function gerarQRCodeUrl(polo){
+  const base = window.location.href.split('?')[0];
+  return `https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(base+'?avaliacao=1&polo='+encodeURIComponent(polo))}`;
+}
+
+/* ── showView: adiciona avaliacao ───────────────────────────── */
+function abrirLightbox(url, caption){
+  const lb  = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  const cap = document.getElementById('lightbox-caption');
+  img.src       = url;
+  cap.textContent = caption || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function fecharLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') fecharLightbox(); });
 
 /* ================================================================
    INIT
