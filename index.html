@@ -483,6 +483,10 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 /* ================================================================
    RECEPÇÃO
 ================================================================ */
+/* COMUNICAÇÃO */
+.com-card{background:white;border-radius:14px;border:1px solid var(--mcj-sand);padding:1.25rem;display:flex;flex-direction:column;gap:10px}
+.com-card-title{font-family:'EB Garamond',Georgia,serif;font-size:16px;font-weight:700;color:var(--mcj-dark);padding-bottom:.75rem;border-bottom:1px solid var(--mcj-sand);margin-bottom:2px}
+/* RECEPÇÃO */
 .rec-polo-section{margin-bottom:2rem}
 .rec-turma-section{margin-bottom:1.5rem}
 .rec-sala-section{margin-bottom:1.25rem}
@@ -839,6 +843,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <button class="atab-btn" id="atab-turmas" onclick="switchAdminTab('turmas',this)">🏫 Turmas</button>
       <button class="atab-btn" id="atab-equipe" onclick="switchAdminTab('equipe',this)">🔧 Equipe</button>
       <button class="atab-btn" id="atab-recepcao" onclick="switchAdminTab('recepcao',this)">🎫 Recepção</button>
+      <button class="atab-btn" id="atab-comunicacao" onclick="switchAdminTab('comunicacao',this)">💬 Comunicação</button>
       <button class="atab-btn" id="atab-config" onclick="switchAdminTab('config',this)">⚙ Polos</button>
       <button class="atab-btn" id="atab-evento" onclick="switchAdminTab('evento',this)">✨ Evento / Expositores</button>
       <button class="atab-btn" id="atab-avaliacao" onclick="switchAdminTab('avaliacao',this)">⭐ Avaliações</button>
@@ -860,6 +865,9 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         <button class="btn-add-polo" onclick="abrirAddPolo()">+ Adicionar polo</button>
       </div>
       <div class="config-grid" id="config-grid"></div>
+    </div>
+    <div class="admin-panel" id="apanel-comunicacao">
+      <div id="comunicacao-wrap"></div>
     </div>
     <div class="admin-panel" id="apanel-recepcao">
       <div id="recepcao-wrap"></div>
@@ -1404,16 +1412,96 @@ function getCfg(){ return _cache.config; }
 
 /* CONFIG DO EVENTO (sobre + expositores globais) */
 let _cfgEvento = {
+  // Textos
   titulo: 'MCJ 2026', subtitulo: 'Momentos com Jesus',
   descricao: '', tema_manha: 'O Renascer de Nicodemos',
   tema_tarde: 'Jesus Forja Pedro para o Futuro',
   data: '20 de setembro de 2026', horario: '8h às 17h30',
   local: 'Rio de Janeiro',
-  instagram: '', facebook: '',
-  aval_criterios: null, // null = usa AVAL_CRITERIOS_DEFAULT
-  aval_aberta: false,   // avaliação aberta ao público
-  expositores_lista: []  // [{ nome, foto, bio }]
+  // Social
+  instagram: '', facebook: '', livreto_url: '',
+  materiais: [],
+  // Avaliação
+  aval_criterios: null,
+  aval_aberta: false,
+  // Expositores
+  expositores_lista: [],
+  // Design visual
+  design: {
+    video_url: 'https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4',
+    cor_primaria: '#3D2410',   // navbar, topo
+    cor_destaque: '#C8873A',   // dourado, botões
+    cor_fundo:    '#F2EDE4',   // fundo geral
+    cor_texto:    '#2C1A08',   // texto principal
+    fonte_titulo: 'EB Garamond',
+    fonte_texto:  'Raleway',
+    titulo_size:  'clamp(3rem,11vw,6.5rem)',
+    hero_tagline: 'Jornada de Estudos Espíritas do Evangelho',
+  }
 };
+
+function getDesign(){ return _cfgEvento.design || {}; }
+
+function aplicarDesign(){
+  const d = getDesign();
+  const root = document.documentElement;
+
+  // Cores via CSS variables
+  if(d.cor_primaria){ root.style.setProperty('--mcj-dark',   d.cor_primaria); root.style.setProperty('--blue-900', d.cor_primaria); }
+  if(d.cor_destaque){ root.style.setProperty('--mcj-gold',   d.cor_destaque); root.style.setProperty('--mcj-gold2', d.cor_destaque); }
+  if(d.cor_fundo)   { root.style.setProperty('--mcj-cream',  d.cor_fundo); }
+  if(d.cor_texto)   { root.style.setProperty('--mcj-text',   d.cor_texto); root.style.setProperty('--mcj-mid', d.cor_texto); }
+
+  // Vídeo de capa
+  if(d.video_url){
+    document.querySelectorAll('.hero-video source').forEach(s=>{ s.src=d.video_url; });
+    document.querySelectorAll('.hero-video').forEach(v=>v.load());
+  }
+
+  // Fontes — injeta @import dinamicamente
+  const fontesTitulo = {
+    'EB Garamond':       'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap',
+    'Playfair Display':  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&display=swap',
+    'Cormorant Garamond':'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap',
+    'Libre Baskerville': 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap',
+    'Lora':              'https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap',
+    'Cinzel':            'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+  };
+  const fontesTexto = {
+    'Raleway':      'https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap',
+    'Nunito':       'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap',
+    'Lato':         'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap',
+    'Source Sans 3':'https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&display=swap',
+    'Inter':        'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap',
+  };
+
+  function carregarFonte(url, id){
+    if(!url || document.getElementById(id)) return;
+    const link = document.createElement('link');
+    link.rel='stylesheet'; link.href=url; link.id=id;
+    document.head.appendChild(link);
+  }
+
+  if(d.fonte_titulo && fontesTitulo[d.fonte_titulo]){
+    carregarFonte(fontesTitulo[d.fonte_titulo], 'font-titulo-custom');
+    document.querySelectorAll('.hero h1, .nav-logo, .admin-header h2, .aval-hero-title, .polo-detalhe-nome, .evento-section-title, .turmas-polo-title')
+      .forEach(el=>el.style.fontFamily=`'${d.fonte_titulo}',Georgia,serif`);
+  }
+  if(d.fonte_texto && fontesTexto[d.fonte_texto]){
+    carregarFonte(fontesTexto[d.fonte_texto], 'font-texto-custom');
+    document.body.style.fontFamily=`'${d.fonte_texto}',sans-serif`;
+  }
+
+  // Tamanho título capa
+  if(d.titulo_size){
+    document.querySelectorAll('.hero h1').forEach(el=>el.style.fontSize=d.titulo_size);
+  }
+
+  // Tagline da capa
+  if(d.hero_tagline){
+    document.querySelectorAll('.hero-tag').forEach(el=>el.textContent=d.hero_tagline);
+  }
+}
 
 function getExpositores(){ return _cfgEvento.expositores_lista || []; }
 function getExpByNome(nome){ return getExpositores().find(e=>e.nome===nome)||null; }
@@ -1529,6 +1617,7 @@ async function carregarTudo(){
     await Promise.all([carregarInscricoes(), carregarConfig(), carregarUsuarios(), carregarCfgEvento()]);
     renderHeroSocial();
     renderBannerAvaliacao();
+    aplicarDesign();
     // Detecta ?avaliacao=1 na URL — abre direto na avaliação
     if(new URLSearchParams(window.location.search).get('avaliacao')==='1'){
       document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -1883,6 +1972,22 @@ function renderSobre(){
   if(tituloEl) tituloEl.innerHTML = e.titulo ? e.titulo.replace(/MCJ/,'<em>MCJ</em>') : 'Sobre o <em>Evento</em>';
 
   wrap.innerHTML = `
+    <!-- Livreto -->
+    ${e.livreto_url ? `
+    <div class="evento-section">
+      <div class="evento-section-header">
+        <span class="evento-section-icon">📖</span>
+        <span class="evento-section-title">Material do Evento</span>
+      </div>
+      <div class="evento-section-body" style="text-align:center;padding:1.5rem">
+        <p style="font-size:14px;color:var(--gray-600);margin-bottom:1rem">O livreto do MCJ 2026 está disponível para download.</p>
+        <a href="${e.livreto_url}" target="_blank" rel="noopener"
+          style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--mcj-gold);color:white;border-radius:10px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;text-decoration:none;transition:background .15s">
+          📥 Baixar Livreto
+        </a>
+      </div>
+    </div>` : ''}
+
     <!-- Informações gerais -->
     <div class="evento-section">
       <div class="evento-section-header">
@@ -2006,10 +2111,100 @@ function renderEventoAdmin(){
   const wrap = document.getElementById('evento-admin-wrap');
   if(!wrap) return;
   const e    = _cfgEvento;
+  const d    = _cfgEvento.design || {};
   const exps = getExpositores();
 
   wrap.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:1.5rem;max-width:760px">
+
+      <!-- SEÇÃO: DESIGN VISUAL -->
+      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;gap:8px">
+          <span style="color:var(--mcj-gold);font-size:16px">🎨</span>
+          <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Design Visual</span>
+        </div>
+        <div style="padding:1.25rem;display:flex;flex-direction:column;gap:14px">
+
+          <!-- Vídeo de capa -->
+          <div class="cfg-section" style="padding-top:0;border-top:none">
+            <div class="cfg-section-title">🎬 Vídeo de capa</div>
+            <div class="cfg-field">
+              <label>URL do vídeo (GitHub raw link)</label>
+              <input type="url" id="dsg-video" value="${esc(d.video_url||'')}" placeholder="https://raw.githubusercontent.com/.../capa.mp4">
+            </div>
+          </div>
+
+          <!-- Cores -->
+          <div class="cfg-section">
+            <div class="cfg-section-title">🎨 Cores</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px">
+              ${[
+                ['dsg-cor-primaria','Cor primária (navbar/topo)', d.cor_primaria||'#3D2410'],
+                ['dsg-cor-destaque','Cor de destaque (botões/dourado)', d.cor_destaque||'#C8873A'],
+                ['dsg-cor-fundo','Cor de fundo geral', d.cor_fundo||'#F2EDE4'],
+                ['dsg-cor-texto','Cor do texto principal', d.cor_texto||'#2C1A08'],
+              ].map(([id,label,val])=>`
+                <div class="cfg-field" style="margin-bottom:0">
+                  <label style="font-size:11px">${label}</label>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <input type="color" id="${id}" value="${val}"
+                      style="width:44px;height:36px;padding:2px 3px;border-radius:6px;border:1px solid var(--gray-100);cursor:pointer">
+                    <input type="text" id="${id}-hex" value="${val}"
+                      style="flex:1;font-size:12px;padding:6px 8px;border-radius:6px;font-family:monospace"
+                      oninput="document.getElementById('${id}').value=this.value">
+                    <script>document.getElementById('${id}').addEventListener('input',function(){document.getElementById('${id}-hex').value=this.value})<\/script>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+
+          <!-- Tipografia -->
+          <div class="cfg-section">
+            <div class="cfg-section-title">✍ Tipografia</div>
+            <div class="cfg-row">
+              <div class="cfg-field">
+                <label>Fonte dos títulos</label>
+                <select id="dsg-fonte-titulo" style="font-size:13px;padding:8px 10px">
+                  ${['EB Garamond','Playfair Display','Cormorant Garamond','Libre Baskerville','Lora','Cinzel']
+                    .map(f=>`<option value="${f}" ${(d.fonte_titulo||'EB Garamond')===f?'selected':''}>${f}</option>`).join('')}
+                </select>
+              </div>
+              <div class="cfg-field">
+                <label>Fonte do texto geral</label>
+                <select id="dsg-fonte-texto" style="font-size:13px;padding:8px 10px">
+                  ${['Raleway','Nunito','Lato','Source Sans 3','Inter']
+                    .map(f=>`<option value="${f}" ${(d.fonte_texto||'Raleway')===f?'selected':''}>${f}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <div class="cfg-field">
+              <label>Tamanho do título na capa</label>
+              <select id="dsg-titulo-size" style="font-size:13px;padding:8px 10px">
+                ${[
+                  ['clamp(2rem,7vw,4rem)','Pequeno'],
+                  ['clamp(2.5rem,9vw,5rem)','Médio'],
+                  ['clamp(3rem,11vw,6.5rem)','Grande (padrão)'],
+                  ['clamp(3.5rem,13vw,8rem)','Muito grande'],
+                ].map(([val,lbl])=>`<option value="${val}" ${(d.titulo_size||'clamp(3rem,11vw,6.5rem)')===val?'selected':''}>${lbl}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <!-- Tagline da capa -->
+          <div class="cfg-section">
+            <div class="cfg-section-title">🏷 Tagline da capa</div>
+            <div class="cfg-field">
+              <label>Texto da tag acima do título</label>
+              <input type="text" id="dsg-tagline" value="${esc(d.hero_tagline||'Jornada de Estudos Espíritas do Evangelho')}" placeholder="Ex: Jornada de Estudos Espíritas do Evangelho">
+            </div>
+          </div>
+
+        </div>
+        <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;align-items:center;justify-content:space-between">
+          <button onclick="restaurarDesignPadrao()" style="padding:8px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">↺ Restaurar padrão</button>
+          <button class="btn-cfg-save" onclick="salvarDesign()">Salvar e aplicar</button>
+        </div>
+      </div>
 
       <!-- SEÇÃO: SOBRE O EVENTO -->
       <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
@@ -2094,6 +2289,42 @@ function renderEventoAdmin(){
 }
 
 let _editExpIdx = null;
+
+function salvarDesign(){
+  if(!_cfgEvento.design) _cfgEvento.design={};
+  const d = _cfgEvento.design;
+  d.video_url    = document.getElementById('dsg-video')?.value.trim()||d.video_url||'';
+  d.cor_primaria = document.getElementById('dsg-cor-primaria')?.value||d.cor_primaria||'#3D2410';
+  d.cor_destaque = document.getElementById('dsg-cor-destaque')?.value||d.cor_destaque||'#C8873A';
+  d.cor_fundo    = document.getElementById('dsg-cor-fundo')?.value||d.cor_fundo||'#F2EDE4';
+  d.cor_texto    = document.getElementById('dsg-cor-texto')?.value||d.cor_texto||'#2C1A08';
+  d.fonte_titulo = document.getElementById('dsg-fonte-titulo')?.value||d.fonte_titulo||'EB Garamond';
+  d.fonte_texto  = document.getElementById('dsg-fonte-texto')?.value||d.fonte_texto||'Raleway';
+  d.titulo_size  = document.getElementById('dsg-titulo-size')?.value||d.titulo_size||'clamp(3rem,11vw,6.5rem)';
+  d.hero_tagline = document.getElementById('dsg-tagline')?.value.trim()||d.hero_tagline||'';
+  setCfgEvento();
+  aplicarDesign();
+  const btn=document.querySelector('#evento-admin-wrap .btn-cfg-save');
+  if(btn){ const t=btn.textContent; btn.textContent='✓ Aplicado!'; setTimeout(()=>btn.textContent=t,2000); }
+}
+
+function restaurarDesignPadrao(){
+  if(!confirm('Restaurar o design padrão do sistema?')) return;
+  _cfgEvento.design = {
+    video_url:    'https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4',
+    cor_primaria: '#3D2410',
+    cor_destaque: '#C8873A',
+    cor_fundo:    '#F2EDE4',
+    cor_texto:    '#2C1A08',
+    fonte_titulo: 'EB Garamond',
+    fonte_texto:  'Raleway',
+    titulo_size:  'clamp(3rem,11vw,6.5rem)',
+    hero_tagline: 'Jornada de Estudos Espíritas do Evangelho',
+  };
+  setCfgEvento();
+  aplicarDesign();
+  renderEventoAdmin();
+}
 
 function salvarEventoCfg(){
   _cfgEvento.subtitulo  = document.getElementById('ev-subtitulo')?.value.trim()||'';
@@ -2300,6 +2531,7 @@ function aplicarEscopoAdmin(){
   document.getElementById('atab-turmas').style.display     = '';
   document.getElementById('atab-equipe').style.display     = '';
   document.getElementById('atab-recepcao').style.display   = '';
+  document.getElementById('atab-comunicacao').style.display = '';
   document.getElementById('atab-config').style.display     = (isAdmin||isAdminPolo)?'':'none';
   document.getElementById('atab-evento').style.display     = isAdmin?'':'none';
   document.getElementById('atab-avaliacao').style.display  = isAdmin?'':'none';
@@ -2316,12 +2548,12 @@ function switchAdminTab(id, btn){
   // bloqueios por papel
   if(role==='coord'      && (id==='usuarios'||id==='config'||id==='evento'||id==='avaliacao')) return;
   if(role==='admin_polo' && (id==='usuarios'||id==='evento'||id==='avaliacao')) return;
-
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.atab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('apanel-'+id).classList.add('active');
   btn.classList.add('active');
 
+  if(id==='comunicacao') renderComunicacao();
   if(id==='avaliacao') renderAvaliacaoAdmin();
   if(id==='recepcao') renderRecepcao();
   if(id==='config')   renderConfig();
@@ -2688,7 +2920,9 @@ function renderPanels(){
     const trabCount    = lista.filter(x=>x.trabalhador===true||x.trabalhador==='true').length;
 
     const nomeSafe   = polo.nome.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    const extraActions = `<button class="btn-export-polo" onclick="exportarPolo('${nomeSafe}')">⬇ Excel</button>`;
+    const extraActions = `<button class="btn-export-polo" onclick="exportarPolo('${nomeSafe}')">⬇ Excel</button>
+      ${_cfgEvento.livreto_url?`<button class="btn-export-polo" style="color:#075E54;border-color:#C8E6C0;background:#F0FAF0" onclick="dispararLivretoPolo('${nomeSafe}')">📖 Livreto WA</button>`:''}`;
+
     const fecharBtn    = `<button class="btn-export-polo" style="color:${polo.inscricoes_abertas===false?'var(--teal-600)':'var(--red-400)'};border-color:${polo.inscricoes_abertas===false?'var(--teal-100)':'var(--red-100)'}" onclick="toggleInscricoesPolo(${i})">${polo.inscricoes_abertas===false?'🔓 Reabrir':'🔒 Fechar'}</button>`;
     const pagoResumo   = lista.length>0
       ? `<span class="pago-resumo"><span class="pago-count-sim">✓ ${pagoCount} pago${pagoCount!==1?'s':''}</span><span class="pago-count-nao">· ${lista.length-pagoCount} pendente${lista.length-pagoCount!==1?'s':''}</span></span>`
@@ -3219,9 +3453,16 @@ function gerarCrachas(){
       </div>
       <div class="cracha-rodape" style="${rodapeStyle}">
         ${cfg.showFuncao?`<span class="cracha-funcao" style="background:${funcaoBg};color:${funcaoCor}">${funcaoLabel}</span>`:'<span></span>'}
-        <div class="cracha-qr">
-          <img src="${gerarQRCodeUrl(p.polo)}" width="48" height="48" alt="QR Avaliação" style="border-radius:4px;background:white;padding:2px">
-          <div class="cracha-qr-label" style="color:${cfg.bgUrl?'rgba(255,255,255,.5)':cfg.rodapeCor}">Avaliar evento</div>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          ${_cfgEvento.livreto_url?`
+          <div class="cracha-qr">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=48x48&data=${encodeURIComponent(_cfgEvento.livreto_url)}" width="48" height="48" alt="QR Livreto" style="border-radius:4px;background:white;padding:2px">
+            <div class="cracha-qr-label" style="color:${cfg.bgUrl?'rgba(255,255,255,.5)':cfg.rodapeCor}">Livreto</div>
+          </div>`:''}
+          <div class="cracha-qr">
+            <img src="${gerarQRCodeUrl(p.polo)}" width="48" height="48" alt="QR Avaliação" style="border-radius:4px;background:white;padding:2px">
+            <div class="cracha-qr-label" style="color:${cfg.bgUrl?'rgba(255,255,255,.5)':cfg.rodapeCor}">Avaliar</div>
+          </div>
         </div>
         ${cfg.showData?`<span class="cracha-data" style="color:${dataColor}">${cfg.rodapeTexto}</span>`:'<span></span>'}
       </div>
@@ -5167,6 +5408,425 @@ function gerarQRCodeUrl(polo){
 }
 
 /* ── showView: adiciona avaliacao ───────────────────────────── */
+
+/* ================================================================
+   COMUNICAÇÃO COM INSCRITOS
+================================================================ */
+let _comFiltros = { polo:'', turma:'', sala:'', pagamento:'', modo:'inscritos', setor:'' };
+// modo: 'inscritos' | 'equipe'
+
+function getMateriais(){
+  const lista = _cfgEvento.materiais||[];
+  // garante que livreto aparece sempre se configurado
+  if(_cfgEvento.livreto_url && !lista.find(m=>m.url===_cfgEvento.livreto_url)){
+    return [{nome:'📖 Livreto MCJ 2026', url:_cfgEvento.livreto_url}, ...lista];
+  }
+  return lista;
+}
+
+function renderComunicacao(){
+  const wrap = document.getElementById('comunicacao-wrap');
+  if(!wrap) return;
+  const isAdmin = SESSION.role==='admin';
+  const polosVis = SESSION.role==='admin'
+    ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+  const d = getIns();
+  const materiais = getMateriais();
+
+  // Opções de filtro
+  const poloOpts = polosVis.map(p=>`<option value="${esc(p.nome)}" ${_comFiltros.polo===p.nome?'selected':''}>${p.nome}</option>`).join('');
+  const poloSel = POLOS.find(p=>p.nome===_comFiltros.polo);
+  const salasAdulto   = poloSel ? getSalasAdulto(_comFiltros.polo)   : [];
+  const salasMocidade = poloSel ? getSalasMocidade(_comFiltros.polo) : [];
+  const todasSalas    = [...salasAdulto, ...salasMocidade];
+  const salaOpts = todasSalas.map(s=>`<option value="${esc(s)}" ${_comFiltros.sala===s?'selected':''}>${s}</option>`).join('');
+  const turmaOpts = `<option value="">Todas</option><option value="Adulto" ${_comFiltros.turma==='Adulto'?'selected':''}>👤 Adulto</option><option value="Mocidade" ${_comFiltros.turma==='Mocidade'?'selected':''}>🌟 Mocidade</option>`;
+  const pagOpts = `<option value="">Todos</option><option value="Confirmado" ${_comFiltros.pagamento==='Confirmado'?'selected':''}>✓ Confirmado</option><option value="Pendente" ${_comFiltros.pagamento==='Pendente'?'selected':''}>⏳ Pendente</option>`;
+
+  // Modo equipe: trabalhadores
+  const isEquipe = _comFiltros.modo==='equipe';
+  const setores  = poloSel?.setores||[];
+  const setorOpts= setores.map(s=>`<option value="${esc(s)}" ${_comFiltros.setor===s?'selected':''}>${s}</option>`).join('');
+
+  // Aplica filtros
+  let filtrados = [];
+  if(isEquipe){
+    filtrados = d.filter(x=>x.telefone && (x.trabalhador===true||x.trabalhador==='true'));
+    if(SESSION.role!=='admin'||_comFiltros.polo) filtrados=filtrados.filter(x=>(_comFiltros.polo?x.polo===_comFiltros.polo:polosVis.find(p=>p.nome===x.polo)));
+    if(_comFiltros.setor) filtrados=filtrados.filter(x=>(Array.isArray(x.setores)?x.setores:[]).includes(_comFiltros.setor));
+  } else {
+    filtrados = d.filter(x=>x.telefone);
+    if(SESSION.role!=='admin'||_comFiltros.polo) filtrados=filtrados.filter(x=>(_comFiltros.polo?x.polo===_comFiltros.polo:polosVis.find(p=>p.nome===x.polo)));
+    if(_comFiltros.turma)    filtrados=filtrados.filter(x=>x.turma===_comFiltros.turma);
+    if(_comFiltros.sala)     filtrados=filtrados.filter(x=>x.sala===_comFiltros.sala);
+    if(_comFiltros.pagamento) filtrados=filtrados.filter(x=>(x.pagamento||'Pendente')===_comFiltros.pagamento);
+  }
+
+  // Modo toggle
+  const modoHtml = `
+    <div style="display:flex;gap:8px;margin-bottom:4px">
+      <button onclick="_comFiltros.modo='inscritos';_comFiltros.setor='';renderComunicacao()"
+        style="padding:7px 18px;border-radius:20px;border:1.5px solid ${!isEquipe?'var(--mcj-gold)':'var(--gray-100)'};background:${!isEquipe?'#FFFBF0':'white'};color:${!isEquipe?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+        👤 Inscritos
+      </button>
+      <button onclick="_comFiltros.modo='equipe';_comFiltros.turma='';_comFiltros.sala='';_comFiltros.pagamento='';renderComunicacao()"
+        style="padding:7px 18px;border-radius:20px;border:1.5px solid ${isEquipe?'var(--mcj-gold)':'var(--gray-100)'};background:${isEquipe?'#FFFBF0':'white'};color:${isEquipe?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+        🔧 Equipe de Trabalho
+      </button>
+    </div>`;
+
+  // Filtros inscritos
+  const filtrosInscritosHtml = !isEquipe ? `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:5px">Polo</div>
+        <select onchange="_comFiltros.polo=this.value;_comFiltros.sala='';renderComunicacao()"
+          style="width:100%;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;font-size:13px">
+          <option value="">Todos os polos</option>${poloOpts}
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:5px">Turma</div>
+        <select onchange="_comFiltros.turma=this.value;renderComunicacao()"
+          style="width:100%;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;font-size:13px">
+          ${turmaOpts}
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:5px">Sala</div>
+        <select onchange="_comFiltros.sala=this.value;renderComunicacao()"
+          style="width:100%;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;font-size:13px">
+          <option value="">Todas as salas</option>${salaOpts}
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:5px">Pagamento</div>
+        <select onchange="_comFiltros.pagamento=this.value;renderComunicacao()"
+          style="width:100%;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;font-size:13px">
+          ${pagOpts}
+        </select>
+      </div>
+    </div>
+    ${_comFiltros.polo||_comFiltros.turma||_comFiltros.sala||_comFiltros.pagamento?`
+    <button onclick="_comFiltros.polo='';_comFiltros.turma='';_comFiltros.sala='';_comFiltros.pagamento='';renderComunicacao()"
+      style="margin-top:8px;padding:6px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">
+      ✕ Limpar filtros
+    </button>`:''}` : '';
+
+  // Filtros equipe
+  const filtrosEquipeHtml = isEquipe ? `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:5px">Polo</div>
+        <select onchange="_comFiltros.polo=this.value;_comFiltros.setor='';renderComunicacao()"
+          style="width:100%;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;font-size:13px">
+          <option value="">Todos os polos</option>${poloOpts}
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-400);margin-bottom:5px">Setor</div>
+        <select onchange="_comFiltros.setor=this.value;renderComunicacao()"
+          style="width:100%;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;font-size:13px">
+          <option value="">Todos os setores</option>${setorOpts}
+        </select>
+      </div>
+    </div>
+    ${_comFiltros.polo||_comFiltros.setor?`
+    <button onclick="_comFiltros.polo='';_comFiltros.setor='';renderComunicacao()"
+      style="margin-top:8px;padding:6px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">
+      ✕ Limpar filtros
+    </button>`:''}` : '';
+
+  // Materiais (admin geral gerencia)
+  const materiaisAdminHtml = isAdmin ? `
+    <div class="com-card">
+      <div class="com-card-title">📂 Materiais cadastrados</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+        ${getMateriais().length===0
+          ? '<div style="font-size:13px;color:var(--gray-400)">Nenhum material cadastrado ainda.</div>'
+          : getMateriais().map((m,i)=>{
+              const isLivreto = _cfgEvento.livreto_url && m.url===_cfgEvento.livreto_url;
+              return '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:1px solid var(--mcj-sand);background:var(--mcj-cream)">'
+                + '<span style="flex:1;font-size:13px;font-weight:500;color:var(--mcj-dark)">'+m.nome+'</span>'
+                + '<a href="'+m.url+'" target="_blank" style="font-size:11px;color:var(--mcj-gold);text-decoration:none">Ver</a>'
+                + (isLivreto?'':'<button onclick="removerMaterial('+i+')" style="background:none;border:none;color:var(--gray-300);font-size:16px;cursor:pointer;line-height:1" onmouseover="this.style.color=\'var(--red-400)\'" onmouseout="this.style.color=\'var(--gray-300)\'">×</button>')
+                + '</div>';
+            }).join('')}
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" id="com-novo-nome" placeholder="Nome do material"
+          style="flex:1;min-width:120px;font-size:13px;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif">
+        <input type="url" id="com-nova-url" placeholder="URL do material"
+          style="flex:2;min-width:180px;font-size:13px;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif">
+        <button onclick="adicionarMaterial()" class="btn-cfg-save" style="white-space:nowrap">+ Adicionar</button>
+      </div>
+    </div>` : '';
+
+  wrap.innerHTML = `
+    <div style="max-width:800px;display:flex;flex-direction:column;gap:1.25rem">
+
+      ${materiaisAdminHtml}
+
+      <!-- FILTROS -->
+      <div class="com-card">
+        <div class="com-card-title">🎯 Destinatários — <span style="color:var(--mcj-gold)">${filtrados.length} ${isEquipe?'trabalhador':'inscrito'}${filtrados.length!==1?'s':''} selecionado${filtrados.length!==1?'s':''}</span></div>
+        ${modoHtml}
+        ${filtrosInscritosHtml}
+        ${filtrosEquipeHtml}
+      </div>
+
+      <!-- MENSAGEM E MATERIAIS -->
+      <div class="com-card">
+        <div class="com-card-title">✍ Compor mensagem</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <textarea id="com-mensagem" rows="6"
+            style="font-size:13px;padding:10px 12px;border:1px solid var(--gray-100);border-radius:10px;font-family:'Raleway',sans-serif;resize:vertical;background:var(--gray-50)"
+            placeholder="Olá, {nome}! 🙏\n\nEscreva sua mensagem aqui...">${isEquipe?'Olá, {nome}! 🔧\n\nInformações para a equipe de trabalho do MCJ 2026.\n\n':'Olá, {nome}! 🙏\n\nEsperamos você no MCJ 2026! '}</textarea>
+          <div style="font-size:11px;color:var(--gray-400)">
+            Variáveis: <code style="background:var(--gray-50);padding:1px 6px;border-radius:4px">{nome}</code>
+            <code style="background:var(--gray-50);padding:1px 6px;border-radius:4px">{polo}</code>
+            ${!isEquipe?`<code style="background:var(--gray-50);padding:1px 6px;border-radius:4px">{sala}</code>
+            <code style="background:var(--gray-50);padding:1px 6px;border-radius:4px">{turma}</code>`:'<code style="background:var(--gray-50);padding:1px 6px;border-radius:4px">{setor}</code>'}
+          </div>
+          ${materiais.length>0?`
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:8px">Anexar materiais à mensagem:</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              ${materiais.map((m,i)=>`
+                <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(--gray-100);cursor:pointer;font-size:13px;background:var(--gray-50)">
+                  <input type="checkbox" id="com-mat-${i}" style="accent-color:var(--mcj-gold);width:15px;height:15px">
+                  <span style="font-weight:500;color:var(--mcj-dark)">${m.nome}</span>
+                  <a href="${m.url}" target="_blank" style="font-size:11px;color:var(--mcj-gold);text-decoration:none;margin-left:auto">Ver</a>
+                </label>`).join('')}
+            </div>
+          </div>`:''}
+        </div>
+      </div>
+
+      <!-- BOTÃO DISPARAR -->
+      <button onclick="dispararComunicacao()"
+        style="padding:14px;background:var(--mcj-gold);color:white;border:none;border-radius:12px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        💬 Gerar links WhatsApp para ${filtrados.length} ${isEquipe?'trabalhador':'inscrito'}${filtrados.length!==1?'s':''}
+      </button>
+    </div>`;
+}
+
+function adicionarMaterial(){
+  const nome = document.getElementById('com-novo-nome')?.value.trim();
+  const url  = document.getElementById('com-nova-url')?.value.trim();
+  if(!nome||!url){ alert('Preencha o nome e a URL do material.'); return; }
+  if(!_cfgEvento.materiais) _cfgEvento.materiais=[];
+  _cfgEvento.materiais.push({nome, url});
+  setCfgEvento();
+  renderComunicacao();
+}
+
+function removerMaterial(idx){
+  if(!_cfgEvento.materiais||_cfgEvento.materiais.length<=idx) return;
+  if(!confirm(`Remover "${_cfgEvento.materiais[idx].nome}"?`)) return;
+  _cfgEvento.materiais.splice(idx,1);
+  setCfgEvento();
+  renderComunicacao();
+}
+
+function dispararComunicacao(){
+  const msg = document.getElementById('com-mensagem')?.value||'';
+  const materiais = getMateriais();
+  const matSelecionados = materiais.filter((_,i)=>document.getElementById('com-mat-'+i)?.checked);
+  const d = getIns();
+  const polosVis = SESSION.role==='admin'
+    ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+
+  let filtrados = d.filter(x=>x.telefone);
+  if(SESSION.role!=='admin'||_comFiltros.polo) filtrados=filtrados.filter(x=>(_comFiltros.polo?x.polo===_comFiltros.polo:polosVis.find(p=>p.nome===x.polo)));
+  if(_comFiltros.turma)    filtrados=filtrados.filter(x=>x.turma===_comFiltros.turma);
+  if(_comFiltros.sala)     filtrados=filtrados.filter(x=>x.sala===_comFiltros.sala);
+  if(_comFiltros.pagamento) filtrados=filtrados.filter(x=>(x.pagamento||'Pendente')===_comFiltros.pagamento);
+
+  if(!filtrados.length){ alert('Nenhum inscrito com telefone para os filtros selecionados.'); return; }
+
+  // Descrição dos filtros
+  const filtroDesc = [
+    _comFiltros.polo      ? `Polo: ${_comFiltros.polo}`      : 'Todos os polos',
+    _comFiltros.turma     ? `Turma: ${_comFiltros.turma}`    : null,
+    _comFiltros.sala      ? `Sala: ${_comFiltros.sala}`      : null,
+    _comFiltros.pagamento ? `Pagto: ${_comFiltros.pagamento}`: null,
+  ].filter(Boolean).join(' · ');
+
+  const linksHtml = filtrados.map(p=>{
+    const nome = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
+    const tel  = p.telefone.replace(/\D/g,'');
+    let msgFinal = msg
+      .replace(/\{nome\}/g,  nome.split(' ')[0])
+      .replace(/\{polo\}/g,  p.polo||'')
+      .replace(/\{sala\}/g,  p.sala||'')
+      .replace(/\{turma\}/g, p.turma||'');
+    if(matSelecionados.length){
+      msgFinal += '\n\n' + matSelecionados.map(m=>`📎 ${m.nome}:\n${m.url}`).join('\n\n');
+    }
+    const url = `https://wa.me/55${tel}?text=${encodeURIComponent(msgFinal)}`;
+    const pago = p.pagamento==='Confirmado';
+    return `<tr style="border-bottom:1px solid #F0E8DC">
+      <td style="padding:8px 10px;font-size:12px;font-weight:600;color:#2C1A08">${nome}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${p.polo}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${p.sala||'—'}</td>
+      <td style="padding:8px 10px;text-align:center">
+        <span style="font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:${pago?'#ECFDF5':'#FFF7ED'};color:${pago?'#065F46':'#92400E'}">${pago?'✓ Pago':'Pendente'}</span>
+      </td>
+      <td style="padding:8px 10px;text-align:center">
+        <a href="${url}" target="_blank" rel="noopener"
+          style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#25D366;color:white;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600">
+          💬 Enviar
+        </a>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const win = window.open('','_blank');
+  if(!win){ alert('Permita pop-ups.'); return; }
+  win.document.write(`<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<title>💬 Comunicação MCJ 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#F5F0E8;color:#2C1A08}
+.header{background:#2C1A08;padding:20px 24px}
+.header h1{font-size:20px;font-weight:bold;color:#C8873A}
+.header p{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px}
+.info{background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;margin:16px 24px;font-size:12px;color:#6B4C2A;line-height:1.6}
+.filtros{display:flex;flex-wrap:wrap;gap:8px;margin:0 24px 12px}
+.filtro-tag{background:#C8873A;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.materiais{margin:0 24px 12px;background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;font-size:12px;color:#6B4C2A}
+.wrap{margin:0 24px 24px}
+.total{font-size:12px;color:#A08060;text-align:right;margin:8px 0}
+table{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden;border:1px solid #D4B8A0}
+th{padding:8px 10px;background:#F5F0E8;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#6B4C2A;text-align:left;border-bottom:1px solid #D4B8A0}
+</style></head><body>
+<div class="header">
+  <h1>💬 Comunicação MCJ 2026</h1>
+  <p>${filtrados.length} destinatário${filtrados.length!==1?'s':''} · ${new Date().toLocaleDateString('pt-BR')}</p>
+</div>
+<div class="filtros">
+  ${filtroDesc.split(' · ').map(f=>`<span class="filtro-tag">${f}</span>`).join('')}
+</div>
+${matSelecionados.length?`<div class="materiais"><strong>Materiais anexados:</strong> ${matSelecionados.map(m=>m.nome).join(', ')}</div>`:''}
+<div class="info">
+  <strong>Como usar:</strong> clique em 💬 Enviar para cada destinatário — o WhatsApp abrirá com a mensagem personalizada pronta. Envie em lotes de ~20 por vez para evitar bloqueios.
+</div>
+<div class="wrap">
+  <div class="total">${filtrados.length} destinatários</div>
+  <table>
+    <thead><tr><th>Nome</th><th>Polo</th><th>Sala</th><th>Pagto</th><th>Ação</th></tr></thead>
+    <tbody>${linksHtml}</tbody>
+  </table>
+</div>
+</body></html>`);
+  win.document.close();
+}
+
+/* ================================================================
+   DISPARO DO LIVRETO VIA WHATSAPP POR POLO (legado — mantido para compatibilidade)
+================================================================ */
+function dispararLivretoPolo(poloNome){
+  if(!_cfgEvento.livreto_url){ alert('Configure o link do livreto na aba ✨ Evento / Expositores.'); return; }
+  const inscritos = getIns().filter(x=>x.polo===poloNome && x.telefone);
+  if(!inscritos.length){ alert('Nenhum inscrito com telefone neste polo.'); return; }
+
+  const overlay = document.createElement('div');
+  overlay.id='livreto-modal';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(61,36,16,.6);z-index:700;display:flex;align-items:center;justify-content:center;padding:1rem';
+  overlay.innerHTML=`
+    <div style="background:white;border-radius:16px;width:100%;max-width:500px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)">
+      <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-family:'EB Garamond',Georgia,serif;font-size:16px;font-weight:700;color:white">📖 Enviar Livreto — ${poloNome}</span>
+        <button onclick="document.getElementById('livreto-modal').remove()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer">×</button>
+      </div>
+      <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
+        <div style="background:var(--mcj-cream);border-radius:10px;padding:.875rem 1rem;border-left:3px solid var(--mcj-gold)">
+          <div style="font-size:12px;font-weight:600;color:var(--mcj-dark);margin-bottom:6px">Mensagem:</div>
+          <textarea id="livreto-msg" rows="5" style="width:100%;font-size:13px;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;resize:vertical">Olá, {nome}! 🙏\n\nO livreto do MCJ 2026 já está disponível:\n📖 ${_cfgEvento.livreto_url}\n\nBoa leitura e até sábado! 🙌</textarea>
+          <div style="font-size:11px;color:var(--gray-400);margin-top:4px">Use {nome} para personalizar com o primeiro nome</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;cursor:pointer">
+            <input type="checkbox" id="livreto-so-pagos" style="accent-color:var(--mcj-gold);width:15px;height:15px"
+              onchange="document.getElementById('livreto-count').textContent=getIns().filter(x=>x.polo==='${poloNome}'&&x.telefone&&(!this.checked||x.pagamento==='Confirmado')).length+' inscritos'">
+            Apenas pagamento confirmado
+          </label>
+          <span id="livreto-count" style="margin-left:auto;font-size:12px;color:var(--gray-400)">${inscritos.length} inscritos</span>
+        </div>
+      </div>
+      <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="document.getElementById('livreto-modal').remove()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">Cancelar</button>
+        <button onclick="abrirLivretosWA('${poloNome.replace(/'/g,"\\'")}')"
+          style="padding:10px 18px;background:#25D366;color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">
+          💬 Gerar links WhatsApp
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function abrirLivretosWA(poloNome){
+  const msg      = document.getElementById('livreto-msg')?.value||'';
+  const soPageos = document.getElementById('livreto-so-pagos')?.checked||false;
+  const d = getIns().filter(x=>x.polo===poloNome&&x.telefone&&(!soPageos||x.pagamento==='Confirmado'));
+  if(!d.length){ alert('Nenhum inscrito com os filtros selecionados.'); return; }
+  document.getElementById('livreto-modal')?.remove();
+
+  const linksHtml=d.map(p=>{
+    const tel=p.telefone.replace(/\D/g,'');
+    const nome=p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
+    const primeiroNome=nome.split(' ')[0];
+    const msgP=msg.replace(/\{nome\}/g,primeiroNome);
+    const url=`https://wa.me/55${tel}?text=${encodeURIComponent(msgP)}`;
+    return `<tr style="border-bottom:1px solid #F0E8DC">
+      <td style="padding:8px 10px;font-size:12px;color:#2C1A08;font-weight:600">${nome}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${p.telefone}</td>
+      <td style="padding:8px 10px;text-align:center">
+        <a href="${url}" target="_blank" rel="noopener"
+          style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#25D366;color:white;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600">
+          💬 Enviar
+        </a>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const win=window.open('','_blank');
+  if(!win){ alert('Permita pop-ups.'); return; }
+  win.document.write(`<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Livreto MCJ 2026 — ${poloNome}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#F5F0E8;color:#2C1A08}
+.header{background:#2C1A08;padding:20px 24px}
+.header h1{font-size:20px;font-weight:bold;color:#C8873A}
+.header p{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px}
+.info{background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;margin:16px 24px;font-size:12px;color:#6B4C2A;line-height:1.6}
+.wrap{margin:0 24px 24px}
+.total{font-size:12px;color:#A08060;text-align:right;margin:8px 0}
+table{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden;border:1px solid #D4B8A0}
+th{padding:8px 10px;background:#F5F0E8;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#6B4C2A;text-align:left;border-bottom:1px solid #D4B8A0}
+</style></head><body>
+<div class="header">
+  <h1>📖 Livreto MCJ 2026 — ${poloNome}</h1>
+  <p>${d.length} destinatário${d.length!==1?'s':''}${soPageos?' · apenas pagos':''}</p>
+</div>
+<div class="info">
+  <strong>Como usar:</strong> clique em 💬 Enviar para cada pessoa — o WhatsApp abrirá com a mensagem personalizada pronta. Envie em lotes de ~20 por vez.
+</div>
+<div class="wrap">
+  <div class="total">${d.length} inscritos</div>
+  <table>
+    <thead><tr><th>Nome</th><th>Telefone</th><th>Ação</th></tr></thead>
+    <tbody>${linksHtml}</tbody>
+  </table>
+</div>
+</body></html>`);
+  win.document.close();
+}
+
 function abrirLightbox(url, caption){
   const lb  = document.getElementById('lightbox');
   const img = document.getElementById('lightbox-img');
