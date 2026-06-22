@@ -659,9 +659,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 <!-- VIEW: INSCRIÇÃO -->
 <div class="view active" id="view-inscricao">
   <div class="hero">
-    <video class="hero-video" autoplay muted loop playsinline poster="">
-      <source src="https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4" type="video/mp4">
-    </video>
+    <div class="hero-video" style="background:linear-gradient(135deg,var(--mcj-dark) 0%,#5C3A1E 50%,rgba(200,135,58,.4) 100%)"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <div class="hero-tag">Jornada de Estudos Espíritas do Evangelho</div>
@@ -1446,8 +1444,16 @@ function atualizarContadores(){
     almocoRow.style.display = '';
   }
 }
+function removeSplash(){
+  const el = document.getElementById('supa-init-screen');
+  if(el){ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),350); }
+}
+
 async function carregarTudo(){
-  // Renderiza a página IMEDIATAMENTE com dados padrão
+  // Remove splash IMEDIATAMENTE — não espera nada
+  removeSplash();
+
+  // Renderiza com dados padrão já
   // para não bloquear o usuário enquanto carrega do Supabase
   aplicarDesign();
   renderHeroSocial();
@@ -5746,6 +5752,8 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') fecharLightbox();
    INIT
 ================================================================ */
 carregarTudo();
+// Segurança: remove splash após 1s mesmo se algo falhar
+setTimeout(removeSplash, 1000);
 </script>
 </body>
 </html>
