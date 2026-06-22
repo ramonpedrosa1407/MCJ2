@@ -1272,6 +1272,9 @@ const KEY_AUTH = 'mcj2026_admin_session';
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'mcj2026@rj';
 
+const SALAS_ADULTO_DEFAULT   = ['A','B','C','D','E','F','G'];
+const SALAS_MOCIDADE_DEFAULT = ['1','2','3','4','5'];
+
 /* ================================================================
    ██████╗  ██████╗   SUPABASE CONFIG
    Preencha com suas credenciais do projeto Supabase
@@ -1323,6 +1326,18 @@ const POLOS_DEFAULT = [
 ================================================================ */
 function getCfg()  { return _cache.config; }
 function getUsers(){ return _cache.users  || []; }
+function getExpositores(){ return _cfgEvento.expositores_lista || []; }
+function getExpByNome(nome){ return getExpositores().find(e=>e.nome===nome)||null; }
+function getMateriais(){
+  const lista = _cfgEvento.materiais||[];
+  if(_cfgEvento.livreto_url && !lista.find(m=>m.url===_cfgEvento.livreto_url)){
+    return [{nome:'📖 Livreto MCJ 2026', url:_cfgEvento.livreto_url}, ...lista];
+  }
+  return lista;
+}
+function getAvalCriterios(){
+  return _cfgEvento.aval_criterios || AVAL_CRITERIOS_DEFAULT;
+}
 
 async function setCfg(){
   if(_savingCfg) return;
@@ -2258,31 +2273,33 @@ function aplicarEscopoAdmin(){
 
 function switchAdminTab(id, btn){
   const role = SESSION.role;
-  // bloqueios por papel
   if(role==='coord'      && (id==='usuarios'||id==='config'||id==='evento'||id==='avaliacao')) return;
   if(role==='admin_polo' && (id==='usuarios'||id==='evento'||id==='avaliacao')) return;
+
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.atab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('apanel-'+id).classList.add('active');
-  btn.classList.add('active');
+  if(btn) btn.classList.add('active');
 
-  if(id==='comunicacao') renderComunicacao();
-  if(id==='recepcao')    renderRecepcao();
-  if(id==='config')      renderConfig();
+  // Se POLOS ainda não carregou, recarrega primeiro
+  if((id==='config'||id==='turmas'||id==='equipe'||id==='recepcao') && POLOS.length===0){
+    showLoading('Carregando polos...');
+    carregarConfig().then(()=>{ hideLoading(); _renderTab(id); });
+    return;
+  }
+  _renderTab(id);
+}
+
+function _renderTab(id){
   if(id==='inscricoes')  renderAdmin();
   if(id==='turmas')      renderTurmas();
   if(id==='equipe')      renderEquipe();
+  if(id==='recepcao')    renderRecepcao();
+  if(id==='comunicacao') renderComunicacao();
+  if(id==='config')      renderConfig();
   if(id==='evento')      renderEventoAdmin();
   if(id==='avaliacao')   renderAvaliacaoAdmin();
   if(id==='usuarios')    renderUsuarios();
-  if(id==='avaliacao') renderAvaliacaoAdmin();
-  if(id==='recepcao') renderRecepcao();
-  if(id==='config')   renderConfig();
-  if(id==='inscricoes') renderAdmin();
-  if(id==='turmas')   renderTurmas();
-  if(id==='equipe')   renderEquipe();
-  if(id==='evento')   renderEventoAdmin();
-  if(id==='usuarios') renderUsuarios();
 }
 
 /* ================================================================
@@ -2719,9 +2736,6 @@ function renderUsuarios(){
 }
 
 /* ================================================================
-const SALAS_ADULTO_DEFAULT   = ['A','B','C','D','E','F','G'];
-const SALAS_MOCIDADE_DEFAULT = ['1','2','3','4','5'];
-
 function getSalasAdulto(poloNome){
   const p = POLOS.find(x=>x.nome===poloNome);
   return (p?.salas_adulto && p.salas_adulto.length) ? p.salas_adulto : SALAS_ADULTO_DEFAULT;
@@ -4166,17 +4180,17 @@ function renderConfig(){
   if(!c) return;
   const isAdmin = SESSION.role==='admin';
 
-  // coordenador só vê seus polos; admin vê todos
   const polosVisiveis = isAdmin ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
 
-  if(polosVisiveis.length===0){
-    c.innerHTML='<p style="color:var(--gray-400);font-size:14px;padding:1rem 0">Nenhum polo disponível para configuração.</p>';
+  if(!polosVisiveis.length){
+    c.innerHTML='<p style="color:var(--gray-400);font-size:14px;padding:1rem 0">Nenhum polo disponível. Clique em "+ Adicionar polo" para criar.</p>';
     return;
   }
 
-  c.innerHTML=polosVisiveis.map((p)=>{
-    const i=POLOS.indexOf(p); // índice real no array global
-    const cl=cor(i);
+  try {
+    c.innerHTML = polosVisiveis.map((p,idx)=>{
+      const i = POLOS.indexOf(p);
+      const cl = cor(i>=0?i:idx);
     const aberto=p.inscricoes_abertas!==false;
     const inscritos=d.filter(x=>x.polo===p.nome).length;
     const badge=aberto
@@ -4385,8 +4399,15 @@ function renderConfig(){
         <button class="btn-cfg-save" onclick="salvarPolo(${i})">Salvar alterações</button>
       </div>
     </div>`;
-  }).join('');
-  inicializarPrevias();
+    }).join('');
+    inicializarPrevias();
+  } catch(err){
+    console.error('renderConfig error:', err);
+    c.innerHTML=`<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:1rem;color:#991B1B;font-size:13px">
+      Erro ao carregar configuração: ${err.message}<br>
+      <button onclick="renderConfig()" style="margin-top:8px;padding:6px 14px;background:#DC2626;color:white;border:none;border-radius:6px;cursor:pointer">Tentar novamente</button>
+    </div>`;
+  }
 }
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -4692,9 +4713,7 @@ const AVAL_CRITERIOS_DEFAULT = {
   ],
 };
 
-function getAvalCriterios(){
-  return _cfgEvento.aval_criterios || AVAL_CRITERIOS_DEFAULT;
-}
+
 
 let _avalPolo  = '';
 let _avalSala  = '';
