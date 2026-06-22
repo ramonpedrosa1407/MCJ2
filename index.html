@@ -2410,7 +2410,7 @@ function abrirUserModal(id){
     }).join('');
   }
 
-  const errEl = document.getElementById('user-modal-error');
+  const errEl = document.getElementById('user-modal-err');
   if(errEl) errEl.classList.remove('show');
 
   onRoleChange();
@@ -2446,7 +2446,7 @@ async function salvarUsuario(){
     ? [...document.querySelectorAll('#u-polos-checkboxes input:checked')].map(c=>c.value)
     : [];
 
-  const errEl = document.getElementById('user-modal-error');
+  const errEl = document.getElementById('user-modal-err');
   const showErr = (msg)=>{ if(errEl){errEl.textContent=msg;errEl.classList.add('show');} };
 
   if(!nome)  return showErr('O nome é obrigatório.');
