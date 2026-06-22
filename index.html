@@ -1450,11 +1450,10 @@ function removeSplash(){
 }
 
 async function carregarTudo(){
-  // Remove splash IMEDIATAMENTE — não espera nada
+  // Remove splash IMEDIATAMENTE
   removeSplash();
 
-  // Renderiza com dados padrão já
-  // para não bloquear o usuário enquanto carrega do Supabase
+  // Renderiza com dados padrão
   aplicarDesign();
   renderHeroSocial();
   renderBannerAvaliacao();
@@ -1491,14 +1490,18 @@ async function carregarTudo(){
       ]),
       timeout
     ]);
-    // Re-renderiza com dados do servidor
+    // Re-renderiza com dados reais do servidor
     aplicarDesign();
     renderHeroSocial();
     renderBannerAvaliacao();
     renderPoloGrid();
     atualizarBanner();
     renderSobre();
-    if(sess) renderAdmin();
+    // Se tinha sessão, re-renderiza o painel admin com dados reais
+    if(SESSION.role){
+      aplicarEscopoAdmin();
+      renderAdmin();
+    }
   } catch(e){
     console.warn('carregarTudo:', e.message);
   }
@@ -2255,6 +2258,14 @@ function switchAdminTab(id, btn){
   btn.classList.add('active');
 
   if(id==='comunicacao') renderComunicacao();
+  if(id==='recepcao')    renderRecepcao();
+  if(id==='config')      renderConfig();
+  if(id==='inscricoes')  renderAdmin();
+  if(id==='turmas')      renderTurmas();
+  if(id==='equipe')      renderEquipe();
+  if(id==='evento')      renderEventoAdmin();
+  if(id==='avaliacao')   renderAvaliacaoAdmin();
+  if(id==='usuarios')    renderUsuarios();
   if(id==='avaliacao') renderAvaliacaoAdmin();
   if(id==='recepcao') renderRecepcao();
   if(id==='config')   renderConfig();
@@ -2653,8 +2664,52 @@ function renderSummary(){
 }
 
 /* ================================================================
-   SALAS — defaults e opções por turma
+   RENDER — USUÁRIOS
 ================================================================ */
+function renderUsuarios(){
+  const users  = getUsers();
+  const admins     = users.filter(u=>u.role==='admin');
+  const adminPolos = users.filter(u=>u.role==='admin_polo');
+  const coords     = users.filter(u=>u.role==='coord');
+
+  function rowsFor(list, showPolos){
+    if(!list.length) return '<tr class="empty-row"><td colspan="5">Nenhum usuário nesta categoria.</td></tr>';
+    return list.map(u=>`<tr>
+      <td><strong>${u.login}</strong></td>
+      <td>${u.nome||'—'}</td>
+      ${showPolos?`<td><div class="user-polo-tags">${(u.polos||[]).map(p=>`<span class="user-polo-tag">${p}</span>`).join('')||'<span style="color:var(--gray-400);font-size:12px">Nenhum polo</span>'}</div></td>`:'<td>—</td>'}
+      <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
+      <td style="display:flex;gap:4px">
+        <button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button>
+        <button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button>
+      </td>
+    </tr>`).join('');
+  }
+
+  const tbA = document.getElementById('tbody-admins');
+  if(tbA){
+    const all = [{id:'__master__',login:ADMIN_USER,nome:'Administrador Principal',role:'admin',status:'ativo',polos:[]},...admins];
+    tbA.innerHTML = all.map(u=>`<tr>
+      <td><strong>${u.login}</strong></td>
+      <td>${u.nome||'—'}</td>
+      <td><span class="role-badge role-admin">Admin geral</span></td>
+      <td><span class="${u.status==='ativo'?'user-status-on':'user-status-off'}"></span>${u.status==='ativo'?'Ativo':'Inativo'}</td>
+      <td>${u.id==='__master__'
+        ?'<span style="font-size:11px;color:var(--gray-400)">conta principal</span>'
+        :`<button class="btn-user-edit" onclick="editarUsuario('${u.id}')">Editar</button>
+          <button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button>`}
+      </td>
+    </tr>`).join('');
+  }
+
+  const tbP = document.getElementById('tbody-admin-polos');
+  if(tbP) tbP.innerHTML = rowsFor(adminPolos, true);
+
+  const tbC = document.getElementById('tbody-coords');
+  if(tbC) tbC.innerHTML = rowsFor(coords, true);
+}
+
+/* ================================================================
 const SALAS_ADULTO_DEFAULT   = ['A','B','C','D','E','F','G'];
 const SALAS_MOCIDADE_DEFAULT = ['1','2','3','4','5'];
 
