@@ -1547,6 +1547,15 @@ function showView(id, btn){
   if(id==='sobre')       renderSobre();
   if(id==='expositores') renderExpositores();
   if(id==='avaliacao')   renderAvaliacao();
+  if(id==='admin'){
+    if(!SESSION.role){
+      // Não logado — abre modal de login
+      abrirLogin();
+      return;
+    }
+    aplicarEscopoAdmin();
+    renderAdmin();
+  }
 }
 
 /* ================================================================
