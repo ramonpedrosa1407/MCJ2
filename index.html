@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <title id="page-title">MCJ 2026 — Sistema de Inscrição</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -36,7 +36,7 @@
   --safe-right:env(safe-area-inset-right,0px);
 }
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{font-family:'Raleway',sans-serif;background:var(--mcj-cream);color:var(--mcj-text);min-height:100vh;display:flex;flex-direction:column;padding-bottom:var(--safe-bot);-webkit-font-smoothing:antialiased}
+body{font-family:'Inter','Raleway',sans-serif;background:var(--mcj-cream);color:var(--mcj-text);min-height:100vh;display:flex;flex-direction:column;padding-bottom:var(--safe-bot);-webkit-font-smoothing:antialiased}
 
 /* ── NAV ───────────────────────────────────────────────── */
 nav{background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;padding-left:calc(1rem + var(--safe-left));padding-right:calc(1rem + var(--safe-right));height:56px;position:sticky;top:0;top:var(--safe-top);z-index:200;border-bottom:2px solid var(--mcj-gold)}
@@ -93,12 +93,12 @@ nav{background:var(--mcj-dark);display:flex;align-items:center;justify-content:s
 .form-grid{display:grid;grid-template-columns:1fr;gap:14px}
 .field{display:flex;flex-direction:column;gap:5px}
 .field.full{grid-column:1/-1}
-label{font-size:13px;font-weight:500;color:var(--gray-800)}
+label{font-size:11.5px;font-weight:600;color:var(--gray-500);font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
 label .req{color:var(--red-400);margin-left:2px}
 /* font-size 16px prevents iOS auto-zoom */
-input,select,textarea{font-family:'Raleway',sans-serif;font-size:16px;color:var(--gray-900);background:var(--gray-50);border:1px solid var(--gray-100);border-radius:10px;padding:12px 14px;outline:none;width:100%;-webkit-appearance:none;appearance:none;transition:border-color .15s}
+input,select,textarea{font-family:'Inter',sans-serif;font-size:15px;font-weight:400;color:var(--gray-900);background:var(--gray-50);border:1.5px solid var(--gray-100);border-radius:12px;padding:11px 14px;outline:none;width:100%;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s}
 input[type=date]{-webkit-appearance:none;appearance:none}
-input:focus,select:focus,textarea:focus{border-color:var(--mcj-gold);background:white}
+input:focus,select:focus,textarea:focus{border-color:var(--mcj-gold);background:white;box-shadow:0 0 0 3px rgba(200,135,58,.12)}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 .polo-required-msg{background:var(--amber-50);border:1px solid var(--amber-100);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--amber-800);margin-bottom:1rem;display:none}
 .polo-required-msg.show{display:block}
@@ -106,7 +106,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .radio-turma-label{flex:1;min-width:140px;display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500;-webkit-user-select:none;user-select:none}
 .radio-turma-label.sel{border-color:var(--blue-400);background:var(--blue-50);color:var(--blue-800)}
 .radio-turma-label input{width:18px;height:18px;flex-shrink:0;accent-color:var(--blue-600)}
-.btn-primary{width:100%;padding:15px;background:var(--mcj-gold);color:white;border:none;border-radius:12px;font-family:'Raleway',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:1.25rem;-webkit-appearance:none;min-height:50px;transition:background .15s;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+.btn-primary{width:100%;padding:15px;background:var(--mcj-gold);color:white;border:none;border-radius:14px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:1.25rem;-webkit-appearance:none;min-height:50px;transition:background .15s,transform .1s;letter-spacing:.2px}
 .btn-primary:hover{background:var(--mcj-mid)}
 .alert{border-radius:10px;padding:12px 16px;font-size:14px;margin-top:1rem;display:none}
 .alert.ok{background:var(--teal-50);color:var(--teal-800);border:1px solid var(--teal-100)}
@@ -165,7 +165,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .admin-wrap{max-width:1000px;margin:0 auto;padding:1.25rem 1rem 3rem}
 .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px}
 .admin-header h2{font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:600;color:var(--mcj-dark);letter-spacing:.3px}
-.btn-export-all{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--mcj-gold);color:white;border:none;min-height:44px;-webkit-appearance:none}
+.btn-export-all{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--mcj-gold);color:white;border:none;min-height:44px;-webkit-appearance:none}
 
 /* ADMIN INTERNAL TABS */
 .admin-tabs{display:flex;border-bottom:2px solid var(--mcj-sand);margin-bottom:1.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -187,7 +187,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .polo-panel-title{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-weight:600;font-size:14px}
 .polo-panel-actions{display:flex;gap:6px;flex-shrink:0}
 .polo-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
-.btn-export-polo{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;background:white;border:1px solid var(--gray-100);color:var(--gray-800);min-height:36px;-webkit-appearance:none}
+.btn-export-polo{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;background:white;border:1px solid var(--gray-100);color:var(--gray-800);min-height:36px;-webkit-appearance:none}
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .list-table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
 .list-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--gray-50);background:var(--gray-50);white-space:nowrap}
@@ -197,17 +197,17 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .empty-row td{text-align:center;padding:2rem;color:var(--gray-400);font-style:italic}
 
 /* PAGAMENTO */
-.btn-pago{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;min-height:32px;-webkit-appearance:none}
+.btn-pago{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;min-height:32px;-webkit-appearance:none}
 .btn-pago.sim{background:var(--teal-50);color:var(--teal-800);border:1px solid var(--teal-100)}
 .btn-pago.nao{background:var(--gray-50);color:var(--gray-400);border:1px solid var(--gray-100)}
 .pago-resumo{display:flex;align-items:center;gap:6px;font-size:11px}
 .pago-count-sim{color:var(--teal-600);font-weight:600}
 .pago-count-nao{color:var(--gray-400);font-weight:500}
-.btn-whatsapp{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #C3E6C8;background:#F0FAF1;color:#1A6630;white-space:nowrap;text-decoration:none;margin-left:4px;min-height:32px}
+.btn-whatsapp{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #C3E6C8;background:#F0FAF1;color:#1A6630;white-space:nowrap;text-decoration:none;margin-left:4px;min-height:32px}
 .pago-cell{display:flex;align-items:center;gap:4px;flex-wrap:nowrap}
 
 /* TRABALHADOR */
-.btn-trabalhador{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;transition:background .15s}
+.btn-trabalhador{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;transition:background .15s}
 .btn-trabalhador.sim{background:#F0EAF8;color:#4A1575;border:1px solid #D4B8EF}
 .btn-trabalhador.sim:hover{background:#E4D5F5}
 .btn-trabalhador.nao{background:var(--gray-50);color:var(--gray-400);border:1px solid var(--gray-100)}
@@ -219,7 +219,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .trab-resumo{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#4A1575;font-weight:600;margin-left:2px}
 
 /* SALA */
-.sala-select{font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;padding:6px 8px;border-radius:8px;border:1.5px solid var(--gray-100);background:var(--gray-50);color:var(--gray-700);cursor:pointer;outline:none;min-width:80px;min-height:36px;-webkit-appearance:auto}
+.sala-select{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:6px 8px;border-radius:8px;border:1.5px solid var(--gray-100);background:var(--gray-50);color:var(--gray-700);cursor:pointer;outline:none;min-width:80px;min-height:36px;-webkit-appearance:auto}
 .sala-select:focus{border-color:var(--blue-400);background:white}
 .sala-select.atribuida{background:var(--blue-50);border-color:var(--blue-200);color:var(--blue-800)}
 .sala-resumo{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--gray-400)}
@@ -227,7 +227,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 /* CONFIG */
 .config-actions-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px}
 .config-actions-bar h3{font-family:'EB Garamond',Georgia,serif;font-size:16px;font-weight:700}
-.btn-add-polo{display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--mcj-gold);color:white;border:none;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;-webkit-appearance:none}
+.btn-add-polo{display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--mcj-gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;-webkit-appearance:none}
 .config-grid{display:grid;grid-template-columns:1fr;gap:1rem}
 .config-polo-card{background:white;border:1px solid var(--gray-100);border-radius:14px;overflow:hidden}
 .config-polo-head{padding:.9rem 1rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--gray-100)}
@@ -252,7 +252,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .cfg-saved-msg{font-size:12px;color:var(--teal-600);font-weight:500;opacity:0;transition:opacity .3s}
 .cfg-saved-msg.show{opacity:1}
 .btn-cfg-save{padding:10px 18px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:600;cursor:pointer;min-height:44px;-webkit-appearance:none}
-.btn-remove-polo{padding:8px 12px;background:white;color:var(--red-400);border:1px solid var(--red-100);border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;min-height:36px;-webkit-appearance:none}
+.btn-remove-polo{padding:8px 12px;background:white;color:var(--red-400);border:1px solid var(--red-100);border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;min-height:36px;-webkit-appearance:none}
 
 /* TOGGLE */
 .toggle-wrap{display:flex;align-items:center;justify-content:space-between;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:10px;padding:12px 14px;gap:12px}
@@ -271,7 +271,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 /* USUÁRIOS */
 .users-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px}
 .users-header h3{font-family:'EB Garamond',Georgia,serif;font-size:16px;font-weight:700}
-.btn-add-user{display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--blue-600);color:white;border:none;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;-webkit-appearance:none}
+.btn-add-user{display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--blue-600);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;min-height:44px;-webkit-appearance:none}
 .users-table-wrap{background:white;border-radius:12px;border:1px solid var(--gray-100);overflow:hidden;margin-bottom:1.25rem}
 .users-table-title{padding:.75rem 1rem;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--gray-400);border-bottom:1px solid var(--gray-50);background:var(--gray-50)}
 .users-table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -285,8 +285,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .role-coord{background:var(--amber-50);color:var(--amber-800);border:1px solid var(--amber-100)}
 .user-polo-tags{display:flex;flex-wrap:wrap;gap:4px}
 .user-polo-tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:12px;background:var(--gray-50);border:1px solid var(--gray-100);color:var(--gray-600)}
-.btn-user-edit{padding:6px 12px;background:white;color:var(--blue-600);border:1px solid var(--blue-100);border-radius:7px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;min-height:36px;-webkit-appearance:none}
-.btn-user-del{padding:6px 12px;background:white;color:var(--red-400);border:1px solid var(--red-100);border-radius:7px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;min-height:36px;-webkit-appearance:none}
+.btn-user-edit{padding:6px 12px;background:white;color:var(--blue-600);border:1px solid var(--blue-100);border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;min-height:36px;-webkit-appearance:none}
+.btn-user-del{padding:6px 12px;background:white;color:var(--red-400);border:1px solid var(--red-100);border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;min-height:36px;-webkit-appearance:none}
 .user-status-on{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--teal-400);margin-right:4px}
 .user-status-off{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gray-200);margin-right:4px}
 
@@ -344,10 +344,15 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 /* ALMOÇO */
 .almoco-wrap{display:none;margin-top:6px}
 .almoco-wrap.show{display:block}
-.almoco-check-label{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500;-webkit-user-select:none;user-select:none;min-height:50px}
+.almoco-check-label{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500;-webkit-user-select:none;user-select:none;min-height:50px;transition:border-color .15s,background .15s,color .15s}
 .almoco-check-label.sel{border-color:#E08020;background:#FFF8EF;color:#6B3A00}
 .almoco-check-label input[type=checkbox]{width:20px;height:20px;flex-shrink:0;accent-color:#E08020}
 .almoco-valor-tag{margin-left:auto;font-size:13px;font-weight:700;color:#E08020}
+.almoco-check-label.crianca{border-color:#BFDBFE;background:#EFF6FF}
+.almoco-check-label.crianca input[type=checkbox]{accent-color:#2563EB}
+.almoco-check-label.crianca .almoco-valor-tag{color:#2563EB}
+.almoco-check-label.crianca.sel{border-color:#2563EB;background:#DBEAFE;color:#1E3A8A}
+.almoco-check-label.crianca.sel .almoco-valor-tag{color:#1D4ED8}
 
 footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc(1.5rem + var(--safe-bot));font-size:12px;color:var(--gray-200);border-top:1px solid var(--gray-100)}
 
@@ -765,13 +770,44 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
             </label>
           </div>
         </div>
+
+        <!-- SEÇÃO CRIANÇA — aparece só se polo aceitar -->
+        <div class="field full" id="crianca-field" style="display:none">
+          <label>👶 Inscrição de crianças para a Evangelização</label>
+          <label style="display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500">
+            <input type="checkbox" id="f-tem-crianca" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--blue-600)" onchange="toggleCriancaFields()">
+            Desejo inscrever uma criança para a Evangelização
+          </label>
+        </div>
+
+        <!-- CAMPOS DAS CRIANÇAS -->
+        <div id="crianca-fields-wrap" style="display:none;flex-direction:column;gap:10px">
+          <div style="background:var(--blue-50);border:1.5px solid var(--blue-100);border-radius:14px;padding:1rem;display:flex;flex-direction:column;gap:10px" id="criancas-lista">
+            <!-- Criança 1 — gerada pelo JS -->
+          </div>
+          <button type="button" onclick="adicionarCrianca()"
+            style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:10px;border:1.5px dashed var(--blue-200);background:var(--blue-50);color:var(--blue-600);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;width:100%">
+            + Adicionar outra criança
+          </button>
+        </div>
+
+        <div id="campos-extras-form" style="display:none"></div>
+
         <div class="field full" id="almoco-field" style="display:none">
-          <label>🍽 Almoço</label>
-          <div class="almoco-wrap show">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);font-family:'Inter',sans-serif;letter-spacing:.4px;text-transform:uppercase;margin-bottom:6px">🍽 Almoço</div>
+          <div class="almoco-wrap show" style="display:flex;flex-direction:column;gap:8px">
             <label class="almoco-check-label" id="lbl-almoco">
-              <input type="checkbox" id="f-almoco"> Desejo incluir o almoço na minha inscrição
+              <input type="checkbox" id="f-almoco">
+              <span>🍽 Desejo incluir o almoço na minha inscrição</span>
               <span class="almoco-valor-tag" id="almoco-valor-tag"></span>
             </label>
+            <div id="almoco-crianca-wrap" style="display:none">
+              <label class="almoco-check-label crianca" id="lbl-almoco-crianca">
+                <input type="checkbox" id="f-almoco-crianca">
+                <span>👶 Incluir almoço para as crianças</span>
+                <span class="almoco-valor-tag" id="almoco-crianca-valor-tag"></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -1221,23 +1257,29 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 </div>
 
 <!-- MODAL: EDITAR INSCRIÇÃO -->
-<div class="login-overlay" id="edit-ins-overlay" style="align-items:center;padding:1rem">
-  <div class="login-box" style="max-width:520px;max-height:90vh;overflow-y:auto">
-    <div style="font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:700;color:var(--mcj-dark);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--mcj-sand)">
-      ✏️ Editar Inscrição
+<div class="login-overlay" id="edit-ins-overlay" onclick="if(event.target===this)fecharEditarInscricao()" style="align-items:center;padding:1rem;z-index:700">
+  <div style="background:white;border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2);display:flex;flex-direction:column">
+    <!-- Header -->
+    <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <span style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">✏️ Editar Inscrição</span>
+      <button onclick="fecharEditarInscricao()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0">×</button>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <div class="cfg-row">
+    <!-- Body com scroll -->
+    <div style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1.25rem;display:flex;flex-direction:column;gap:12px;flex:1">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="cfg-field"><label>Nome completo *</label><input type="text" id="ei-nome" placeholder="Nome completo"></div>
         <div class="cfg-field"><label>Data de nascimento</label><input type="text" id="ei-nascimento" placeholder="DD/MM/AAAA"></div>
       </div>
-      <div class="cfg-row">
-        <div class="cfg-field"><label>E-mail <span style="font-size:10px;color:var(--gray-400)">(não editável)</span></label><input type="email" id="ei-email" readonly style="background:var(--gray-50);color:var(--gray-400);cursor:default"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="cfg-field">
+          <label>E-mail <span style="font-size:10px;color:var(--gray-400);font-weight:400">(não editável)</span></label>
+          <input type="email" id="ei-email" readonly style="background:var(--gray-50);color:var(--gray-400);cursor:default">
+        </div>
         <div class="cfg-field"><label>Telefone</label><input type="tel" id="ei-telefone" placeholder="(00) 00000-0000"></div>
       </div>
       <div class="cfg-field"><label>Nome para o crachá</label><input type="text" id="ei-cracha" placeholder="Como deseja ser chamado(a)" maxlength="40"></div>
       <div class="cfg-field"><label>Instituição de origem</label><input type="text" id="ei-instituicao" placeholder="Igreja, escola ou organização"></div>
-      <div class="cfg-row">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="cfg-field">
           <label>Turma</label>
           <select id="ei-turma">
@@ -1245,9 +1287,12 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
             <option value="Mocidade">🌟 Mocidade</option>
           </select>
         </div>
-        <div class="cfg-field"><label>Polo <span style="font-size:10px;color:var(--gray-400)">(não editável)</span></label><input type="text" id="ei-polo" readonly style="background:var(--gray-50);color:var(--gray-400);cursor:default"></div>
+        <div class="cfg-field">
+          <label>Polo <span style="font-size:10px;color:var(--gray-400);font-weight:400">(não editável)</span></label>
+          <input type="text" id="ei-polo" readonly style="background:var(--gray-50);color:var(--gray-400);cursor:default">
+        </div>
       </div>
-      <div class="cfg-row">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="cfg-field">
           <label>Almoço</label>
           <select id="ei-almoco">
@@ -1257,11 +1302,12 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         </div>
         <div class="cfg-field"><label>Valor almoço</label><input type="text" id="ei-almoco-valor" placeholder="R$ 35,00"></div>
       </div>
+      <div id="ei-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800)"></div>
     </div>
-    <div id="ei-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800);margin-top:10px"></div>
-    <div style="display:flex;gap:8px;margin-top:1.25rem">
-      <button class="btn-cancel" onclick="fecharEditarInscricao()">Cancelar</button>
-      <button class="btn-ok" onclick="salvarEdicaoInscricao()">Salvar alterações</button>
+    <!-- Footer -->
+    <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0">
+      <button onclick="fecharEditarInscricao()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">Cancelar</button>
+      <button onclick="salvarEdicaoInscricao()" class="btn-cfg-save">Salvar alterações</button>
     </div>
   </div>
 </div>
@@ -1295,6 +1341,51 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
       <button onclick="fecharModalExpositor()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">Cancelar</button>
       <button onclick="salvarExpositor()" class="btn-cfg-save">Salvar expositor</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CAMPO EXTRA -->
+<div class="login-overlay" id="modal-campo-overlay" onclick="if(event.target===this)fecharModalCampo()" style="align-items:center;padding:1rem;z-index:700">
+  <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)">
+    <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
+      <span id="modal-campo-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">Novo campo</span>
+      <button onclick="fecharModalCampo()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0">×</button>
+    </div>
+    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
+      <div class="cfg-field">
+        <label>Label do campo *</label>
+        <input type="text" id="campo-label" placeholder="Ex: Nome da Igreja, Você é médium?">
+      </div>
+      <div class="cfg-field">
+        <label>Tipo de campo *</label>
+        <select id="campo-tipo" onchange="toggleCampoOpcoes()">
+          <option value="text">📝 Texto livre</option>
+          <option value="number">🔢 Número</option>
+          <option value="select">📋 Seleção (lista de opções)</option>
+          <option value="checkbox">☑️ Checkbox (sim/não)</option>
+        </select>
+      </div>
+      <div id="campo-opcoes-wrap" style="display:none">
+        <div class="cfg-field">
+          <label>Opções (uma por linha)</label>
+          <textarea id="campo-opcoes" rows="4" placeholder="Sim&#10;Não&#10;Talvez"></textarea>
+          <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Cada linha vira uma opção no select</span>
+        </div>
+      </div>
+      <div class="cfg-field">
+        <label>Texto de ajuda (opcional)</label>
+        <input type="text" id="campo-placeholder" placeholder="Ex: Digite o nome completo da sua instituição">
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500">
+        <input type="checkbox" id="campo-obrigatorio" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--mcj-gold)">
+        Campo obrigatório
+      </label>
+      <div id="campo-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800)"></div>
+    </div>
+    <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="fecharModalCampo()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancelar</button>
+      <button onclick="salvarCampoExtra()" class="btn-cfg-save">Salvar campo</button>
     </div>
   </div>
 </div>
@@ -1365,19 +1456,23 @@ const POLOS_DEFAULT = [
   { nome:'Campo Grande', salas_adulto:['A','B','C'], salas_mocidade:['D','E'],
     logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
     fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
-    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'' },
+    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'',
+    tem_mocidade:true, aceita_crianca:false },
   { nome:'Jacarepaguá', salas_adulto:['A','B','C'], salas_mocidade:['D','E'],
     logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
     fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
-    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'' },
+    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'',
+    tem_mocidade:true, aceita_crianca:false },
   { nome:'Vila Isabel', salas_adulto:['A','B'], salas_mocidade:['C'],
     logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
     fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
-    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'' },
+    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'',
+    tem_mocidade:true, aceita_crianca:false },
   { nome:'Teresópolis', salas_adulto:['A','B'], salas_mocidade:['C'],
     logradouro:'', cep:'', cidade:'Teresópolis', estado:'RJ', contato:'', apresentacao:'',
     fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
-    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'' },
+    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'',
+    tem_mocidade:true, aceita_crianca:false },
 ];
 
 /* ================================================================
@@ -1538,6 +1633,7 @@ async function carregarTudo(){
   renderPoloGrid();
   atualizarBanner();
   renderSobre();
+  renderCamposExtrasForm();
 
   // Restaura sessão do localStorage (instantâneo)
   const sess = restaurarSessao();
@@ -1575,6 +1671,7 @@ async function carregarTudo(){
     renderPoloGrid();
     atualizarBanner();
     renderSobre();
+    renderCamposExtrasForm();
     if(SESSION.role){
       aplicarEscopoAdmin();
       renderAdmin();
@@ -1879,6 +1976,40 @@ function renderEventoAdmin(){
         </div>
       </div>
 
+      <!-- CAMPOS DINÂMICOS DO FORMULÁRIO -->
+      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="color:var(--mcj-gold);font-size:16px">📋</span>
+            <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Campos do formulário de inscrição</span>
+          </div>
+          <button onclick="abrirModalCampo(null)" style="padding:6px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">+ Novo campo</button>
+        </div>
+        <div style="padding:1.25rem">
+          <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">
+            Campos extras aparecem no formulário de inscrição abaixo dos campos padrão. Arraste para reordenar.
+          </div>
+          <div id="campos-extras-lista" style="display:flex;flex-direction:column;gap:8px">
+            ${(e.campos_extras||[]).length===0
+              ? '<div style="text-align:center;color:var(--gray-300);font-size:13px;padding:1rem;border:1.5px dashed var(--gray-100);border-radius:10px">Nenhum campo personalizado. Clique em "+ Novo campo" para adicionar.</div>'
+              : (e.campos_extras||[]).map((c,i)=>`
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--gray-50);border-radius:10px;border:1px solid var(--gray-100)">
+                  <span style="color:var(--gray-300);cursor:grab;font-size:16px">⠿</span>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600;color:var(--mcj-dark)">${esc(c.label)}</div>
+                    <div style="font-size:11px;color:var(--gray-400);margin-top:2px">
+                      ${{text:'Texto',number:'Número',select:'Seleção',checkbox:'Checkbox'}[c.tipo]||c.tipo}
+                      ${c.obrigatorio?'· <span style="color:var(--red-400)">Obrigatório</span>':'· Opcional'}
+                      ${c.opcoes?.length?`· Opções: ${c.opcoes.join(', ')}`:''}
+                    </div>
+                  </div>
+                  <button onclick="abrirModalCampo(${i})" style="padding:5px 10px;font-size:11px;font-weight:600;background:white;border:1px solid var(--gray-100);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif">✏️ Editar</button>
+                  <button onclick="removerCampoExtra(${i})" style="padding:5px 10px;font-size:11px;font-weight:600;background:white;border:1px solid var(--red-100);color:var(--red-400);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif">🗑</button>
+                </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
     </div>`;
 }
 // Fila de escritas para config/users — evita chamadas paralelas
@@ -1984,7 +2115,9 @@ async function carregarInscricoes(){
 /* INSERT de uma nova inscrição */
 /* Campos que existem na tabela inscricoes do Supabase */
 const SUPA_INS_COLS = ['nome','nascimento','email','telefone','instituicao','cracha','turma','polo',
-  'almoco','almoco_valor','sala','setores','pagamento','pagamento_em','trabalhador','data_inscricao'];
+  'almoco','almoco_valor','almoco_crianca','almoco_crianca_valor',
+  'sala','setores','pagamento','pagamento_em','trabalhador','data_inscricao',
+  'crianca','criancas','campos_extras'];
 
 function filtrarColunas(obj){
   const out = {};
@@ -1993,28 +2126,30 @@ function filtrarColunas(obj){
 }
 
 async function inserirInscricao(ins){
-  // Atualiza cache imediatamente (optimistic update)
+  // Optimistic update
+  const tempId = '__tmp_' + Date.now();
+  ins._tempId = tempId;
   _cache.inscricoes = [...getIns(), ins];
   if(!supaConfigurado()) return;
   showLoading('Inscrevendo...');
   try {
     const payload = filtrarColunas(ins);
     const rows = await supa('POST', 'inscricoes', [payload]);
-    // Guarda o id gerado pelo banco no cache
-    if(rows && rows[0]?.id){
+    // Substitui o registro temporário pelo retornado com id real
+    if(rows && rows[0]){
       const d = getIns();
-      const idx = d.findIndex(x=>x.email===ins.email && x.polo===ins.polo);
-      if(idx>=0) d[idx].id = rows[0].id;
+      const idx = d.findIndex(x=>x._tempId===tempId);
+      if(idx>=0){ d[idx] = {...d[idx], ...rows[0], _tempId:undefined}; }
       _cache.inscricoes = d;
     }
     hideLoading();
   } catch(e){
     hideLoading();
-    // Reverte o optimistic update em caso de erro
-    _cache.inscricoes = getIns().filter(x=>!(x.email===ins.email && x.polo===ins.polo));
+    // Reverte
+    _cache.inscricoes = getIns().filter(x=>x._tempId!==tempId);
     const msg = e.message||'';
-    if(msg.includes('setores') || msg.includes('column')){
-      showError('Erro: execute o SQL de migração no Supabase (ver guia).');
+    if(msg.includes('column')){
+      showError('Erro: verifique as colunas no Supabase.');
     } else {
       showError('Erro ao inscrever. Verifique a conexão.');
     }
@@ -2023,34 +2158,40 @@ async function inserirInscricao(ins){
   }
 }
 
-/* PATCH de campos específicos de uma inscrição — nunca manda o registro inteiro */
-async function atualizarInscricao(email, polo, campos){
+/* PATCH de campos específicos de uma inscrição */
+async function atualizarInscricao(email, polo, campos, id){
   const d = getIns();
-  const idx = d.findIndex(x=>x.email===email && x.polo===polo);
+  // Usa id se disponível, senão email+polo
+  const idx = id
+    ? d.findIndex(x=>x.id===id)
+    : d.findIndex(x=>x.email===email && x.polo===polo);
   if(idx<0) return;
-  // Optimistic update no cache
   Object.assign(d[idx], campos);
-  _cache.inscricoes = d;
+  _cache.inscricoes = [...d];
   if(!supaConfigurado()) return;
   try {
-    const id = d[idx].id;
-    const filter = id
-      ? `inscricoes?id=eq.${id}`
+    const recId = d[idx].id || id;
+    const filter = recId
+      ? `inscricoes?id=eq.${recId}`
       : `inscricoes?email=eq.${encodeURIComponent(email)}&polo=eq.${encodeURIComponent(polo)}`;
     await supa('PATCH', filter, filtrarColunas(campos));
   } catch(e){ showError('Erro ao atualizar'); console.error(e.message); }
 }
 
 /* DELETE de uma inscrição */
-async function deletarInscricao(email, polo){
+async function deletarInscricao(email, polo, id){
   const d = getIns();
-  const ins = d.find(x=>x.email===email && x.polo===polo);
-  _cache.inscricoes = d.filter(x=>!(x.email===email && x.polo===polo));
+  const ins = id
+    ? d.find(x=>x.id===id)
+    : d.find(x=>x.email===email && x.polo===polo);
+  _cache.inscricoes = ins
+    ? d.filter(x=>x!==ins)
+    : d.filter(x=>!(x.email===email && x.polo===polo));
   if(!supaConfigurado()) return;
   showLoading('Excluindo...');
   try {
-    const filter = ins?.id
-      ? `inscricoes?id=eq.${ins.id}`
+    const filter = (ins?.id||id)
+      ? `inscricoes?id=eq.${ins?.id||id}`
       : `inscricoes?email=eq.${encodeURIComponent(email)}&polo=eq.${encodeURIComponent(polo)}`;
     await supa('DELETE', filter);
     hideLoading();
@@ -2065,6 +2206,7 @@ let _cfgEvento = {
   // Textos
   titulo: 'MCJ 2026', subtitulo: 'Momentos com Jesus',
   inscricao_sub: 'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.',
+  campos_extras: [],
   descricao: '', tema_manha: 'O Renascer de Nicodemos',
   tema_tarde: 'Jesus Forja Pedro para o Futuro',
   data: '20 de setembro de 2026', horario: '8h às 17h30',
@@ -2577,14 +2719,154 @@ function toggleSenhaUser(){
 function selecionarPolo(nome){
   const inp = document.getElementById('f-polo');
   if(inp) inp.value = nome;
-  // Atualiza visual — funciona com cards estáticos e dinâmicos
+
+  // Destaca card selecionado
   document.querySelectorAll('.polo-card').forEach(c=>{
     const cardNome = c.querySelector('.polo-name')?.textContent?.trim();
     c.classList.toggle('selected', cardNome === nome);
   });
-  // Limpa mensagem de polo obrigatório
+
+  // Limpa msg de polo obrigatório
   const msg = document.getElementById('polo-msg');
   if(msg) msg.style.display = 'none';
+
+  // Busca config do polo
+  const polo = POLOS.find(p=>p.nome===nome);
+
+  // Mocidade — mostra/oculta baseado no config do polo
+  const lblMocidade = document.getElementById('lbl-mocidade');
+  if(lblMocidade){
+    const temMocidade = !polo || polo.tem_mocidade !== false;
+    lblMocidade.style.display = temMocidade ? '' : 'none';
+    // Se estava marcado Mocidade e desabilitou, volta para Adulto
+    if(!temMocidade){
+      const radAdulto = document.querySelector('input[name="turma"][value="Adulto"]');
+      if(radAdulto) radAdulto.checked = true;
+      document.getElementById('lbl-adulto')?.classList.add('sel');
+      lblMocidade.classList.remove('sel');
+    }
+  }
+
+  // Almoço — mostra/oculta
+  const almocoField = document.getElementById('almoco-field');
+  if(almocoField){
+    const temAlmoco = polo?.almoco_ativo === true;
+    almocoField.style.display = temAlmoco ? '' : 'none';
+    const tag = document.getElementById('almoco-valor-tag');
+    if(tag && polo?.almoco_valor) tag.textContent = polo.almoco_valor;
+    // Almoço criança
+    const almocoCriancaWrap = document.getElementById('almoco-crianca-wrap');
+    if(almocoCriancaWrap){
+      const temCriancaAtiva = polo?.aceita_crianca && polo?.almoco_crianca_ativo;
+      almocoCriancaWrap.style.display = temCriancaAtiva ? '' : 'none';
+      const tagC = document.getElementById('almoco-crianca-valor-tag');
+      if(tagC) tagC.textContent = polo?.almoco_crianca_valor||polo?.almoco_valor||'';
+    }
+  }
+
+  // Crianças — mostra/oculta
+  const criancaField = document.getElementById('crianca-field');
+  if(criancaField){
+    const aceitaCrianca = polo?.aceita_crianca === true;
+    criancaField.style.display = aceitaCrianca ? '' : 'none';
+    if(!aceitaCrianca){
+      const chk = document.getElementById('f-tem-crianca');
+      if(chk) chk.checked = false;
+      const wrap = document.getElementById('crianca-fields-wrap');
+      if(wrap) wrap.style.display = 'none';
+    }
+  }
+}
+
+function toggleCriancaFields(){
+  const chk  = document.getElementById('f-tem-crianca');
+  const wrap = document.getElementById('crianca-fields-wrap');
+  if(!wrap) return;
+  if(chk?.checked){
+    wrap.style.display = 'flex';
+    // Adiciona primeira criança se lista estiver vazia
+    const lista = document.getElementById('criancas-lista');
+    if(lista && !lista.children.length) adicionarCrianca();
+  } else {
+    wrap.style.display = 'none';
+    // Limpa lista
+    const lista = document.getElementById('criancas-lista');
+    if(lista) lista.innerHTML = '';
+  }
+}
+
+let _criancaCount = 0;
+
+function adicionarCrianca(){
+  const lista = document.getElementById('criancas-lista');
+  if(!lista) return;
+  _criancaCount++;
+  const idx = _criancaCount;
+  const div = document.createElement('div');
+  div.id = `crianca-item-${idx}`;
+  div.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--blue-100)';
+  div.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:12px;font-weight:700;color:var(--blue-700);text-transform:uppercase;letter-spacing:.5px;font-family:'Inter',sans-serif">
+        👶 Criança ${lista.children.length + 1}
+      </div>
+      <button type="button" onclick="removerCrianca(${idx})"
+        style="background:none;border:none;color:var(--red-400);font-size:18px;cursor:pointer;line-height:1;padding:0 4px"
+        title="Remover">×</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="cfg-field">
+        <label>Nome completo *</label>
+        <input type="text" id="f-crianca-nome-${idx}" placeholder="Nome da criança">
+      </div>
+      <div class="cfg-field">
+        <label>Data de nascimento *</label>
+        <input type="text" id="f-crianca-nasc-${idx}" placeholder="DD/MM/AAAA">
+      </div>
+    </div>
+    <div class="cfg-field">
+      <label>Nome para o crachá</label>
+      <input type="text" id="f-crianca-cracha-${idx}" placeholder="Como prefere ser chamada" maxlength="40">
+    </div>`;
+  lista.appendChild(div);
+  // Re-numera títulos
+  renumerarCriancas();
+  document.getElementById(`f-crianca-nome-${idx}`)?.focus();
+}
+
+function removerCrianca(idx){
+  const el = document.getElementById(`crianca-item-${idx}`);
+  if(el) el.remove();
+  renumerarCriancas();
+  // Se removeu todas, desmarca checkbox
+  const lista = document.getElementById('criancas-lista');
+  if(lista && !lista.children.length){
+    const chk = document.getElementById('f-tem-crianca');
+    if(chk) chk.checked = false;
+    toggleCriancaFields();
+  }
+}
+
+function renumerarCriancas(){
+  const lista = document.getElementById('criancas-lista');
+  if(!lista) return;
+  [...lista.children].forEach((el,i)=>{
+    const title = el.querySelector('[style*="blue-700"]');
+    if(title) title.textContent = `👶 Criança ${i+1}`;
+  });
+}
+
+function getCriancasDoForm(){
+  const lista = document.getElementById('criancas-lista');
+  if(!lista) return [];
+  return [...lista.querySelectorAll('[id^="crianca-item-"]')].map(el=>{
+    const idx = el.id.replace('crianca-item-','');
+    return {
+      nome:   document.getElementById(`f-crianca-nome-${idx}`)?.value.trim()||'',
+      nasc:   document.getElementById(`f-crianca-nasc-${idx}`)?.value.trim()||'',
+      cracha: document.getElementById(`f-crianca-cracha-${idx}`)?.value.trim()||'',
+    };
+  }).filter(c=>c.nome);
 }
 
 /* ================================================================
@@ -2717,6 +2999,11 @@ async function excluirUsuario(id){
   if(alm) alm.addEventListener('change', function(){
     document.getElementById('lbl-almoco')?.classList.toggle('sel', this.checked);
   });
+
+  const almC = document.getElementById('f-almoco-crianca');
+  if(almC) almC.addEventListener('change', function(){
+    document.getElementById('lbl-almoco-crianca')?.classList.toggle('sel', this.checked);
+  });
 })();
 
 function alerta(tipo,msg){
@@ -2735,10 +3022,30 @@ async function inscrever(){
   const inst       = document.getElementById('f-instituicao')?.value.trim()||'';
   const cracha     = document.getElementById('f-cracha')?.value.trim()||'';
   const turma      = document.querySelector('input[name="turma"]:checked')?.value||'';
-  const almocoChk  = document.getElementById('f-almoco');
-  const almoco     = almocoChk?.checked || false;
+  const almocoChk        = document.getElementById('f-almoco');
+  const almoco           = almocoChk?.checked || false;
+  const almocoCriancaChk = document.getElementById('f-almoco-crianca');
+  const almocoCrianca    = almocoCriancaChk?.checked || false;
 
-  if(!poloSel){ document.getElementById('polo-msg').classList.add('show'); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  // Dados de crianças para Evangelização
+  const temCrianca = document.getElementById('f-tem-crianca')?.checked || false;
+  const criancas = temCrianca ? getCriancasDoForm() : [];
+  if(temCrianca && !criancas.length){
+    alerta('err','Informe o nome de ao menos uma criança.');
+    return;
+  }
+
+  // Valida idade mínima de cada criança
+  if(temCrianca && criancas.length){
+    const idadeMin = poloSelCfg?.idade_minima_evang || 0;
+    for(const c of criancas){
+      const idadeC = calcularIdadeNumero(c.nasc);
+      if(idadeC !== null && idadeMin > 0 && idadeC < idadeMin){
+        alerta('err', `Idade não permitida para a criança "${c.nome}". Idade mínima: ${idadeMin} anos. Entre em contato com o coordenador responsável.`);
+        return;
+      }
+    }
+  }
   if(poloSelCfg?.inscricoes_abertas===false){ alerta('err','As inscrições para este polo estão encerradas.'); return; }
   if(!nome){ alerta('err','Informe o nome completo.'); return; }
   if(!nascimento){ alerta('err','Informe a data de nascimento.'); return; }
@@ -2746,8 +3053,13 @@ async function inscrever(){
   if(!tel||tel.replace(/\D/g,'').length<10){ alerta('err','Informe um telefone válido com DDD.'); return; }
   if(!turma){ alerta('err','Selecione uma turma: Adulto ou Mocidade.'); return; }
 
+  // Valida campos extras obrigatórios
+  if(!validarCamposExtras()) return;
+
+  // Coleta respostas dos campos extras
+  const camposExtras = getCamposExtrasRespostas();
+
   const d = getIns();
-  if(d.find(x=>x.email.toLowerCase()===email.toLowerCase())){ alerta('err','Este e-mail já está inscrito.'); return; }
 
   const [ano,mes,dia]=nascimento.split('-');
   const novaIns = {
@@ -2755,6 +3067,11 @@ async function inscrever(){
     instituicao:inst||'—', cracha: cracha||'', turma, polo:poloSel,
     almoco: almoco ? 'Sim' : 'Não',
     almoco_valor: almoco ? (poloSelCfg?.almoco_valor||'') : '',
+    almoco_crianca: almocoCrianca || false,
+    almoco_crianca_valor: almocoCrianca ? (poloSelCfg?.almoco_crianca_valor||poloSelCfg?.almoco_valor||'') : '',
+    crianca: temCrianca || false,
+    criancas: criancas,
+    campos_extras: camposExtras,
     pagamento: 'Pendente', sala: '', setores: [],
     data_inscricao: new Date().toLocaleString('pt-BR')
   };
@@ -2802,36 +3119,62 @@ function formatBRL(n){
 }
 
 function abrirPix(nomeInscrito, almoco){
-  const poloNome = document.getElementById('f-polo')?.value||'';
-  const cfg = POLOS.find(p=>p.nome===poloNome)||{};
+  const poloNome      = document.getElementById('f-polo')?.value||'';
+  const cfg           = POLOS.find(p=>p.nome===poloNome)||{};
+  const almocoCrianca = document.getElementById('f-almoco-crianca')?.checked||false;
+  const criancas      = getCriancasDoForm();
+  const numCriancas   = criancas.length;
+
   document.getElementById('pix-subtitulo').textContent = cfg.nome+' · Conclua o pagamento via PIX para garantir sua vaga.';
 
-  // calcular breakdown
-  const vInscricao = parseBRL(cfg.valorExibir);
-  const vAlmoco    = almoco ? parseBRL(cfg.almoco_valor) : null;
-  const breakdown  = document.getElementById('pix-breakdown');
+  const vInscricao       = parseBRL(cfg.valorExibir);
+  const vAlmoco          = almoco ? parseBRL(cfg.almoco_valor) : null;
+  const vAlmocoCrianca   = almocoCrianca ? parseBRL(cfg.almoco_crianca_valor||cfg.almoco_valor) : null;
 
-  let totalNum = null;
+  let totalNum = 0;
   let html = '';
 
+  // Inscrição
   if(vInscricao !== null){
     html += `<div class="pix-line"><span class="pix-line-label">🎫 Inscrição</span><span>${cfg.valorExibir}</span></div>`;
-    totalNum = vInscricao;
+    totalNum += vInscricao;
   } else {
     html += `<div class="pix-line"><span class="pix-line-label">🎫 Inscrição</span><span>${cfg.valorExibir||'—'}</span></div>`;
+    totalNum = null;
   }
 
+  // Almoço adulto
   if(almoco){
-    if(vAlmoco !== null){
-      html += `<div class="pix-line pix-almoco-line"><span class="pix-line-label">🍽 Almoço</span><span>${cfg.almoco_valor}</span></div>`;
-      if(totalNum !== null) totalNum += vAlmoco;
-    } else {
-      html += `<div class="pix-line pix-almoco-line"><span class="pix-line-label">🍽 Almoço</span><span>${cfg.almoco_valor||'—'}</span></div>`;
-    }
+    const label = cfg.almoco_valor||'—';
+    html += `<div class="pix-line pix-almoco-line"><span class="pix-line-label">🍽 Almoço</span><span>${label}</span></div>`;
+    if(totalNum !== null && vAlmoco !== null) totalNum += vAlmoco;
+    else totalNum = null;
   }
 
-  breakdown.innerHTML = html;
-  document.getElementById('pix-valor').textContent = totalNum !== null ? formatBRL(totalNum) : (cfg.valorExibir||'R$ —,—');
+  // Almoço crianças
+  if(almocoCrianca && numCriancas > 0){
+    const valCr  = cfg.almoco_crianca_valor||cfg.almoco_valor||'—';
+    const vCrNum = parseBRL(valCr);
+    const label  = numCriancas > 1
+      ? `${numCriancas}× ${valCr}`
+      : valCr;
+    html += `<div class="pix-line pix-almoco-line"><span class="pix-line-label">🍽 Almoço crianças (${numCriancas})</span><span>${label}</span></div>`;
+    if(totalNum !== null && vCrNum !== null) totalNum += vCrNum * numCriancas;
+    else totalNum = null;
+  }
+
+  // Crianças inscritas (informativo)
+  if(numCriancas > 0){
+    html += `<div class="pix-line" style="border-top:1px dashed var(--gray-100);padding-top:8px;margin-top:4px">
+      <span class="pix-line-label">👶 Evangelização</span>
+      <span style="font-size:12px;color:var(--gray-500)">${criancas.map(c=>c.nome).join(', ')}</span>
+    </div>`;
+  }
+
+  document.getElementById('pix-breakdown').innerHTML = html;
+  document.getElementById('pix-valor').textContent = totalNum !== null
+    ? formatBRL(totalNum)
+    : (cfg.valorExibir||'R$ —,—');
 
   document.getElementById('pix-chave').textContent = cfg.pixChave||'—';
   document.getElementById('pix-nome').textContent  = 'Beneficiário: '+(cfg.pixNome||'—');
@@ -2987,40 +3330,59 @@ function renderPanels(){
     const salaCount  = lista.filter(x=>x.sala&&x.sala!=='').length;
 
     const rows=lista.length===0
-      ?`<tr class="empty-row"><td colspan="13">Nenhuma inscrição neste polo.</td></tr>`
+      ?`<tr class="empty-row"><td colspan="16">Nenhuma inscrição neste polo.</td></tr>`
       :lista.map((p,j)=>{
         const emailSafe  = p.email.replace(/'/g,"\\'");
         const poloSafe   = polo.nome.replace(/'/g,"\\'");
+        const idSafe     = (p.id||'').replace(/'/g,"\\'");
         const pago       = p.pagamento==='Confirmado';
         const trab       = p.trabalhador===true || p.trabalhador==='true';
         const tel        = (p.telefone||'').replace(/\D/g,'');
         const waLink     = (pago && tel.length>=10)
-          ? `<a class="btn-whatsapp" href="${montarLinkWA(tel, p.nome, polo.nome)}" target="_blank" rel="noopener">💬 WA</a>`
+          ? `<a class="btn-whatsapp" href="${montarLinkWA(tel, p.nome, polo.nome)}" target="_blank" rel="noopener" title="Enviar WhatsApp">💬</a>`
           : '';
         return `<tr style="${trab?'background:#FAF5FF':''}">
           <td><span class="num-badge">${j+1}</span></td>
-          <td>${p.nome}</td>
+          <td>
+            <div>${p.nome}</div>
+            ${(p.criancas&&p.criancas.length)?`<div style="margin-top:3px;display:flex;flex-wrap:wrap;gap:3px">
+              ${p.criancas.map(c=>`<span style="font-size:10px;background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:6px;padding:1px 6px;white-space:nowrap">👶 ${c.nome}${c.nasc?' ('+calcularIdade(c.nasc)+'a)':''}</span>`).join('')}
+            </div>`:''}
+          </td>
           <td style="font-weight:500;color:var(--blue-700)">${p.cracha||'—'}</td>
           <td>${p.nascimento||'—'}</td>
           <td style="text-align:center;font-weight:600;color:var(--blue-600)">${calcularIdade(p.nascimento)}</td>
           <td>${p.email}</td>
           <td>${p.telefone}</td>
           <td>${p.turma||'—'}</td>
-          <td>${p.almoco||'Não'}${p.almoco==='Sim'&&p.almoco_valor?' ('+p.almoco_valor+')':''}</td>
+          <td style="text-align:center">${p.almoco==='Sim'?'1':'—'}</td>
+          <td style="text-align:center">${(p.almoco_crianca&&p.criancas?.length)?p.criancas.length:'—'}</td>
+          <td style="font-weight:600;color:var(--mcj-dark)">${(()=>{
+            const cfg = POLOS.find(x=>x.nome===polo.nome)||{};
+            let total = 0;
+            const vIns = parseBRL(cfg.valorExibir);
+            if(vIns) total += vIns;
+            if(p.almoco==='Sim'){ const v=parseBRL(cfg.almoco_valor); if(v) total+=v; }
+            if(p.almoco_crianca&&p.criancas?.length){ const v=parseBRL(cfg.almoco_crianca_valor||cfg.almoco_valor); if(v) total+=v*p.criancas.length; }
+            return total>0 ? formatBRL(total) : (cfg.valorExibir||'—');
+          })()}</td>
           <td>${p.instituicao}</td>
+          ${(p.campos_extras&&Object.keys(p.campos_extras).length)
+            ?`<td style="font-size:11px;color:var(--gray-500);max-width:150px">${Object.entries(p.campos_extras).map(([k,v])=>`<div><b>${k}:</b> ${v===true?'✓':v===false?'—':v}</div>`).join('')}</td>`
+            :'<td>—</td>'}
           <td>
-            <button class="btn-trabalhador ${trab?'sim':'nao'}" onclick="toggleTrabalhador('${emailSafe}','${poloSafe}')">
+            <button class="btn-trabalhador ${trab?'sim':'nao'}" onclick="toggleTrabalhador('${emailSafe}','${poloSafe}','${idSafe}')">
               ${trab?'🔧 Trabalhador':'👤 Participante'}
             </button>
           </td>
           <td><div class="pago-cell">
-            <button class="btn-pago ${pago?'sim':'nao'}" onclick="togglePagamento('${emailSafe}','${poloSafe}')">
+            <button class="btn-pago ${pago?'sim':'nao'}" onclick="togglePagamento('${emailSafe}','${poloSafe}','${idSafe}')">
               ${pago?'✓ Confirmado':'⏳ Pendente'}
             </button>${waLink}
           </div></td>
           <td style="display:flex;gap:4px;align-items:center">
-            <button class="btn-excluir" style="color:var(--mcj-mid);border-color:rgba(107,76,42,.2);background:white" onclick="editarInscricao('${emailSafe}','${poloSafe}')" title="Editar inscrição">✏️</button>
-            <button class="btn-excluir" onclick="excluirInscricao('${emailSafe}','${poloSafe}')" title="Excluir inscrição">🗑</button>
+            <button class="btn-excluir" style="color:var(--mcj-mid);border-color:rgba(107,76,42,.2);background:white" onclick="editarInscricao('${emailSafe}','${poloSafe}','${idSafe}')" title="Editar inscrição">✏️</button>
+            <button class="btn-excluir" onclick="excluirInscricao('${emailSafe}','${poloSafe}','${idSafe}')" title="Excluir inscrição">🗑</button>
           </td>
         </tr>`;
       }).join('');
@@ -3051,7 +3413,7 @@ function renderPanels(){
       </div>
       <div class="table-scroll">
       <table class="list-table">
-        <thead><tr><th>#</th><th>Nome</th><th>Crachá</th><th>Nascimento</th><th>Idade</th><th>E-mail</th><th>Telefone</th><th>Turma</th><th>Almoço</th><th>Instituição</th><th>Função</th><th>Pagamento</th><th>Ações</th></tr></thead>
+        <thead><tr><th>#</th><th>Nome</th><th>Crachá</th><th>Nascimento</th><th>Idade</th><th>E-mail</th><th>Telefone</th><th>Turma</th><th>🍽</th><th>👶🍽</th><th>Total</th><th>Instituição</th><th>Extras</th><th>Função</th><th>Pagamento</th><th>Ações</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
       </div>
@@ -3062,8 +3424,8 @@ function renderPanels(){
 /* ================================================================
    DEFINIR TURMAS — drag and drop
 ================================================================ */
-let _turmaPoloAtivo = null; // polo sendo exibido nas turmas
-let _turmaTurmaAtiva = 'Adulto'; // Adulto | Mocidade
+let _turmaPoloAtivo = null;
+let _turmaTurmaAtiva = 'Adulto'; // Adulto | Mocidade | Evangelizacao
 let _dragEmail = null;
 let _dragPolo  = null;
 
@@ -3122,7 +3484,7 @@ function renderTurmas(){
     const poloAttr   = polo.nome.replace(/"/g,'&quot;');
     const btnRemover = mostraBtnRemover
       ? `<button class="btn-remover-atrib" title="Remover da sala"
-           onclick="removerAtribuicao('${p.email.replace(/'/g,"\\'")}','${polo.nome.replace(/'/g,"\\'")}',event)">×</button>`
+           onclick="removerAtribuicao('${p.email.replace(/'/g,"\\'")}','${poloAttr.replace(/'/g,"\\'")}',event,'${(p.id||'').replace(/'/g,"\\'")}')">×</button>`
       : '';
     return `<div class="pessoa-card"
       draggable="true"
@@ -3205,24 +3567,35 @@ function renderTurmas(){
         <span style="background:${cor(POLOS.indexOf(polo)).bg};color:${cor(POLOS.indexOf(polo)).text};border:1px solid ${cor(POLOS.indexOf(polo)).border};padding:3px 10px;border-radius:20px;font-size:13px">${polo.nome}</span>
         Definir Turmas
         <span style="font-size:12px;font-weight:400;color:var(--gray-400)">${totalAtribuidos}/${totalFiltrados} atribuídos</span>
-        <div style="margin-left:auto;display:flex;gap:8px">
+        <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="atribuirSalasAleatorio('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:#10B981;color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+            🎲 Distribuir aleatoriamente
+          </button>
+          <button onclick="cancelarAtribuicoes('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:white;color:var(--red-400);border:1.5px solid var(--red-100);border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+            🗑 Limpar salas
+          </button>
           <button onclick="imprimirListagemTurmas('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
-            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-mid);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-mid);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
             🖨 Listagem
           </button>
           <button onclick="abrirPainelCracha('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
-            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
             🪪 Crachás
           </button>
         </div>
       </div>
       <div class="turmas-turma-tabs">
         <button class="turma-tab ${_turmaTurmaAtiva==='Adulto'?'active':''}" onclick="selecionarTurmaTipo('Adulto',this)">👤 Adulto (${inscritos.filter(p=>p.turma==='Adulto').length})</button>
-        <button class="turma-tab ${_turmaTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarTurmaTipo('Mocidade',this)">🌟 Mocidade (${inscritos.filter(p=>p.turma==='Mocidade').length})</button>
+        ${polo.tem_mocidade!==false?`<button class="turma-tab ${_turmaTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarTurmaTipo('Mocidade',this)">🌟 Mocidade (${inscritos.filter(p=>p.turma==='Mocidade').length})</button>`:''}
+        ${polo.aceita_crianca?`<button class="turma-tab ${_turmaTurmaAtiva==='Evangelizacao'?'active':''}" onclick="selecionarTurmaTipo('Evangelizacao',this)" style="${_turmaTurmaAtiva==='Evangelizacao'?'border-color:#4ADE80;color:#15803D;background:#F0FDF4':''}">👶 Evangelização (${inscritos.reduce((acc,p)=>acc+(p.criancas?.length||0),0)})</button>`:''}
       </div>
       <div class="turmas-layout">
-        ${unassignedHtml}
-        ${salasHtml}
+        ${_turmaTurmaAtiva==='Evangelizacao' ? renderEvangelizacaoLayout(polo, inscritos) : `
+          ${unassignedHtml}
+          ${salasHtml}
+        `}
       </div>
     </div>`;
 
@@ -3236,6 +3609,274 @@ function renderTurmas(){
     });
     card.addEventListener('dragend', ()=>card.classList.remove('dragging'));
   });
+}
+
+/* ================================================================
+   CAMPOS EXTRAS DO FORMULÁRIO
+================================================================ */
+let _editCampoIdx = null;
+
+function abrirModalCampo(idx){
+  _editCampoIdx = idx;
+  const c = idx!==null ? (_cfgEvento.campos_extras||[])[idx] : null;
+  document.getElementById('modal-campo-titulo').textContent = idx!==null ? 'Editar campo' : 'Novo campo';
+  document.getElementById('campo-label').value       = c?.label||'';
+  document.getElementById('campo-tipo').value        = c?.tipo||'text';
+  document.getElementById('campo-placeholder').value = c?.placeholder||'';
+  document.getElementById('campo-obrigatorio').checked= c?.obrigatorio||false;
+  document.getElementById('campo-opcoes').value      = (c?.opcoes||[]).join('\n');
+  document.getElementById('campo-erro').style.display='none';
+  toggleCampoOpcoes();
+  document.getElementById('modal-campo-overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('campo-label').focus(),100);
+}
+
+function fecharModalCampo(){
+  document.getElementById('modal-campo-overlay').classList.remove('show');
+  document.body.style.overflow='';
+  _editCampoIdx = null;
+}
+
+function toggleCampoOpcoes(){
+  const tipo = document.getElementById('campo-tipo').value;
+  document.getElementById('campo-opcoes-wrap').style.display = tipo==='select' ? 'block' : 'none';
+}
+
+function salvarCampoExtra(){
+  const label       = document.getElementById('campo-label').value.trim();
+  const tipo        = document.getElementById('campo-tipo').value;
+  const placeholder = document.getElementById('campo-placeholder').value.trim();
+  const obrigatorio = document.getElementById('campo-obrigatorio').checked;
+  const opcoes      = tipo==='select'
+    ? document.getElementById('campo-opcoes').value.split('\n').map(s=>s.trim()).filter(Boolean)
+    : [];
+  const errEl = document.getElementById('campo-erro');
+
+  if(!label){ errEl.textContent='O label é obrigatório.'; errEl.style.display='block'; return; }
+  if(tipo==='select'&&!opcoes.length){ errEl.textContent='Adicione ao menos uma opção.'; errEl.style.display='block'; return; }
+
+  if(!_cfgEvento.campos_extras) _cfgEvento.campos_extras=[];
+  const campo = { label, tipo, placeholder, obrigatorio, opcoes, id: 'ce_'+(Date.now()) };
+
+  if(_editCampoIdx!==null){
+    _cfgEvento.campos_extras[_editCampoIdx] = {..._cfgEvento.campos_extras[_editCampoIdx], ...campo};
+  } else {
+    _cfgEvento.campos_extras.push(campo);
+  }
+
+  setCfgEvento();
+  fecharModalCampo();
+  renderEventoAdmin();
+  renderCamposExtrasForm();
+}
+
+function removerCampoExtra(idx){
+  if(!confirm(`Remover o campo "${_cfgEvento.campos_extras[idx]?.label}"?`)) return;
+  _cfgEvento.campos_extras.splice(idx,1);
+  setCfgEvento();
+  renderEventoAdmin();
+  renderCamposExtrasForm();
+}
+
+/* Renderiza os campos extras no formulário público */
+function renderCamposExtrasForm(){
+  const wrap = document.getElementById('campos-extras-form');
+  if(!wrap) return;
+  const campos = _cfgEvento.campos_extras||[];
+  if(!campos.length){ wrap.style.display='none'; return; }
+  wrap.style.display='';
+  wrap.innerHTML = campos.map((c,i)=>{
+    const req = c.obrigatorio ? '<span class="req">*</span>' : '';
+    const id  = 'f-extra-'+i;
+    let input = '';
+    if(c.tipo==='text'){
+      input = `<input type="text" id="${id}" placeholder="${esc(c.placeholder||'')}" ${c.obrigatorio?'required':''}>`;
+    } else if(c.tipo==='number'){
+      input = `<input type="number" id="${id}" placeholder="${esc(c.placeholder||'0')}" ${c.obrigatorio?'required':''}  style="max-width:160px">`;
+    } else if(c.tipo==='select'){
+      input = `<select id="${id}" ${c.obrigatorio?'required':''}>
+        <option value="">Selecione...</option>
+        ${(c.opcoes||[]).map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}
+      </select>`;
+    } else if(c.tipo==='checkbox'){
+      return `<div class="field full">
+        <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500">
+          <input type="checkbox" id="${id}" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--mcj-gold)">
+          ${esc(c.label)} ${req}
+        </label>
+      </div>`;
+    }
+    return `<div class="field full">
+      <label>${esc(c.label)} ${req}</label>
+      ${input}
+    </div>`;
+  }).join('');
+}
+
+/* Coleta respostas dos campos extras */
+function getCamposExtrasRespostas(){
+  const campos = _cfgEvento.campos_extras||[];
+  const respostas = {};
+  campos.forEach((c,i)=>{
+    const el = document.getElementById('f-extra-'+i);
+    if(!el) return;
+    respostas[c.label] = c.tipo==='checkbox' ? el.checked : el.value;
+  });
+  return respostas;
+}
+
+/* Valida campos extras obrigatórios */
+function validarCamposExtras(){
+  const campos = _cfgEvento.campos_extras||[];
+  for(let i=0;i<campos.length;i++){
+    const c = campos[i];
+    if(!c.obrigatorio) continue;
+    const el = document.getElementById('f-extra-'+i);
+    if(!el) continue;
+    const val = c.tipo==='checkbox' ? el.checked : el.value.trim();
+    if(!val){ alerta('err',`O campo "${c.label}" é obrigatório.`); el.focus(); return false; }
+  }
+  return true;
+}
+async function atribuirSalasAleatorio(poloNome, turma){
+  const salas = turma==='Mocidade' ? getSalasMocidade(poloNome) : getSalasAdulto(poloNome);
+  if(!salas.length){ alert('Configure as salas do polo primeiro na aba ⚙ Polos.'); return; }
+
+  const d = getIns();
+  const semSala = d.filter(x=>x.polo===poloNome && x.turma===turma && (!x.sala||x.sala===''));
+
+  if(!semSala.length){ alert('Todos os inscritos desta turma já têm sala atribuída.'); return; }
+  if(!confirm(`Distribuir ${semSala.length} inscritos aleatoriamente entre as salas: ${salas.join(', ')}?`)) return;
+
+  // Embaralha (Fisher-Yates)
+  const shuffled = [...semSala];
+  for(let i=shuffled.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [shuffled[i],shuffled[j]] = [shuffled[j],shuffled[i]];
+  }
+
+  // Distribui em rodízio pelas salas
+  const updates = shuffled.map((p,i)=>({
+    id: p.id, email: p.email, polo: p.polo, sala: salas[i % salas.length]
+  }));
+
+  // Aplica no cache usando id quando disponível
+  updates.forEach(({id,email,polo,sala})=>{
+    const idx = id
+      ? _cache.inscricoes.findIndex(x=>x.id===id)
+      : _cache.inscricoes.findIndex(x=>x.email===email&&x.polo===polo);
+    if(idx>=0) _cache.inscricoes[idx].sala = sala;
+  });
+
+  showLoading('Salvando distribuição...');
+  try {
+    for(const {id,email,polo,sala} of updates)
+      await atualizarInscricao(email, polo, {sala}, id);
+  } catch(e){ console.error('Erro ao distribuir:', e); }
+  hideLoading();
+  renderTurmas();
+}
+
+async function cancelarAtribuicoes(poloNome, turma){
+  const d = getIns();
+  const comSala = d.filter(x=>x.polo===poloNome && x.turma===turma && x.sala && x.sala!=='');
+  if(!comSala.length){ alert('Nenhum inscrito com sala atribuída nesta turma.'); return; }
+  if(!confirm(`Remover sala de ${comSala.length} inscritos (${turma} — ${poloNome})?\nEles voltarão para "Sem sala atribuída".`)) return;
+
+  comSala.forEach(p=>{
+    const idx = p.id
+      ? _cache.inscricoes.findIndex(x=>x.id===p.id)
+      : _cache.inscricoes.findIndex(x=>x.email===p.email&&x.polo===p.polo);
+    if(idx>=0) _cache.inscricoes[idx].sala = '';
+  });
+
+  showLoading('Removendo atribuições...');
+  try {
+    for(const p of comSala)
+      await atualizarInscricao(p.email, p.polo, {sala:''}, p.id);
+  } catch(e){ console.error('Erro ao cancelar:', e); }
+  hideLoading();
+  renderTurmas();
+}
+
+function renderEvangelizacaoLayout(polo, inscritos){
+  const salasEvang = polo.salas_evang || [];
+  // Coleta todas as crianças com dados do responsável
+  const criancas = [];
+  inscritos.forEach(ins=>{
+    (ins.criancas||[]).forEach(c=>{
+      if(!c.nome) return;
+      const idade = calcularIdadeNumero(c.nasc);
+      const sala  = salasEvang.find(s=>idade>=s.idade_de && idade<=s.idade_ate);
+      criancas.push({ ...c, responsavel: ins.nome, responsavel_tel: ins.telefone, idade, sala: sala?.nome||'—' });
+    });
+  });
+
+  if(!criancas.length) return `<div style="padding:2rem;text-align:center;color:var(--gray-400);font-size:14px">Nenhuma criança inscrita neste polo ainda.</div>`;
+
+  if(!salasEvang.length) return `<div style="padding:2rem;text-align:center;color:var(--gray-400);font-size:14px">
+    Configure as salas de Evangelização na aba ⚙ Polos para organizar por faixa etária.
+    <br><br><strong>${criancas.length} criança${criancas.length!==1?'s':''} inscrita${criancas.length!==1?'s':''}</strong> aguardando sala.
+  </div>`;
+
+  // Agrupa por sala
+  const grupos = {};
+  salasEvang.forEach(s=>{ grupos[s.nome] = []; });
+  grupos['Sem sala'] = [];
+  criancas.forEach(c=>{
+    const key = salasEvang.find(s=>c.idade>=s.idade_de && c.idade<=s.idade_ate)?.nome || 'Sem sala';
+    grupos[key].push(c);
+  });
+
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;width:100%">
+    ${Object.entries(grupos).filter(([k,v])=>k!=='Sem sala'||v.length).map(([salaNome, lista])=>{
+      const isSemSala = salaNome==='Sem sala';
+      const s = salasEvang.find(s=>s.nome===salaNome);
+      return `<div style="background:white;border-radius:14px;border:1.5px solid ${isSemSala?'var(--red-100)':'#BBF7D0'};overflow:hidden">
+        <div style="padding:10px 14px;background:${isSemSala?'var(--red-50)':'#F0FDF4'};border-bottom:1px solid ${isSemSala?'var(--red-100)':'#BBF7D0'}">
+          <div style="font-size:13px;font-weight:700;color:${isSemSala?'var(--red-600)':'#15803D'}">
+            👶 ${salaNome}
+          </div>
+          ${s?`<div style="font-size:10px;color:#4ADE80;margin-top:1px">Faixa: ${s.idade_de}–${s.idade_ate} anos</div>`:''}
+          <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${lista.length} criança${lista.length!==1?'s':''}</div>
+        </div>
+        <div style="padding:8px;display:flex;flex-direction:column;gap:6px">
+          ${lista.length===0
+            ? '<div style="font-size:12px;color:var(--gray-300);text-align:center;padding:8px">Nenhuma criança</div>'
+            : lista.map(c=>`
+              <div style="background:var(--gray-50);border-radius:8px;padding:8px 10px;border:1px solid var(--gray-100)">
+                <div style="font-weight:600;font-size:13px;color:var(--mcj-dark)">${c.nome}</div>
+                <div style="font-size:11px;color:var(--gray-500);margin-top:2px">
+                  ${c.idade!==null?`${c.idade} anos · `:''}${c.nasc||''}
+                </div>
+                <div style="font-size:11px;color:var(--gray-400);margin-top:2px;display:flex;align-items:center;gap:4px">
+                  <span style="color:var(--gray-300)">Responsável:</span>
+                  <span style="font-weight:500;color:var(--gray-600)">${c.responsavel}</span>
+                </div>
+                ${c.responsavel_tel?`<div style="font-size:10px;color:var(--gray-400);margin-top:1px">📞 ${c.responsavel_tel}</div>`:''}
+              </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function calcularIdadeNumero(nascStr){
+  if(!nascStr) return null;
+  // Aceita DD/MM/AAAA ou YYYY-MM-DD
+  let d;
+  if(nascStr.includes('/')){
+    const [dia,mes,ano] = nascStr.split('/');
+    d = new Date(+ano, +mes-1, +dia);
+  } else {
+    d = new Date(nascStr);
+  }
+  if(isNaN(d)) return null;
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - d.getFullYear();
+  if(hoje.getMonth()<d.getMonth()||(hoje.getMonth()===d.getMonth()&&hoje.getDate()<d.getDate())) idade--;
+  return idade;
 }
 
 function selecionarTurmaPolo(nomeP, btn){
@@ -3862,7 +4503,7 @@ function renderEquipe(){
     const idade      = calcularIdade(p.nascimento);
     const rmBtn = setor
       ? `<button class="btn-remover-atrib" title="Remover do setor"
-           onclick="removerDoSetor('${p.email.replace(/'/g,"\\'")}','${polo.nome.replace(/'/g,"\\'")}','${setor.replace(/'/g,"\\'")}',event)">×</button>`
+           onclick="removerDoSetor('${p.email.replace(/'/g,"\\'")}','${polo.nome.replace(/'/g,"\\'")}','${setor.replace(/'/g,"\\'")}',event,'${(p.id||'').replace(/'/g,"\\'")}')">×</button>`
       : '';
     return `<div class="setor-membro">
       <div class="pessoa-avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0">${iniciais}</div>
@@ -3923,7 +4564,7 @@ function renderEquipe(){
                       const nE = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
                       const iE = nE.split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
                       return `<div class="setor-dropdown-item"
-                        onclick="adicionarAoSetor('${p.email.replace(/'/g,"\\'")}','${polo.nome.replace(/'/g,"\\'")}','${setorSafe}','${ddId}')">
+                        onclick="adicionarAoSetor('${p.email.replace(/'/g,"\\'")}','${polo.nome.replace(/'/g,"\\'")}','${setorSafe}','${ddId}','${(p.id||'').replace(/'/g,"\\'")}')">
                         <div class="pessoa-avatar" style="width:24px;height:24px;font-size:10px;flex-shrink:0">${iE}</div>
                         ${nE}
                       </div>`;
@@ -4116,40 +4757,42 @@ document.addEventListener('click', ()=>{
 });
 
 /* Adiciona trabalhador ao setor */
-function adicionarAoSetor(email, poloNome, setor, dropdownId){
+function adicionarAoSetor(email, poloNome, setor, dropdownId, id){
   if(!poloNoEscopo(poloNome)){ alert('Sem permissão.'); return; }
   const d   = getIns();
-  const idx = d.findIndex(x=>x.email===email && x.polo===poloNome);
+  const idx = id
+    ? d.findIndex(x=>x.id===id)
+    : d.findIndex(x=>x.email===email && x.polo===poloNome);
   if(idx<0) return;
   let setoresP = Array.isArray(d[idx].setores) ? [...d[idx].setores] : [];
   if(!setoresP.includes(setor)) setoresP.push(setor);
   d[idx].setores = setoresP;
-  _cache.inscricoes = d;
-  atualizarInscricao(email, poloNome, {setores: setoresP});
+  _cache.inscricoes = [...d];
+  atualizarInscricao(email, poloNome, {setores: setoresP}, id||d[idx].id);
   if(dropdownId){ const dd=document.getElementById(dropdownId); if(dd) dd.classList.remove('open'); }
   renderEquipe();
 }
 
-/* Remove trabalhador do setor */
-function removerDoSetor(email, poloNome, setor, event){
+function removerDoSetor(email, poloNome, setor, event, id){
   if(event && event.stopPropagation) event.stopPropagation();
   if(!poloNoEscopo(poloNome)){ alert('Sem permissão.'); return; }
   const d   = getIns();
-  const idx = d.findIndex(x=>x.email===email && x.polo===poloNome);
+  const idx = id
+    ? d.findIndex(x=>x.id===id)
+    : d.findIndex(x=>x.email===email && x.polo===poloNome);
   if(idx<0) return;
   let setoresP = Array.isArray(d[idx].setores) ? [...d[idx].setores] : [];
   setoresP = setoresP.filter(s=>s!==setor);
   d[idx].setores = setoresP;
-  _cache.inscricoes = d;
-  atualizarInscricao(email, poloNome, {setores: setoresP});
+  _cache.inscricoes = [...d];
+  atualizarInscricao(email, poloNome, {setores: setoresP}, id||d[idx].id);
   renderEquipe();
 }
 
-function removerAtribuicao(email, poloNome, event){
-  // evita que o clique no × dispare o drag do card pai
+function removerAtribuicao(email, poloNome, event, id){
   event.stopPropagation();
   if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
-  atualizarInscricao(email, poloNome, {sala:''});
+  atualizarInscricao(email, poloNome, {sala:''}, id);
   renderTurmas();
 }
 
@@ -4283,13 +4926,15 @@ function inicializarPrevias(){
   POLOS.forEach((_,i)=>{ setTimeout(()=>atualizarPrevia(i),50); });
 }
 
-function toggleTrabalhador(email, poloNome){
+function toggleTrabalhador(email, poloNome, id){
   if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
   const d = getIns();
-  const idx = d.findIndex(x=>x.email===email && x.polo===poloNome);
+  const idx = id
+    ? d.findIndex(x=>x.id===id)
+    : d.findIndex(x=>x.email===email && x.polo===poloNome);
   if(idx<0) return;
   const novoValor = !(d[idx].trabalhador===true || d[idx].trabalhador==='true');
-  atualizarInscricao(email, poloNome, { trabalhador: novoValor });
+  atualizarInscricao(email, poloNome, { trabalhador: novoValor }, id);
   renderPanels(); renderSummary();
 }
 
@@ -4298,15 +4943,19 @@ function toggleTrabalhador(email, poloNome){
 ================================================================ */
 let _editInsEmail = null;
 let _editInsPolo  = null;
+let _editInsId    = null;
 
-function editarInscricao(email, poloNome){
+function editarInscricao(email, poloNome, id){
   if(!poloNoEscopo(poloNome)){ alert('Sem permissão para editar inscrições deste polo.'); return; }
   const d = getIns();
-  const p = d.find(x=>x.email===email && x.polo===poloNome);
+  const p = id
+    ? d.find(x=>x.id===id)
+    : d.find(x=>x.email===email && x.polo===poloNome);
   if(!p){ alert('Inscrito não encontrado.'); return; }
 
-  _editInsEmail = email;
-  _editInsPolo  = poloNome;
+  _editInsEmail = p.email;
+  _editInsPolo  = p.polo;
+  _editInsId    = p.id||null;
 
   document.getElementById('ei-nome').value       = p.nome||'';
   document.getElementById('ei-nascimento').value = p.nascimento||'';
@@ -4328,7 +4977,7 @@ function editarInscricao(email, poloNome){
 function fecharEditarInscricao(){
   document.getElementById('edit-ins-overlay').classList.remove('show');
   document.body.style.overflow='';
-  _editInsEmail=null; _editInsPolo=null;
+  _editInsEmail=null; _editInsPolo=null; _editInsId=null;
 }
 
 async function salvarEdicaoInscricao(){
@@ -4357,40 +5006,42 @@ async function salvarEdicaoInscricao(){
   }
 
   // Salva no Supabase usando email+polo originais
-  await atualizarInscricao(_editInsEmail, _editInsPolo, campos);
+  await atualizarInscricao(_editInsEmail, _editInsPolo, campos, _editInsId);
 
   fecharEditarInscricao();
   renderAdmin();
 }
 
-async function excluirInscricao(email, poloNome){
+async function excluirInscricao(email, poloNome, id){
   if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
-  const ins = getIns().find(x=>x.email===email && x.polo===poloNome);
+  const ins = id
+    ? getIns().find(x=>x.id===id)
+    : getIns().find(x=>x.email===email && x.polo===poloNome);
   if(!ins) return;
   if(!confirm(`Excluir a inscrição de "${ins.nome}"?\n\nEsta ação não pode ser desfeita.`)) return;
   try {
-    await deletarInscricao(email, poloNome);
+    await deletarInscricao(email, poloNome, id||ins.id);
     renderPanels(); renderSummary(); atualizarContadores();
   } catch(e){ /* erro já mostrado em deletarInscricao */ }
 }
 
-function togglePagamento(email, poloNome){
+function togglePagamento(email, poloNome, id){
   if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
   const d = getIns();
-  const idx = d.findIndex(x=>x.email===email && x.polo===poloNome);
+  const idx = id
+    ? d.findIndex(x=>x.id===id)
+    : d.findIndex(x=>x.email===email && x.polo===poloNome);
   if(idx<0) return;
 
   const atual = d[idx].pagamento==='Confirmado';
 
   if(!atual){
     const campos = { pagamento:'Confirmado', pagamento_em: new Date().toLocaleString('pt-BR') };
-    atualizarInscricao(email, poloNome, campos);
+    atualizarInscricao(email, poloNome, campos, id);
     renderPanels(); renderSummary();
-    const tel = (d[idx].telefone||'').replace(/\D/g,'');
-    if(tel.length >= 10) window.open(montarLinkWA(tel, d[idx].nome, poloNome), '_blank', 'noopener');
   } else {
     if(!confirm(`Desfazer confirmação de pagamento de ${d[idx].nome}?`)) return;
-    atualizarInscricao(email, poloNome, { pagamento:'Pendente', pagamento_em:'' });
+    atualizarInscricao(email, poloNome, { pagamento:'Pendente', pagamento_em:'' }, id);
     renderPanels(); renderSummary();
   }
 }
@@ -4475,9 +5126,43 @@ function renderConfig(){
             <div><div class="toggle-lbl-main">🍽 Almoço disponível</div><div class="toggle-lbl-sub">Ative para oferecer opção de almoço neste polo</div></div>
             <label class="toggle-switch"><input type="checkbox" id="cfg-almoco-${i}" ${p.almoco_ativo?'checked':''} onchange="toggleAlmocoValor(${i})"><span class="toggle-slider"></span></label>
           </div>
-          <div class="cfg-field" id="cfg-almoco-valor-wrap-${i}" style="display:${p.almoco_ativo?'flex':'none'};flex-direction:column;gap:5px;margin-top:8px">
-            <label>Valor do almoço</label>
-            <input type="text" id="cfg-almoco-valor-${i}" value="${esc(p.almoco_valor||'')}" placeholder="Ex: R$ 35,00">
+          <div id="cfg-almoco-valor-wrap-${i}" style="display:${p.almoco_ativo?'flex':'none'};flex-direction:column;gap:10px;margin-top:8px;background:#FFFBF0;border-radius:10px;padding:12px;border:1px solid #FFD09B">
+            <div class="cfg-field">
+              <label>Valor do almoço (adulto)</label>
+              <input type="text" id="cfg-almoco-valor-${i}" value="${esc(p.almoco_valor||'')}" placeholder="Ex: R$ 35,00">
+            </div>
+            <div class="toggle-wrap" style="border-color:#FFD09B;margin:0">
+              <div>
+                <div class="toggle-lbl-main">👶 Cobrar almoço das crianças?</div>
+                <div class="toggle-lbl-sub">Ative para oferecer opção de almoço para crianças inscritas</div>
+              </div>
+              <label class="toggle-switch"><input type="checkbox" id="cfg-almoco-crianca-${i}" ${p.almoco_crianca_ativo?'checked':''} onchange="toggleAlmocoCrianca(${i})"><span class="toggle-slider"></span></label>
+            </div>
+            <div id="cfg-almoco-crianca-valor-wrap-${i}" style="display:${p.almoco_crianca_ativo?'flex':'none'};flex-direction:column;gap:5px">
+              <div class="cfg-field">
+                <label>Valor do almoço das crianças</label>
+                <input type="text" id="cfg-almoco-crianca-valor-${i}" value="${esc(p.almoco_crianca_valor||'')}" placeholder="Ex: R$ 20,00 (ou igual ao adulto)">
+              </div>
+            </div>
+          </div>
+          <div class="toggle-wrap" style="border-color:#A5D8FF;margin-top:8px">
+            <div>
+              <div class="toggle-lbl-main">🌟 Turma Mocidade</div>
+              <div class="toggle-lbl-sub">Ative para exibir a opção Mocidade no formulário de inscrição</div>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" id="cfg-mocidade-${i}" ${p.tem_mocidade!==false?'checked':''}><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-wrap" style="border-color:#B9F5D0;margin-top:8px">
+            <div>
+              <div class="toggle-lbl-main">👶 Aceitar inscrição de crianças</div>
+              <div class="toggle-lbl-sub">Ative para permitir que responsáveis inscrevam menores de idade</div>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" id="cfg-crianca-${i}" ${p.aceita_crianca?'checked':''} onchange="toggleIdadeMinima(${i})"><span class="toggle-slider"></span></label>
+          </div>
+          <div id="cfg-idade-min-wrap-${i}" style="display:${p.aceita_crianca?'flex':'none'};align-items:center;gap:10px;margin-top:8px;padding:10px 12px;background:#F0FDF4;border-radius:8px;border:1px solid #BBF7D0">
+            <label style="font-size:12px;color:#15803D;font-weight:600;white-space:nowrap">Idade mínima para Evangelização:</label>
+            <input type="number" id="cfg-idade-min-${i}" value="${p.idade_minima_evang||0}" min="0" max="17" style="width:60px;font-size:14px;padding:5px 8px;border-radius:7px;border:1px solid #BBF7D0;text-align:center">
+            <span style="font-size:12px;color:#4ADE80">anos</span>
           </div>
         </div>
 
@@ -4517,39 +5202,73 @@ function renderConfig(){
         <!-- ── SEÇÃO 4: SALAS ─────────────────────────────── -->
         <div class="cfg-section">
           <div class="cfg-section-title">🏫 Salas por Turma</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <div>
-              <div style="font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">👤 Adulto</div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+
+            <!-- ADULTO — sempre visível -->
+            <div style="background:var(--gray-50);border-radius:10px;padding:12px;border:1px solid var(--gray-100)">
+              <div style="font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">👤 Adulto</div>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-                <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Qtd:</label>
+                <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Qtd de salas:</label>
                 <select id="cfg-qtd-adulto-${i}" style="width:70px;font-size:14px;padding:5px 8px;border-radius:7px" onchange="atualizarCamposSalas(${i},'adulto')">
-                  ${[...Array(12)].map((_,n)=>`<option value="${n+1}" ${(p.salas_adulto&&p.salas_adulto.length?p.salas_adulto.length:SALAS_ADULTO_DEFAULT.length)===(n+1)?'selected':''}>${n+1}</option>`).join('')}
+                  ${[...Array(12)].map((_,n)=>`<option value="${n+1}" ${(p.salas_adulto?.length||SALAS_ADULTO_DEFAULT.length)===(n+1)?'selected':''}>${n+1}</option>`).join('')}
                 </select>
               </div>
               <div id="cfg-salas-adulto-campos-${i}" style="display:flex;flex-direction:column;gap:6px">
-                ${(p.salas_adulto&&p.salas_adulto.length?p.salas_adulto:SALAS_ADULTO_DEFAULT).map((nome,j)=>`
+                ${(p.salas_adulto?.length?p.salas_adulto:SALAS_ADULTO_DEFAULT).map((nome,j)=>`
                   <div style="display:flex;align-items:center;gap:6px">
                     <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
-                    <input type="text" id="cfg-sala-adulto-${i}-${j}" value="${esc(nome)}" placeholder="Sala ${j+1}" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px">
+                    <input type="text" id="cfg-sala-adulto-${i}-${j}" value="${esc(nome)}" placeholder="Nome da sala" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px">
                   </div>`).join('')}
               </div>
             </div>
-            <div>
-              <div style="font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🌟 Mocidade</div>
+
+            <!-- MOCIDADE — só se tem_mocidade ativo -->
+            ${p.tem_mocidade!==false ? `
+            <div style="background:#EFF6FF;border-radius:10px;padding:12px;border:1px solid #BFDBFE">
+              <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">🌟 Mocidade</div>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-                <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Qtd:</label>
+                <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Qtd de salas:</label>
                 <select id="cfg-qtd-mocidade-${i}" style="width:70px;font-size:14px;padding:5px 8px;border-radius:7px" onchange="atualizarCamposSalas(${i},'mocidade')">
-                  ${[...Array(10)].map((_,n)=>`<option value="${n+1}" ${(p.salas_mocidade&&p.salas_mocidade.length?p.salas_mocidade.length:SALAS_MOCIDADE_DEFAULT.length)===(n+1)?'selected':''}>${n+1}</option>`).join('')}
+                  ${[...Array(10)].map((_,n)=>`<option value="${n+1}" ${(p.salas_mocidade?.length||SALAS_MOCIDADE_DEFAULT.length)===(n+1)?'selected':''}>${n+1}</option>`).join('')}
                 </select>
               </div>
               <div id="cfg-salas-mocidade-campos-${i}" style="display:flex;flex-direction:column;gap:6px">
-                ${(p.salas_mocidade&&p.salas_mocidade.length?p.salas_mocidade:SALAS_MOCIDADE_DEFAULT).map((nome,j)=>`
+                ${(p.salas_mocidade?.length?p.salas_mocidade:SALAS_MOCIDADE_DEFAULT).map((nome,j)=>`
                   <div style="display:flex;align-items:center;gap:6px">
-                    <span style="font-size:11px;font-weight:600;color:var(--gray-400);min-width:18px;text-align:right">${j+1}.</span>
-                    <input type="text" id="cfg-sala-mocidade-${i}-${j}" value="${esc(nome)}" placeholder="Sala ${j+1}" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px">
+                    <span style="font-size:11px;font-weight:600;color:#93C5FD;min-width:18px;text-align:right">${j+1}.</span>
+                    <input type="text" id="cfg-sala-mocidade-${i}-${j}" value="${esc(nome)}" placeholder="Nome da sala" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px;border-color:#BFDBFE">
                   </div>`).join('')}
               </div>
-            </div>
+            </div>` : `<div style="background:var(--gray-50);border-radius:10px;padding:10px 12px;border:1px dashed var(--gray-100);font-size:12px;color:var(--gray-400)">
+              🌟 Turma Mocidade desativada neste polo — ative o toggle em Status para habilitar.
+            </div>`}
+
+            <!-- EVANGELIZAÇÃO — só se aceita_crianca ativo -->
+            ${p.aceita_crianca ? `
+            <div style="background:#F0FDF4;border-radius:10px;padding:12px;border:1px solid #BBF7D0">
+              <div style="font-size:11px;font-weight:700;color:#15803D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">👶 Evangelização</div>
+              <div style="font-size:11px;color:#4ADE80;margin-bottom:10px">Cada sala é definida por faixa etária. Ex: de 7 a 10 anos.</div>
+              <div id="cfg-salas-evang-campos-${i}" style="display:flex;flex-direction:column;gap:8px">
+                ${(p.salas_evang||[]).map((s,j)=>`
+                  <div style="display:flex;align-items:center;gap:6px;background:white;border-radius:8px;padding:8px 10px;border:1px solid #BBF7D0">
+                    <span style="font-size:11px;font-weight:700;color:#4ADE80;min-width:18px">${j+1}.</span>
+                    <input type="text" id="cfg-evang-nome-${i}-${j}" value="${esc(s.nome||'')}" placeholder="Nome da sala" style="flex:2;font-size:13px;padding:5px 8px;border-radius:6px;border:1px solid #BBF7D0">
+                    <span style="font-size:11px;color:var(--gray-400);white-space:nowrap">de</span>
+                    <input type="number" id="cfg-evang-de-${i}-${j}" value="${s.idade_de||''}" min="0" max="17" placeholder="0" style="width:52px;font-size:13px;padding:5px 8px;border-radius:6px;border:1px solid #BBF7D0;text-align:center">
+                    <span style="font-size:11px;color:var(--gray-400);white-space:nowrap">até</span>
+                    <input type="number" id="cfg-evang-ate-${i}-${j}" value="${s.idade_ate||''}" min="0" max="17" placeholder="17" style="width:52px;font-size:13px;padding:5px 8px;border-radius:6px;border:1px solid #BBF7D0;text-align:center">
+                    <span style="font-size:11px;color:var(--gray-400)">anos</span>
+                    <button type="button" onclick="removerSalaEvang(${i},this)" style="background:none;border:none;color:#FCA5A5;font-size:18px;cursor:pointer;line-height:1;padding:0 2px;flex-shrink:0">×</button>
+                  </div>`).join('')}
+              </div>
+              <button type="button" onclick="adicionarSalaEvang(${i})"
+                style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;width:100%;border-radius:8px;border:1.5px dashed #BBF7D0;background:white;color:#15803D;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">
+                + Adicionar sala de Evangelização
+              </button>
+            </div>` : `<div style="background:var(--gray-50);border-radius:10px;padding:10px 12px;border:1px dashed var(--gray-100);font-size:12px;color:var(--gray-400)">
+              👶 Evangelização desativada neste polo — ative o toggle "Aceitar inscrição de crianças" em Status.
+            </div>`}
+
           </div>
         </div>
 
@@ -4644,9 +5363,21 @@ function renderConfig(){
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+function toggleIdadeMinima(i){
+  const chk  = document.getElementById('cfg-crianca-'+i);
+  const wrap = document.getElementById('cfg-idade-min-wrap-'+i);
+  if(wrap) wrap.style.display = chk?.checked ? 'flex' : 'none';
+}
+
 function toggleAlmocoValor(i){
-  const chk = document.getElementById('cfg-almoco-'+i);
+  const chk  = document.getElementById('cfg-almoco-'+i);
   const wrap = document.getElementById('cfg-almoco-valor-wrap-'+i);
+  if(wrap) wrap.style.display = chk?.checked ? 'flex' : 'none';
+}
+
+function toggleAlmocoCrianca(i){
+  const chk  = document.getElementById('cfg-almoco-crianca-'+i);
+  const wrap = document.getElementById('cfg-almoco-crianca-valor-wrap-'+i);
   if(wrap) wrap.style.display = chk?.checked ? 'flex' : 'none';
 }
 
@@ -4659,6 +5390,77 @@ function lerSalas(i, tipo){
     result.push(v || (tipo==='adulto' ? SALAS_ADULTO_DEFAULT[j]||String.fromCharCode(65+j) : String(j+1)));
   }
   return result;
+}
+
+function lerSalasEvang(i){
+  const container = document.getElementById('cfg-salas-evang-campos-'+i);
+  if(!container) return [];
+  const result = [];
+  [...container.children].forEach((row, idx)=>{
+    // Busca os inputs pelo tipo: text para nome, number para idades
+    const inputText   = row.querySelector('input[type="text"]');
+    const inputsNum   = row.querySelectorAll('input[type="number"]');
+    const nome    = inputText?.value.trim()||'';
+    const idadeDe = parseInt(inputsNum[0]?.value)||0;
+    const idadeAte= parseInt(inputsNum[1]?.value)||17;
+    if(nome) result.push({ nome, idade_de: idadeDe, idade_ate: idadeAte });
+  });
+  return result;
+}
+
+function adicionarSalaEvang(i){
+  const container = document.getElementById('cfg-salas-evang-campos-'+i);
+  if(!container) return;
+  const j = container.children.length;
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;align-items:center;gap:6px;background:white;border-radius:8px;padding:8px 10px;border:1px solid #BBF7D0';
+  div.innerHTML = `
+    <span style="font-size:11px;font-weight:700;color:#4ADE80;min-width:18px">${j+1}.</span>
+    <input type="text" id="cfg-evang-nome-${i}-${j}" placeholder="Nome da sala" style="flex:2;font-size:13px;padding:5px 8px;border-radius:6px;border:1px solid #BBF7D0">
+    <span style="font-size:11px;color:var(--gray-400);white-space:nowrap">de</span>
+    <input type="number" id="cfg-evang-de-${i}-${j}" min="0" max="17" placeholder="0" style="width:52px;font-size:13px;padding:5px 8px;border-radius:6px;border:1px solid #BBF7D0;text-align:center">
+    <span style="font-size:11px;color:var(--gray-400);white-space:nowrap">até</span>
+    <input type="number" id="cfg-evang-ate-${i}-${j}" min="0" max="17" placeholder="17" style="width:52px;font-size:13px;padding:5px 8px;border-radius:6px;border:1px solid #BBF7D0;text-align:center">
+    <span style="font-size:11px;color:var(--gray-400)">anos</span>
+    <button type="button" onclick="removerSalaEvang(${i},this)" style="background:none;border:none;color:#FCA5A5;font-size:18px;cursor:pointer;line-height:1;padding:0 2px;flex-shrink:0">×</button>`;
+  container.appendChild(div);
+  div.querySelector('input')?.focus();
+  renumerarSalasEvang(i);
+}
+
+function removerSalaEvang(i, btn){
+  // btn pode ser o elemento botão ou o índice (legado)
+  const container = document.getElementById('cfg-salas-evang-campos-'+i);
+  if(!container) return;
+  // Se recebeu um elemento botão, remove o pai direto
+  if(btn instanceof Element){
+    btn.closest('div')?.remove();
+  } else {
+    // Fallback: remove pelo índice
+    const rows = [...container.children];
+    if(rows[btn]) rows[btn].remove();
+  }
+  renumerarSalasEvang(i);
+}
+
+function renumerarSalasEvang(i){
+  const container = document.getElementById('cfg-salas-evang-campos-'+i);
+  if(!container) return;
+  [...container.children].forEach((el,n)=>{
+    const num = el.querySelector('span');
+    if(num) num.textContent = (n+1)+'.';
+  });
+}
+
+function getSalasEvang(poloNome){
+  const p = POLOS.find(x=>x.nome===poloNome);
+  return p?.salas_evang||[];
+}
+
+// Determina sala de evangelização pela idade da criança
+function getSalaEvangPorIdade(poloNome, idadeCrianca){
+  const salas = getSalasEvang(poloNome);
+  return salas.find(s=>idadeCrianca>=s.idade_de && idadeCrianca<=s.idade_ate)||null;
 }
 
 function lerSetores(i){
@@ -4750,35 +5552,46 @@ function atualizarCamposSalas(i, tipo){
 }
 
 function salvarPolo(i){
-  const p=POLOS[i]; if(!p) return;
-  p.nome              = document.getElementById('cfg-nome-'+i).value.trim()||p.nome;
-  p.endereco          = document.getElementById('cfg-endereco-'+i).value.trim();
-  p.valorExibir       = document.getElementById('cfg-valor-'+i).value.trim()||'R$ —,—';
-  p.pixChave          = document.getElementById('cfg-pix-chave-'+i).value.trim();
-  p.pixNome           = document.getElementById('cfg-pix-nome-'+i).value.trim();
-  p.responsavel       = document.getElementById('cfg-resp-'+i).value.trim();
-  p.telefone_polo     = document.getElementById('cfg-tel-'+i).value.trim();
-  p.email_polo        = document.getElementById('cfg-email-'+i).value.trim();
-  p.capacidade        = document.getElementById('cfg-cap-'+i).value.trim();
-  p.obs               = document.getElementById('cfg-obs-'+i).value.trim();
-  p.maps_link         = document.getElementById('cfg-maps-'+i)?.value.trim()||'';
-  p.apresentacao      = document.getElementById('cfg-apresentacao-'+i)?.value.trim()||'';
-  p.fotos             = (document.getElementById('cfg-fotos-'+i)?.value||'').split('\n').map(s=>s.trim()).filter(s=>s.startsWith('http'));
-  p.inscricoes_abertas= document.getElementById('cfg-toggle-'+i).checked;
-  p.almoco_ativo      = document.getElementById('cfg-almoco-'+i).checked;
-  p.almoco_valor      = document.getElementById('cfg-almoco-valor-'+i).value.trim();
-  p.msg_pagamento     = document.getElementById('cfg-msg-pag-'+i).value.trim();
-  p.salas_adulto   = lerSalas(i, 'adulto');
-  p.salas_mocidade = lerSalas(i, 'mocidade');
-  p.setores        = lerSetores(i);
-  // expositores: já são mantidos diretamente em POLOS[i].expositores
-  // pelas funções vincularExpoPolo/desvincularExpoPolo — não precisa reler do DOM
-  // expositores_salas is saved separately via atribuirExpositor — don't overwrite here
-  if(!p.expositores_salas) p.expositores_salas={};
-  setCfg();
-  renderPoloGrid(); atualizarBanner(); renderAdmin(); renderConfig();
-  const m=document.getElementById('cfg-saved-'+i);
-  if(m){ m.classList.add('show'); setTimeout(()=>m.classList.remove('show'),2500); }
+  const p=POLOS[i]; if(!p){ console.error('salvarPolo: polo',i,'não encontrado'); return; }
+  try {
+    p.nome              = document.getElementById('cfg-nome-'+i)?.value.trim()||p.nome;
+    p.endereco          = document.getElementById('cfg-endereco-'+i)?.value.trim()||'';
+    p.valorExibir       = document.getElementById('cfg-valor-'+i)?.value.trim()||'R$ —,—';
+    p.pixChave          = document.getElementById('cfg-pix-chave-'+i)?.value.trim()||'';
+    p.pixNome           = document.getElementById('cfg-pix-nome-'+i)?.value.trim()||'';
+    p.responsavel       = document.getElementById('cfg-resp-'+i)?.value.trim()||'';
+    p.telefone_polo     = document.getElementById('cfg-tel-'+i)?.value.trim()||'';
+    p.email_polo        = document.getElementById('cfg-email-'+i)?.value.trim()||'';
+    p.capacidade        = document.getElementById('cfg-cap-'+i)?.value.trim()||'';
+    p.obs               = document.getElementById('cfg-obs-'+i)?.value.trim()||'';
+    p.maps_link         = document.getElementById('cfg-maps-'+i)?.value.trim()||'';
+    p.apresentacao      = document.getElementById('cfg-apresentacao-'+i)?.value.trim()||'';
+    p.fotos             = (document.getElementById('cfg-fotos-'+i)?.value||'').split('\n').map(s=>s.trim()).filter(s=>s.startsWith('http'));
+    p.inscricoes_abertas= document.getElementById('cfg-toggle-'+i)?.checked ?? true;
+    p.almoco_ativo           = document.getElementById('cfg-almoco-'+i)?.checked || false;
+    p.almoco_valor           = document.getElementById('cfg-almoco-valor-'+i)?.value.trim()||'';
+    p.almoco_crianca_ativo   = document.getElementById('cfg-almoco-crianca-'+i)?.checked || false;
+    p.almoco_crianca_valor   = document.getElementById('cfg-almoco-crianca-valor-'+i)?.value.trim()||'';
+    p.tem_mocidade      = document.getElementById('cfg-mocidade-'+i)?.checked ?? true;
+    p.aceita_crianca    = document.getElementById('cfg-crianca-'+i)?.checked || false;
+    p.idade_minima_evang= parseInt(document.getElementById('cfg-idade-min-'+i)?.value||'0')||0;
+    p.msg_pagamento     = document.getElementById('cfg-msg-pag-'+i)?.value.trim()||'';
+    p.salas_adulto      = lerSalas(i, 'adulto');
+    p.salas_mocidade    = p.tem_mocidade ? lerSalas(i, 'mocidade') : (p.salas_mocidade||[]);
+    p.salas_evang       = p.aceita_crianca ? lerSalasEvang(i) : (p.salas_evang||[]);
+    p.setores           = lerSetores(i);
+    if(!p.expositores_salas) p.expositores_salas={};
+
+    console.log('salvarPolo', i, p.nome, 'salas_evang:', p.salas_evang);
+
+    setCfg();
+    renderPoloGrid(); atualizarBanner(); renderAdmin(); renderConfig();
+    const m=document.getElementById('cfg-saved-'+i);
+    if(m){ m.classList.add('show'); setTimeout(()=>m.classList.remove('show'),2500); }
+  } catch(err){
+    console.error('salvarPolo erro:', err);
+    alert('Erro ao salvar: ' + err.message);
+  }
 }
 
 /* ================================================================
@@ -5254,7 +6067,7 @@ async function renderAvaliacaoAdmin(){
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         ${[['geral','🌐 Geral'],['polo','📍 Polo'],['sala','🏫 Sala'],['expositor','🎤 Expositor']].map(([t,l])=>`
           <button onclick="avalFiltroTipo('${t}')"
-            style="padding:6px 14px;border-radius:20px;border:1.5px solid ${_avalFiltroTipo===t?'var(--mcj-gold)':'var(--gray-100)'};background:${_avalFiltroTipo===t?'#FFFBF0':'white'};color:${_avalFiltroTipo===t?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer">
+            style="padding:6px 14px;border-radius:20px;border:1.5px solid ${_avalFiltroTipo===t?'var(--mcj-gold)':'var(--gray-100)'};background:${_avalFiltroTipo===t?'#FFFBF0':'white'};color:${_avalFiltroTipo===t?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">
             ${l}
           </button>`).join('')}
         ${valoresSelect()}
@@ -5266,8 +6079,8 @@ async function renderAvaliacaoAdmin(){
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
       <h2 style="font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:700;color:var(--mcj-dark)">Resultados das Avaliações</h2>
       <div style="display:flex;gap:8px">
-        <button onclick="exportarAvaliacaoExcel()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#217346;color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer">📊 Excel</button>
-        <button onclick="exportarAvaliacaoPDF()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--mcj-dark);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer">📄 PDF</button>
+        <button onclick="exportarAvaliacaoExcel()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#217346;color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">📊 Excel</button>
+        <button onclick="exportarAvaliacaoPDF()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--mcj-dark);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">📄 PDF</button>
       </div>
     </div>
     ${filtroHtml}
@@ -5659,32 +6472,42 @@ function renderComunicacao(){
 
   // Modo equipe: trabalhadores
   const isEquipe = _comFiltros.modo==='equipe';
-  const setores  = poloSel?.setores||[];
+  const setores = poloSel?.setores?.length
+    ? poloSel.setores
+    : [...new Set(polosVis.flatMap(p=>p.setores||[]))];
   const setorOpts= setores.map(s=>`<option value="${esc(s)}" ${_comFiltros.setor===s?'selected':''}>${s}</option>`).join('');
 
   // Aplica filtros
   let filtrados = [];
+  const polosPermitidos = new Set(polosVis.map(p=>p.nome));
+
   if(isEquipe){
-    filtrados = d.filter(x=>x.telefone && (x.trabalhador===true||x.trabalhador==='true'));
-    if(SESSION.role!=='admin'||_comFiltros.polo) filtrados=filtrados.filter(x=>(_comFiltros.polo?x.polo===_comFiltros.polo:polosVis.find(p=>p.nome===x.polo)));
-    if(_comFiltros.setor) filtrados=filtrados.filter(x=>(Array.isArray(x.setores)?x.setores:[]).includes(_comFiltros.setor));
+    // Modo equipe — só trabalhadores com telefone
+    filtrados = d.filter(x=>
+      x.telefone &&
+      (x.trabalhador===true||x.trabalhador==='true') &&
+      polosPermitidos.has(x.polo)
+    );
+    if(_comFiltros.polo)  filtrados = filtrados.filter(x=>x.polo===_comFiltros.polo);
+    if(_comFiltros.setor) filtrados = filtrados.filter(x=>(Array.isArray(x.setores)?x.setores:[]).includes(_comFiltros.setor));
   } else {
-    filtrados = d.filter(x=>x.telefone);
-    if(SESSION.role!=='admin'||_comFiltros.polo) filtrados=filtrados.filter(x=>(_comFiltros.polo?x.polo===_comFiltros.polo:polosVis.find(p=>p.nome===x.polo)));
-    if(_comFiltros.turma)    filtrados=filtrados.filter(x=>x.turma===_comFiltros.turma);
-    if(_comFiltros.sala)     filtrados=filtrados.filter(x=>x.sala===_comFiltros.sala);
-    if(_comFiltros.pagamento) filtrados=filtrados.filter(x=>(x.pagamento||'Pendente')===_comFiltros.pagamento);
+    // Modo inscritos — todos com telefone (participantes + trabalhadores)
+    filtrados = d.filter(x=>x.telefone && polosPermitidos.has(x.polo));
+    if(_comFiltros.polo)      filtrados = filtrados.filter(x=>x.polo===_comFiltros.polo);
+    if(_comFiltros.turma)     filtrados = filtrados.filter(x=>x.turma===_comFiltros.turma);
+    if(_comFiltros.sala)      filtrados = filtrados.filter(x=>x.sala===_comFiltros.sala);
+    if(_comFiltros.pagamento) filtrados = filtrados.filter(x=>(x.pagamento||'Pendente')===_comFiltros.pagamento);
   }
 
   // Modo toggle
   const modoHtml = `
     <div style="display:flex;gap:8px;margin-bottom:4px">
       <button onclick="_comFiltros.modo='inscritos';_comFiltros.setor='';renderComunicacao()"
-        style="padding:7px 18px;border-radius:20px;border:1.5px solid ${!isEquipe?'var(--mcj-gold)':'var(--gray-100)'};background:${!isEquipe?'#FFFBF0':'white'};color:${!isEquipe?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+        style="padding:7px 18px;border-radius:20px;border:1.5px solid ${!isEquipe?'var(--mcj-gold)':'var(--gray-100)'};background:${!isEquipe?'#FFFBF0':'white'};color:${!isEquipe?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
         👤 Inscritos
       </button>
       <button onclick="_comFiltros.modo='equipe';_comFiltros.turma='';_comFiltros.sala='';_comFiltros.pagamento='';renderComunicacao()"
-        style="padding:7px 18px;border-radius:20px;border:1.5px solid ${isEquipe?'var(--mcj-gold)':'var(--gray-100)'};background:${isEquipe?'#FFFBF0':'white'};color:${isEquipe?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+        style="padding:7px 18px;border-radius:20px;border:1.5px solid ${isEquipe?'var(--mcj-gold)':'var(--gray-100)'};background:${isEquipe?'#FFFBF0':'white'};color:${isEquipe?'var(--mcj-mid)':'var(--gray-600)'};font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
         🔧 Equipe de Trabalho
       </button>
     </div>`;
@@ -5848,33 +6671,50 @@ function dispararComunicacao(){
   const materiais = getMateriais();
   const matSelecionados = materiais.filter((_,i)=>document.getElementById('com-mat-'+i)?.checked);
   const d = getIns();
+  const isEquipe = _comFiltros.modo==='equipe';
   const polosVis = SESSION.role==='admin'
     ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+  const polosPermitidos = new Set(polosVis.map(p=>p.nome));
 
-  let filtrados = d.filter(x=>x.telefone);
-  if(SESSION.role!=='admin'||_comFiltros.polo) filtrados=filtrados.filter(x=>(_comFiltros.polo?x.polo===_comFiltros.polo:polosVis.find(p=>p.nome===x.polo)));
-  if(_comFiltros.turma)    filtrados=filtrados.filter(x=>x.turma===_comFiltros.turma);
-  if(_comFiltros.sala)     filtrados=filtrados.filter(x=>x.sala===_comFiltros.sala);
-  if(_comFiltros.pagamento) filtrados=filtrados.filter(x=>(x.pagamento||'Pendente')===_comFiltros.pagamento);
+  let filtrados = [];
+  if(isEquipe){
+    filtrados = d.filter(x=>
+      x.telefone &&
+      (x.trabalhador===true||x.trabalhador==='true') &&
+      polosPermitidos.has(x.polo)
+    );
+    if(_comFiltros.polo)  filtrados = filtrados.filter(x=>x.polo===_comFiltros.polo);
+    if(_comFiltros.setor) filtrados = filtrados.filter(x=>(Array.isArray(x.setores)?x.setores:[]).includes(_comFiltros.setor));
+  } else {
+    filtrados = d.filter(x=>x.telefone && polosPermitidos.has(x.polo));
+    if(_comFiltros.polo)      filtrados = filtrados.filter(x=>x.polo===_comFiltros.polo);
+    if(_comFiltros.turma)     filtrados = filtrados.filter(x=>x.turma===_comFiltros.turma);
+    if(_comFiltros.sala)      filtrados = filtrados.filter(x=>x.sala===_comFiltros.sala);
+    if(_comFiltros.pagamento) filtrados = filtrados.filter(x=>(x.pagamento||'Pendente')===_comFiltros.pagamento);
+  }
 
-  if(!filtrados.length){ alert('Nenhum inscrito com telefone para os filtros selecionados.'); return; }
+  if(!filtrados.length){ alert('Nenhum destinatário para os filtros selecionados.'); return; }
 
   // Descrição dos filtros
   const filtroDesc = [
-    _comFiltros.polo      ? `Polo: ${_comFiltros.polo}`      : 'Todos os polos',
+    isEquipe ? '🔧 Equipe' : '👤 Inscritos',
+    _comFiltros.polo      ? `Polo: ${_comFiltros.polo}`      : null,
     _comFiltros.turma     ? `Turma: ${_comFiltros.turma}`    : null,
     _comFiltros.sala      ? `Sala: ${_comFiltros.sala}`      : null,
     _comFiltros.pagamento ? `Pagto: ${_comFiltros.pagamento}`: null,
+    _comFiltros.setor     ? `Setor: ${_comFiltros.setor}`    : null,
   ].filter(Boolean).join(' · ');
 
   const linksHtml = filtrados.map(p=>{
     const nome = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
     const tel  = p.telefone.replace(/\D/g,'');
+    const setoresP = Array.isArray(p.setores)?p.setores.join(', '):'—';
     let msgFinal = msg
       .replace(/\{nome\}/g,  nome.split(' ')[0])
       .replace(/\{polo\}/g,  p.polo||'')
       .replace(/\{sala\}/g,  p.sala||'')
-      .replace(/\{turma\}/g, p.turma||'');
+      .replace(/\{turma\}/g, p.turma||'')
+      .replace(/\{setor\}/g, setoresP);
     if(matSelecionados.length){
       msgFinal += '\n\n' + matSelecionados.map(m=>`📎 ${m.nome}:\n${m.url}`).join('\n\n');
     }
@@ -5883,7 +6723,7 @@ function dispararComunicacao(){
     return `<tr style="border-bottom:1px solid #F0E8DC">
       <td style="padding:8px 10px;font-size:12px;font-weight:600;color:#2C1A08">${nome}</td>
       <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${p.polo}</td>
-      <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${p.sala||'—'}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${isEquipe ? setoresP : (p.sala||'—')}</td>
       <td style="padding:8px 10px;text-align:center">
         <span style="font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:${pago?'#ECFDF5':'#FFF7ED'};color:${pago?'#065F46':'#92400E'}">${pago?'✓ Pago':'Pendente'}</span>
       </td>
