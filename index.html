@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#3D2410">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MCJ 2026">
+<meta name="apple-mobile-web-app-title" id="meta-app-title" content="MCJ 2026">
 <meta name="mobile-web-app-capable" content="yes">
-<title>MCJ 2026 — Sistema de Inscrição</title>
+<title id="page-title">MCJ 2026 — Sistema de Inscrição</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -638,7 +638,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 
 <!-- TELA DE CARREGAMENTO INICIAL -->
 <div id="supa-init-screen" style="position:fixed;inset:0;background:var(--blue-900);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:1.5rem">
-  <div style="font-family:'EB Garamond',Georgia,serif;font-size:2rem;font-weight:800;color:white;letter-spacing:-1px">MCJ <span style="color:var(--blue-200)">2026</span></div>
+  <div style="font-family:'EB Garamond',Georgia,serif;font-size:2rem;font-weight:800;color:white;letter-spacing:-1px">MCJ <span style="color:var(--blue-200)" id="splash-ano">2026</span></div>
   <div style="display:flex;align-items:center;gap:10px;color:var(--blue-200);font-size:14px">
     <span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite"></span>
     Carregando dados…
@@ -646,8 +646,8 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 </div>
 
 <nav>
-  <div class="nav-logo">MCJ <span>2026</span></div>
-  <div class="nav-date">20 de setembro de 2026</div>
+  <div class="nav-logo" id="nav-logo">MCJ <span id="nav-ano">2026</span></div>
+  <div class="nav-date" id="nav-date"></div>
 </nav>
 <div class="tabs-bar">
   <button class="tab-btn active" id="tab-inscricao" onclick="showView('inscricao',this)">Inscrição</button>
@@ -667,13 +667,13 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-tag">Jornada de Estudos Espíritas do Evangelho</div>
-      <h1>MCJ <em>2026</em></h1>
-      <p class="hero-sub">Momentos com Jesus — Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.</p>
+      <div class="hero-tag" id="hero-tagline"></div>
+      <h1 id="hero-titulo"></h1>
+      <p class="hero-sub" id="hero-sub"></p>
       <div class="hero-pills">
-        <div class="hero-pill">📅 20 de setembro de 2026</div>
-        <div class="hero-pill">⏰ 8h às 17h30</div>
-        <div class="hero-pill">📍 Polos no Rio de Janeiro</div>
+        <div class="hero-pill" id="pill-data"></div>
+        <div class="hero-pill" id="pill-horario"></div>
+        <div class="hero-pill" id="pill-local"></div>
       </div>
       <div class="hero-social" id="hero-social-links"></div>
     </div>
@@ -712,7 +712,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         <span style="font-size:24px">⭐</span>
         <div>
           <div style="font-size:14px;font-weight:700;color:white">Avaliação do evento disponível!</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:2px">Compartilhe sua opinião sobre o MCJ 2026</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:2px"><span id="banner-aval-txt"></span></div>
         </div>
       </div>
       <button onclick="showView('avaliacao',document.getElementById('tab-avaliacao'))"
@@ -789,7 +789,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-tag" id="sobre-tag-hero">MCJ 2026</div>
+      <div class="hero-tag" id="sobre-hero-tag"></div>
       <h1 id="sobre-titulo-hero" style="font-size:clamp(1.6rem,6vw,3rem)">Sobre o <em>Evento</em></h1>
     </div>
   </div>
@@ -804,9 +804,9 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-tag">MCJ 2026</div>
-      <h1 style="font-size:clamp(1.6rem,6vw,3rem)">Expositores <em>Convidados</em></h1>
-      <p class="hero-sub" style="font-size:13px">Conheça quem vai nos guiar nessa jornada</p>
+      <div class="hero-tag" id="exp-hero-tag"></div>
+      <h1 id="exp-h1" style="font-size:clamp(1.6rem,6vw,3rem)">Expositores <em>Convidados</em></h1>
+      <p class="hero-sub" id="exp-hero-sub" style="font-size:13px">Conheça quem vai nos guiar nessa jornada</p>
     </div>
   </div>
   <div class="expositores-page-wrap" id="expositores-content"></div>
@@ -816,7 +816,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 <div class="view" id="view-avaliacao">
   <div class="aval-hero">
     <div class="aval-hero-title">⭐ Avaliação do Evento</div>
-    <div class="aval-hero-sub">MCJ 2026 · Momentos com Jesus</div>
+    <div class="aval-hero-sub" id="aval-hero-sub"></div>
   </div>
   <div class="aval-page">
     <div id="aval-form-wrap"></div>
@@ -836,8 +836,8 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-tag">MCJ 2026 · Rio de Janeiro</div>
-      <h1 style="font-size:clamp(1.6rem,6vw,3rem)">Conheça <em>seu Polo</em></h1>
+      <div class="hero-tag" id="polos-hero-tag"></div>
+      <h1 id="polos-h1" style="font-size:clamp(1.6rem,6vw,3rem)">Conheça <em>seu Polo</em></h1>
       <p class="hero-sub" style="font-size:13px">Encontre o polo mais próximo de você e saiba tudo sobre o local, endereço e como chegar.</p>
     </div>
   </div>
@@ -871,7 +871,8 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <button class="atab-btn" id="atab-recepcao" onclick="switchAdminTab('recepcao',this)">🎫 Recepção</button>
       <button class="atab-btn" id="atab-comunicacao" onclick="switchAdminTab('comunicacao',this)">💬 Comunicação</button>
       <button class="atab-btn" id="atab-config" onclick="switchAdminTab('config',this)">⚙ Polos</button>
-      <button class="atab-btn" id="atab-evento" onclick="switchAdminTab('evento',this)">✨ Evento / Expositores</button>
+      <button class="atab-btn" id="atab-evento" onclick="switchAdminTab('evento',this)">✨ Evento</button>
+      <button class="atab-btn" id="atab-expositores-admin" onclick="switchAdminTab('expositores-admin',this)">🎤 Expositores</button>
       <button class="atab-btn" id="atab-avaliacao" onclick="switchAdminTab('avaliacao',this)">⭐ Avaliações</button>
       <button class="atab-btn" id="atab-usuarios" onclick="switchAdminTab('usuarios',this)">👥 Usuários</button>
     </div>
@@ -900,6 +901,9 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
     <div class="admin-panel" id="apanel-avaliacao">
       <div id="avaliacao-admin-wrap"></div>
+    </div>
+    <div class="admin-panel" id="apanel-expositores-admin">
+      <div id="expositores-admin-wrap"></div>
     </div>
     <div class="admin-panel" id="apanel-evento">
       <div id="evento-admin-wrap"></div>
@@ -1228,7 +1232,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         <div class="cfg-field"><label>Data de nascimento</label><input type="text" id="ei-nascimento" placeholder="DD/MM/AAAA"></div>
       </div>
       <div class="cfg-row">
-        <div class="cfg-field"><label>E-mail</label><input type="email" id="ei-email" placeholder="email@exemplo.com"></div>
+        <div class="cfg-field"><label>E-mail <span style="font-size:10px;color:var(--gray-400)">(não editável)</span></label><input type="email" id="ei-email" readonly style="background:var(--gray-50);color:var(--gray-400);cursor:default"></div>
         <div class="cfg-field"><label>Telefone</label><input type="tel" id="ei-telefone" placeholder="(00) 00000-0000"></div>
       </div>
       <div class="cfg-field"><label>Nome para o crachá</label><input type="text" id="ei-cracha" placeholder="Como deseja ser chamado(a)" maxlength="40"></div>
@@ -1241,12 +1245,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
             <option value="Mocidade">🌟 Mocidade</option>
           </select>
         </div>
-        <div class="cfg-field">
-          <label>Polo</label>
-          <select id="ei-polo">
-            ${POLOS.map(p=>`<option value="${esc(p.nome)}">${p.nome}</option>`).join('')}
-          </select>
-        </div>
+        <div class="cfg-field"><label>Polo <span style="font-size:10px;color:var(--gray-400)">(não editável)</span></label><input type="text" id="ei-polo" readonly style="background:var(--gray-50);color:var(--gray-400);cursor:default"></div>
       </div>
       <div class="cfg-row">
         <div class="cfg-field">
@@ -1267,6 +1266,39 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   </div>
 </div>
 
+<!-- MODAL: EXPOSITOR -->
+<div class="login-overlay" id="modal-expositor-overlay" onclick="if(event.target===this)fecharModalExpositor()" style="align-items:center;padding:1rem;z-index:700">
+  <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)">
+    <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
+      <span id="modal-exp-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">Novo Expositor</span>
+      <button onclick="fecharModalExpositor()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0">×</button>
+    </div>
+    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
+      <div class="cfg-field">
+        <label>Nome do expositor <span class="req">*</span></label>
+        <input type="text" id="exp-nome" placeholder="Nome completo do expositor">
+      </div>
+      <div class="cfg-field">
+        <label>Foto (URL da imagem)</label>
+        <input type="url" id="exp-foto" placeholder="https://raw.githubusercontent.com/...">
+        <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Suba a foto no GitHub e cole o link raw aqui</span>
+      </div>
+      <div id="exp-foto-preview" style="display:none;margin-top:-4px">
+        <img id="exp-foto-img" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--mcj-sand)" onerror="document.getElementById('exp-foto-preview').style.display='none'">
+      </div>
+      <div class="cfg-field">
+        <label>Bio / Apresentação</label>
+        <textarea id="exp-bio" rows="4" placeholder="Breve apresentação do expositor, formação, experiência..." style="resize:vertical"></textarea>
+      </div>
+      <div id="exp-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800)"></div>
+    </div>
+    <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="fecharModalExpositor()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">Cancelar</button>
+      <button onclick="salvarExpositor()" class="btn-cfg-save">Salvar expositor</button>
+    </div>
+  </div>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="fecharLightbox()">
   <button class="lightbox-close" onclick="fecharLightbox()">×</button>
@@ -1274,7 +1306,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   <div class="lightbox-caption" id="lightbox-caption"></div>
 </div>
 
-<footer>MCJ 2026 · 20 de setembro de 2026 · Rio de Janeiro</footer>
+<footer id="site-footer"></footer>
 
 <script>
 /* ================================================================
@@ -1500,6 +1532,7 @@ async function carregarTudo(){
 
   // Renderiza imediatamente com dados padrão
   aplicarDesign();
+  aplicarConfigEvento();
   renderHeroSocial();
   renderBannerAvaliacao();
   renderPoloGrid();
@@ -1569,6 +1602,88 @@ function renderHeroSocial(){
     (fb?`<a href="${fb}" target="_blank" rel="noopener" class="hero-social-btn" title="Facebook">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
     </a>`:'');
+}
+
+function aplicarConfigEvento(){
+  const e = _cfgEvento;
+  const titulo    = e.titulo    || 'MCJ 2026';
+  const subtitulo = e.subtitulo || 'Momentos com Jesus';
+  const tagline   = e.design?.hero_tagline || 'Jornada de Estudos Espíritas do Evangelho';
+  const data      = e.data      || '20 de setembro de 2026';
+  const horario   = e.horario   || '8h às 17h30';
+  const local     = e.local     || 'Rio de Janeiro';
+
+  // Extrai nome base e ano
+  const m = titulo.match(/^(.+?)\s*(\d{4})$/);
+  const tituloBase = m ? m[1].trim() : titulo;
+  const tituloAno  = m ? m[2] : '';
+
+  // ── Metadados ────────────────────────────────────────────
+  document.title = titulo + (subtitulo ? ' — ' + subtitulo : '');
+  document.getElementById('meta-app-title')?.setAttribute('content', titulo);
+
+  // ── Splash screen ────────────────────────────────────────
+  const splashAno = document.getElementById('splash-ano');
+  if(splashAno) splashAno.textContent = tituloAno || titulo;
+
+  // ── Navbar ───────────────────────────────────────────────
+  const navLogo = document.getElementById('nav-logo');
+  if(navLogo){
+    navLogo.innerHTML = tituloAno
+      ? `${tituloBase} <span id="nav-ano">${tituloAno}</span>`
+      : titulo;
+  }
+  const navDate = document.getElementById('nav-date');
+  if(navDate) navDate.textContent = data;
+
+  // ── Hero principal (inscrição) ───────────────────────────
+  const heroTag = document.getElementById('hero-tagline');
+  if(heroTag) heroTag.textContent = tagline;
+
+  const heroTitulo = document.getElementById('hero-titulo');
+  if(heroTitulo){
+    heroTitulo.innerHTML = tituloAno
+      ? `${tituloBase} <em id="hero-ano">${tituloAno}</em>`
+      : titulo;
+  }
+
+  const heroSub = document.getElementById('hero-sub');
+  if(heroSub){
+    const sub = e.inscricao_sub || 'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.';
+    heroSub.textContent = subtitulo + ' — ' + sub;
+  }
+
+  // Pills
+  const pillData    = document.getElementById('pill-data');
+  const pillHorario = document.getElementById('pill-horario');
+  const pillLocal   = document.getElementById('pill-local');
+  if(pillData)    pillData.textContent    = '📅 ' + data;
+  if(pillHorario) pillHorario.textContent = '⏰ ' + horario;
+  if(pillLocal)   pillLocal.textContent   = '📍 Polos no ' + local;
+
+  // Banner avaliação
+  const bannerAvalTxt = document.getElementById('banner-aval-txt');
+  if(bannerAvalTxt) bannerAvalTxt.textContent = 'Compartilhe sua opinião sobre o ' + titulo;
+
+  // ── Hero Sobre ───────────────────────────────────────────
+  const sobreTag = document.getElementById('sobre-hero-tag');
+  if(sobreTag) sobreTag.textContent = titulo;
+
+  // ── Hero Expositores ─────────────────────────────────────
+  const expTag = document.getElementById('exp-hero-tag');
+  if(expTag) expTag.textContent = titulo;
+
+  // ── Hero Polos ───────────────────────────────────────────
+  const polosTag = document.getElementById('polos-hero-tag');
+  if(polosTag) polosTag.textContent = titulo + ' · ' + local;
+
+  // ── Hero Avaliação ───────────────────────────────────────
+  const avalSub = document.getElementById('aval-hero-sub');
+  if(avalSub) avalSub.textContent = titulo + (subtitulo ? ' · ' + subtitulo : '');
+
+  // ── Rodapé ───────────────────────────────────────────────
+  const footer = document.getElementById('site-footer');
+  if(footer) footer.textContent = [titulo, data, local].filter(Boolean).join(' · ');
 }
 
 function renderBannerAvaliacao(){
@@ -1740,6 +1855,10 @@ function renderEventoAdmin(){
             <div class="cfg-field"><label>Título</label><input type="text" id="ev-titulo" value="${esc(e.titulo||'MCJ 2026')}"></div>
             <div class="cfg-field"><label>Subtítulo</label><input type="text" id="ev-subtitulo" value="${esc(e.subtitulo||'')}"></div>
           </div>
+          <div class="cfg-field">
+            <label>Tag da página de inscrição</label>
+            <input type="text" id="ev-inscricao-sub" value="${esc(e.inscricao_sub||'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.')}" placeholder="Texto abaixo do título na página de inscrição">
+          </div>
           <div class="cfg-row">
             <div class="cfg-field"><label>Data</label><input type="text" id="ev-data" value="${esc(e.data||'')}"></div>
             <div class="cfg-field"><label>Horário</label><input type="text" id="ev-horario" value="${esc(e.horario||'')}"></div>
@@ -1757,35 +1876,6 @@ function renderEventoAdmin(){
         </div>
         <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;justify-content:flex-end">
           <button class="btn-cfg-save" onclick="salvarEventoCfg()">Salvar informações</button>
-        </div>
-      </div>
-
-      <!-- EXPOSITORES -->
-      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
-        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="color:var(--mcj-gold);font-size:16px">🎤</span>
-            <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Expositores (${exps.length})</span>
-          </div>
-          <button onclick="abrirModalExpositor(null)" style="padding:6px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer">+ Adicionar</button>
-        </div>
-        <div style="padding:1.25rem">
-          ${exps.length===0
-            ? '<div style="text-align:center;color:var(--gray-400);font-size:13px;padding:1rem">Nenhum expositor cadastrado. Clique em + Adicionar.</div>'
-            : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
-                ${exps.map((ex,i)=>`
-                  <div style="border-radius:10px;border:1px solid var(--mcj-sand);overflow:hidden">
-                    ${ex.foto?`<img src="${ex.foto}" style="width:100%;height:120px;object-fit:cover" onerror="this.style.display='none'">`:''}
-                    <div style="padding:10px 12px">
-                      <div style="font-weight:700;font-size:14px;color:var(--mcj-dark)">${ex.nome}</div>
-                      ${ex.bio?`<div style="font-size:12px;color:var(--gray-500);margin-top:3px;line-height:1.4">${ex.bio.substring(0,80)}${ex.bio.length>80?'...':''}</div>`:''}
-                      <div style="display:flex;gap:6px;margin-top:8px">
-                        <button onclick="editarExpositor(${i})" style="flex:1;padding:4px 0;font-size:11px;font-weight:600;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:6px;cursor:pointer">✏️ Editar</button>
-                        <button onclick="excluirExpositor(${i})" style="flex:1;padding:4px 0;font-size:11px;font-weight:600;background:white;border:1px solid var(--red-100);color:var(--red-400);border-radius:6px;cursor:pointer">🗑 Remover</button>
-                      </div>
-                    </div>
-                  </div>`).join('')}
-              </div>`}
         </div>
       </div>
 
@@ -1974,6 +2064,7 @@ async function deletarInscricao(email, polo){
 let _cfgEvento = {
   // Textos
   titulo: 'MCJ 2026', subtitulo: 'Momentos com Jesus',
+  inscricao_sub: 'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.',
   descricao: '', tema_manha: 'O Renascer de Nicodemos',
   tema_tarde: 'Jesus Forja Pedro para o Futuro',
   data: '20 de setembro de 2026', horario: '8h às 17h30',
@@ -2040,14 +2131,19 @@ function aplicarTema(idx){
   aplicarDesign();
 }
 
-function salvarDesign(){
+async function salvarDesign(){
   if(!_cfgEvento.design) _cfgEvento.design={...TEMAS_DESIGN[0]};
   const v=document.getElementById('dsg-video')?.value.trim();
   if(v) _cfgEvento.design.video_url=v;
-  setCfgEvento();
-  aplicarDesign();
-  const btn=document.querySelector('#evento-admin-wrap .btn-cfg-save');
-  if(btn){const t=btn.textContent;btn.textContent='✓ Salvo!';setTimeout(()=>btn.textContent=t,2000);}
+  try {
+    await setCfgEvento();
+    aplicarDesign();
+    const btn=document.querySelector('[onclick="salvarDesign()"]');
+    if(btn){ const t=btn.textContent; btn.textContent='✓ Salvo!'; btn.style.background='#10B981'; setTimeout(()=>{ btn.textContent=t; btn.style.background=''; },2000); }
+  } catch(e){
+    alert('Erro ao salvar design: ' + e.message);
+    console.error(e);
+  }
 }
 
 function restaurarDesignPadrao(){
@@ -2086,8 +2182,10 @@ function aplicarDesign(){
   if(d.hero_tagline){document.querySelectorAll('.hero-tag').forEach(el=>el.textContent=d.hero_tagline);}
 }
 
-function salvarEventoCfg(){
-  _cfgEvento.subtitulo  = document.getElementById('ev-subtitulo')?.value.trim()||'';
+async function salvarEventoCfg(){
+  _cfgEvento.titulo       = document.getElementById('ev-titulo')?.value.trim()||_cfgEvento.titulo;
+  _cfgEvento.subtitulo    = document.getElementById('ev-subtitulo')?.value.trim()||'';
+  _cfgEvento.inscricao_sub= document.getElementById('ev-inscricao-sub')?.value.trim()||'';
   _cfgEvento.data       = document.getElementById('ev-data')?.value.trim()||'';
   _cfgEvento.horario    = document.getElementById('ev-horario')?.value.trim()||'';
   _cfgEvento.local      = document.getElementById('ev-local')?.value.trim()||'';
@@ -2096,83 +2194,142 @@ function salvarEventoCfg(){
   _cfgEvento.descricao  = document.getElementById('ev-descricao')?.value.trim()||'';
   _cfgEvento.instagram  = document.getElementById('ev-instagram')?.value.trim()||'';
   _cfgEvento.facebook   = document.getElementById('ev-facebook')?.value.trim()||'';
-  setCfgEvento();
-  renderHeroSocial();
-  const btns = document.querySelectorAll('#evento-admin-wrap .btn-cfg-save');
-  if(btns[0]){ const t=btns[0].textContent; btns[0].textContent='✓ Salvo!'; setTimeout(()=>btns[0].textContent=t,2000); }
+  try {
+    await setCfgEvento();
+    aplicarConfigEvento();
+    renderHeroSocial();
+    renderSobre();
+    // Feedback visual no botão
+    const btn = document.querySelector('[onclick="salvarEventoCfg()"]');
+    if(btn){ const t=btn.textContent; btn.textContent='✓ Salvo!'; btn.style.background='#10B981'; setTimeout(()=>{ btn.textContent=t; btn.style.background=''; },2000); }
+  } catch(e){
+    alert('Erro ao salvar: ' + e.message);
+    console.error(e);
+  }
+}
+
+let _editExpIdx = null;
+
+function renderExpositoresAdmin(){
+  const wrap = document.getElementById('expositores-admin-wrap');
+  if(!wrap) return;
+  const exps = getExpositores();
+
+  wrap.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+      <div>
+        <h2 style="font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:700;color:var(--mcj-dark)">Expositores</h2>
+        <div style="font-size:13px;color:var(--gray-400);margin-top:2px">${exps.length} expositor${exps.length!==1?'es':''} cadastrado${exps.length!==1?'s':''}</div>
+      </div>
+      <button onclick="abrirModalExpositor(null)" class="btn-cfg-save" style="display:flex;align-items:center;gap:6px">
+        + Novo expositor
+      </button>
+    </div>
+    ${exps.length===0
+      ? `<div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);padding:2rem;text-align:center;color:var(--gray-400)">
+          Nenhum expositor cadastrado ainda.<br>Clique em "+ Novo expositor" para adicionar.
+        </div>`
+      : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">
+          ${exps.map((ex,i)=>`
+            <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+              ${ex.foto?`<img src="${esc(ex.foto)}" alt="${esc(ex.nome)}" style="width:100%;height:160px;object-fit:cover" onerror="this.style.display='none'">`:''}
+              <div style="padding:1rem">
+                <div style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:var(--mcj-dark);margin-bottom:4px">${esc(ex.nome)}</div>
+                ${ex.bio?`<div style="font-size:12px;color:var(--gray-500);line-height:1.5;margin-bottom:10px">${esc(ex.bio.substring(0,100))}${ex.bio.length>100?'...':''}</div>`:''}
+                <div style="display:flex;gap:6px;margin-top:8px">
+                  <button onclick="abrirModalExpositor(${i})" style="flex:1;padding:6px;font-size:12px;font-weight:600;background:var(--gray-50);border:1px solid var(--gray-100);border-radius:8px;cursor:pointer;font-family:'Raleway',sans-serif">✏️ Editar</button>
+                  <button onclick="excluirExpositor(${i})" style="flex:1;padding:6px;font-size:12px;font-weight:600;background:white;border:1px solid var(--red-100);color:var(--red-400);border-radius:8px;cursor:pointer;font-family:'Raleway',sans-serif">🗑 Remover</button>
+                </div>
+              </div>
+            </div>`).join('')}
+        </div>`}`;
 }
 
 function abrirModalExpositor(idx){
-  _editExpIdx = idx ?? null;
-  const exp = idx!=null ? getExpositores()[idx] : null;
-  document.getElementById('modal-exp-titulo').textContent = exp ? 'Editar Expositor' : 'Novo Expositor';
-  document.getElementById('mexp-nome').value = exp?.nome||'';
-  document.getElementById('mexp-foto').value = exp?.foto||'';
-  document.getElementById('mexp-bio').value  = exp?.bio||'';
-  document.getElementById('mexp-erro').style.display='none';
+  _editExpIdx = (idx!==undefined && idx!==null) ? idx : null;
+  const ex = _editExpIdx!==null ? getExpositores()[_editExpIdx] : null;
+  const titulo = document.getElementById('modal-exp-titulo');
+  if(titulo) titulo.textContent = _editExpIdx!==null ? 'Editar Expositor' : 'Novo Expositor';
+  const nomeEl = document.getElementById('exp-nome');
+  const fotoEl = document.getElementById('exp-foto');
+  const bioEl  = document.getElementById('exp-bio');
+  const erroEl = document.getElementById('exp-erro');
+  if(nomeEl) nomeEl.value = ex?.nome||'';
+  if(fotoEl){
+    fotoEl.value = ex?.foto||'';
+    // Live preview
+    fotoEl.oninput = function(){
+      const prev = document.getElementById('exp-foto-preview');
+      const img  = document.getElementById('exp-foto-img');
+      if(this.value){ prev.style.display='block'; img.src=this.value; }
+      else prev.style.display='none';
+    };
+    // Mostra preview se já tem foto
+    const prev = document.getElementById('exp-foto-preview');
+    const img  = document.getElementById('exp-foto-img');
+    if(ex?.foto){ prev.style.display='block'; img.src=ex.foto; }
+    else prev.style.display='none';
+  }
+  if(bioEl)  bioEl.value  = ex?.bio||'';
+  if(erroEl) erroEl.style.display = 'none';
   const ov = document.getElementById('modal-expositor-overlay');
-  ov.style.display='flex';
-  setTimeout(()=>document.getElementById('mexp-nome').focus(),100);
+  if(ov){ ov.classList.add('show'); document.body.style.overflow='hidden'; }
+  setTimeout(()=>document.getElementById('exp-nome')?.focus(), 100);
 }
+
 function fecharModalExpositor(){
-  document.getElementById('modal-expositor-overlay').style.display='none';
-  _editExpIdx=null;
+  const ov = document.getElementById('modal-expositor-overlay');
+  if(ov){ ov.classList.remove('show'); document.body.style.overflow=''; }
+  _editExpIdx = null;
 }
-function editarExpositor(idx){ abrirModalExpositor(idx); }
 
 function salvarExpositor(){
-  const nome = document.getElementById('mexp-nome').value.trim();
-  const foto = document.getElementById('mexp-foto').value.trim();
-  const bio  = document.getElementById('mexp-bio').value.trim();
-  const erroEl = document.getElementById('mexp-erro');
-  if(!nome){ erroEl.textContent='Informe o nome do expositor.'; erroEl.style.display='block'; return; }
+  const nome  = document.getElementById('exp-nome')?.value.trim()||'';
+  const foto  = document.getElementById('exp-foto')?.value.trim()||'';
+  const bio   = document.getElementById('exp-bio')?.value.trim()||'';
+  const erroEl = document.getElementById('exp-erro');
+  if(!nome){
+    if(erroEl){ erroEl.textContent='O nome é obrigatório.'; erroEl.style.display='block'; }
+    return;
+  }
   const lista = [...getExpositores()];
-  if(_editExpIdx!=null){
-    const nomeAntigo = lista[_editExpIdx].nome;
-    lista[_editExpIdx] = {nome, foto, bio};
-    // atualiza referências nos polos
-    if(nomeAntigo!==nome){
-      POLOS.forEach(p=>{
-        p.expositores = (p.expositores||[]).map(n=>n===nomeAntigo?nome:n);
-        if(p.expositores_salas){
-          Object.keys(p.expositores_salas).forEach(sala=>{
-            if(p.expositores_salas[sala].manha===nomeAntigo) p.expositores_salas[sala].manha=nome;
-            if(p.expositores_salas[sala].tarde===nomeAntigo)  p.expositores_salas[sala].tarde=nome;
-          });
-        }
-      });
-      setCfg();
-    }
+  if(_editExpIdx!==null){
+    lista[_editExpIdx] = {...lista[_editExpIdx], nome, foto, bio};
   } else {
-    if(lista.find(e=>e.nome===nome)){ erroEl.textContent='Já existe um expositor com este nome.'; erroEl.style.display='block'; return; }
+    if(lista.find(e=>e.nome.toLowerCase()===nome.toLowerCase())){
+      if(erroEl){ erroEl.textContent='Já existe um expositor com este nome.'; erroEl.style.display='block'; }
+      return;
+    }
     lista.push({nome, foto, bio});
   }
   _cfgEvento.expositores_lista = lista;
   setCfgEvento();
   fecharModalExpositor();
-  renderEventoAdmin();
+  renderExpositoresAdmin();
 }
 
 function excluirExpositor(idx){
-  const exp = getExpositores()[idx];
-  if(!exp) return;
-  if(!confirm(`Remover "${exp.nome}"? Ele será desvinculado de todos os polos.`)) return;
-  const lista = getExpositores().filter((_,i)=>i!==idx);
-  _cfgEvento.expositores_lista = lista;
-  // remove referências nos polos
+  const exps = getExpositores();
+  const ex = exps[idx];
+  if(!ex) return;
+  if(!confirm(`Remover "${ex.nome}"?`)) return;
+  const lista = exps.filter((_,i)=>i!==idx);
+  // Desvincula dos polos
   POLOS.forEach(p=>{
-    p.expositores = (p.expositores||[]).filter(n=>n!==exp.nome);
-    if(p.expositores_salas){
-      Object.keys(p.expositores_salas).forEach(sala=>{
-        if(p.expositores_salas[sala].manha===exp.nome) p.expositores_salas[sala].manha='';
-        if(p.expositores_salas[sala].tarde===exp.nome)  p.expositores_salas[sala].tarde='';
-      });
-    }
+    if(p.expositores) p.expositores = p.expositores.filter(n=>n!==ex.nome);
+    if(p.expositores_salas) Object.keys(p.expositores_salas).forEach(sala=>{
+      if(p.expositores_salas[sala].manha===ex.nome) p.expositores_salas[sala].manha='';
+      if(p.expositores_salas[sala].tarde===ex.nome)  p.expositores_salas[sala].tarde='';
+    });
   });
-  setCfg();
+  _cfgEvento.expositores_lista = lista;
   setCfgEvento();
-  renderEventoAdmin();
+  setCfg();
+  renderExpositoresAdmin();
 }
+
+function editarExpositor(idx){ abrirModalExpositor(idx); }
+
 function renderPolos(){
   const wrap = document.getElementById('polos-page-content');
   if(!wrap) return;
@@ -2293,8 +2450,9 @@ function aplicarEscopoAdmin(){
   document.getElementById('atab-recepcao').style.display   = '';
   document.getElementById('atab-comunicacao').style.display = '';
   document.getElementById('atab-config').style.display     = (isAdmin||isAdminPolo)?'':'none';
-  document.getElementById('atab-evento').style.display     = isAdmin?'':'none';
-  document.getElementById('atab-avaliacao').style.display  = isAdmin?'':'none';
+  document.getElementById('atab-evento').style.display              = isAdmin?'':'none';
+  document.getElementById('atab-expositores-admin').style.display   = isAdmin?'':'none';
+  document.getElementById('atab-avaliacao').style.display           = isAdmin?'':'none';
   document.getElementById('atab-usuarios').style.display   = isAdmin?'':'none';
 
   document.getElementById('btn-exportar-todos').style.display = isAdmin?'':'none';
@@ -2305,8 +2463,8 @@ function aplicarEscopoAdmin(){
 
 function switchAdminTab(id, btn){
   const role = SESSION.role;
-  if(role==='coord'      && (id==='usuarios'||id==='config'||id==='evento'||id==='avaliacao')) return;
-  if(role==='admin_polo' && (id==='usuarios'||id==='evento'||id==='avaliacao')) return;
+  if(role==='coord'      && (id==='usuarios'||id==='config'||id==='evento'||id==='expositores-admin'||id==='avaliacao')) return;
+  if(role==='admin_polo' && (id==='usuarios'||id==='evento'||id==='expositores-admin'||id==='avaliacao')) return;
 
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.atab-btn').forEach(b=>b.classList.remove('active'));
@@ -2329,8 +2487,9 @@ function _renderTab(id){
   if(id==='recepcao')    renderRecepcao();
   if(id==='comunicacao') renderComunicacao();
   if(id==='config')      renderConfig();
-  if(id==='evento')      renderEventoAdmin();
-  if(id==='avaliacao')   renderAvaliacaoAdmin();
+  if(id==='evento')           renderEventoAdmin();
+  if(id==='expositores-admin') renderExpositoresAdmin();
+  if(id==='avaliacao')        renderAvaliacaoAdmin();
   if(id==='usuarios')    renderUsuarios();
 }
 
@@ -3342,21 +3501,13 @@ function gerarCrachas(){
   const cfg = getCrachaCfg();
   const d   = getIns();
 
-  // Se vier da recepção usa a seleção; se vier das turmas filtra por sala
   const inscritos = _crachaSelecao
     ? _crachaSelecao
-    : d.filter(x=>
-        x.polo===_crachaPoloAtivo &&
-        x.turma===_crachaTurmaAtiva &&
-        x.sala && x.sala!==''
-      );
+    : d.filter(x=>x.polo===_crachaPoloAtivo && x.turma===_crachaTurmaAtiva && x.sala && x.sala!=='');
 
-  _crachaSelecao = null; // limpa após usar
+  _crachaSelecao = null;
 
-  if(inscritos.length===0){
-    alert('Nenhum inscrito com sala atribuída neste polo/turma.');
-    return;
-  }
+  if(!inscritos.length){ alert('Nenhum inscrito com sala atribuída.'); return; }
 
   const ordenados = [...inscritos].sort((a,b)=>{
     if((a.sala||'')!==(b.sala||'')) return (a.sala||'').localeCompare(b.sala||'','pt-BR');
@@ -3365,107 +3516,150 @@ function gerarCrachas(){
     return nA.localeCompare(nB,'pt-BR');
   });
 
-  const bgCss = cfg.bgUrl
-    ? `background-image:linear-gradient(rgba(0,0,0,${cfg.overlay/100}),rgba(0,0,0,${cfg.overlay/100})),url('${cfg.bgUrl}');background-size:cover;background-position:center`
-    : '';
-  const topoStyle = cfg.bgUrl ? bgCss : `background:${cfg.topoBg}`;
-  const corpoStyle = cfg.bgUrl ? bgCss : 'background:white';
-  const nomeColor = cfg.bgUrl ? 'white' : cfg.nomeCor;
-  const gridItemStyle = cfg.bgUrl ? 'background:rgba(255,255,255,.15);' : 'background:#FAF5EF;';
-  const gridValColor = cfg.bgUrl ? 'white' : '#2C1A08';
-  const instColor = cfg.bgUrl ? 'rgba(255,255,255,.8)' : '#7A5A3A';
-  const rodapeStyle = cfg.bgUrl ? 'background:rgba(0,0,0,.4);border-top:1px solid rgba(255,255,255,.15)' : `background:${cfg.rodapeBg};border-top:1px solid #E8DDD0`;
-  const dataColor = cfg.bgUrl ? 'rgba(255,255,255,.7)' : cfg.rodapeCor;
+  const topoBg    = cfg.topoBg;
+  const tituloCor = cfg.tituloCor;
+  const nomeCor   = cfg.nomeCor;
+  const rodapeBg  = cfg.rodapeBg;
+  const rodapeCor = cfg.rodapeCor;
 
-  function crachaHtml(p){
+  // ── FRENTE ──────────────────────────────────────────────────
+  function frenteHtml(p){
     const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
     const trab = p.trabalhador===true||p.trabalhador==='true';
     const funcaoLabel = trab?'Trabalhador':'Participante';
     const funcaoCor   = trab?'#5B21B6':'#1A6630';
     const funcaoBg    = trab?'#F0EAF8':'#F0FAF1';
-    const gridCols = [cfg.showPolo,cfg.showTurma,cfg.showSala].filter(Boolean).length;
+    const bgCss = cfg.bgUrl
+      ? `background-image:linear-gradient(rgba(0,0,0,${cfg.overlay/100}),rgba(0,0,0,${cfg.overlay/100})),url('${cfg.bgUrl}');background-size:cover;background-position:center`
+      : '';
+    const topoStyle  = cfg.bgUrl ? bgCss : `background:${topoBg}`;
+    const corpoStyle = cfg.bgUrl ? bgCss : 'background:white';
+    const nc = cfg.bgUrl?'white':nomeCor;
+    const gic = cfg.bgUrl?'rgba(255,255,255,.15)':'#FAF5EF';
+    const gvc = cfg.bgUrl?'white':'#2C1A08';
 
-    return `
-    <div class="cracha">
+    return `<div class="cracha frente">
       <div class="cracha-topo" style="${topoStyle}">
-        <div class="cracha-evento" style="color:${cfg.tituloCor}">MCJ</div>
-        <div class="cracha-ano" style="color:${cfg.bgUrl?'rgba(255,255,255,.7)':'rgba(255,255,255,.7)'}">2026</div>
-        ${cfg.showSubtitulo?`<div class="cracha-subtitulo" style="color:rgba(255,255,255,.5)">Momentos com Jesus</div>`:''}
+        <div class="cracha-evento" style="color:${tituloCor}">MCJ</div>
+        <div class="cracha-ano">2026</div>
+        ${cfg.showSubtitulo?`<div class="cracha-sub">Momentos com Jesus</div>`:''}
       </div>
       <div class="cracha-corpo" style="${corpoStyle}">
-        <div class="cracha-nome" style="color:${nomeColor};font-size:${cfg.nomeSize}px">${nomeExibir}</div>
+        <div class="cracha-nome" style="color:${nc};font-size:${cfg.nomeSize}px">${nomeExibir}</div>
         ${cfg.showNomeCompleto&&p.nome!==nomeExibir?`<div class="cracha-nome-completo">${p.nome}</div>`:''}
         <div class="cracha-divider"></div>
-        ${gridCols>0?`<div class="cracha-info-grid" style="grid-template-columns:repeat(${gridCols},1fr)">
-          ${cfg.showPolo?`<div class="cracha-info-item" style="${gridItemStyle}"><div class="cracha-info-label">Polo</div><div class="cracha-info-valor" style="color:${gridValColor}">${p.polo}</div></div>`:''}
-          ${cfg.showTurma?`<div class="cracha-info-item" style="${gridItemStyle}"><div class="cracha-info-label">Turma</div><div class="cracha-info-valor" style="color:${gridValColor}">${p.turma}</div></div>`:''}
-          ${cfg.showSala?`<div class="cracha-info-item" style="${gridItemStyle}"><div class="cracha-info-label">Sala</div><div class="cracha-info-valor" style="color:${gridValColor}">${p.sala}</div></div>`:''}
-        </div>`:''}
-        ${cfg.showInstituicao&&p.instituicao&&p.instituicao!=='—'?`<div class="cracha-instituicao" style="color:${instColor};border-top:1px solid ${cfg.bgUrl?'rgba(255,255,255,.2)':'#F0E8DC'}">${p.instituicao}</div>`:''}
-      </div>
-      <div class="cracha-rodape" style="${rodapeStyle}">
-        ${cfg.showFuncao?`<span class="cracha-funcao" style="background:${funcaoBg};color:${funcaoCor}">${funcaoLabel}</span>`:'<span></span>'}
-        <div style="display:flex;gap:6px;align-items:flex-end">
-          ${_cfgEvento.livreto_url?`
-          <div class="cracha-qr">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=48x48&data=${encodeURIComponent(_cfgEvento.livreto_url)}" width="48" height="48" alt="QR Livreto" style="border-radius:4px;background:white;padding:2px">
-            <div class="cracha-qr-label" style="color:${cfg.bgUrl?'rgba(255,255,255,.5)':cfg.rodapeCor}">Livreto</div>
-          </div>`:''}
-          <div class="cracha-qr">
-            <img src="${gerarQRCodeUrl(p.polo)}" width="48" height="48" alt="QR Avaliação" style="border-radius:4px;background:white;padding:2px">
-            <div class="cracha-qr-label" style="color:${cfg.bgUrl?'rgba(255,255,255,.5)':cfg.rodapeCor}">Avaliar</div>
-          </div>
+        <div class="cracha-info-grid">
+          ${cfg.showPolo?`<div class="cracha-info-item" style="background:${gic}"><div class="cracha-info-label">Polo</div><div class="cracha-info-valor" style="color:${gvc}">${p.polo}</div></div>`:''}
+          ${cfg.showSala?`<div class="cracha-info-item" style="background:${gic}"><div class="cracha-info-label">Sala</div><div class="cracha-info-valor" style="color:${gvc}">${p.sala||'—'}</div></div>`:''}
         </div>
-        ${cfg.showData?`<span class="cracha-data" style="color:${dataColor}">${cfg.rodapeTexto}</span>`:'<span></span>'}
+        ${cfg.showInstituicao&&p.instituicao&&p.instituicao!=='—'?`<div class="cracha-inst" style="color:${cfg.bgUrl?'rgba(255,255,255,.7)':'#7A5A3A'}">${p.instituicao}</div>`:''}
+      </div>
+      <div class="cracha-rodape" style="background:${cfg.bgUrl?'rgba(0,0,0,.4)':rodapeBg}">
+        ${cfg.showFuncao?`<span class="cracha-funcao" style="background:${funcaoBg};color:${funcaoCor}">${funcaoLabel}</span>`:'<span></span>'}
+        ${cfg.showData?`<span class="cracha-data" style="color:${cfg.bgUrl?'rgba(255,255,255,.6)':rodapeCor}">${cfg.rodapeTexto}</span>`:''}
       </div>
     </div>`;
   }
 
-  const html = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Crachás MCJ 2026 — ${_crachaPoloAtivo} · ${_crachaTurmaAtiva}</title>
-<style>
+  // ── VERSO ───────────────────────────────────────────────────
+  function versoHtml(p){
+    const avalUrl = (() => {
+      const base = (typeof window !== 'undefined' ? window.location.href : '').split('?')[0];
+      return `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(base+'?avaliacao=1&polo='+encodeURIComponent(p.polo))}`;
+    })();
+    const livUrl = _cfgEvento.livreto_url
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(_cfgEvento.livreto_url)}`
+      : null;
+
+    return `<div class="cracha verso">
+      <div class="verso-topo" style="background:${topoBg}">
+        <div class="verso-titulo" style="color:${tituloCor}">MCJ 2026</div>
+        <div class="verso-sub">Momentos com Jesus</div>
+      </div>
+      <div class="verso-corpo">
+        <div class="verso-nome">${p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome}</div>
+        <div class="verso-qr-row">
+          <div class="verso-qr-item">
+            <img src="${avalUrl}" width="90" height="90" alt="QR Avaliação">
+            <div class="verso-qr-label">⭐ Avaliar o evento</div>
+          </div>
+          ${livUrl?`<div class="verso-qr-item">
+            <img src="${livUrl}" width="90" height="90" alt="QR Livreto">
+            <div class="verso-qr-label">📖 Acessar livreto</div>
+          </div>`:''}
+        </div>
+      </div>
+      <div class="verso-rodape" style="background:${topoBg};color:rgba(255,255,255,.5)">
+        ${p.polo} · ${p.sala||''}
+      </div>
+    </div>`;
+  }
+
+  const css = `
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Georgia',serif;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.pagina{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10mm;padding:12mm;width:210mm;min-height:297mm;page-break-after:always}
-.pagina:last-child{page-break-after:avoid}
-.cracha{border:1.5px solid #D4B8A0;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;background:white;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.cracha-topo{padding:16px 16px 12px;text-align:center;background-size:cover;background-position:center}
-.cracha-evento{font-family:'Georgia',serif;font-size:40px;font-weight:bold;line-height:1;letter-spacing:2px}
-.cracha-ano{font-size:18px;font-weight:bold;letter-spacing:6px;margin-top:2px}
-.cracha-subtitulo{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
-.cracha-corpo{padding:14px 16px 10px;flex:1;display:flex;flex-direction:column;gap:8px;background-size:cover;background-position:center}
-.cracha-nome{font-weight:bold;line-height:1.15;text-align:center}
-.cracha-nome-completo{font-size:10px;color:#A08060;text-align:center;font-style:italic;margin-top:-4px}
-.cracha-divider{height:1px;background:linear-gradient(to right,transparent,#D4B8A0,transparent);margin:2px 0}
-.cracha-info-grid{display:grid;gap:6px}
-.cracha-info-item{border-radius:6px;padding:5px 6px;text-align:center}
-.cracha-info-label{font-size:8px;font-weight:bold;text-transform:uppercase;letter-spacing:.8px;color:#A08060;margin-bottom:2px}
-.cracha-info-valor{font-size:11px;font-weight:bold}
-.cracha-instituicao{font-size:9.5px;text-align:center;font-style:italic;padding-top:6px;margin-top:2px}
-.cracha-rodape{padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
-.cracha-funcao{font-size:9px;font-weight:bold;padding:2px 8px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
-.cracha-data{font-size:9px;letter-spacing:1px}
-@media print{@page{size:A4 portrait;margin:0}body{margin:0}}
-</style>
-</head>
-<body>
-${(()=>{
-  let pages='';
-  for(let i=0;i<ordenados.length;i+=4){
-    pages+=`<div class="pagina">${ordenados.slice(i,i+4).map(crachaHtml).join('')}</div>`;
-  }
-  return pages;
-})()}
-</body></html>`;
 
-  const win=window.open('','_blank');
-  if(!win){alert('Permita pop-ups para imprimir.');return;}
+/* Layout de página — 4 crachás por folha A4, frente+verso lado a lado */
+.pagina{display:grid;grid-template-columns:1fr 1fr;gap:8mm;padding:10mm;width:210mm;page-break-after:always}
+.pagina:last-child{page-break-after:avoid}
+.par{display:flex;gap:3mm;break-inside:avoid}
+
+/* Crachá base */
+.cracha{width:85mm;min-height:54mm;border:1px solid #D4B8A0;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;background:white;font-family:'Georgia',serif}
+
+/* FRENTE */
+.cracha-topo{padding:10px 12px 8px;text-align:center;background-size:cover;background-position:center}
+.cracha-evento{font-size:32px;font-weight:bold;line-height:1;letter-spacing:2px}
+.cracha-ano{font-size:13px;font-weight:bold;letter-spacing:5px;color:rgba(255,255,255,.7);margin-top:1px}
+.cracha-sub{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:3px}
+.cracha-corpo{padding:10px 12px 8px;flex:1;display:flex;flex-direction:column;gap:6px;background-size:cover;background-position:center}
+.cracha-nome{font-weight:bold;line-height:1.15;text-align:center}
+.cracha-nome-completo{font-size:8px;color:#A08060;text-align:center;font-style:italic;margin-top:-3px}
+.cracha-divider{height:1px;background:linear-gradient(to right,transparent,#D4B8A0,transparent);margin:2px 0}
+.cracha-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.cracha-info-item{border-radius:5px;padding:4px 6px;text-align:center}
+.cracha-info-label{font-size:7px;font-weight:bold;text-transform:uppercase;letter-spacing:.8px;color:#A08060;margin-bottom:1px}
+.cracha-info-valor{font-size:10px;font-weight:bold}
+.cracha-inst{font-size:8px;text-align:center;font-style:italic;color:#7A5A3A;border-top:1px solid #F0E8DC;padding-top:4px;margin-top:2px}
+.cracha-rodape{padding:6px 12px;display:flex;align-items:center;justify-content:space-between}
+.cracha-funcao{font-size:7px;font-weight:bold;padding:2px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
+.cracha-data{font-size:7px;letter-spacing:.5px}
+
+/* VERSO */
+.verso{background:#FAFAF8}
+.verso-topo{padding:8px 12px;text-align:center}
+.verso-titulo{font-size:22px;font-weight:bold;letter-spacing:2px}
+.verso-sub{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:2px}
+.verso-corpo{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;gap:6px}
+.verso-nome{font-size:9px;font-weight:bold;color:#3D2410;text-align:center}
+.verso-qr-row{display:flex;gap:8px;justify-content:center;margin-top:4px}
+.verso-qr-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.verso-qr-item img{border-radius:4px;border:1px solid #E8DDD0}
+.verso-qr-label{font-size:6.5px;color:#6B4C2A;text-align:center;font-weight:500}
+.verso-rodape{padding:5px 10px;text-align:center;font-size:7px;letter-spacing:.5px}
+
+@media print{@page{size:A4 portrait;margin:0}body{margin:0}}`;
+
+  // Monta página: cada "par" é frente+verso do mesmo crachá
+  // 4 crachás por página = 4 pares (frente|verso)
+  const pairs = ordenados.map(p=>`<div class="par">${frenteHtml(p)}${versoHtml(p)}</div>`);
+
+  let pagesHtml = '';
+  for(let i=0; i<pairs.length; i+=2){
+    pagesHtml += `<div class="pagina">${pairs.slice(i,i+2).join('')}</div>`;
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Crachás MCJ 2026 — ${_crachaPoloAtivo}</title>
+<style>${css}</style>
+</head><body>${pagesHtml}</body></html>`;
+
+  const win = window.open('','_blank');
+  if(!win){ alert('Permita pop-ups para imprimir.'); return; }
   win.document.write(html);
   win.document.close();
-  win.onload=()=>{win.focus();win.print();};
+  win.onload = ()=>{ win.focus(); win.print(); };
 }
 
 function imprimirListagemTurmas(poloNome, tipoTurma){
@@ -4124,7 +4318,6 @@ function editarInscricao(email, poloNome){
   document.getElementById('ei-polo').value       = p.polo||poloNome;
   document.getElementById('ei-almoco').value     = p.almoco||'Não';
   document.getElementById('ei-almoco-valor').value = p.almoco_valor||'';
-  document.getElementById('ei-erro').style.display='none';
 
   const ov = document.getElementById('edit-ins-overlay');
   ov.classList.add('show');
@@ -4139,31 +4332,32 @@ function fecharEditarInscricao(){
 }
 
 async function salvarEdicaoInscricao(){
-  const nome = document.getElementById('ei-nome').value.trim();
+  const nome = document.getElementById('ei-nome')?.value.trim();
   const errEl = document.getElementById('ei-erro');
-  if(!nome){ errEl.textContent='O nome é obrigatório.'; errEl.style.display='block'; return; }
+  if(!nome){ if(errEl){errEl.textContent='O nome é obrigatório.';errEl.style.display='block';} return; }
 
+  // Campos editáveis — email e polo são chaves, não mudam
   const campos = {
     nome,
-    nascimento: document.getElementById('ei-nascimento').value.trim(),
-    email:      document.getElementById('ei-email').value.trim(),
-    telefone:   document.getElementById('ei-telefone').value.trim(),
-    cracha:     document.getElementById('ei-cracha').value.trim(),
-    instituicao:document.getElementById('ei-instituicao').value.trim()||'—',
-    turma:      document.getElementById('ei-turma').value,
-    polo:       document.getElementById('ei-polo').value,
-    almoco:     document.getElementById('ei-almoco').value,
-    almoco_valor:document.getElementById('ei-almoco-valor').value.trim(),
+    nascimento:   document.getElementById('ei-nascimento')?.value.trim()||'',
+    telefone:     document.getElementById('ei-telefone')?.value.trim()||'',
+    cracha:       document.getElementById('ei-cracha')?.value.trim()||'',
+    instituicao:  document.getElementById('ei-instituicao')?.value.trim()||'—',
+    turma:        document.getElementById('ei-turma')?.value||'Adulto',
+    almoco:       document.getElementById('ei-almoco')?.value||'Não',
+    almoco_valor: document.getElementById('ei-almoco-valor')?.value.trim()||'',
   };
 
-  // Optimistic update no cache
-  const d   = getIns();
+  // Atualiza cache local usando email+polo originais como chave
+  const d = getIns();
   const idx = d.findIndex(x=>x.email===_editInsEmail && x.polo===_editInsPolo);
-  if(idx>=0) Object.assign(d[idx], campos);
-  _cache.inscricoes = d;
+  if(idx>=0){
+    Object.assign(d[idx], campos);
+    _cache.inscricoes = [...d]; // força nova referência
+  }
 
-  // Salva no Supabase
-  atualizarInscricao(_editInsEmail, _editInsPolo, campos);
+  // Salva no Supabase usando email+polo originais
+  await atualizarInscricao(_editInsEmail, _editInsPolo, campos);
 
   fecharEditarInscricao();
   renderAdmin();
@@ -5442,14 +5636,7 @@ function gerarQRCodeUrl(polo){
 let _comFiltros = { polo:'', turma:'', sala:'', pagamento:'', modo:'inscritos', setor:'' };
 // modo: 'inscritos' | 'equipe'
 
-function getMateriais(){
-  const lista = _cfgEvento.materiais||[];
-  // garante que livreto aparece sempre se configurado
-  if(_cfgEvento.livreto_url && !lista.find(m=>m.url===_cfgEvento.livreto_url)){
-    return [{nome:'📖 Livreto MCJ 2026', url:_cfgEvento.livreto_url}, ...lista];
-  }
-  return lista;
-}
+
 
 function renderComunicacao(){
   const wrap = document.getElementById('comunicacao-wrap');
@@ -5872,6 +6059,9 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') fecharLightbox();
 /* ================================================================
    INIT
 ================================================================ */
+// Aplica defaults imediatamente — antes do Supabase responder
+aplicarConfigEvento();
+aplicarDesign();
 carregarTudo();
 // Segurança: remove splash após 1s mesmo se algo falhar
 setTimeout(removeSplash, 1000);
