@@ -162,7 +162,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 /* ADMIN */
 .admin-user-bar{background:var(--mcj-cream);border-bottom:2px solid var(--mcj-sand);padding:10px 1rem;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--mcj-dark);font-weight:500;flex-wrap:wrap;gap:6px}
 .btn-logout{background:none;border:1px solid rgba(107,76,42,.3);color:var(--mcj-mid);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif;min-height:36px;-webkit-appearance:none}
-.admin-wrap{max-width:1000px;margin:0 auto;padding:1.25rem 1rem 3rem}
+.admin-wrap{max-width:100%;margin:0 auto;padding:1.25rem 1rem 3rem;display:flex;flex-direction:column;align-items:center}
 .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px}
 .admin-header h2{font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:600;color:var(--mcj-dark);letter-spacing:.3px}
 .btn-export-all{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--mcj-gold);color:white;border:none;min-height:44px;-webkit-appearance:none}
@@ -188,7 +188,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .polo-panel-actions{display:flex;gap:6px;flex-shrink:0}
 .polo-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
 .btn-export-polo{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;background:white;border:1px solid var(--gray-100);color:var(--gray-800);min-height:36px;-webkit-appearance:none}
-.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
 .list-table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
 .list-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--gray-50);background:var(--gray-50);white-space:nowrap}
 .list-table td{padding:10px 12px;border-bottom:1px solid var(--gray-50);color:var(--gray-800);vertical-align:middle}
@@ -911,6 +911,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <button class="atab-btn" id="atab-expositores-admin" onclick="switchAdminTab('expositores-admin',this)">🎤 Expositores</button>
       <button class="atab-btn" id="atab-avaliacao" onclick="switchAdminTab('avaliacao',this)">⭐ Avaliações</button>
       <button class="atab-btn" id="atab-usuarios" onclick="switchAdminTab('usuarios',this)">👥 Usuários</button>
+      <button class="atab-btn" id="atab-relatorios" onclick="switchAdminTab('relatorios',this)">📊 Relatórios</button>
     </div>
     <div class="admin-panel active" id="apanel-inscricoes">
       <div class="summary-grid" id="summary-grid"></div>
@@ -934,6 +935,9 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
     <div class="admin-panel" id="apanel-recepcao">
       <div id="recepcao-wrap"></div>
+    </div>
+    <div class="admin-panel" id="apanel-relatorios">
+      <div id="relatorios-wrap"></div>
     </div>
     <div class="admin-panel" id="apanel-avaliacao">
       <div id="avaliacao-admin-wrap"></div>
@@ -988,7 +992,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 
 <!-- MODAL: USUÁRIO -->
 <div class="overlay" id="user-modal-overlay" onclick="if(event.target===this)fecharUserModal()">
-  <div class="modal modal-sm" style="max-width:460px">
+  <div class="modal modal-sm" style="max-width:460px" onclick="event.stopPropagation()">
     <div class="modal-hd">
       <div><h3 id="user-modal-title">Novo usuário</h3></div>
       <button class="modal-close" onclick="fecharUserModal()">×</button>
@@ -1119,7 +1123,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 
 <!-- MODAL: ADICIONAR POLO -->
 <div class="overlay" id="addpolo-overlay" onclick="if(event.target===this)fecharAddPolo()">
-  <div class="modal modal-sm">
+  <div class="modal modal-sm" onclick="event.stopPropagation()">
     <div class="modal-hd">
       <div><h3>Adicionar novo polo</h3></div>
       <button class="modal-close" onclick="fecharAddPolo()">×</button>
@@ -1147,118 +1151,10 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 </div>
 
 <!-- PAINEL CRACHÁS -->
-<div class="cracha-panel-overlay" id="cracha-panel-overlay" onclick="if(event.target===this)fecharPainelCracha()">
-  <div class="cracha-panel">
-    <div class="cracha-panel-header">
-      <div class="cracha-panel-title">🪪 Configurar Crachás</div>
-      <button class="cracha-panel-close" onclick="fecharPainelCracha()">×</button>
-    </div>
-    <div class="cracha-panel-body">
-
-      <!-- PREVIEW -->
-      <div class="cracha-cfg-group">
-        <div class="cracha-cfg-group-title">Pré-visualização</div>
-        <div class="cracha-preview-wrap">
-          <div class="cracha-preview" id="cracha-preview-card">
-            <!-- renderizado por JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- IMAGEM DE FUNDO -->
-      <div class="cracha-cfg-group">
-        <div class="cracha-cfg-group-title">🖼 Imagem de fundo</div>
-        <div class="cfg-field">
-          <label>URL da imagem (jpg/png — GitHub ou outro host)</label>
-          <input type="url" id="cc-bg-url" placeholder="https://raw.githubusercontent.com/..." oninput="atualizarPreviewCracha()">
-          <span style="font-size:11px;color:var(--gray-400);margin-top:3px">A imagem será usada como fundo do crachá inteiro. Tamanho ideal: 400×600px.</span>
-        </div>
-        <div class="cfg-field">
-          <label>Opacidade do overlay escuro sobre a imagem</label>
-          <div style="display:flex;align-items:center;gap:10px">
-            <input type="range" id="cc-overlay" min="0" max="85" value="40" style="flex:1;accent-color:var(--mcj-gold)" oninput="document.getElementById('cc-overlay-val').textContent=this.value+'%';atualizarPreviewCracha()">
-            <span id="cc-overlay-val" style="font-size:12px;font-weight:600;color:var(--gray-600);min-width:32px">40%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- CORES E TEXTO -->
-      <div class="cracha-cfg-group">
-        <div class="cracha-cfg-group-title">🎨 Cores e Texto</div>
-        <div class="cfg-row">
-          <div class="cfg-field">
-            <label>Cor do topo</label>
-            <input type="color" id="cc-topo-bg" value="#2C1A08" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
-          </div>
-          <div class="cfg-field">
-            <label>Cor do título MCJ</label>
-            <input type="color" id="cc-titulo-cor" value="#C8873A" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
-          </div>
-        </div>
-        <div class="cfg-row">
-          <div class="cfg-field">
-            <label>Cor do nome</label>
-            <input type="color" id="cc-nome-cor" value="#2C1A08" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
-          </div>
-          <div class="cfg-field">
-            <label>Tamanho do nome</label>
-            <select id="cc-nome-size" oninput="atualizarPreviewCracha()">
-              <option value="16">Pequeno</option>
-              <option value="20" selected>Médio</option>
-              <option value="26">Grande</option>
-              <option value="32">Muito grande</option>
-            </select>
-          </div>
-        </div>
-        <div class="cfg-field">
-          <label>Texto do rodapé (direita)</label>
-          <input type="text" id="cc-rodape-texto" value="20 · 09 · 2026" oninput="atualizarPreviewCracha()">
-        </div>
-        <div class="cfg-row">
-          <div class="cfg-field">
-            <label>Cor do rodapé</label>
-            <input type="color" id="cc-rodape-cor" value="#A08060" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
-          </div>
-          <div class="cfg-field">
-            <label>Fundo do rodapé</label>
-            <input type="color" id="cc-rodape-bg" value="#FAF5EF" oninput="atualizarPreviewCracha()" style="height:40px;padding:2px 4px">
-          </div>
-        </div>
-      </div>
-
-      <!-- CAMPOS VISÍVEIS -->
-      <div class="cracha-cfg-group">
-        <div class="cracha-cfg-group-title">👁 Campos visíveis</div>
-        ${[
-          ['cc-show-subtitulo','Subtítulo "Momentos com Jesus"',true],
-          ['cc-show-nome-completo','Nome completo (abaixo do crachá)',true],
-          ['cc-show-polo','Polo',true],
-          ['cc-show-turma','Turma',true],
-          ['cc-show-sala','Sala',true],
-          ['cc-show-instituicao','Instituição de origem',true],
-          ['cc-show-funcao','Função (Trabalhador/Participante)',true],
-          ['cc-show-data','Data no rodapé',true],
-        ].map(([id,label,checked])=>`
-          <div class="cracha-toggle-row">
-            <span class="cracha-toggle-label">${label}</span>
-            <label class="toggle-switch" style="transform:scale(.8)">
-              <input type="checkbox" id="${id}" ${checked?'checked':''} onchange="atualizarPreviewCracha()">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>`).join('')}
-      </div>
-
-    </div>
-    <div class="cracha-panel-footer">
-      <button onclick="fecharPainelCracha()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">Cancelar</button>
-      <button onclick="gerarCrachas()" class="btn-cfg-save" style="display:flex;align-items:center;gap:7px">🖨 Gerar e Imprimir</button>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL: EDITAR INSCRIÇÃO -->
 <div class="login-overlay" id="edit-ins-overlay" onclick="if(event.target===this)fecharEditarInscricao()" style="align-items:center;padding:1rem;z-index:700">
-  <div style="background:white;border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2);display:flex;flex-direction:column">
+  <div style="background:white;border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2);display:flex;flex-direction:column" onclick="event.stopPropagation()">
     <!-- Header -->
     <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
       <span style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">✏️ Editar Inscrição</span>
@@ -1314,7 +1210,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 
 <!-- MODAL: EXPOSITOR -->
 <div class="login-overlay" id="modal-expositor-overlay" onclick="if(event.target===this)fecharModalExpositor()" style="align-items:center;padding:1rem;z-index:700">
-  <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)">
+  <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)" onclick="event.stopPropagation()">
     <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
       <span id="modal-exp-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">Novo Expositor</span>
       <button onclick="fecharModalExpositor()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0">×</button>
@@ -1347,7 +1243,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 
 <!-- MODAL: CAMPO EXTRA -->
 <div class="login-overlay" id="modal-campo-overlay" onclick="if(event.target===this)fecharModalCampo()" style="align-items:center;padding:1rem;z-index:700">
-  <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)">
+  <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)" onclick="event.stopPropagation()">
     <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
       <span id="modal-campo-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">Novo campo</span>
       <button onclick="fecharModalCampo()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0">×</button>
@@ -2595,7 +2491,8 @@ function aplicarEscopoAdmin(){
   document.getElementById('atab-evento').style.display              = isAdmin?'':'none';
   document.getElementById('atab-expositores-admin').style.display   = isAdmin?'':'none';
   document.getElementById('atab-avaliacao').style.display           = isAdmin?'':'none';
-  document.getElementById('atab-usuarios').style.display   = isAdmin?'':'none';
+  document.getElementById('atab-usuarios').style.display            = isAdmin?'':'none';
+  document.getElementById('atab-relatorios').style.display          = isAdmin?'':'none';
 
   document.getElementById('btn-exportar-todos').style.display = isAdmin?'':'none';
   document.getElementById('admin-panel-title').textContent = isAdmin
@@ -2633,6 +2530,7 @@ function _renderTab(id){
   if(id==='expositores-admin') renderExpositoresAdmin();
   if(id==='avaliacao')        renderAvaliacaoAdmin();
   if(id==='usuarios')    renderUsuarios();
+  if(id==='relatorios')  renderRelatorios();
 }
 
 /* ================================================================
@@ -3739,6 +3637,147 @@ function validarCamposExtras(){
   }
   return true;
 }
+
+/* ================================================================
+   RELATÓRIOS
+================================================================ */
+function renderRelatorios(){
+  const wrap = document.getElementById('relatorios-wrap');
+  if(!wrap) return;
+  const relatorios = [
+    {id:'fechamento',   icon:'📋', titulo:'Fechamento do Evento',    desc:'Resumo geral — inscritos, pagamentos e totais por polo.'},
+    {id:'evento',       icon:'✨', titulo:'Sobre o Evento',           desc:'Informações do evento e expositores convidados.'},
+    {id:'polos',        icon:'📍', titulo:'Informações dos Polos',    desc:'Dados completos de cada polo.'},
+    {id:'inscritos',    icon:'👥', titulo:'Listagem de Inscritos',    desc:'Lista completa por polo e turma.'},
+    {id:'turmas',       icon:'🏫', titulo:'Listagem por Turmas/Salas',desc:'Inscritos organizados por sala.'},
+    {id:'equipe',       icon:'🔧', titulo:'Equipe de Trabalho',       desc:'Trabalhadores por polo e setor.'},
+    {id:'evangelizacao',icon:'👶', titulo:'Evangelização',            desc:'Crianças inscritas por polo e faixa etária.'},
+    {id:'avaliacoes',   icon:'⭐', titulo:'Avaliações',               desc:'Resultados das avaliações do evento.'},
+  ];
+  wrap.innerHTML = `
+    <div style="margin-bottom:1.5rem">
+      <h2 style="font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:700;color:var(--mcj-dark);margin:0 0 4px">📊 Relatórios</h2>
+      <div style="font-size:13px;color:var(--gray-400)">Clique em "Gerar PDF" para abrir e imprimir o relatório</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">
+      ${relatorios.map(r=>`
+        <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);padding:1.25rem;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:26px">${r.icon}</span>
+            <div>
+              <div style="font-family:'EB Garamond',Georgia,serif;font-size:16px;font-weight:700;color:var(--mcj-dark)">${r.titulo}</div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${r.desc}</div>
+            </div>
+          </div>
+          <button onclick="gerarRelatorio('${r.id}')" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:var(--mcj-gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;width:100%">
+            📄 Gerar PDF
+          </button>
+        </div>`).join('')}
+    </div>`;
+}
+
+function gerarRelatorio(tipo){
+  const d = getIns();
+  const e = _cfgEvento;
+  const titulo = e.titulo||'MCJ 2026';
+
+  const css = `*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Georgia',serif;background:white;color:#2C1A08;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:15mm 18mm}h1{font-size:26px;color:#3D2410}h2{font-size:17px;color:#3D2410;margin:22px 0 10px;border-bottom:2px solid #C8873A;padding-bottom:5px}h3{font-size:13px;color:#3D2410;margin:14px 0 6px}.header{text-align:center;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid #3D2410}.sub{font-size:13px;color:#A08060;margin-top:4px}table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11.5px}th{background:#3D2410;color:#C8873A;padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px}td{padding:6px 10px;border-bottom:1px solid #F0E8DC}tr:nth-child(even) td{background:#FDF8F3}.card{background:#FDF8F3;border-radius:8px;padding:12px;margin:8px 0;border:1px solid #E8DDD0}.grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:12px 0}.stat{background:#3D2410;color:white;border-radius:8px;padding:12px;text-align:center}.stat-num{font-size:26px;font-weight:bold;color:#C8873A}.stat-lbl{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}@media print{@page{size:A4 portrait;margin:12mm}body{padding:0}}`;
+
+  const header = `<div class="header"><h1>${titulo}</h1><div class="sub">${e.subtitulo||''} · ${e.data||''} · ${e.local||''}</div><div class="sub" style="margin-top:5px">Gerado em ${new Date().toLocaleString('pt-BR')}</div></div>`;
+
+  let conteudo = '';
+
+  if(tipo==='fechamento'){
+    const pagos=d.filter(x=>x.pagamento==='Confirmado').length;
+    const trab=d.filter(x=>x.trabalhador===true||x.trabalhador==='true').length;
+    const alm=d.filter(x=>x.almoco==='Sim').length;
+    const cri=d.reduce((a,x)=>a+(x.criancas?.length||0),0);
+    conteudo=`<h2>Resumo Geral</h2>
+    <div class="grid">
+      <div class="stat"><div class="stat-num">${d.length}</div><div class="stat-lbl">Total inscritos</div></div>
+      <div class="stat"><div class="stat-num">${pagos}</div><div class="stat-lbl">Pagamentos confirmados</div></div>
+      <div class="stat"><div class="stat-num">${trab}</div><div class="stat-lbl">Trabalhadores</div></div>
+      <div class="stat"><div class="stat-num">${alm}</div><div class="stat-lbl">Almoços</div></div>
+    </div>
+    ${cri?`<div class="stat" style="margin:10px 0;grid-column:span 2"><div class="stat-num">${cri}</div><div class="stat-lbl">Crianças (Evangelização)</div></div>`:''}
+    <h2>Por Polo</h2>
+    <table><thead><tr><th>Polo</th><th>Inscritos</th><th>Confirmados</th><th>Pendentes</th><th>Trabalhadores</th><th>Almoços</th><th>Crianças</th></tr></thead><tbody>
+    ${POLOS.map(p=>{const i=d.filter(x=>x.polo===p.nome);const pg=i.filter(x=>x.pagamento==='Confirmado').length;const tr=i.filter(x=>x.trabalhador===true||x.trabalhador==='true').length;const al=i.filter(x=>x.almoco==='Sim').length;const cr=i.reduce((a,x)=>a+(x.criancas?.length||0),0);return `<tr><td><strong>${p.nome}</strong></td><td>${i.length}</td><td>${pg}</td><td>${i.length-pg}</td><td>${tr}</td><td>${al}</td><td>${cr||'—'}</td></tr>`;}).join('')}
+    </tbody></table>`;
+
+  } else if(tipo==='evento'){
+    const exps=e.expositores_lista||[];
+    conteudo=`<h2>Informações do Evento</h2><div class="card"><table>
+    <tr><td><strong>Evento</strong></td><td>${titulo}</td></tr>
+    <tr><td><strong>Subtítulo</strong></td><td>${e.subtitulo||'—'}</td></tr>
+    <tr><td><strong>Data</strong></td><td>${e.data||'—'}</td></tr>
+    <tr><td><strong>Horário</strong></td><td>${e.horario||'—'}</td></tr>
+    <tr><td><strong>Local</strong></td><td>${e.local||'—'}</td></tr>
+    <tr><td><strong>Tema Manhã</strong></td><td>${e.tema_manha||'—'}</td></tr>
+    <tr><td><strong>Tema Tarde</strong></td><td>${e.tema_tarde||'—'}</td></tr>
+    </table></div>
+    ${e.descricao?`<h2>Descrição</h2><div class="card" style="font-size:13px;line-height:1.6">${e.descricao}</div>`:''}
+    ${exps.length?`<h2>Expositores (${exps.length})</h2><table><thead><tr><th>#</th><th>Nome</th><th>Bio</th></tr></thead><tbody>${exps.map((ex,i)=>`<tr><td>${i+1}</td><td><strong>${ex.nome}</strong></td><td>${ex.bio||'—'}</td></tr>`).join('')}</tbody></table>`:''}`;
+
+  } else if(tipo==='polos'){
+    conteudo=POLOS.map(p=>`<h2>${p.nome}</h2><div class="card"><table>
+    <tr><td><strong>Cidade</strong></td><td>${p.cidade||'—'} / ${p.estado||'—'}</td></tr>
+    <tr><td><strong>Endereço</strong></td><td>${p.endereco||p.logradouro||'—'}</td></tr>
+    <tr><td><strong>Contato</strong></td><td>${p.telefone_polo||p.contato||'—'}</td></tr>
+    <tr><td><strong>E-mail</strong></td><td>${p.email_polo||'—'}</td></tr>
+    <tr><td><strong>Salas Adulto</strong></td><td>${(p.salas_adulto||[]).join(', ')||'—'}</td></tr>
+    <tr><td><strong>Salas Mocidade</strong></td><td>${p.tem_mocidade!==false?(p.salas_mocidade||[]).join(', ')||'—':'Desativado'}</td></tr>
+    <tr><td><strong>Inscrições</strong></td><td>${p.inscricoes_abertas!==false?'✓ Abertas':'✗ Encerradas'}</td></tr>
+    <tr><td><strong>Almoço</strong></td><td>${p.almoco_ativo?`Sim — ${p.almoco_valor||''}`:'Não'}</td></tr>
+    <tr><td><strong>Total inscritos</strong></td><td>${d.filter(x=>x.polo===p.nome).length}</td></tr>
+    </table></div>`).join('');
+
+  } else if(tipo==='inscritos'){
+    conteudo=POLOS.map(p=>{const ins=d.filter(x=>x.polo===p.nome);if(!ins.length)return '';
+    return `<h2>${p.nome} (${ins.length})</h2><table><thead><tr><th>#</th><th>Nome</th><th>Crachá</th><th>Turma</th><th>Nascimento</th><th>Telefone</th><th>Pagamento</th></tr></thead><tbody>
+    ${ins.map((x,i)=>`<tr><td>${i+1}</td><td>${x.nome}</td><td>${x.cracha||'—'}</td><td>${x.turma||'—'}</td><td>${x.nascimento||'—'}</td><td>${x.telefone||'—'}</td><td>${x.pagamento==='Confirmado'?'✓ Pago':'Pendente'}</td></tr>`).join('')}
+    </tbody></table>`;}).join('');
+
+  } else if(tipo==='turmas'){
+    conteudo=POLOS.map(p=>{const ins=d.filter(x=>x.polo===p.nome);if(!ins.length)return '';
+    const salas=[...new Set(ins.map(x=>x.sala||'Sem sala'))].sort();
+    return `<h2>${p.nome}</h2>`+salas.map(sala=>{const g=ins.filter(x=>(x.sala||'Sem sala')===sala);
+    return `<h3>${sala} (${g.length})</h3><table><thead><tr><th>#</th><th>Nome</th><th>Crachá</th><th>Turma</th><th>Pagamento</th></tr></thead><tbody>
+    ${g.map((x,i)=>`<tr><td>${i+1}</td><td>${x.nome}</td><td>${x.cracha||'—'}</td><td>${x.turma||'—'}</td><td>${x.pagamento==='Confirmado'?'✓':'⏳'}</td></tr>`).join('')}
+    </tbody></table>`;}).join('');}).join('');
+
+  } else if(tipo==='equipe'){
+    conteudo=POLOS.map(p=>{const trab=d.filter(x=>x.polo===p.nome&&(x.trabalhador===true||x.trabalhador==='true'));if(!trab.length)return '';
+    const setores=[...new Set(trab.flatMap(x=>x.setores?.length?x.setores:['Sem setor']))];
+    return `<h2>${p.nome} — ${trab.length} trabalhadores</h2>`+setores.map(s=>{
+    const g=trab.filter(x=>x.setores?.includes(s)||(s==='Sem setor'&&!x.setores?.length));if(!g.length)return '';
+    return `<h3>${s}</h3><table><thead><tr><th>#</th><th>Nome</th><th>Telefone</th><th>E-mail</th></tr></thead><tbody>
+    ${g.map((x,i)=>`<tr><td>${i+1}</td><td>${x.nome}</td><td>${x.telefone||'—'}</td><td>${x.email||'—'}</td></tr>`).join('')}
+    </tbody></table>`;}).join('');}).join('');
+
+  } else if(tipo==='evangelizacao'){
+    conteudo=POLOS.map(p=>{if(!p.aceita_crianca)return '';
+    const criancas=[];d.filter(x=>x.polo===p.nome&&x.criancas?.length).forEach(ins=>ins.criancas.forEach(c=>criancas.push({...c,responsavel:ins.nome,tel:ins.telefone})));
+    if(!criancas.length)return '';
+    const salasEvang=p.salas_evang||[];
+    return `<h2>${p.nome} — ${criancas.length} crianças</h2><table><thead><tr><th>#</th><th>Nome</th><th>Nascimento</th><th>Sala</th><th>Responsável</th><th>Telefone</th></tr></thead><tbody>
+    ${criancas.map((c,i)=>{const idade=calcularIdadeNumero(c.nasc);const sala=salasEvang.find(s=>idade>=s.idade_de&&idade<=s.idade_ate)?.nome||'—';
+    return `<tr><td>${i+1}</td><td>${c.nome}</td><td>${c.nasc||'—'}</td><td>${sala}</td><td>${c.responsavel}</td><td>${c.tel||'—'}</td></tr>`;}).join('')}
+    </tbody></table>`;}).join('');
+
+  } else if(tipo==='avaliacoes'){
+    conteudo=`<h2>Avaliações</h2><p style="color:#888;font-size:13px;margin-top:10px">Em breve — os dados de avaliação serão exibidos aqui.</p>`;
+  }
+
+  if(!conteudo){ alert('Nenhum dado disponível para este relatório.'); return; }
+
+  const win=window.open('','_blank');
+  if(!win){ alert('Permita pop-ups para gerar o PDF.'); return; }
+  win.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${titulo} — Relatório</title><style>${css}</style></head><body>${header}${conteudo}</body></html>`);
+  win.document.close();
+  win.onload=()=>{ win.focus(); win.print(); };
+}
+
 async function atribuirSalasAleatorio(poloNome, turma){
   const salas = turma==='Mocidade' ? getSalasMocidade(poloNome) : getSalasAdulto(poloNome);
   if(!salas.length){ alert('Configure as salas do polo primeiro na aba ⚙ Polos.'); return; }
@@ -4073,69 +4112,23 @@ let _crachaSelecao    = null; // null = todos com sala; array = selecionados da 
 function abrirPainelCracha(poloNome, turma){
   _crachaPoloAtivo  = poloNome;
   _crachaTurmaAtiva = turma;
-  document.getElementById('cracha-panel-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  atualizarPreviewCracha();
+  gerarCrachas();
 }
-function fecharPainelCracha(){
-  document.getElementById('cracha-panel-overlay').classList.remove('open');
-  document.body.style.overflow='';
-}
+function fecharPainelCracha(){}
 
 function getCrachaCfg(){
+  const d = _cfgEvento.design||{};
   return {
-    bgUrl:        document.getElementById('cc-bg-url')?.value.trim()||'',
-    overlay:      parseInt(document.getElementById('cc-overlay')?.value||40),
-    topoBg:       document.getElementById('cc-topo-bg')?.value||'#2C1A08',
-    tituloCor:    document.getElementById('cc-titulo-cor')?.value||'#C8873A',
-    nomeCor:      document.getElementById('cc-nome-cor')?.value||'#2C1A08',
-    nomeSize:     parseInt(document.getElementById('cc-nome-size')?.value||20),
-    rodapeTexto:  document.getElementById('cc-rodape-texto')?.value||'20 · 09 · 2026',
-    rodapeCor:    document.getElementById('cc-rodape-cor')?.value||'#A08060',
-    rodapeBg:     document.getElementById('cc-rodape-bg')?.value||'#FAF5EF',
-    showSubtitulo:document.getElementById('cc-show-subtitulo')?.checked!==false,
-    showNomeCompleto:document.getElementById('cc-show-nome-completo')?.checked!==false,
-    showPolo:     document.getElementById('cc-show-polo')?.checked!==false,
-    showTurma:    document.getElementById('cc-show-turma')?.checked!==false,
-    showSala:     document.getElementById('cc-show-sala')?.checked!==false,
-    showInstituicao:document.getElementById('cc-show-instituicao')?.checked!==false,
-    showFuncao:   document.getElementById('cc-show-funcao')?.checked!==false,
-    showData:     document.getElementById('cc-show-data')?.checked!==false,
+    bgUrl:     d.video_url||'',
+    overlay:   40,
+    topoBg:    d.cor_primaria||'#3D2410',
+    tituloCor: d.cor_destaque||'#C8873A',
+    nomeCor:   '#2C1A08',
+    nomeSize:  40,
+    rodapeTexto: _cfgEvento.data||'',
+    rodapeCor: '#A08060',
+    rodapeBg:  '#FAF5EF',
   };
-}
-
-function atualizarPreviewCracha(){
-  const cfg = getCrachaCfg();
-  const card = document.getElementById('cracha-preview-card');
-  if(!card) return;
-
-  const bgStyle = cfg.bgUrl
-    ? `background-image:linear-gradient(rgba(0,0,0,${cfg.overlay/100}),rgba(0,0,0,${cfg.overlay/100})),url('${cfg.bgUrl}');background-size:cover;background-position:center`
-    : '';
-  const topoStyle = cfg.bgUrl ? bgStyle : `background:${cfg.topoBg}`;
-  const corpoStyle = cfg.bgUrl ? bgStyle : '';
-
-  card.innerHTML = `
-    <div class="cp-topo" style="${topoStyle}">
-      <div class="cp-evento" style="color:${cfg.tituloCor}">MCJ</div>
-      <div class="cp-ano" style="color:white">2026</div>
-      ${cfg.showSubtitulo?`<div class="cp-sub" style="color:white">Momentos com Jesus</div>`:''}
-    </div>
-    <div class="cp-corpo" style="${corpoStyle}">
-      <div class="cp-nome" style="color:${cfg.bgUrl?'white':cfg.nomeCor};font-size:${Math.round(cfg.nomeSize*0.55)}px">Nome do Crachá</div>
-      ${cfg.showNomeCompleto?`<div class="cp-nome-completo">Nome Completo da Pessoa</div>`:''}
-      <div class="cp-divider"></div>
-      <div class="cp-grid">
-        ${cfg.showPolo?`<div class="cp-item"><div class="cp-item-label">Polo</div><div class="cp-item-val" style="color:${cfg.bgUrl?'white':'#2C1A08'}">${_crachaPoloAtivo||'Polo'}</div></div>`:''}
-        ${cfg.showTurma?`<div class="cp-item"><div class="cp-item-label">Turma</div><div class="cp-item-val" style="color:${cfg.bgUrl?'white':'#2C1A08'}">${_crachaTurmaAtiva||'Turma'}</div></div>`:''}
-        ${cfg.showSala?`<div class="cp-item"><div class="cp-item-label">Sala</div><div class="cp-item-val" style="color:${cfg.bgUrl?'white':'#2C1A08'}">A</div></div>`:''}
-      </div>
-      ${cfg.showInstituicao?`<div class="cp-inst" style="color:${cfg.bgUrl?'rgba(255,255,255,.8)':'#7A5A3A'}">Instituição de Origem</div>`:''}
-    </div>
-    <div class="cp-rodape" style="background:${cfg.bgUrl?'rgba(0,0,0,.4)':cfg.rodapeBg}">
-      ${cfg.showFuncao?`<span class="cp-funcao" style="background:#F0EAF8;color:#5B21B6">Participante</span>`:'<span></span>'}
-      ${cfg.showData?`<span class="cp-data" style="color:${cfg.bgUrl?'rgba(255,255,255,.7)':cfg.rodapeCor}">${cfg.rodapeTexto}</span>`:''}
-    </div>`;
 }
 
 function gerarCrachas(){
@@ -4167,38 +4160,79 @@ function gerarCrachas(){
   function frenteHtml(p){
     const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
     const trab = p.trabalhador===true||p.trabalhador==='true';
-    const funcaoLabel = trab?'Trabalhador':'Participante';
-    const funcaoCor   = trab?'#5B21B6':'#1A6630';
-    const funcaoBg    = trab?'#F0EAF8':'#F0FAF1';
-    const bgCss = cfg.bgUrl
+    const topoStyle = cfg.bgUrl
       ? `background-image:linear-gradient(rgba(0,0,0,${cfg.overlay/100}),rgba(0,0,0,${cfg.overlay/100})),url('${cfg.bgUrl}');background-size:cover;background-position:center`
-      : '';
-    const topoStyle  = cfg.bgUrl ? bgCss : `background:${topoBg}`;
-    const corpoStyle = cfg.bgUrl ? bgCss : 'background:white';
-    const nc = cfg.bgUrl?'white':nomeCor;
-    const gic = cfg.bgUrl?'rgba(255,255,255,.15)':'#FAF5EF';
-    const gvc = cfg.bgUrl?'white':'#2C1A08';
+      : `background:${topoBg}`;
+    const e = _cfgEvento;
+    const almoco = p.almoco==='Sim';
+    const almocoCrianca = p.almoco_crianca;
+    const polo = POLOS.find(x=>x.nome===p.polo)||{};
 
-    return `<div class="cracha frente">
-      <div class="cracha-topo" style="${topoStyle}">
-        <div class="cracha-evento" style="color:${tituloCor}">MCJ</div>
-        <div class="cracha-ano">2026</div>
-        ${cfg.showSubtitulo?`<div class="cracha-sub">Momentos com Jesus</div>`:''}
+    return `<div class="cracha">
+
+      <!-- 20%: TÍTULO DO EVENTO -->
+      <div class="c-topo" style="${topoStyle}">
+        <div class="c-evento" style="color:${tituloCor}">${(e.titulo||'MCJ 2026').replace(/\s*\d{4}$/,'')}</div>
+        <div class="c-ano" style="color:${tituloCor}">${(e.titulo||'MCJ 2026').match(/\d{4}/)?.[0]||'2026'}</div>
       </div>
-      <div class="cracha-corpo" style="${corpoStyle}">
-        <div class="cracha-nome" style="color:${nc};font-size:${cfg.nomeSize}px">${nomeExibir}</div>
-        ${cfg.showNomeCompleto&&p.nome!==nomeExibir?`<div class="cracha-nome-completo">${p.nome}</div>`:''}
-        <div class="cracha-divider"></div>
-        <div class="cracha-info-grid">
-          ${cfg.showPolo?`<div class="cracha-info-item" style="background:${gic}"><div class="cracha-info-label">Polo</div><div class="cracha-info-valor" style="color:${gvc}">${p.polo}</div></div>`:''}
-          ${cfg.showSala?`<div class="cracha-info-item" style="background:${gic}"><div class="cracha-info-label">Sala</div><div class="cracha-info-valor" style="color:${gvc}">${p.sala||'—'}</div></div>`:''}
+
+      <!-- 10%: TEMAS MANHÃ / TARDE -->
+      <div class="c-temas">
+        <div class="c-tema-item c-tema-manha">
+          <div class="c-tema-label">Manhã</div>
+          <div class="c-tema-val">${e.tema_manha||'—'}</div>
         </div>
-        ${cfg.showInstituicao&&p.instituicao&&p.instituicao!=='—'?`<div class="cracha-inst" style="color:${cfg.bgUrl?'rgba(255,255,255,.7)':'#7A5A3A'}">${p.instituicao}</div>`:''}
+        <div class="c-tema-sep"></div>
+        <div class="c-tema-item c-tema-tarde">
+          <div class="c-tema-label">Tarde</div>
+          <div class="c-tema-val">${e.tema_tarde||'—'}</div>
+        </div>
       </div>
-      <div class="cracha-rodape" style="background:${cfg.bgUrl?'rgba(0,0,0,.4)':rodapeBg}">
-        ${cfg.showFuncao?`<span class="cracha-funcao" style="background:${funcaoBg};color:${funcaoCor}">${funcaoLabel}</span>`:'<span></span>'}
-        ${cfg.showData?`<span class="cracha-data" style="color:${cfg.bgUrl?'rgba(255,255,255,.6)':rodapeCor}">${cfg.rodapeTexto}</span>`:''}
+
+      <!-- 25%: NOME -->
+      <div class="c-nome-wrap">
+        <div class="c-nome" style="font-size:${cfg.nomeSize||40}px">${nomeExibir}</div>
+        ${p.nome!==nomeExibir?`<div class="c-nome-completo">${p.nome}</div>`:''}
       </div>
+
+      <!-- 10%: TURMA E SALA -->
+      <div class="c-info-row">
+        <div class="c-info-item">
+          <div class="c-info-label">Turma</div>
+          <div class="c-info-val">${p.turma||'—'}</div>
+        </div>
+        <div class="c-info-div"></div>
+        <div class="c-info-item">
+          <div class="c-info-label">Sala</div>
+          <div class="c-info-val">${p.sala||'—'}</div>
+        </div>
+        <div class="c-info-div"></div>
+        <div class="c-info-item">
+          <div class="c-info-label">Polo</div>
+          <div class="c-info-val">${p.polo}</div>
+        </div>
+      </div>
+
+      <!-- 25%: OBSERVAÇÕES -->
+      <div class="c-obs">
+        <div class="c-obs-label">Observações</div>
+        <div class="c-obs-linhas">
+          <div class="c-obs-linha"></div>
+          <div class="c-obs-linha"></div>
+          <div class="c-obs-linha"></div>
+        </div>
+      </div>
+
+      <!-- 10%: RODAPÉ — ALMOÇO + DATA + FUNÇÃO -->
+      <div class="c-rodape" style="background:${rodapeBg}">
+        <div class="c-rodape-esq">
+          ${almoco?`<span class="c-badge c-badge-almoco">🍽 Almoço</span>`:''}
+          ${almocoCrianca?`<span class="c-badge c-badge-cri">👶 Almoço</span>`:''}
+          ${trab?`<span class="c-badge c-badge-trab">Trabalhador</span>`:``}
+        </div>
+        <div class="c-rodape-dir" style="color:${rodapeCor}">${e.data||''}</div>
+      </div>
+
     </div>`;
   }
 
@@ -4240,54 +4274,98 @@ function gerarCrachas(){
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Georgia',serif;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 
-/* Layout de página — 4 crachás por folha A4, frente+verso lado a lado */
-.pagina{display:grid;grid-template-columns:1fr 1fr;gap:8mm;padding:10mm;width:210mm;page-break-after:always}
-.pagina:last-child{page-break-after:avoid}
-.par{display:flex;gap:3mm;break-inside:avoid}
+/* A4 = 210×297mm. Margem 3mm cada lado → área útil 204×291mm */
+/* 2 colunas × 2 linhas = 4 crachás por página */
+/* Cada par (frente+verso) = 204mm ÷ 2 = 102mm. Gap 2mm → cada crachá ~50mm */
+/* Altura: 291mm ÷ 2 linhas - gap 2mm = ~144mm por linha */
 
-/* Crachá base */
-.cracha{width:85mm;min-height:54mm;border:1px solid #D4B8A0;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;background:white;font-family:'Georgia',serif}
+@media print{
+  @page{size:A4 portrait;margin:3mm}
+  body{margin:0}
+  .pagina{page-break-after:always}
+  .pagina:last-child{page-break-after:avoid}
+}
 
-/* FRENTE */
-.cracha-topo{padding:10px 12px 8px;text-align:center;background-size:cover;background-position:center}
-.cracha-evento{font-size:32px;font-weight:bold;line-height:1;letter-spacing:2px}
-.cracha-ano{font-size:13px;font-weight:bold;letter-spacing:5px;color:rgba(255,255,255,.7);margin-top:1px}
-.cracha-sub{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:3px}
-.cracha-corpo{padding:10px 12px 8px;flex:1;display:flex;flex-direction:column;gap:6px;background-size:cover;background-position:center}
-.cracha-nome{font-weight:bold;line-height:1.15;text-align:center}
-.cracha-nome-completo{font-size:8px;color:#A08060;text-align:center;font-style:italic;margin-top:-3px}
-.cracha-divider{height:1px;background:linear-gradient(to right,transparent,#D4B8A0,transparent);margin:2px 0}
-.cracha-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.cracha-info-item{border-radius:5px;padding:4px 6px;text-align:center}
-.cracha-info-label{font-size:7px;font-weight:bold;text-transform:uppercase;letter-spacing:.8px;color:#A08060;margin-bottom:1px}
-.cracha-info-valor{font-size:10px;font-weight:bold}
-.cracha-inst{font-size:8px;text-align:center;font-style:italic;color:#7A5A3A;border-top:1px solid #F0E8DC;padding-top:4px;margin-top:2px}
-.cracha-rodape{padding:6px 12px;display:flex;align-items:center;justify-content:space-between}
-.cracha-funcao{font-size:7px;font-weight:bold;padding:2px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
-.cracha-data{font-size:7px;letter-spacing:.5px}
+.pagina{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:2mm;
+  width:204mm;
+  height:284mm;
+  padding:0;
+  margin:3mm auto;
+}
 
-/* VERSO */
+.par{display:flex;overflow:hidden;break-inside:avoid;}
+
+/* Crachá base — ocupa metade do par */
+.cracha{
+  flex:1;
+  border:0.5px solid #D4B8A0;
+  border-radius:4px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  background:white;
+  font-family:'Georgia',serif;
+  font-family:'Georgia',serif;
+  max-height:141mm;
+
+
+/* 20% — TÍTULO */
+.c-topo{height:20%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px 8px;background-size:cover;background-position:center}
+.c-evento{font-size:40px;font-weight:bold;letter-spacing:3px;line-height:1}
+.c-ano{font-size:25px;font-weight:bold;letter-spacing:5px;margin-top:1px;opacity:.8}
+
+/* 10% — TEMAS */
+.c-temas{height:10%;display:flex;align-items:stretch;border-top:0.5px solid #E8DDD0;border-bottom:0.5px solid #E8DDD0}
+.c-tema-item{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2px 6px}
+.c-tema-manha{text-align:left}
+.c-tema-tarde{text-align:right}
+.c-tema-label{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:#A08060;margin-bottom:1px;font-family:'Helvetica',sans-serif}
+.c-tema-val{font-size:10px;font-weight:bold;color:#3D2410;line-height:1.2}
+.c-tema-sep{width:0.5px;background:#E8DDD0;margin:3px 0}
+
+/* 25% — NOME */
+.c-nome-wrap{height:25%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 10px;text-align:center;border-bottom:0.5px solid #F0E8DC}
+.c-nome{font-weight:bold;color:#3D2410;line-height:1.1;text-align:center}
+.c-nome-completo{font-size:20px;color:#A08060;font-style:italic;margin-top:2px}
+
+/* 10% — TURMA E SALA */
+.c-info-row{height:10%;display:flex;align-items:stretch;background:#FAF5EF;border-bottom:0.5px solid #E8DDD0}
+.c-info-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px 4px}
+.c-info-label{font-size:8px;text-transform:uppercase;letter-spacing:.6px;color:#A08060;font-family:'Helvetica',sans-serif}
+.c-info-val{font-size:14px;font-weight:bold;color:#3D2410;margin-top:1px}
+.c-info-div{width:0.5px;background:#E8DDD0;margin:4px 0}
+
+/* 25% — OBSERVAÇÕES */
+.c-obs{height:25%;display:flex;flex-direction:column;padding:4px 8px;border-bottom:0.5px solid #E8DDD0}
+.c-obs-label{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:#C8C0B0;margin-bottom:4px;font-family:'Helvetica',sans-serif}
+.c-obs-linhas{flex:1;display:flex;flex-direction:column;justify-content:space-around}
+.c-obs-linha{border-bottom:0.5px solid #E8DDD0}
+
+/* 10% — RODAPÉ */
+.c-rodape{height:10%;display:flex;align-items:center;justify-content:space-between;padding:3px 8px}
+.c-rodape-esq{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
+.c-rodape-dir{font-size:10px;letter-spacing:.5px;font-family:'Helvetica',sans-serif}
+.c-badge{font-size:9px;font-weight:bold;padding:1px 5px;border-radius:6px;letter-spacing:.3px}
+.c-badge-almoco{background:#FFF8EF;color:#B45309;border:0.5px solid #FCD9A0}
+.c-badge-cri{background:#EFF6FF;color:#1D4ED8;border:0.5px solid #BFDBFE}
+.c-badge-trab{background:#F5F3FF;color:#5B21B6;border:0.5px solid #DDD6FE}
+
+/* VERSO (mantido caso use no futuro) */
 .verso{background:#FAFAF8}
-.verso-topo{padding:8px 12px;text-align:center}
-.verso-titulo{font-size:22px;font-weight:bold;letter-spacing:2px}
-.verso-sub{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:2px}
-.verso-corpo{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;gap:6px}
-.verso-nome{font-size:9px;font-weight:bold;color:#3D2410;text-align:center}
-.verso-qr-row{display:flex;gap:8px;justify-content:center;margin-top:4px}
-.verso-qr-item{display:flex;flex-direction:column;align-items:center;gap:3px}
-.verso-qr-item img{border-radius:4px;border:1px solid #E8DDD0}
-.verso-qr-label{font-size:6.5px;color:#6B4C2A;text-align:center;font-weight:500}
-.verso-rodape{padding:5px 10px;text-align:center;font-size:7px;letter-spacing:.5px}
+.verso-topo{padding:7px 10px;text-align:center}
+.verso-titulo{font-size:18px;font-weight:bold;letter-spacing:2px}
+.verso-rodape{padding:4px 8px;text-align:center;font-size:6px;letter-spacing:.5px}
+`;
 
-@media print{@page{size:A4 portrait;margin:0}body{margin:0}}`;
-
-  // Monta página: cada "par" é frente+verso do mesmo crachá
-  // 4 crachás por página = 4 pares (frente|verso)
-  const pairs = ordenados.map(p=>`<div class="par">${frenteHtml(p)}${versoHtml(p)}</div>`);
+  const pairs = ordenados.map(p=>`<div class="par">${frenteHtml(p)}</div>`);
 
   let pagesHtml = '';
-  for(let i=0; i<pairs.length; i+=2){
-    pagesHtml += `<div class="pagina">${pairs.slice(i,i+2).join('')}</div>`;
+  for(let i=0; i<pairs.length; i+=4){
+    pagesHtml += `<div class="pagina">${pairs.slice(i,i+4).join('')}</div>`;
   }
 
   const html = `<!DOCTYPE html>
@@ -5025,6 +5103,57 @@ async function excluirInscricao(email, poloNome, id){
   } catch(e){ /* erro já mostrado em deletarInscricao */ }
 }
 
+async function enviarEmailConfirmacao(p){
+  if(!p.email || !p.email.includes('@')) return;
+  const polo = POLOS.find(x=>x.nome===p.polo)||{};
+
+  // Mesmo cálculo da coluna Total na aba Inscrições
+  let total = 0;
+  const vIns  = parseBRL(polo.valorExibir);
+  const vAlm  = p.almoco==='Sim' ? parseBRL(polo.almoco_valor) : null;
+  const vAlmC = (p.almoco_crianca && p.criancas?.length) ? parseBRL(polo.almoco_crianca_valor||polo.almoco_valor) : null;
+  const numC  = p.criancas?.length||0;
+  if(vIns)          total += vIns;
+  if(vAlm)          total += vAlm;
+  if(vAlmC && numC) total += vAlmC * numC;
+
+  const totalPagoStr = total > 0 ? formatBRL(total) : (polo.valorExibir||'—');
+
+  try {
+    const r = await fetch(`${SUPA_URL}/functions/v1/enviar-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPA_KEY },
+      body: JSON.stringify({
+        nome:              p.nome,
+        email:             p.email,
+        polo:              p.polo,
+        sala:              p.sala||'A definir',
+        turma:             p.turma||'',
+        evento:            _cfgEvento.titulo||'MCJ 2026',
+        data:              _cfgEvento.data||'',
+        horario:           _cfgEvento.horario||'',
+        local:             _cfgEvento.local||'Rio de Janeiro',
+        emailPolo:         polo.email_polo||'',
+        valorInscricao:    polo.valorExibir||'',
+        valorAlmoco:       p.almoco==='Sim' ? (polo.almoco_valor||'') : '',
+        valorAlmocoCrianca: vAlmC ? (polo.almoco_crianca_valor||polo.almoco_valor||'') : '',
+        numCriancas:       numC||0,
+        totalPago:         totalPagoStr,
+        criancas:          p.criancas||[],
+      })
+    });
+    if(r.ok){
+      showLoading('✉️ E-mail enviado!');
+      setTimeout(hideLoading, 2500);
+    } else {
+      const err = await r.text();
+      console.warn('Erro ao enviar e-mail:', err);
+    }
+  } catch(e){
+    console.warn('enviarEmailConfirmacao:', e.message);
+  }
+}
+
 function togglePagamento(email, poloNome, id){
   if(!poloNoEscopo(poloNome)){ alert('Sem permissão para este polo.'); return; }
   const d = getIns();
@@ -5039,6 +5168,8 @@ function togglePagamento(email, poloNome, id){
     const campos = { pagamento:'Confirmado', pagamento_em: new Date().toLocaleString('pt-BR') };
     atualizarInscricao(email, poloNome, campos, id);
     renderPanels(); renderSummary();
+    // Envia e-mail de confirmação
+    enviarEmailConfirmacao(d[idx]);
   } else {
     if(!confirm(`Desfazer confirmação de pagamento de ${d[idx].nome}?`)) return;
     atualizarInscricao(email, poloNome, { pagamento:'Pendente', pagamento_em:'' }, id);
