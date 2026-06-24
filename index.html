@@ -1373,181 +1373,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   </div>
 </div>
 
-<!-- TEMPLATE DO TELÃO -->
-<script type="text/html" id="telao-template">
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Telao MCJ</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#000;color:white;font-family:Georgia,serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
-#tela{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;position:relative}
-.idle{background:#1a0a00;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;width:100%;height:100%}
-.idle-logo{font-size:60px;font-weight:bold;color:#C8873A;letter-spacing:4px}
-.idle-sub{font-size:20px;color:rgba(255,255,255,.4);letter-spacing:2px}
-.idle-polo{font-size:14px;color:rgba(255,255,255,.2);margin-top:8px;letter-spacing:3px;text-transform:uppercase}
-.video-wrap{width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center}
-.video-wrap iframe,.video-wrap video{width:100%;height:100%;border:none}
-.slide{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;position:relative;background-size:cover;background-position:center}
-.slide-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55)}
-.slide-content{position:relative;z-index:1;max-width:900px}
-.slide-titulo{font-size:64px;font-weight:bold;line-height:1.1;color:white;text-shadow:0 2px 20px rgba(0,0,0,.8);margin-bottom:20px}
-.slide-texto{font-size:32px;color:rgba(255,255,255,.9);line-height:1.5}
-.slide-nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}
-.slide-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer}
-.slide-dot.active{background:white}
-.musica-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:#0D0D0D;width:100%;height:100%}
-.musica-nota{font-size:80px}
-.musica-titulo{font-size:36px;font-weight:bold;color:#C8873A}
-</style>
-</head>
-<body>
-<div id="tela">
-  <div class="idle" style="width:100%;height:100%">
-    <div class="idle-logo">MCJ</div>
-    <div class="idle-sub">Momentos com Jesus</div>
-    <div class="idle-polo">%%POLO%%</div>
-  </div>
-</div>
-<script>
-var POLO = '%%POLO%%';
-var SUPA = '%%SUPA_URL%%';
-var KEY  = '%%SUPA_KEY%%';
-var slideAtual = 0;
-var slides = [];
-var slideTimer = null;
-var ultimoAtualizado = null;
 
-function mostrarIdle(){
-  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
-  document.getElementById('tela').innerHTML =
-    '<div class="idle"><div class="idle-logo">MCJ</div>' +
-    '<div class="idle-sub">Momentos com Jesus</div>' +
-    '<div class="idle-polo">' + POLO + '</div></div>';
-}
-
-function getYouTubeId(url){
-  if(!url) return null;
-  if(url.indexOf('youtu.be/') !== -1){
-    var id = url.split('youtu.be/')[1].split('?')[0].split('&')[0];
-    return id.length === 11 ? id : null;
-  }
-  if(url.indexOf('v=') !== -1){
-    var id = url.split('v=')[1].split('&')[0].split('#')[0];
-    return id.length === 11 ? id : null;
-  }
-  if(url.indexOf('/embed/') !== -1){
-    var id = url.split('/embed/')[1].split('?')[0];
-    return id.length === 11 ? id : null;
-  }
-  return null;
-}
-
-function normalizarUrl(url){
-  if(!url) return '';
-  if(url.indexOf('drive.google.com/file/d/') !== -1){
-    var parts = url.split('/file/d/');
-    if(parts[1]){
-      var id = parts[1].split('/')[0].split('?')[0];
-      return 'https://drive.google.com/file/d/' + id + '/preview';
-    }
-  }
-  return url;
-}
-
-function mostrarVideo(item){
-  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
-  var src = normalizarUrl(item.url || '');
-  var ytId = getYouTubeId(src);
-  var isDrive = src.indexOf('drive.google.com') !== -1;
-  var tela = document.getElementById('tela');
-  if(ytId){
-    tela.innerHTML = '<div class="video-wrap"><iframe src="https://www.youtube.com/embed/' + ytId + '?autoplay=1&controls=1&rel=0" allowfullscreen allow="autoplay; fullscreen"></iframe></div>';
-  } else if(isDrive){
-    tela.innerHTML = '<div class="video-wrap" id="drive-wrap" style="cursor:pointer;flex-direction:column;gap:20px;background:#111" onclick="carregarDrive(\'' + src + '\')"><div style="width:100px;height:100px;border-radius:50%;background:rgba(200,135,58,.9);display:flex;align-items:center;justify-content:center;font-size:48px">&#9654;</div><div style="color:rgba(255,255,255,.7);font-size:18px">Clique para reproduzir</div></div>';
-  } else {
-    tela.innerHTML = '<div class="video-wrap"><video src="' + src + '" autoplay controls style="width:100%;height:100%;object-fit:contain"></video></div>';
-  }
-}
-
-function carregarDrive(src){
-  var w = document.getElementById('drive-wrap');
-  if(w) w.innerHTML = '<iframe src="' + src + '" allowfullscreen style="width:100%;height:100%;border:none"></iframe>';
-}
-
-function mostrarSlides(item){
-  slides = item.slides || [];
-  slideAtual = 0;
-  renderSlide();
-  if(slideTimer) clearInterval(slideTimer);
-  slideTimer = setInterval(function(){ slideAtual = (slideAtual+1) % slides.length; renderSlide(); }, 8000);
-}
-
-function renderSlide(){
-  var s = slides[slideAtual] || {};
-  var bg = s.bg ? 'background-image:url("' + s.bg + '");background-size:cover;background-position:center' : 'background:linear-gradient(135deg,#1a0a00,#3D2410)';
-  var dots = '';
-  for(var i=0; i<slides.length; i++) dots += '<div class="slide-dot' + (i===slideAtual?' active':'') + '" onclick="slideAtual=' + i + ';renderSlide()"></div>';
-  document.getElementById('tela').innerHTML =
-    '<div class="slide" style="' + bg + '">' +
-    '<div class="slide-overlay"></div>' +
-    '<div class="slide-content">' +
-    (s.titulo ? '<div class="slide-titulo">' + s.titulo + '</div>' : '') +
-    (s.texto  ? '<div class="slide-texto">'  + s.texto  + '</div>' : '') +
-    '</div></div>' +
-    (slides.length > 1 ? '<div class="slide-nav">' + dots + '</div>' : '');
-}
-
-function mostrarMusica(item){
-  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
-  document.getElementById('tela').innerHTML =
-    '<div class="musica-wrap">' +
-    '<div class="musica-nota">&#127925;</div>' +
-    '<div class="musica-titulo">' + (item.titulo||'') + '</div>' +
-    (item.url ? '<audio src="' + item.url + '" autoplay controls style="margin-top:20px;width:300px"></audio>' : '') +
-    '</div>';
-}
-
-function aplicar(data){
-  if(!data || data.tipo === 'idle'){ mostrarIdle(); return; }
-  var item = data.conteudo || data;
-  if(!item || !item.tipo){ mostrarIdle(); return; }
-  if(item.tipo === 'video')       mostrarVideo(item);
-  else if(item.tipo === 'slide')  mostrarSlides(item);
-  else if(item.tipo === 'musica') mostrarMusica(item);
-}
-
-var bc = new BroadcastChannel('mcj-midia-' + POLO);
-bc.onmessage = function(e){ aplicar(e.data); };
-
-async function pollEstado(){
-  try{
-    var r = await fetch(SUPA + '/rest/v1/midia_estado?polo=eq.' + encodeURIComponent(POLO) + '&limit=1',
-      { headers:{ apikey: KEY, 'Authorization': 'Bearer ' + KEY } });
-    var data = await r.json();
-    var row = data && data[0];
-    if(!row) return;
-    if(row.atualizado_em !== ultimoAtualizado){ ultimoAtualizado = row.atualizado_em; aplicar(row); }
-  }catch(e){}
-}
-setInterval(pollEstado, 2000);
-pollEstado();
-
-document.addEventListener('keydown', function(e){
-  if(e.key==='f'||e.key==='F') document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
-  if(e.key==='ArrowRight' && slides.length>1){ slideAtual=(slideAtual+1)%slides.length; renderSlide(); }
-  if(e.key==='ArrowLeft'  && slides.length>1){ slideAtual=(slideAtual-1+slides.length)%slides.length; renderSlide(); }
-});
-document.getElementById('tela').addEventListener('dblclick', function(){
-  if(document.fullscreenElement) document.exitFullscreen && document.exitFullscreen();
-  else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
-});
-<\/script>
-</body>
-</html>
-</script>
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="fecharLightbox()">
@@ -4238,12 +4064,84 @@ function abrirTelaTelaoPolo(poloNome){
 }
 
 function gerarHtmlTelaoPolo(poloNome){
-  var t = document.getElementById('telao-template');
-  if(!t){ alert('Template do telao nao encontrado.'); return ''; }
-  return t.innerHTML
-    .replace(/%%POLO%%/g, poloNome)
-    .replace(/%%SUPA_URL%%/g, SUPA_URL)
-    .replace(/%%SUPA_KEY%%/g, SUPA_KEY);
+  var su = SUPA_URL;
+  var sk = SUPA_KEY;
+  var p  = poloNome;
+
+  var css = [
+    '*{box-sizing:border-box;margin:0;padding:0}',
+    'body{background:#000;color:white;font-family:Georgia,serif;overflow:hidden;width:100vw;height:100vh}',
+    '#tela{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}',
+    '.idle{background:#1a0a00;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;width:100%;height:100%}',
+    '.idle-logo{font-size:60px;font-weight:bold;color:#C8873A;letter-spacing:4px}',
+    '.idle-sub{font-size:20px;color:rgba(255,255,255,.4)}',
+    '.idle-polo{font-size:14px;color:rgba(255,255,255,.2);letter-spacing:3px;text-transform:uppercase}',
+    '.vwrap{width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center}',
+    '.vwrap iframe,.vwrap video{width:100%;height:100%;border:none}',
+    '.slide{width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px;position:relative;background-size:cover;background-position:center}',
+    '.sov{position:absolute;inset:0;background:rgba(0,0,0,.55)}',
+    '.sc{position:relative;z-index:1;max-width:900px}',
+    '.st{font-size:64px;font-weight:bold;color:white;text-shadow:0 2px 20px rgba(0,0,0,.8);margin-bottom:20px;line-height:1.1}',
+    '.sx{font-size:32px;color:rgba(255,255,255,.9);line-height:1.5}',
+    '.snav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}',
+    '.sd{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer}',
+    '.sd.on{background:white}',
+    '.mwrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:#0D0D0D;width:100%;height:100%}',
+    '.mnota{font-size:80px}',
+    '.mtit{font-size:36px;font-weight:bold;color:#C8873A}'
+  ].join('');
+
+  // Build JS as array of lines joined — safe, no template literals
+  var L = [];
+  L.push('var PL=' + JSON.stringify(p) + ';');
+  L.push('var SU=' + JSON.stringify(su) + ';');
+  L.push('var SK=' + JSON.stringify(sk) + ';');
+  L.push('var si=0,sl=[],st=null,lu=null;');
+  L.push('function idle(){if(st){clearInterval(st);st=null;}');
+  L.push('document.getElementById("tela").innerHTML=');
+  L.push('"<div class=idle><div class=idle-logo>MCJ</div>"+');
+  L.push('"<div class=idle-sub>Momentos com Jesus</div>"+');
+  L.push('"<div class=idle-polo>"+PL+"</div></div>";}');
+  L.push('function ytId(u){');
+  L.push('if(!u)return null;');
+  L.push('if(u.indexOf("youtu.be/")>-1){var x=u.split("youtu.be/")[1].split("?")[0].split("&")[0];return x.length===11?x:null;}');
+  L.push('if(u.indexOf("v=")>-1){var x=u.split("v=")[1].split("&")[0].split("#")[0];return x.length===11?x:null;}');
+  L.push('return null;}');
+  L.push('function fixUrl(u){');
+  L.push('if(!u)return "";');
+  L.push('if(u.indexOf("drive.google.com/file/d/")>-1){var p=u.split("/file/d/");if(p[1]){var id=p[1].split("/")[0].split("?")[0];return "https://drive.google.com/file/d/"+id+"/preview";}}');
+  L.push('return u;}');
+  L.push('function video(item){if(st){clearInterval(st);st=null;}');
+  L.push('var u=fixUrl(item.url||""),yt=ytId(u),dr=u.indexOf("drive.google.com")>-1;');
+  L.push('var el=document.getElementById("tela");');
+  L.push('if(yt){el.innerHTML="<div class=vwrap><iframe src=\\"https://www.youtube.com/embed/"+yt+"?autoplay=1&controls=1&rel=0\\" allowfullscreen allow=\\"autoplay;fullscreen\\"></iframe></div>";}');
+  L.push('else if(dr){el.innerHTML="<div class=vwrap id=dw style=\\"cursor:pointer;flex-direction:column;gap:20px\\" onclick=\\"loadDr(\'"+u+"\')\\">"+"<div style=\\"width:100px;height:100px;border-radius:50%;background:rgba(200,135,58,.9);display:flex;align-items:center;justify-content:center;font-size:48px\\">&#9654;</div>"+"<div style=\\"color:rgba(255,255,255,.7);font-size:18px\\">Clique para reproduzir</div></div>";}');
+  L.push('else{el.innerHTML="<div class=vwrap><video src=\\""+u+"\\" autoplay controls style=\\"width:100%;height:100%;object-fit:contain\\"></video></div>";}}');
+  L.push('function loadDr(u){var w=document.getElementById("dw");if(w)w.innerHTML="<iframe src=\\""+u+"\\" allowfullscreen style=\\"width:100%;height:100%;border:none\\"></iframe>";}');
+  L.push('function doSlides(item){sl=item.slides||[];si=0;renderSl();if(st)clearInterval(st);st=setInterval(function(){si=(si+1)%sl.length;renderSl();},8000);}');
+  L.push('function renderSl(){var s=sl[si]||{};');
+  L.push('var bg=s.bg?"background-image:url(\'"+s.bg+"\');background-size:cover;background-position:center":"background:linear-gradient(135deg,#1a0a00,#3D2410)";');
+  L.push('var dots="";for(var i=0;i<sl.length;i++)dots+="<div class=\\"sd"+(i===si?" on":"")+"\\\" onclick=\\"si="+i+";renderSl()\\"></div>";');
+  L.push('document.getElementById("tela").innerHTML="<div class=slide style=\\""+bg+"\\"><div class=sov></div><div class=sc>"+(s.titulo?"<div class=st>"+s.titulo+"</div>":"")+(s.texto?"<div class=sx>"+s.texto+"</div>":"")+"</div></div>"+(sl.length>1?"<div class=snav>"+dots+"</div>":"");}');
+  L.push('function musica(item){if(st){clearInterval(st);st=null;}');
+  L.push('document.getElementById("tela").innerHTML="<div class=mwrap><div class=mnota>&#127925;</div><div class=mtit>"+(item.titulo||"")+"</div>"+(item.url?"<audio src=\\""+item.url+"\\" autoplay controls style=\\"margin-top:20px;width:300px\\"></audio>":"")+"</div>";}');
+  L.push('function run(data){if(!data||data.tipo==="idle"){idle();return;}var item=data.conteudo||data;if(!item||!item.tipo){idle();return;}if(item.tipo==="video")video(item);else if(item.tipo==="slide")doSlides(item);else if(item.tipo==="musica")musica(item);}');
+  L.push('var bc=new BroadcastChannel("mcj-midia-"+PL);');
+  L.push('bc.onmessage=function(e){run(e.data);};');
+  L.push('async function poll(){try{var r=await fetch(SU+"/rest/v1/midia_estado?polo=eq."+encodeURIComponent(PL)+"&limit=1",{headers:{apikey:SK,"Authorization":"Bearer "+SK}});var d=await r.json();var row=d&&d[0];if(!row)return;if(row.atualizado_em!==lu){lu=row.atualizado_em;run(row);}}catch(e){}}');
+  L.push('setInterval(poll,2000);poll();');
+  L.push('document.addEventListener("keydown",function(e){if(e.key==="f"||e.key==="F")document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(e.key==="ArrowRight"&&sl.length>1){si=(si+1)%sl.length;renderSl();}if(e.key==="ArrowLeft"&&sl.length>1){si=(si-1+sl.length)%sl.length;renderSl();}});');
+  L.push('document.getElementById("tela").addEventListener("dblclick",function(){if(document.fullscreenElement)document.exitFullscreen&&document.exitFullscreen();else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();});');
+
+  var js = L.join('\n');
+
+  return '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Telao MCJ</title>' +
+    '<style>' + css + '</style></head><body>' +
+    '<div id="tela"><div class="idle"><div class="idle-logo">MCJ</div>' +
+    '<div class="idle-sub">Momentos com Jesus</div>' +
+    '<div class="idle-polo">' + p + '</div></div></div>' +
+    '<scr' + 'ipt>' + js + '</scr' + 'ipt>' +
+    '</body></html>';
 }
 
 function renderRelatorios(){
