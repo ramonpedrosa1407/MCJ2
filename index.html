@@ -283,6 +283,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .role-admin{background:var(--blue-50);color:var(--blue-800);border:1px solid var(--blue-100)}
 .role-admin-polo{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}
 .role-coord{background:var(--amber-50);color:var(--amber-800);border:1px solid var(--amber-100)}
+.role-recepcao{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
 .user-polo-tags{display:flex;flex-wrap:wrap;gap:4px}
 .user-polo-tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:12px;background:var(--gray-50);border:1px solid var(--gray-100);color:var(--gray-600)}
 .btn-user-edit{padding:6px 12px;background:white;color:var(--blue-600);border:1px solid var(--blue-100);border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;min-height:36px;-webkit-appearance:none}
@@ -453,7 +454,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 .setor-add-wrap{position:relative;margin-top:4px}
 .btn-setor-add{display:flex;align-items:center;gap:5px;width:100%;padding:7px 10px;border-radius:8px;border:1.5px dashed var(--gray-100);background:transparent;color:var(--gray-400);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:Inter,sans-serif}
 .btn-setor-add:hover{border-color:var(--amber-300);color:var(--amber-700);background:var(--amber-50)}
-.setor-dropdown{position:absolute;bottom:calc(100% + 4px);left:0;right:0;background:white;border:1px solid var(--gray-100);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:200;max-height:200px;overflow-y:auto;display:none}
+.setor-dropdown{position:absolute;background:white;border:1.5px solid var(--gray-100);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:9999;min-width:220px;max-height:240px;overflow-y:auto;display:none}
 .setor-dropdown.open{display:block}
 .setor-dropdown-item{display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;font-size:12px;color:var(--gray-800);transition:background .1s;border-bottom:1px solid var(--gray-50)}
 .setor-dropdown-item:last-child{border-bottom:none}
@@ -752,20 +753,22 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         </div>
         <div class="field full">
           <label>Instituição de origem</label>
-          <input type="text" id="f-instituicao" placeholder="Nome da sua igreja, escola ou organização">
+          <input type="text" id="f-instituicao" placeholder="Nome da sua instituição religiosa">
         </div>
         <div class="field full">
           <label>Nome para o crachá</label>
           <input type="text" id="f-cracha" placeholder="Como deseja ser identificado(a) no crachá" maxlength="40">
           <span style="font-size:11px;color:var(--gray-400);margin-top:3px">Deixe em branco para usar o nome completo</span>
         </div>
+        <div id="campos-extras-form" style="display:none"></div>
+
         <div class="field full">
           <label>Turma <span class="req">*</span></label>
           <div class="radio-turma-wrap">
             <label class="radio-turma-label" id="lbl-adulto">
               <input type="radio" name="turma" value="Adulto"> 👤 Turma de Adulto
             </label>
-            <label class="radio-turma-label" id="lbl-mocidade">
+            <label class="radio-turma-label" id="lbl-mocidade" style="display:none">
               <input type="radio" name="turma" value="Mocidade"> 🌟 Turma de Mocidade
             </label>
           </div>
@@ -790,8 +793,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
             + Adicionar outra criança
           </button>
         </div>
-
-        <div id="campos-extras-form" style="display:none"></div>
 
         <div class="field full" id="almoco-field" style="display:none">
           <div style="font-size:11px;font-weight:600;color:var(--gray-500);font-family:'Inter',sans-serif;letter-spacing:.4px;text-transform:uppercase;margin-bottom:6px">🍽 Almoço</div>
@@ -898,7 +899,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   <div class="admin-wrap">
     <div class="admin-header">
       <h2 id="admin-panel-title">Painel de inscrições</h2>
-      <button class="btn-export-all" id="btn-exportar-todos" onclick="exportarTodos()">⬇ Exportar todas (Excel)</button>
     </div>
     <div class="admin-tabs" id="admin-tabs-bar">
       <button class="atab-btn active" id="atab-inscricoes" onclick="switchAdminTab('inscricoes',this)">📋 Inscrições</button>
@@ -912,6 +912,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <button class="atab-btn" id="atab-avaliacao" onclick="switchAdminTab('avaliacao',this)">⭐ Avaliações</button>
       <button class="atab-btn" id="atab-usuarios" onclick="switchAdminTab('usuarios',this)">👥 Usuários</button>
       <button class="atab-btn" id="atab-relatorios" onclick="switchAdminTab('relatorios',this)">📊 Relatórios</button>
+      <button class="atab-btn" id="atab-midia" onclick="switchAdminTab('midia',this)">🎬 Mídia</button>
     </div>
     <div class="admin-panel active" id="apanel-inscricoes">
       <div class="summary-grid" id="summary-grid"></div>
@@ -938,6 +939,9 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
     <div class="admin-panel" id="apanel-relatorios">
       <div id="relatorios-wrap"></div>
+    </div>
+    <div class="admin-panel" id="apanel-midia">
+      <div id="midia-wrap"></div>
     </div>
     <div class="admin-panel" id="apanel-avaliacao">
       <div id="avaliacao-admin-wrap"></div>
@@ -986,6 +990,17 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           </table>
         </div>
       </div>
+
+      <!-- Recepção -->
+      <div class="users-table-wrap">
+        <div class="users-table-title">🎫 Recepção — acesso somente à aba Recepção</div>
+        <div class="users-table-scroll">
+          <table class="users-table">
+            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="tbody-recepcoes"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1005,6 +1020,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           <option value="admin">Administrador Geral</option>
           <option value="admin_polo">Administrador de Polo</option>
           <option value="coord">Coordenador</option>
+          <option value="recepcao">Recepção</option>
         </select>
       </div>
       <div class="user-field">
@@ -1197,6 +1213,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           </select>
         </div>
         <div class="cfg-field"><label>Valor almoço</label><input type="text" id="ei-almoco-valor" placeholder="R$ 35,00"></div>
+        <div class="cfg-field" style="grid-column:1/-1"><label>Observação (aparece no crachá)</label><textarea id="ei-observacao" rows="3" placeholder="Observações que aparecerão impressas no crachá..." style="resize:vertical"></textarea></div>
       </div>
       <div id="ei-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800)"></div>
     </div>
@@ -1282,6 +1299,54 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
       <button onclick="fecharModalCampo()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancelar</button>
       <button onclick="salvarCampoExtra()" class="btn-cfg-save">Salvar campo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MÍDIA -->
+<div class="login-overlay" id="midia-modal-overlay" onclick="if(event.target===this)fecharModalMidia()" style="align-items:center;padding:1rem;z-index:700">
+  <div style="background:white;border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)" onclick="event.stopPropagation()">
+    <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;position:sticky;top:0;z-index:1">
+      <span id="midia-modal-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">Novo conteúdo</span>
+      <button onclick="fecharModalMidia()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
+      <div class="cfg-field">
+        <label>Tipo *</label>
+        <select id="midia-tipo" onchange="midiaOnTipoChange()">
+          <option value="video">🎬 Vídeo (MP4 ou YouTube)</option>
+          <option value="slide">🖼 Slides com imagem + texto</option>
+          <option value="musica">🎵 Música / Áudio</option>
+        </select>
+      </div>
+      <div class="cfg-field">
+        <label>Título *</label>
+        <input type="text" id="midia-titulo-input" placeholder="Ex: Abertura MCJ 2026">
+      </div>
+      <div class="cfg-field" id="midia-url-wrap">
+        <label>URL do arquivo</label>
+        <input type="text" id="midia-url" placeholder="https://...mp4 ou youtube.com/watch?v=...">
+      </div>
+      <div class="cfg-field" id="midia-thumbnail-wrap">
+        <label>URL da miniatura (opcional)</label>
+        <input type="text" id="midia-thumbnail" placeholder="https://...jpg">
+      </div>
+      <div class="cfg-field">
+        <label>Descrição (opcional)</label>
+        <input type="text" id="midia-descricao" placeholder="Descrição breve">
+      </div>
+      <div id="midia-slides-wrap" style="display:none">
+        <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-family:'Inter',sans-serif">Slides</div>
+        <div id="midia-slides-lista" style="display:flex;flex-direction:column;gap:8px"></div>
+        <button type="button" onclick="adicionarSlide()"
+          style="margin-top:8px;width:100%;padding:8px;border:1.5px dashed var(--gray-100);border-radius:8px;background:white;color:var(--gray-500);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif">
+          + Adicionar slide
+        </button>
+      </div>
+    </div>
+    <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="fecharModalMidia()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancelar</button>
+      <button onclick="salvarMidia()" class="btn-cfg-save">Salvar</button>
     </div>
   </div>
 </div>
@@ -2013,7 +2078,7 @@ async function carregarInscricoes(){
 const SUPA_INS_COLS = ['nome','nascimento','email','telefone','instituicao','cracha','turma','polo',
   'almoco','almoco_valor','almoco_crianca','almoco_crianca_valor',
   'sala','setores','pagamento','pagamento_em','trabalhador','data_inscricao',
-  'crianca','criancas','campos_extras'];
+  'crianca','criancas','campos_extras','observacao'];
 
 function filtrarColunas(obj){
   const out = {};
@@ -2464,7 +2529,8 @@ function aplicarEscopoAdmin(){
   const isAdmin     = SESSION.role==='admin';
   const isAdminPolo = SESSION.role==='admin_polo';
   const isCoord     = SESSION.role==='coord';
-  const temPolo     = isAdminPolo || isCoord;
+  const isRecepcao  = SESSION.role==='recepcao';
+  const temPolo     = isAdminPolo || isCoord || isRecepcao;
 
   document.getElementById('bar-admin').style.display = isAdmin?'flex':'none';
   document.getElementById('bar-coord').style.display = temPolo?'flex':'none';
@@ -2473,35 +2539,41 @@ function aplicarEscopoAdmin(){
     document.getElementById('admin-user-nome').textContent = SESSION.nome||SESSION.login;
   } else {
     document.getElementById('coord-user-nome').textContent = SESSION.nome||SESSION.login;
-    const label = isAdminPolo ? 'Admin de Polo' : 'Coordenador';
+    const label = isAdminPolo ? 'Admin de Polo' : isRecepcao ? 'Recepção' : 'Coordenador';
     const tagsEl = document.getElementById('coord-polo-tags-bar');
     tagsEl.innerHTML = `<span style="font-size:11px;opacity:.7;margin-right:4px">${label}:</span>`
       + SESSION.polos.map(p=>`<span class="coord-polo-tag-bar">${p}</span>`).join('');
   }
 
-  // admin geral: tudo
-  // admin_polo: inscrições, turmas, equipe, recepção, ⚙ Polos (só seus)  — sem evento/usuários
-  // coord: inscrições, turmas, equipe, recepção — sem ⚙ Polos, evento, usuários
-  document.getElementById('atab-inscricoes').style.display = '';
-  document.getElementById('atab-turmas').style.display     = '';
-  document.getElementById('atab-equipe').style.display     = '';
-  document.getElementById('atab-recepcao').style.display   = '';
-  document.getElementById('atab-comunicacao').style.display = '';
-  document.getElementById('atab-config').style.display     = (isAdmin||isAdminPolo)?'':'none';
+  // Visibilidade das abas por perfil
+  document.getElementById('atab-inscricoes').style.display  = isRecepcao?'none':'';
+  document.getElementById('atab-turmas').style.display      = isRecepcao?'none':'';
+  document.getElementById('atab-equipe').style.display      = isRecepcao?'none':'';
+  document.getElementById('atab-recepcao').style.display    = '';
+  document.getElementById('atab-comunicacao').style.display = isRecepcao?'none':'';
+  document.getElementById('atab-config').style.display      = (isAdmin||isAdminPolo)?'':'none';
   document.getElementById('atab-evento').style.display              = isAdmin?'':'none';
   document.getElementById('atab-expositores-admin').style.display   = isAdmin?'':'none';
   document.getElementById('atab-avaliacao').style.display           = isAdmin?'':'none';
   document.getElementById('atab-usuarios').style.display            = isAdmin?'':'none';
   document.getElementById('atab-relatorios').style.display          = isAdmin?'':'none';
+  document.getElementById('atab-midia').style.display              = isAdmin?'':'none';
 
-  document.getElementById('btn-exportar-todos').style.display = isAdmin?'':'none';
+  // Recepção: abre direto na aba recepção
+  if(isRecepcao){
+    switchAdminTab('recepcao', document.getElementById('atab-recepcao'));
+  }
+
   document.getElementById('admin-panel-title').textContent = isAdmin
     ? 'Painel de inscrições'
-    : 'Inscrições — '+SESSION.polos.join(', ');
+    : isRecepcao
+      ? 'Recepção — '+SESSION.polos.join(', ')
+      : 'Inscrições — '+SESSION.polos.join(', ');
 }
 
 function switchAdminTab(id, btn){
   const role = SESSION.role;
+  if(role==='recepcao' && id!=='recepcao') return;
   if(role==='coord'      && (id==='usuarios'||id==='config'||id==='evento'||id==='expositores-admin'||id==='avaliacao')) return;
   if(role==='admin_polo' && (id==='usuarios'||id==='evento'||id==='expositores-admin'||id==='avaliacao')) return;
 
@@ -2531,6 +2603,7 @@ function _renderTab(id){
   if(id==='avaliacao')        renderAvaliacaoAdmin();
   if(id==='usuarios')    renderUsuarios();
   if(id==='relatorios')  renderRelatorios();
+  if(id==='midia')       renderMidia();
 }
 
 /* ================================================================
@@ -2817,11 +2890,14 @@ function fecharUserModal(){
 function onRoleChange(){
   const r = document.getElementById('u-role')?.value;
   const polosField = document.getElementById('u-polos-field');
-  if(polosField) polosField.style.display = (r==='admin_polo'||r==='coord')?'flex':'none';
+  const temPolo = r==='admin_polo'||r==='coord'||r==='recepcao';
+  if(polosField) polosField.style.display = temPolo?'flex':'none';
   const note = document.getElementById('coord-scope-note');
   if(note){
-    if(r==='admin_polo') note.textContent='O administrador de polo terá acesso total ao polo (inscrições, turmas, equipe, recepção e configuração).';
-    else if(r==='coord') note.textContent='O coordenador poderá acessar inscrições, recepção, turmas e equipe nos polos selecionados.';
+    if(r==='admin_polo')  note.textContent='O administrador de polo terá acesso total ao polo (inscrições, turmas, equipe, recepção e configuração).';
+    else if(r==='coord')  note.textContent='O coordenador poderá acessar inscrições, recepção, turmas e equipe nos polos selecionados.';
+    else if(r==='recepcao') note.textContent='O usuário de recepção terá acesso somente à aba Recepção nos polos selecionados.';
+    else note.textContent='';
   }
 }
 
@@ -2831,7 +2907,7 @@ async function salvarUsuario(){
   const senha = document.getElementById('u-senha')?.value.trim()||'';
   const role  = document.getElementById('u-role')?.value||'coord';
   const status= document.getElementById('u-status')?.value||'ativo';
-  const polos = (role==='admin_polo'||role==='coord')
+  const polos = (role==='admin_polo'||role==='coord'||role==='recepcao')
     ? [...document.querySelectorAll('#u-polos-checkboxes input:checked')].map(c=>c.value)
     : [];
 
@@ -3130,6 +3206,7 @@ function renderUsuarios(){
   const admins     = users.filter(u=>u.role==='admin');
   const adminPolos = users.filter(u=>u.role==='admin_polo');
   const coords     = users.filter(u=>u.role==='coord');
+  const recepcoes  = users.filter(u=>u.role==='recepcao');
 
   function rowsFor(list, showPolos){
     if(!list.length) return '<tr class="empty-row"><td colspan="5">Nenhum usuário nesta categoria.</td></tr>';
@@ -3166,6 +3243,10 @@ function renderUsuarios(){
 
   const tbC = document.getElementById('tbody-coords');
   if(tbC) tbC.innerHTML = rowsFor(coords, true);
+
+  // Recepção
+  const tbR = document.getElementById('tbody-recepcoes');
+  if(tbR) tbR.innerHTML = rowsFor(recepcoes, true);
 }
 
 /* ================================================================
@@ -3478,10 +3559,16 @@ function renderTurmas(){
             style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-mid);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
             🖨 Listagem
           </button>
-          <button onclick="abrirPainelCracha('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
-            style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
-            🪪 Crachás
-          </button>
+          ${_turmaTurmaAtiva==='Evangelizacao'
+            ? `<button onclick="gerarCrachasEvangelizacao('${polo.nome.replace(/'/g,"\\'")}')"
+                style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:#10B981;color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+                👶 Crachás
+              </button>`
+            : `<button onclick="abrirPainelCracha('${polo.nome.replace(/'/g,"\\'")}','${_turmaTurmaAtiva}')"
+                style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">
+                🪪 Crachás
+              </button>`
+          }
         </div>
       </div>
       <div class="turmas-turma-tabs">
@@ -3639,8 +3726,465 @@ function validarCamposExtras(){
 }
 
 /* ================================================================
-   RELATÓRIOS
+   MÓDULO MÍDIA
 ================================================================ */
+let _midiaLib      = [];   // biblioteca de conteúdo
+let _midiaEstado   = {};   // estado atual por polo
+let _midiaEditItem = null; // item sendo editado
+let _midiaSlideIdx = {};   // índice de slides por polo (no telão)
+let _midiaChannels = {};   // canais realtime por polo
+
+async function carregarMidia(){
+  if(!supaConfigurado()) return;
+  try {
+    const lib    = await supa('GET','midia_biblioteca?order=criado_em.desc');
+    const estado = await supa('GET','midia_estado');
+    _midiaLib    = lib||[];
+    _midiaEstado = {};
+    (estado||[]).forEach(e=>{ _midiaEstado[e.polo]=e; });
+  } catch(e){ console.warn('carregarMidia:', e.message); }
+}
+
+function renderMidia(){
+  const wrap = document.getElementById('midia-wrap');
+  if(!wrap) return;
+  carregarMidia().then(()=>_renderMidiaInner(wrap));
+}
+
+function _renderMidiaInner(wrap){
+  const polosVis = SESSION.role==='admin' ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+
+  const tipoIcon = {video:'🎬', slide:'🖼', musica:'🎵'};
+  const tipoLabel = {video:'Vídeo', slide:'Slides', musica:'Música'};
+
+  wrap.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1.5rem">
+      <div>
+        <h2 style="font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:700;color:var(--mcj-dark);margin:0 0 4px">🎬 Central de Mídia</h2>
+        <div style="font-size:12px;color:var(--gray-400)">Gerencie e exiba conteúdo nos telões dos polos em tempo real</div>
+      </div>
+      <button onclick="abrirModalMidia(null)"
+        style="padding:9px 18px;background:var(--mcj-gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+        + Adicionar conteúdo
+      </button>
+    </div>
+
+    <!-- CONTROLE POR POLO -->
+    <div style="margin-bottom:1.5rem">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);margin-bottom:10px;font-family:'Inter',sans-serif">🎛 Controle dos Telões</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+        ${polosVis.map(polo=>{
+          const estado = _midiaEstado[polo.nome];
+          const ativo  = estado?.tipo && estado.tipo!=='idle';
+          const conteudo = estado?.conteudo||{};
+          return `
+          <div style="background:white;border-radius:14px;border:1.5px solid ${ativo?'var(--mcj-gold)':'var(--gray-100)'};overflow:hidden">
+            <div style="padding:10px 14px;background:${ativo?'var(--mcj-dark)':'var(--gray-50)'};display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:13px;font-weight:700;color:${ativo?'white':'var(--mcj-dark)'}">📍 ${polo.nome}</div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span style="font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600;background:${ativo?'#10B981':'var(--gray-200)'};color:white">
+                  ${ativo?'● AO VIVO':'● INATIVO'}
+                </span>
+                <button onclick="abrirTelaTelaoPolo('${polo.nome.replace(/'/g,"\\'")}')"
+                  style="padding:4px 10px;background:var(--mcj-gold);color:white;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">
+                  📺 Abrir Telão
+                </button>
+              </div>
+            </div>
+            <div style="padding:10px 14px">
+              ${ativo
+                ? `<div style="font-size:12px;color:var(--gray-600)">
+                    <span style="font-weight:600">${tipoIcon[estado.tipo]||''} ${conteudo.titulo||'—'}</span>
+                   </div>`
+                : `<div style="font-size:12px;color:var(--gray-300)">Nenhum conteúdo ativo</div>`}
+              <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+                ${_midiaLib.slice(0,3).map(item=>`
+                  <button onclick="exibirConteudo('${polo.nome.replace(/'/g,"\\'")}','${item.id}')"
+                    style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--gray-100);background:white;cursor:pointer;font-family:'Inter',sans-serif;color:var(--gray-700)">
+                    ${tipoIcon[item.tipo]||''} ${item.titulo}
+                  </button>`).join('')}
+                ${ativo?`<button onclick="pararExibicao('${polo.nome.replace(/'/g,"\\'")}')"
+                  style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--red-100);background:var(--red-50);color:var(--red-500);cursor:pointer;font-family:'Inter',sans-serif">
+                  ⏹ Parar
+                </button>`:''}
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- BIBLIOTECA -->
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);margin-bottom:10px;font-family:'Inter',sans-serif">📚 Biblioteca de Conteúdo</div>
+      ${_midiaLib.length===0
+        ? `<div style="text-align:center;padding:2rem;color:var(--gray-300);border:1.5px dashed var(--gray-100);border-radius:12px;font-size:13px">
+            Nenhum conteúdo cadastrado. Clique em "+ Adicionar conteúdo" para começar.
+          </div>`
+        : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+            ${_midiaLib.map(item=>`
+              <div style="background:white;border-radius:12px;border:1px solid var(--gray-100);overflow:hidden">
+                ${item.thumbnail
+                  ? `<div style="height:120px;background:url('${item.thumbnail}') center/cover no-repeat;position:relative">
+                      <span style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px">${tipoLabel[item.tipo]||item.tipo}</span>
+                     </div>`
+                  : `<div style="height:80px;background:var(--gray-50);display:flex;align-items:center;justify-content:center;font-size:32px">${tipoIcon[item.tipo]||'📄'}</div>`}
+                <div style="padding:10px 12px">
+                  <div style="font-weight:600;font-size:13px;color:var(--mcj-dark);margin-bottom:4px">${item.titulo}</div>
+                  ${item.descricao?`<div style="font-size:11px;color:var(--gray-400);margin-bottom:8px">${item.descricao}</div>`:''}
+                  <div style="display:flex;gap:6px">
+                    <button onclick="abrirModalMidia('${item.id}')"
+                      style="flex:1;padding:6px;background:white;border:1px solid var(--gray-100);border-radius:6px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif">✏️ Editar</button>
+                    <button onclick="excluirMidia('${item.id}')"
+                      style="padding:6px 10px;background:white;border:1px solid var(--red-100);border-radius:6px;font-size:11px;cursor:pointer;color:var(--red-400);font-family:'Inter',sans-serif">🗑</button>
+                  </div>
+                </div>
+              </div>`).join('')}
+          </div>`}
+    </div>`;
+}
+
+/* ── Modal de cadastro de mídia ─────────────────────────────── */
+function abrirModalMidia(id){
+  _midiaEditItem = id ? _midiaLib.find(x=>x.id===id) : null;
+  const item = _midiaEditItem;
+  document.getElementById('midia-modal-titulo').textContent = item ? 'Editar conteúdo' : 'Novo conteúdo';
+  document.getElementById('midia-tipo').value      = item?.tipo||'video';
+  document.getElementById('midia-titulo-input').value = item?.titulo||'';
+  document.getElementById('midia-url').value       = item?.url||'';
+  document.getElementById('midia-thumbnail').value = item?.thumbnail||'';
+  document.getElementById('midia-descricao').value = item?.descricao||'';
+  // Slides
+  const slides = item?.slides||[];
+  document.getElementById('midia-slides-lista').innerHTML = slides.map((s,i)=>slidesRowHtml(s,i)).join('');
+  midiaOnTipoChange();
+  document.getElementById('midia-modal-overlay').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function fecharModalMidia(){
+  document.getElementById('midia-modal-overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function midiaOnTipoChange(){
+  const tipo = document.getElementById('midia-tipo').value;
+  document.getElementById('midia-url-wrap').style.display     = tipo!=='slide'?'flex':'none';
+  document.getElementById('midia-slides-wrap').style.display  = tipo==='slide'?'block':'none';
+  document.getElementById('midia-thumbnail-wrap').style.display = 'flex';
+}
+
+function slidesRowHtml(s, i){
+  return `<div style="display:flex;flex-direction:column;gap:6px;background:var(--gray-50);border-radius:8px;padding:10px;border:1px solid var(--gray-100);position:relative">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:11px;font-weight:700;color:var(--gray-400)">Slide ${i+1}</span>
+      <button type="button" onclick="removerSlide(${i})" style="background:none;border:none;color:var(--red-400);cursor:pointer;font-size:16px;line-height:1">×</button>
+    </div>
+    <input type="text" id="slide-titulo-${i}" value="${esc(s.titulo||'')}" placeholder="Título do slide"
+      style="font-size:13px;padding:6px 9px;border-radius:6px;border:1px solid var(--gray-100)">
+    <textarea id="slide-texto-${i}" placeholder="Texto do slide..." rows="2"
+      style="font-size:12px;padding:6px 9px;border-radius:6px;border:1px solid var(--gray-100);resize:vertical">${esc(s.texto||'')}</textarea>
+    <input type="text" id="slide-bg-${i}" value="${esc(s.bg||'')}" placeholder="URL da imagem de fundo (opcional)"
+      style="font-size:12px;padding:6px 9px;border-radius:6px;border:1px solid var(--gray-100)">
+  </div>`;
+}
+
+let _slideCount = 0;
+function adicionarSlide(){
+  const lista = document.getElementById('midia-slides-lista');
+  const i = lista.children.length;
+  _slideCount++;
+  const div = document.createElement('div');
+  div.innerHTML = slidesRowHtml({},i);
+  lista.appendChild(div.firstElementChild);
+}
+
+function removerSlide(i){
+  const lista = document.getElementById('midia-slides-lista');
+  if(lista.children[i]) lista.children[i].remove();
+  // Renumera
+  [...lista.children].forEach((el,n)=>{
+    const span = el.querySelector('span');
+    if(span) span.textContent = `Slide ${n+1}`;
+  });
+}
+
+function lerSlides(){
+  const lista = document.getElementById('midia-slides-lista');
+  return [...lista.children].map((_,i)=>({
+    titulo: document.getElementById('slide-titulo-'+i)?.value.trim()||'',
+    texto:  document.getElementById('slide-texto-'+i)?.value.trim()||'',
+    bg:     document.getElementById('slide-bg-'+i)?.value.trim()||'',
+  }));
+}
+
+async function salvarMidia(){
+  const tipo     = document.getElementById('midia-tipo').value;
+  const titulo   = document.getElementById('midia-titulo-input').value.trim();
+  const url      = document.getElementById('midia-url').value.trim();
+  const thumbnail= document.getElementById('midia-thumbnail').value.trim();
+  const descricao= document.getElementById('midia-descricao').value.trim();
+  const slides   = tipo==='slide' ? lerSlides() : [];
+
+  if(!titulo){ alert('Informe o título.'); return; }
+  if(tipo!=='slide' && !url){ alert('Informe a URL do conteúdo.'); return; }
+  if(tipo==='slide' && !slides.length){ alert('Adicione ao menos um slide.'); return; }
+
+  const payload = { tipo, titulo, url, thumbnail, descricao, slides };
+  showLoading('Salvando...');
+  try {
+    if(_midiaEditItem){
+      await supa('PATCH',`midia_biblioteca?id=eq.${_midiaEditItem.id}`, payload);
+      const idx = _midiaLib.findIndex(x=>x.id===_midiaEditItem.id);
+      if(idx>=0) _midiaLib[idx] = {..._midiaLib[idx],...payload};
+    } else {
+      const rows = await supa('POST','midia_biblioteca',[payload]);
+      if(rows?.[0]) _midiaLib.unshift(rows[0]);
+    }
+    hideLoading();
+    fecharModalMidia();
+    _renderMidiaInner(document.getElementById('midia-wrap'));
+  } catch(e){ hideLoading(); alert('Erro ao salvar: '+e.message); }
+}
+
+async function excluirMidia(id){
+  if(!confirm('Remover este conteúdo da biblioteca?')) return;
+  await supa('DELETE',`midia_biblioteca?id=eq.${id}`);
+  _midiaLib = _midiaLib.filter(x=>x.id!==id);
+  _renderMidiaInner(document.getElementById('midia-wrap'));
+}
+
+/* ── Controle de exibição ────────────────────────────────────── */
+async function exibirConteudo(poloNome, itemId){
+  const item = _midiaLib.find(x=>x.id===itemId);
+  if(!item) return;
+  const payload = { polo:poloNome, tipo:item.tipo, conteudo:item, atualizado_em: new Date().toISOString() };
+  try {
+    // Upsert — insere ou atualiza
+    await supa('POST','midia_estado?on_conflict=polo',[payload]);
+    _midiaEstado[poloNome] = payload;
+    _renderMidiaInner(document.getElementById('midia-wrap'));
+    // Notifica telão via BroadcastChannel (instantâneo)
+    const ch = _midiaChannels[poloNome];
+    if(ch) ch.postMessage({tipo:item.tipo, conteudo:item});
+  } catch(e){ console.warn('exibirConteudo:', e.message); }
+}
+
+async function pararExibicao(poloNome){
+  const payload = { polo:poloNome, tipo:'idle', conteudo:{}, atualizado_em: new Date().toISOString() };
+  try {
+    await supa('PATCH',`midia_estado?polo=eq.${encodeURIComponent(poloNome)}`, payload);
+    _midiaEstado[poloNome] = payload;
+    _renderMidiaInner(document.getElementById('midia-wrap'));
+    const ch = _midiaChannels[poloNome];
+    if(ch) ch.postMessage({tipo:'idle'});
+  } catch(e){ console.warn('pararExibicao:', e.message); }
+}
+
+/* ── Telão ────────────────────────────────────────────────────── */
+function abrirTelaTelaoPolo(poloNome){
+  const html = gerarHtmlTelaoPolo(poloNome);
+  const blob = new Blob([html], {type:'text/html'});
+  const url  = URL.createObjectURL(blob);
+  const win  = window.open(url,'_blank','width=1280,height=720');
+  if(!win){ alert('Permita pop-ups para abrir o telão.'); URL.revokeObjectURL(url); return; }
+  setTimeout(()=>URL.revokeObjectURL(url), 5000);
+  _midiaChannels[poloNome] = new BroadcastChannel('mcj-midia-'+poloNome);
+}
+
+function gerarHtmlTelaoPolo(poloNome){
+  const poloSafe = poloNome.split("'").join("\\'");
+  const SUPA_URL_TV = SUPA_URL;
+  const SUPA_KEY_TV = SUPA_KEY;
+  return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Telão — ${poloNome}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:white;font-family:'Georgia',serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
+#tela{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;position:relative;transition:all .5s}
+.idle{background:#1a0a00;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.idle-logo{font-size:60px;font-weight:bold;color:#C8873A;letter-spacing:4px}
+.idle-sub{font-size:20px;color:rgba(255,255,255,.4);letter-spacing:2px}
+.idle-polo{font-size:14px;color:rgba(255,255,255,.2);margin-top:8px;letter-spacing:3px;text-transform:uppercase}
+/* VÍDEO */
+.video-wrap{width:100%;height:100%;background:#000}
+.video-wrap iframe,.video-wrap video{width:100%;height:100%;border:none;object-fit:contain}
+/* SLIDES */
+.slide{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;position:relative;background-size:cover;background-position:center}
+.slide-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+.slide-content{position:relative;z-index:1;max-width:900px}
+.slide-titulo{font-size:64px;font-weight:bold;line-height:1.1;color:white;text-shadow:0 2px 20px rgba(0,0,0,.8);margin-bottom:20px}
+.slide-texto{font-size:32px;color:rgba(255,255,255,.9);line-height:1.5;text-shadow:0 1px 10px rgba(0,0,0,.8)}
+.slide-nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}
+.slide-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .2s}
+.slide-dot.active{background:white}
+/* MÚSICA */
+.musica-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:#0D0D0D;width:100%;height:100%}
+.musica-nota{font-size:80px;animation:pulsar 2s infinite}
+@keyframes pulsar{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.musica-titulo{font-size:36px;font-weight:bold;color:#C8873A}
+.musica-sub{font-size:16px;color:rgba(255,255,255,.4)}
+</style>
+</head>
+<body>
+<div id="tela">
+  <div class="idle" style="width:100%;height:100%">
+    <div class="idle-logo">MCJ</div>
+    <div class="idle-sub">Momentos com Jesus</div>
+    <div class="idle-polo">${poloNome}</div>
+  </div>
+</div>
+<script>
+const POLO = '${poloSafe}';
+const SUPA = '${SUPA_URL_TV}';
+const KEY  = '${SUPA_KEY_TV}';
+let slideAtual = 0;
+let slides = [];
+let slideTimer = null;
+let ultimoAtualizado = null;
+
+function mostrarIdle(){
+  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
+  document.getElementById('tela').innerHTML =
+    '<div class="idle" style="width:100%;height:100%">' +
+    '<div class="idle-logo">MCJ</div>' +
+    '<div class="idle-sub">Momentos com Jesus</div>' +
+    '<div class="idle-polo">'+POLO+'</div>' +
+    '</div>';
+}
+
+function normalizarUrl(url){
+  if(!url) return '';
+  if(url.indexOf('drive.google.com/file/d/')!==-1){
+    var parts = url.split('/file/d/');
+    if(parts[1]){
+      var id = parts[1].split('/')[0].split('?')[0];
+      return 'https://drive.google.com/file/d/'+id+'/preview';
+    }
+  }
+  return url;
+}
+
+function getYouTubeId(url){
+  if(!url) return null;
+  var u = url.replace('youtu.be/', 'youtube.com/watch?v=');
+  var idx = u.indexOf('v=');
+  if(idx===-1) idx = u.indexOf('embed/');
+  if(idx===-1) idx = u.indexOf('shorts/');
+  if(idx===-1) return null;
+  var id = u.substring(idx+2).split('&')[0].split('?')[0].split('/')[0];
+  return id.length===11 ? id : null;
+}
+
+function mostrarVideo(item){
+  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
+  const src = normalizarUrl(item.url||'');
+  const ytId = getYouTubeId(src);
+  const isDrive = src.indexOf('drive.google.com')!==-1;
+  let embed = '';
+  if(ytId){
+    embed = '<iframe src="https://www.youtube.com/embed/'+ytId+'?autoplay=1&controls=1&rel=0" allowfullscreen allow="autoplay; fullscreen" style="width:100%;height:100%;border:none"></iframe>';
+    document.getElementById('tela').innerHTML = '<div class="video-wrap">'+embed+'</div>';
+  } else if(isDrive){
+    // Drive não permite autoplay — mostra botão play que carrega o iframe
+    document.getElementById('tela').innerHTML =
+      '<div class="video-wrap" id="drive-wrap" style="position:relative;background:#000;display:flex;align-items:center;justify-content:center">' +
+      '<div onclick="carregarDrive(\''+src+'\')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:20px">' +
+      '<div style="width:100px;height:100px;border-radius:50%;background:rgba(200,135,58,.9);display:flex;align-items:center;justify-content:center">' +
+      '<span style="font-size:48px;margin-left:8px">▶</span></div>' +
+      '<div style="color:rgba(255,255,255,.7);font-size:18px">Clique para reproduzir</div>' +
+      '</div></div>';
+  } else {
+    embed = '<video src="'+src+'" autoplay controls style="width:100%;height:100%;object-fit:contain;background:#000"></video>';
+    document.getElementById('tela').innerHTML = '<div class="video-wrap">'+embed+'</div>';
+  }
+}
+
+function carregarDrive(src){
+  var wrap = document.getElementById('drive-wrap');
+  if(wrap) wrap.innerHTML = '<iframe src="'+src+'" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>';
+}
+
+function mostrarSlides(item){
+  slides = item.slides||[];
+  slideAtual = 0;
+  renderSlide();
+  if(slideTimer) clearInterval(slideTimer);
+  slideTimer = setInterval(function(){ slideAtual=(slideAtual+1)%slides.length; renderSlide(); }, 8000);
+}
+
+function renderSlide(){
+  const s = slides[slideAtual]||{};
+  const bgStyle = s.bg ? 'background-image:url("'+s.bg+'");background-size:cover;background-position:center' : 'background:linear-gradient(135deg,#1a0a00,#3D2410)';
+  let dots = '';
+  for(let i=0;i<slides.length;i++) dots += '<div class="slide-dot'+(i===slideAtual?' active':'')+'" onclick="slideAtual='+i+';renderSlide()"></div>';
+  document.getElementById('tela').innerHTML =
+    '<div class="slide" style="'+bgStyle+'">' +
+    '<div class="slide-overlay"></div>' +
+    '<div class="slide-content">' +
+    (s.titulo?'<div class="slide-titulo">'+s.titulo+'</div>':'') +
+    (s.texto?'<div class="slide-texto">'+s.texto+'</div>':'') +
+    '</div></div>' +
+    (slides.length>1?'<div class="slide-nav">'+dots+'</div>':'');
+}
+
+function mostrarMusica(item){
+  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
+  document.getElementById('tela').innerHTML =
+    '<div class="musica-wrap">' +
+    '<div class="musica-nota">🎵</div>' +
+    '<div class="musica-titulo">'+(item.titulo||'')+'</div>' +
+    (item.descricao?'<div class="musica-sub">'+item.descricao+'</div>':'') +
+    (item.url?'<audio src="'+item.url+'" autoplay controls style="margin-top:20px;width:300px"></audio>':'') +
+    '</div>';
+}
+
+function aplicar(data){
+  if(!data||data.tipo==='idle'){ mostrarIdle(); return; }
+  const item = data.conteudo||data;
+  if(!item||!item.tipo){ mostrarIdle(); return; }
+  if(item.tipo==='video')       mostrarVideo(item);
+  else if(item.tipo==='slide')  mostrarSlides(item);
+  else if(item.tipo==='musica') mostrarMusica(item);
+}
+
+// BroadcastChannel — instantâneo quando painel e telão estão na mesma máquina
+const bc = new BroadcastChannel('mcj-midia-'+POLO);
+bc.onmessage = function(e){ aplicar(e.data); };
+
+// Polling Supabase a cada 2s — fallback para outras máquinas
+async function pollEstado(){
+  try {
+    const r = await fetch(SUPA+'/rest/v1/midia_estado?polo=eq.'+encodeURIComponent(POLO)+'&limit=1',
+      {headers:{apikey:KEY,'Authorization':'Bearer '+KEY}});
+    const data = await r.json();
+    const row = data&&data[0];
+    if(!row) return;
+    if(row.atualizado_em!==ultimoAtualizado){
+      ultimoAtualizado = row.atualizado_em;
+      aplicar(row);
+    }
+  } catch(e){}
+}
+setInterval(pollEstado, 2000);
+pollEstado();
+
+document.addEventListener('keydown', function(e){
+  if(e.key==='f'||e.key==='F') document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+  if(e.key==='ArrowRight'&&slides.length>1){ slideAtual=(slideAtual+1)%slides.length; renderSlide(); }
+  if(e.key==='ArrowLeft' &&slides.length>1){ slideAtual=(slideAtual-1+slides.length)%slides.length; renderSlide(); }
+});
+document.getElementById('tela').addEventListener('dblclick', function(){
+  if(document.fullscreenElement) document.exitFullscreen&&document.exitFullscreen();
+  else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+});
+<\/script>
+</body>
+</html>`;
+}
 function renderRelatorios(){
   const wrap = document.getElementById('relatorios-wrap');
   if(!wrap) return;
@@ -3933,7 +4477,9 @@ function selecionarTurmaTipo(tipo, btn){
 ================================================================ */
 let _recPoloAtivo   = null;
 let _recTurmaAtiva  = 'Adulto';
-let _recSelecionados = new Set(); // emails selecionados
+let _recSelecionados = new Set();
+let _recBusca       = '';
+let _recCheckins    = new Set(); // ids com check-in feito
 
 function renderRecepcao(){
   const wrap = document.getElementById('recepcao-wrap');
@@ -3944,111 +4490,218 @@ function renderRecepcao(){
     ? POLOS
     : POLOS.filter(p=>SESSION.polos.includes(p.nome));
 
-  if(polosVis.length===0){
+  if(!polosVis.length){
     wrap.innerHTML='<p style="color:var(--gray-400);padding:1rem 0">Nenhum polo disponível.</p>';
     return;
   }
 
-  if(!_recPoloAtivo || !polosVis.find(p=>p.nome===_recPoloAtivo)){
+  if(!_recPoloAtivo || !polosVis.find(p=>p.nome===_recPoloAtivo))
     _recPoloAtivo = polosVis[0].nome;
-  }
 
-  // Seletor de polo
-  const poloTabsHtml = polosVis.length>1
-    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">${
-        polosVis.map(p=>{
-          const idx=POLOS.indexOf(p); const c=cor(idx);
-          return `<button onclick="selecionarRecPolo('${p.nome.replace(/'/g,"\\'")}',this)"
-            style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${_recPoloAtivo===p.nome?c.badge:'var(--gray-100)'};background:${_recPoloAtivo===p.nome?c.bg:'white'};color:${_recPoloAtivo===p.nome?c.text:'var(--gray-600)'}">
+  const polo   = polosVis.find(p=>p.nome===_recPoloAtivo)||polosVis[0];
+  const todos  = d.filter(x=>x.polo===polo.nome);
+  const total  = todos.length;
+  const presentes = todos.filter(x=>x.checkin).length;
+  const pagoPendente = todos.filter(x=>x.pagamento!=='Confirmado').length;
+
+  // Busca
+  const busca = _recBusca.trim().toLowerCase();
+  const filtrados = busca
+    ? todos.filter(x=>{
+        const nome   = (x.nome||'').toLowerCase();
+        const cracha = (x.cracha||'').toLowerCase();
+        return nome.includes(busca) || cracha.includes(busca);
+      })
+    : todos;
+
+  // Ordena alfabeticamente pelo crachá/nome
+  filtrados.sort((a,b)=>{
+    const nA=(a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
+    const nB=(b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
+    return nA.localeCompare(nB,'pt-BR');
+  });
+
+  // Tabs polo + botões de crachá na mesma linha
+  const poloTabs = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${polosVis.length>1 ? polosVis.map(p=>`
+          <button onclick="selecionarRecPolo('${p.nome.replace(/'/g,"\\'")}',this)"
+            style="padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${_recPoloAtivo===p.nome?'var(--mcj-gold)':'var(--gray-100)'};background:${_recPoloAtivo===p.nome?'var(--mcj-gold)':'white'};color:${_recPoloAtivo===p.nome?'white':'var(--gray-600)'}">
             ${p.nome}
-          </button>`;
-        }).join('')
-      }</div>`
-    : '';
-
-  const polo = polosVis.find(p=>p.nome===_recPoloAtivo)||polosVis[0];
-  const todos = d.filter(x=>x.polo===polo.nome);
-  const cl    = cor(POLOS.indexOf(polo));
-
-  // Abas Adulto/Mocidade
-  const turmaTabs = `
-    <div style="display:flex;gap:8px;margin-bottom:1rem">
-      <button class="turma-tab ${_recTurmaAtiva==='Adulto'?'active':''}" onclick="selecionarRecTurma('Adulto')">👤 Adulto (${todos.filter(p=>p.turma==='Adulto').length})</button>
-      <button class="turma-tab ${_recTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarRecTurma('Mocidade')">🌟 Mocidade (${todos.filter(p=>p.turma==='Mocidade').length})</button>
-    </div>`;
-
-  const inscritos = todos.filter(x=>x.turma===_recTurmaAtiva);
-
-  // Agrupa por sala (sem sala no final)
-  const salas = [...new Set(inscritos.filter(x=>x.sala&&x.sala!=='').map(x=>x.sala))].sort();
-  const semSala = inscritos.filter(x=>!x.sala||x.sala==='');
-
-  function linhaHtml(p,j){
-    const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
-    const pago = p.pagamento==='Confirmado';
-    const trab = p.trabalhador===true||p.trabalhador==='true';
-    const sel  = _recSelecionados.has(p.email+'|'+p.polo);
-    return `<tr class="${sel?'selecionado':''}">
-      <td class="th-check" style="text-align:center">
-        <input type="checkbox" class="rec-check" ${sel?'checked':''}
-          onchange="toggleRecSel('${p.email.replace(/'/g,"\\'")}','${p.polo.replace(/'/g,"\\'")}',this.checked,this.closest('tr'))"
-          onclick="event.stopPropagation()">
-      </td>
-      <td style="font-weight:700;color:var(--mcj-dark)">${nomeExibir}</td>
-      <td style="color:var(--gray-600);font-size:12px">${p.nome}</td>
-      <td style="text-align:center;font-size:12px">${calcularIdade(p.nascimento)!=='—'?calcularIdade(p.nascimento)+' a':'—'}</td>
-      <td><span class="${pago?'rec-pago-dot':'rec-pendente-dot'}"></span>${pago?'<span style="font-size:11px;color:var(--teal-600)">Pago</span>':'<span style="font-size:11px;color:var(--gray-400)">Pendente</span>'}</td>
-      <td style="font-size:12px;color:var(--gray-500);font-style:italic">${p.instituicao!=='—'?p.instituicao:''}</td>
-      <td style="font-size:11px;font-weight:600;color:${trab?'#4A1575':'var(--gray-400)'}">${trab?'🔧 Trab.':'Partic.'}</td>
-    </tr>`;
-  }
-
-  function salaBlock(nomeSala, lista){
-    if(!lista.length) return '';
-    return `<div class="rec-sala-section">
-      <div class="rec-sala-title">${nomeSala?`Sala ${nomeSala}`:'Sem sala atribuída'}</div>
-      <div class="table-scroll">
-      <table class="rec-table">
-        <thead><tr>
-          <th class="th-check"><input type="checkbox" class="rec-check" onchange="selecionarSala(this,'${nomeSala}','${polo.nome.replace(/'/g,"\\'")}','${_recTurmaAtiva}')"></th>
-          <th>Crachá</th><th>Nome completo</th><th>Idade</th><th>Pgto</th><th>Instituição</th><th>Função</th>
-        </tr></thead>
-        <tbody>${lista.map((p,j)=>linhaHtml(p,j)).join('')}</tbody>
-      </table>
+          </button>`).join('') : `<span style="font-size:15px;font-weight:700;color:var(--mcj-dark)">${polo.nome}</span>`}
       </div>
     </div>`;
-  }
 
-  const selectedCount = [..._recSelecionados].filter(k=>k.endsWith('|'+polo.nome)).length;
+  // Cards de resumo
+  const resumo = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:1.25rem">
+      <div style="background:white;border-radius:12px;border:1px solid var(--mcj-sand);padding:14px;text-align:center">
+        <div style="font-size:28px;font-weight:700;color:var(--mcj-dark)">${total}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:2px;text-transform:uppercase;letter-spacing:.5px">Inscritos</div>
+      </div>
+      <div style="background:white;border-radius:12px;border:1px solid #BBF7D0;padding:14px;text-align:center">
+        <div data-rec-presentes style="font-size:28px;font-weight:700;color:#15803D">${presentes}</div>
+        <div style="font-size:11px;color:#4ADE80;margin-top:2px;text-transform:uppercase;letter-spacing:.5px">Presentes</div>
+      </div>
+      <div style="background:white;border-radius:12px;border:1px solid var(--gray-100);padding:14px;text-align:center">
+        <div data-rec-aguardando style="font-size:28px;font-weight:700;color:var(--gray-400)">${total-presentes}</div>
+        <div style="font-size:11px;color:var(--gray-300);margin-top:2px;text-transform:uppercase;letter-spacing:.5px">Aguardando</div>
+      </div>
+      ${pagoPendente?`<div style="background:white;border-radius:12px;border:1px solid #FCD9A0;padding:14px;text-align:center">
+        <div style="font-size:28px;font-weight:700;color:#B45309">${pagoPendente}</div>
+        <div style="font-size:11px;color:#F59E0B;margin-top:2px;text-transform:uppercase;letter-spacing:.5px">Pag. Pendente</div>
+      </div>`:''}
+    </div>`;
+
+  // Barra de busca
+  const barraBusca = `
+    <div style="position:relative;margin-bottom:1rem">
+      <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gray-300);pointer-events:none">🔍</span>
+      <input type="text" id="rec-busca-input" value="${esc(_recBusca)}"
+        oninput="_recBusca=this.value;recAtualizarLista()"
+        onkeydown="if(event.key==='Escape'){_recBusca='';this.value='';recAtualizarLista();}"
+        placeholder="Buscar por nome ou crachá..."
+        style="width:100%;padding:12px 14px 12px 42px;border:1.5px solid var(--gray-100);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;background:white;outline:none">
+      <button onclick="_recBusca='';document.getElementById('rec-busca-input').value='';recAtualizarLista()"
+        style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-300);font-size:22px;cursor:pointer;line-height:1;display:${_recBusca?'block':'none'}" id="rec-busca-clear">×</button>
+    </div>`;
+
+  // Lista será preenchida por recAtualizarLista()
+  const listaHtml = '';
 
   wrap.innerHTML = `
-    ${poloTabsHtml}
-    <div class="rec-actions-bar">
-      <span class="rec-select-count">${selectedCount>0?`<strong>${selectedCount}</strong> selecionado${selectedCount!==1?'s':''}`:'Selecione os inscritos para gerar crachás'}</span>
-      ${selectedCount>0?`
-        <button onclick="gerarCrachasSelecao('${polo.nome.replace(/'/g,"\\'")}','${_recTurmaAtiva}')"
-          style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Raleway',sans-serif">
-          🪪 Gerar Crachás (${selectedCount})
-        </button>
-        <button onclick="limparSelecao()" style="padding:8px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">Limpar seleção</button>`:''}
-      <button onclick="selecionarTodos('${polo.nome.replace(/'/g,"\\'")}','${_recTurmaAtiva}')"
-        style="margin-left:auto;padding:8px 14px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--gray-600);font-family:'Raleway',sans-serif">
-        Selecionar todos
-      </button>
-    </div>
-    ${turmaTabs}
-    <div class="rec-polo-section">
-      ${salas.map(s=>salaBlock(s, inscritos.filter(x=>x.sala===s).sort((a,b)=>{
-        const nA=(a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
-        const nB=(b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
-        return nA.localeCompare(nB,'pt-BR');
-      }))).join('')}
-      ${salaBlock('', semSala.sort((a,b)=>{
-        const nA=(a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
-        const nB=(b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
-        return nA.localeCompare(nB,'pt-BR');
-      }))}
+    ${poloTabs}
+    ${resumo}
+    ${barraBusca}
+    <div id="rec-lista-contador" style="font-size:11px;color:var(--gray-400);margin-bottom:8px">${filtrados.length} inscrito${filtrados.length!==1?'s':''} ${busca?'encontrado'+(filtrados.length!==1?'s':''):'no polo'}</div>
+    <div id="rec-lista-wrap" style="display:flex;flex-direction:column;gap:8px">
+      ${listaHtml}
     </div>`;
+
+  setTimeout(()=>{ const el=document.getElementById('rec-busca-input'); if(el) el.focus(); },50);
+  recAtualizarLista();
+}
+
+function recBuscaInput(val){ _recBusca=val; renderRecepcao(); }
+function limparBuscaRec(){ _recBusca=''; renderRecepcao(); }
+
+function recAtualizarLista(){
+  const clearBtn = document.getElementById('rec-busca-clear');
+  if(clearBtn) clearBtn.style.display = _recBusca ? 'block' : 'none';
+
+  const d = getIns();
+  const polosVis = SESSION.role==='admin' ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+  const polo = polosVis.find(p=>p.nome===_recPoloAtivo)||polosVis[0];
+  if(!polo) return;
+
+  const todos  = d.filter(x=>x.polo===polo.nome);
+  const busca  = _recBusca.trim().toLowerCase();
+
+  const filtrados = busca
+    ? todos.filter(x=>(x.nome||'').toLowerCase().includes(busca)||(x.cracha||'').toLowerCase().includes(busca))
+    : todos;
+
+  filtrados.sort((a,b)=>{
+    const nA=(a.cracha&&a.cracha.trim()?a.cracha:a.nome).toLowerCase();
+    const nB=(b.cracha&&b.cracha.trim()?b.cracha:b.nome).toLowerCase();
+    return nA.localeCompare(nB,'pt-BR');
+  });
+
+  const aguardando = filtrados.filter(x=>!x.checkin);
+  const presentes  = filtrados.filter(x=>x.checkin);
+
+  const contador = document.getElementById('rec-lista-contador');
+  if(contador) contador.textContent = `${filtrados.length} inscrito${filtrados.length!==1?'s':''} ${busca?'encontrado'+(filtrados.length!==1?'s':''):'no polo'}`;
+
+  const listaWrap = document.getElementById('rec-lista-wrap');
+  if(!listaWrap) return;
+
+  function cardHtml(p){
+    const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
+    const pago   = p.pagamento==='Confirmado';
+    const trab   = p.trabalhador===true||p.trabalhador==='true';
+    const checkin= p.checkin||false;
+    const idSafe = (p.id||'').replace(/'/g,"\\'");
+    return `
+    <div id="rec-card-${p.id||p.email.replace(/[^a-z0-9]/gi,'_')}"
+      style="background:white;border-radius:12px;border:1.5px solid ${checkin?'#BBF7D0':'var(--gray-100)'};padding:12px 14px;display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;border-radius:50%;background:${checkin?'#10B981':'var(--gray-100)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;color:white;font-weight:bold">
+        ${checkin?'✓':''}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:15px;color:var(--mcj-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nomeExibir}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:1px;display:flex;gap:8px;flex-wrap:wrap">
+          ${p.nome!==nomeExibir?`<span>${p.nome}</span>`:''}
+          <span>${p.turma||'—'}${p.sala?' · Sala '+p.sala:''}</span>
+          ${p.almoco==='Sim'?'<span style="color:#B45309">🍽 Almoço</span>':''}
+          ${trab?'<span style="color:#5B21B6">🔧 Trab.</span>':''}
+        </div>
+      </div>
+      <span style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:8px;background:${pago?'#ECFDF5':'#FFF7ED'};color:${pago?'#065F46':'#92400E'};flex-shrink:0">
+        ${pago?'✓ Pago':'Pendente'}
+      </span>
+      <button onclick="fazerCheckin('${idSafe}','${p.email.replace(/'/g,"\\'")}','${p.polo.replace(/'/g,"\\'")}',${checkin})"
+        style="flex-shrink:0;padding:8px 16px;border-radius:10px;border:none;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:${checkin?'#F0FDF4':'var(--mcj-gold)'};color:${checkin?'#15803D':'white'};white-space:nowrap">
+        ${checkin?'↩ Desfazer':'Check-in'}
+      </button>
+    </div>`;
+  }
+
+  const grupoAguardando = aguardando.length
+    ? `<div style="margin-bottom:1rem">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);margin-bottom:8px;font-family:'Inter',sans-serif">
+          ⏳ Aguardando — ${aguardando.length}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">${aguardando.map(cardHtml).join('')}</div>
+      </div>`
+    : `<div style="text-align:center;padding:1.5rem;color:#15803D;font-size:14px;background:#F0FDF4;border-radius:12px;border:1px solid #BBF7D0;margin-bottom:1rem">
+        ✅ Todos os inscritos já fizeram check-in!
+      </div>`;
+
+  const grupoPresentes = presentes.length
+    ? `<div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#15803D;margin-bottom:8px;font-family:'Inter',sans-serif">
+          ✓ Presentes — ${presentes.length}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">${presentes.map(cardHtml).join('')}</div>
+      </div>`
+    : '';
+
+  listaWrap.innerHTML = filtrados.length===0
+    ? `<div style="text-align:center;padding:2rem;color:var(--gray-400);font-size:14px">
+        ${busca?`Nenhum resultado para "<strong>${busca}</strong>"`:'Nenhum inscrito neste polo.'}
+      </div>`
+    : grupoAguardando + grupoPresentes;
+}
+
+async function fazerCheckin(id, email, polo, jaPresente){
+  if(jaPresente){
+    if(!confirm('Desfazer check-in desta pessoa?')) return;
+  }
+  const novoStatus = !jaPresente;
+  const d = getIns();
+  const idx = id
+    ? d.findIndex(x=>x.id===id)
+    : d.findIndex(x=>x.email===email&&x.polo===polo);
+  if(idx<0) return;
+  d[idx].checkin = novoStatus;
+  d[idx].checkin_em = novoStatus ? new Date().toLocaleString('pt-BR') : '';
+  _cache.inscricoes = [...d];
+  await atualizarInscricao(email, polo, {
+    checkin: novoStatus,
+    checkin_em: novoStatus ? new Date().toLocaleString('pt-BR') : ''
+  }, id);
+
+  // Atualiza resumo
+  const todos    = d.filter(x=>x.polo===polo);
+  const presentes= todos.filter(x=>x.checkin).length;
+  const el1 = document.querySelector('[data-rec-presentes]');
+  const el2 = document.querySelector('[data-rec-aguardando]');
+  if(el1) el1.textContent = presentes;
+  if(el2) el2.textContent = todos.length - presentes;
+
+  recAtualizarLista();
 }
 
 function selecionarRecPolo(nome){ _recPoloAtivo=nome; renderRecepcao(); }
@@ -4129,6 +4782,110 @@ function getCrachaCfg(){
     rodapeCor: '#A08060',
     rodapeBg:  '#FAF5EF',
   };
+}
+
+function gerarCrachasEvangelizacao(poloNome){
+  const cfg = getCrachaCfg();
+  const e   = _cfgEvento;
+  const polo = POLOS.find(p=>p.nome===poloNome)||{};
+  const salasEvang = polo.salas_evang||[];
+  const d = getIns();
+
+  // Coleta todas as crianças do polo
+  const criancas = [];
+  d.filter(x=>x.polo===poloNome&&x.criancas?.length).forEach(ins=>{
+    ins.criancas.forEach(c=>{
+      if(!c.nome) return;
+      const idade = calcularIdadeNumero(c.nasc);
+      const sala  = salasEvang.find(s=>idade>=s.idade_de&&idade<=s.idade_ate)?.nome||'—';
+      criancas.push({ ...c, responsavel: ins.nome, responsavel_tel: ins.telefone, sala, idade });
+    });
+  });
+
+  if(!criancas.length){ alert('Nenhuma criança inscrita neste polo.'); return; }
+
+  // Ordena por sala depois nome
+  criancas.sort((a,b)=>{
+    if(a.sala!==b.sala) return (a.sala||'').localeCompare(b.sala||'','pt-BR');
+    return (a.nome||'').localeCompare(b.nome||'','pt-BR');
+  });
+
+  const topoBg    = '#15803D';
+  const tituloCor = '#BBF7D0';
+  const topoStyle = `background:${topoBg}`;
+
+  function crachaCriancaHtml(c){
+    const nomeExibir = c.cracha&&c.cracha.trim() ? c.cracha.trim() : c.nome;
+    return `<div class="cracha">
+
+      <!-- 20%: TOPO VERDE — EVENTO + EVANGELIZAÇÃO -->
+      <div class="c-topo" style="background:#166534;flex-direction:column;gap:2px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#4ADE80;text-transform:uppercase">👶 Evangelização</div>
+        <div class="c-evento" style="color:#BBF7D0">${(e.titulo||'MCJ 2026').replace(/\s*\d{4}$/,'')}</div>
+        <div class="c-ano" style="color:#4ADE80">${(e.titulo||'MCJ 2026').match(/\d{4}/)?.[0]||'2026'}</div>
+      </div>
+
+      <!-- 10%: SALA E FAIXA ETÁRIA -->
+      <div class="c-temas" style="background:#F0FDF4">
+        <div class="c-tema-item" style="text-align:center;flex:1">
+          <div class="c-tema-label" style="color:#4ADE80">Sala</div>
+          <div class="c-tema-val" style="color:#166534;font-size:11px">${c.sala}</div>
+        </div>
+        <div class="c-tema-sep" style="background:#BBF7D0"></div>
+        <div class="c-tema-item" style="text-align:center;flex:1">
+          <div class="c-tema-label" style="color:#4ADE80">Idade</div>
+          <div class="c-tema-val" style="color:#166534">${c.idade!==null?c.idade+' anos':'—'}</div>
+        </div>
+        <div class="c-tema-sep" style="background:#BBF7D0"></div>
+        <div class="c-tema-item" style="text-align:center;flex:1">
+          <div class="c-tema-label" style="color:#4ADE80">Polo</div>
+          <div class="c-tema-val" style="color:#166534;font-size:8px">${poloNome}</div>
+        </div>
+      </div>
+
+      <!-- 25%: NOME DA CRIANÇA -->
+      <div class="c-nome-wrap" style="background:white">
+        <div class="c-nome" style="font-size:${cfg.nomeSize||40}px;color:#166534">${nomeExibir}</div>
+        ${(c.cracha&&c.cracha.trim()&&c.cracha!==c.nome)?`<div class="c-nome-completo" style="color:#4ADE80">${c.nome}</div>`:''}
+      </div>
+
+      <!-- 10%: NASCIMENTO -->
+      <div class="c-info-row" style="background:#F0FDF4;border-top:0.5px solid #BBF7D0;border-bottom:0.5px solid #BBF7D0">
+        <div class="c-info-item">
+          <div class="c-info-label" style="color:#4ADE80">Nascimento</div>
+          <div class="c-info-val" style="color:#166534;font-size:11px">${c.nasc||'—'}</div>
+        </div>
+      </div>
+
+      <!-- 25%: RESPONSÁVEL -->
+      <div class="c-obs" style="background:white;justify-content:center">
+        <div class="c-obs-label" style="color:#4ADE80">Responsável</div>
+        <div style="font-size:16px;font-weight:700;color:#166534;margin-top:4px;line-height:1.2">${c.responsavel}</div>
+        ${c.responsavel_tel?`<div style="font-size:11px;color:var(--gray-400);margin-top:4px">📞 ${c.responsavel_tel}</div>`:''}
+      </div>
+
+      <!-- 10%: RODAPÉ -->
+      <div class="c-rodape" style="background:#166534">
+        <span class="c-badge" style="background:#BBF7D0;color:#166534;border:none">👶 Evangelização</span>
+        <div class="c-rodape-dir" style="color:#4ADE80">${e.data||''}</div>
+      </div>
+
+    </div>`;
+  }
+
+  const pairs = criancas.map(c=>`<div class="par">${crachaCriancaHtml(c)}</div>`);
+  let pagesHtml = '';
+  for(let i=0; i<pairs.length; i+=4)
+    pagesHtml += `<div class="pagina">${pairs.slice(i,i+4).join('')}</div>`;
+
+  const css = document.querySelector('style')?.textContent||'';
+  const win = window.open('','_blank');
+  if(!win){ alert('Permita pop-ups.'); return; }
+  win.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+    <title>Crachás Evangelização — ${poloNome}</title>
+    <style>${css}</style></head><body>${pagesHtml}</body></html>`);
+  win.document.close();
+  win.onload = ()=>{ win.focus(); win.print(); };
 }
 
 function gerarCrachas(){
@@ -4216,11 +4973,14 @@ function gerarCrachas(){
       <!-- 25%: OBSERVAÇÕES -->
       <div class="c-obs">
         <div class="c-obs-label">Observações</div>
-        <div class="c-obs-linhas">
-          <div class="c-obs-linha"></div>
-          <div class="c-obs-linha"></div>
-          <div class="c-obs-linha"></div>
-        </div>
+        ${p.observacao
+          ? `<div class="c-obs-texto">${p.observacao}</div>`
+          : `<div class="c-obs-linhas">
+              <div class="c-obs-linha"></div>
+              <div class="c-obs-linha"></div>
+              <div class="c-obs-linha"></div>
+            </div>`
+        }
       </div>
 
       <!-- 10%: RODAPÉ — ALMOÇO + DATA + FUNÇÃO -->
@@ -4344,6 +5104,7 @@ body{font-family:'Georgia',serif;background:white;-webkit-print-color-adjust:exa
 .c-obs-label{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:#C8C0B0;margin-bottom:4px;font-family:'Helvetica',sans-serif}
 .c-obs-linhas{flex:1;display:flex;flex-direction:column;justify-content:space-around}
 .c-obs-linha{border-bottom:0.5px solid #E8DDD0}
+.c-obs-texto{font-size:10px;color:#3D2410;line-height:1.5;padding-top:2px}
 
 /* 10% — RODAPÉ */
 .c-rodape{height:10%;display:flex;align-items:center;justify-content:space-between;padding:3px 8px}
@@ -4824,9 +5585,35 @@ function toggleDropdownSetor(id, event){
   const dd = document.getElementById(id);
   if(!dd) return;
   const isOpen = dd.classList.contains('open');
-  // fecha todos os outros dropdowns abertos
+
+  // Fecha todos
   document.querySelectorAll('.setor-dropdown.open').forEach(el=>el.classList.remove('open'));
-  if(!isOpen) dd.classList.add('open');
+  if(isOpen) return;
+
+  // Move para o body para evitar overflow:hidden dos pais
+  if(dd.parentElement !== document.body) document.body.appendChild(dd);
+
+  // Posiciona
+  const btn = event.currentTarget;
+  const rect = btn.getBoundingClientRect();
+
+  dd.style.position = 'fixed';
+  dd.style.top  = (rect.bottom + 4) + 'px';
+  dd.style.left = rect.left + 'px';
+  dd.style.width= Math.max(rect.width, 220) + 'px';
+  dd.style.zIndex = '9999';
+  dd.classList.add('open');
+
+  // Fecha ao clicar fora
+  setTimeout(()=>{
+    const handler = e=>{
+      if(!dd.contains(e.target)){
+        dd.classList.remove('open');
+        document.removeEventListener('click', handler);
+      }
+    };
+    document.addEventListener('click', handler);
+  }, 50);
 }
 
 // fecha qualquer dropdown aberto ao clicar fora
@@ -5043,8 +5830,9 @@ function editarInscricao(email, poloNome, id){
   document.getElementById('ei-instituicao').value= p.instituicao&&p.instituicao!=='—'?p.instituicao:'';
   document.getElementById('ei-turma').value      = p.turma||'Adulto';
   document.getElementById('ei-polo').value       = p.polo||poloNome;
-  document.getElementById('ei-almoco').value     = p.almoco||'Não';
+  document.getElementById('ei-almoco').value       = p.almoco||'Não';
   document.getElementById('ei-almoco-valor').value = p.almoco_valor||'';
+  document.getElementById('ei-observacao').value   = p.observacao||'';
 
   const ov = document.getElementById('edit-ins-overlay');
   ov.classList.add('show');
@@ -5073,6 +5861,7 @@ async function salvarEdicaoInscricao(){
     turma:        document.getElementById('ei-turma')?.value||'Adulto',
     almoco:       document.getElementById('ei-almoco')?.value||'Não',
     almoco_valor: document.getElementById('ei-almoco-valor')?.value.trim()||'',
+    observacao:   document.getElementById('ei-observacao')?.value.trim()||'',
   };
 
   // Atualiza cache local usando email+polo originais como chave
@@ -5895,6 +6684,7 @@ let _avalPolo  = '';
 let _avalSala  = '';
 let _avalNotas = {};
 let _avalComentario = '';
+let _avalComentarios = {}; // comentários por seção
 
 function renderAvaliacao(){
   const wrap = document.getElementById('aval-form-wrap');
@@ -5977,6 +6767,12 @@ function renderAvaliacao(){
                 onclick="setNota('${chave}',${j},${n})">★</span>`).join('')}
           </div>
         </div>`).join('')}
+      <div style="margin-top:8px">
+        <div class="aval-criterio-label" style="margin-bottom:6px">💬 Comentários sobre esta seção (opcional)</div>
+        <textarea id="aval-comentario-${chave}"
+          style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-100);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;resize:vertical;min-height:60px;background:var(--gray-50)"
+          placeholder="Deixe aqui suas impressões ou sugestões sobre ${titulo.replace(/<[^>]*>/g,'').replace(/[📋🌅🌆]/g,'').trim()}...">${_avalComentarios?.[chave]||''}</textarea>
+      </div>
     </div>`;
   }
 
@@ -5988,8 +6784,8 @@ function renderAvaliacao(){
       ${secaoHtml('tarde', tituloTarde, getAvalCriterios().tarde, 'data-titulo-exp="tarde"')}
     </div>
     <div class="aval-card">
-      <div class="aval-criterio-label">💬 Comentários e sugestões (opcional)</div>
-      <textarea class="aval-comment" id="aval-comentario" placeholder="Escreva aqui suas impressões, sugestões ou críticas...">${_avalComentario}</textarea>
+      <div class="aval-criterio-label">💬 Comentários gerais e sugestões (opcional)</div>
+      <textarea class="aval-comment" id="aval-comentario" placeholder="Escreva aqui suas impressões gerais, sugestões ou críticas...">${_avalComentario}</textarea>
     </div>
     <button class="aval-submit" onclick="enviarAvaliacao()">Enviar avaliação ✓</button>`;
 }
@@ -6074,6 +6870,13 @@ async function enviarAvaliacao(){
   const cfg   = (polo?.expositores_salas||{})[_avalSala]||{};
   const comentario = document.getElementById('aval-comentario')?.value.trim()||'';
 
+  // Coleta comentários por seção
+  const comentariosSec = {};
+  ['evento','manha','tarde'].forEach(chave=>{
+    const el = document.getElementById('aval-comentario-'+chave);
+    if(el && el.value.trim()) comentariosSec[chave] = el.value.trim();
+  });
+
   const payload = {
     polo: _avalPolo,
     turma: _avalSala,
@@ -6081,6 +6884,7 @@ async function enviarAvaliacao(){
     expositor_tarde:  cfg.tarde||'',
     notas: _avalNotas,
     comentario,
+    comentarios_secoes: comentariosSec,
     data_resposta: new Date().toISOString(),
   };
 
