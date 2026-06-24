@@ -1001,6 +1001,26 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           </table>
         </div>
       </div>
+      <!-- Mídia -->
+      <div class="users-table-wrap">
+        <div class="users-table-title">🎬 Mídia — acesso somente à aba Mídia</div>
+        <div class="users-table-scroll">
+          <table class="users-table">
+            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="tbody-midias"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Financeiro -->
+      <div class="users-table-wrap">
+        <div class="users-table-title">💰 Financeiro — acesso somente à aba Inscrições</div>
+        <div class="users-table-scroll">
+          <table class="users-table">
+            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="tbody-financeiros"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1021,6 +1041,8 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           <option value="admin_polo">Administrador de Polo</option>
           <option value="coord">Coordenador</option>
           <option value="recepcao">Recepção</option>
+          <option value="midia">Mídia</option>
+          <option value="financeiro">Financeiro</option>
         </select>
       </div>
       <div class="user-field">
@@ -2530,7 +2552,9 @@ function aplicarEscopoAdmin(){
   const isAdminPolo = SESSION.role==='admin_polo';
   const isCoord     = SESSION.role==='coord';
   const isRecepcao  = SESSION.role==='recepcao';
-  const temPolo     = isAdminPolo || isCoord || isRecepcao;
+  const isMidia     = SESSION.role==='midia';
+  const isFinanceiro= SESSION.role==='financeiro';
+  const temPolo     = isAdminPolo || isCoord || isRecepcao || isMidia || isFinanceiro;
 
   document.getElementById('bar-admin').style.display = isAdmin?'flex':'none';
   document.getElementById('bar-coord').style.display = temPolo?'flex':'none';
@@ -2546,36 +2570,37 @@ function aplicarEscopoAdmin(){
   }
 
   // Visibilidade das abas por perfil
-  document.getElementById('atab-inscricoes').style.display  = isRecepcao?'none':'';
-  document.getElementById('atab-turmas').style.display      = isRecepcao?'none':'';
-  document.getElementById('atab-equipe').style.display      = isRecepcao?'none':'';
-  document.getElementById('atab-recepcao').style.display    = '';
-  document.getElementById('atab-comunicacao').style.display = isRecepcao?'none':'';
-  document.getElementById('atab-config').style.display      = (isAdmin||isAdminPolo)?'':'none';
+  document.getElementById('atab-inscricoes').style.display  = (isRecepcao||isMidia)?'none':'';
+  document.getElementById('atab-turmas').style.display      = (isRecepcao||isMidia||isFinanceiro)?'none':'';
+  document.getElementById('atab-equipe').style.display      = (isRecepcao||isMidia||isFinanceiro)?'none':'';
+  document.getElementById('atab-recepcao').style.display    = (isMidia||isFinanceiro)?'none':'';
+  document.getElementById('atab-comunicacao').style.display = (isRecepcao||isMidia||isFinanceiro)?'none':'';
+  document.getElementById('atab-config').style.display      = (isAdmin||isAdminPolo||isCoord)?'':'none';
   document.getElementById('atab-evento').style.display              = isAdmin?'':'none';
   document.getElementById('atab-expositores-admin').style.display   = isAdmin?'':'none';
-  document.getElementById('atab-avaliacao').style.display           = isAdmin?'':'none';
-  document.getElementById('atab-usuarios').style.display            = isAdmin?'':'none';
-  document.getElementById('atab-relatorios').style.display          = isAdmin?'':'none';
-  document.getElementById('atab-midia').style.display              = isAdmin?'':'none';
+  document.getElementById('atab-avaliacao').style.display           = (isAdmin||isAdminPolo||isCoord)?'':'none';
+  document.getElementById('atab-usuarios').style.display            = (isAdmin||isAdminPolo||isCoord)?'':'none';
+  document.getElementById('atab-relatorios').style.display          = (isAdmin||isAdminPolo||isCoord)?'':'none';
+  document.getElementById('atab-midia').style.display               = (isAdmin||isMidia||isAdminPolo||isCoord)?'':'none';
 
-  // Recepção: abre direto na aba recepção
-  if(isRecepcao){
-    switchAdminTab('recepcao', document.getElementById('atab-recepcao'));
-  }
+  if(isRecepcao)  switchAdminTab('recepcao',   document.getElementById('atab-recepcao'));
+  if(isMidia)     switchAdminTab('midia',       document.getElementById('atab-midia'));
+  if(isFinanceiro)switchAdminTab('inscricoes',  document.getElementById('atab-inscricoes'));
 
   document.getElementById('admin-panel-title').textContent = isAdmin
     ? 'Painel de inscrições'
-    : isRecepcao
-      ? 'Recepção — '+SESSION.polos.join(', ')
-      : 'Inscrições — '+SESSION.polos.join(', ');
+    : isRecepcao   ? 'Recepção — '+SESSION.polos.join(', ')
+    : isMidia      ? 'Mídia — '+SESSION.polos.join(', ')
+    : isFinanceiro ? 'Financeiro — '+SESSION.polos.join(', ')
+    : 'Inscrições — '+SESSION.polos.join(', ');
 }
 
 function switchAdminTab(id, btn){
   const role = SESSION.role;
-  if(role==='recepcao' && id!=='recepcao') return;
-  if(role==='coord'      && (id==='usuarios'||id==='config'||id==='evento'||id==='expositores-admin'||id==='avaliacao')) return;
-  if(role==='admin_polo' && (id==='usuarios'||id==='evento'||id==='expositores-admin'||id==='avaliacao')) return;
+  if(role==='recepcao'   && id!=='recepcao') return;
+  if(role==='midia'      && id!=='midia') return;
+  if(role==='financeiro' && id!=='inscricoes') return;
+  if((role==='coord'||role==='admin_polo') && (id==='evento'||id==='expositores-admin')) return;
 
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.atab-btn').forEach(b=>b.classList.remove('active'));
@@ -2855,14 +2880,37 @@ function abrirUserModal(id){
   document.getElementById('u-nome').value    = u?.nome||'';
   document.getElementById('u-login').value   = u?.login||'';
   document.getElementById('u-senha').value   = u?.senha||'';
-  document.getElementById('u-role').value    = u?.role||'coord';
   document.getElementById('u-status').value  = u?.status||'ativo';
 
-  // Gera checkboxes dos polos
+  // Filtra opções de role conforme quem está criando
+  const isCoordCriando = SESSION.role==='coord'||SESSION.role==='admin_polo';
+  const roleSelect = document.getElementById('u-role');
+  if(isCoordCriando){
+    // Coord só pode criar: recepcao, midia, financeiro
+    roleSelect.innerHTML = `
+      <option value="recepcao">Recepção</option>
+      <option value="midia">Mídia</option>
+      <option value="financeiro">Financeiro</option>`;
+  } else {
+    roleSelect.innerHTML = `
+      <option value="admin">Administrador Geral</option>
+      <option value="admin_polo">Administrador de Polo</option>
+      <option value="coord">Coordenador</option>
+      <option value="recepcao">Recepção</option>
+      <option value="midia">Mídia</option>
+      <option value="financeiro">Financeiro</option>`;
+  }
+  roleSelect.value = u?.role||(isCoordCriando?'recepcao':'coord');
+
+  // Filtra polos disponíveis — coord só vê seus polos
+  const polosDisponiveis = isCoordCriando
+    ? POLOS.filter(p=>SESSION.polos.includes(p.nome))
+    : POLOS;
+
   const chkWrap = document.getElementById('u-polos-checkboxes');
   if(chkWrap){
-    chkWrap.innerHTML = POLOS.map((p,i)=>{
-      const cl = cor(i);
+    chkWrap.innerHTML = polosDisponiveis.map((p,i)=>{
+      const cl = cor(POLOS.indexOf(p));
       const chk = (u?.polos||[]).includes(p.nome);
       return `<label class="polo-checkbox-label${chk?' checked':''}" id="pclbl-${i}">
         <input type="checkbox" value="${esc(p.nome)}" ${chk?'checked':''} onchange="this.closest('label').classList.toggle('checked',this.checked)">
@@ -2890,13 +2938,15 @@ function fecharUserModal(){
 function onRoleChange(){
   const r = document.getElementById('u-role')?.value;
   const polosField = document.getElementById('u-polos-field');
-  const temPolo = r==='admin_polo'||r==='coord'||r==='recepcao';
+  const temPolo = r==='admin_polo'||r==='coord'||r==='recepcao'||r==='midia'||r==='financeiro';
   if(polosField) polosField.style.display = temPolo?'flex':'none';
   const note = document.getElementById('coord-scope-note');
   if(note){
     if(r==='admin_polo')  note.textContent='O administrador de polo terá acesso total ao polo (inscrições, turmas, equipe, recepção e configuração).';
     else if(r==='coord')  note.textContent='O coordenador poderá acessar inscrições, recepção, turmas e equipe nos polos selecionados.';
     else if(r==='recepcao') note.textContent='O usuário de recepção terá acesso somente à aba Recepção nos polos selecionados.';
+    else if(r==='midia')  note.textContent='O usuário de mídia terá acesso somente à aba Mídia nos polos selecionados.';
+    else if(r==='financeiro') note.textContent='O usuário financeiro terá acesso somente à aba Inscrições nos polos selecionados.';
     else note.textContent='';
   }
 }
@@ -2907,7 +2957,7 @@ async function salvarUsuario(){
   const senha = document.getElementById('u-senha')?.value.trim()||'';
   const role  = document.getElementById('u-role')?.value||'coord';
   const status= document.getElementById('u-status')?.value||'ativo';
-  const polos = (role==='admin_polo'||role==='coord'||role==='recepcao')
+  const polos = (role==='admin_polo'||role==='coord'||role==='recepcao'||role==='midia'||role==='financeiro')
     ? [...document.querySelectorAll('#u-polos-checkboxes input:checked')].map(c=>c.value)
     : [];
 
@@ -3202,11 +3252,20 @@ function renderSummary(){
    RENDER — USUÁRIOS
 ================================================================ */
 function renderUsuarios(){
-  const users  = getUsers();
+  const allUsers = getUsers();
+  const isCoordCriando = SESSION.role==='coord'||SESSION.role==='admin_polo';
+
+  // Coord só vê usuários dos seus polos
+  const users = isCoordCriando
+    ? allUsers.filter(u=>(u.polos||[]).some(p=>SESSION.polos.includes(p)))
+    : allUsers;
+
   const admins     = users.filter(u=>u.role==='admin');
   const adminPolos = users.filter(u=>u.role==='admin_polo');
   const coords     = users.filter(u=>u.role==='coord');
   const recepcoes  = users.filter(u=>u.role==='recepcao');
+  const midias       = users.filter(u=>u.role==='midia');
+  const financeiros  = users.filter(u=>u.role==='financeiro');
 
   function rowsFor(list, showPolos){
     if(!list.length) return '<tr class="empty-row"><td colspan="5">Nenhum usuário nesta categoria.</td></tr>';
@@ -3224,7 +3283,11 @@ function renderUsuarios(){
 
   const tbA = document.getElementById('tbody-admins');
   if(tbA){
-    const all = [{id:'__master__',login:ADMIN_USER,nome:'Administrador Principal',role:'admin',status:'ativo',polos:[]},...admins];
+    const wrapA = tbA.closest('.users-table-wrap');
+    if(isCoordCriando){ if(wrapA) wrapA.style.display='none'; }
+    else {
+      if(wrapA) wrapA.style.display='';
+      const all = [{id:'__master__',login:ADMIN_USER,nome:'Administrador Principal',role:'admin',status:'ativo',polos:[]},...admins];
     tbA.innerHTML = all.map(u=>`<tr>
       <td><strong>${u.login}</strong></td>
       <td>${u.nome||'—'}</td>
@@ -3236,17 +3299,23 @@ function renderUsuarios(){
           <button class="btn-user-del" onclick="excluirUsuario('${u.id}')">Remover</button>`}
       </td>
     </tr>`).join('');
+    } // end else
   }
 
   const tbP = document.getElementById('tbody-admin-polos');
-  if(tbP) tbP.innerHTML = rowsFor(adminPolos, true);
+  if(tbP){ const wP=tbP.closest('.users-table-wrap'); if(isCoordCriando&&wP) wP.style.display='none'; else { if(wP) wP.style.display=''; tbP.innerHTML=rowsFor(adminPolos,true); } }
 
   const tbC = document.getElementById('tbody-coords');
-  if(tbC) tbC.innerHTML = rowsFor(coords, true);
+  if(tbC){ const wC=tbC.closest('.users-table-wrap'); if(isCoordCriando&&wC) wC.style.display='none'; else { if(wC) wC.style.display=''; tbC.innerHTML=rowsFor(coords,true); } }
 
-  // Recepção
   const tbR = document.getElementById('tbody-recepcoes');
   if(tbR) tbR.innerHTML = rowsFor(recepcoes, true);
+
+  const tbM = document.getElementById('tbody-midias');
+  if(tbM) tbM.innerHTML = rowsFor(midias, true);
+
+  const tbF = document.getElementById('tbody-financeiros');
+  if(tbF) tbF.innerHTML = rowsFor(financeiros, true);
 }
 
 /* ================================================================
@@ -3993,198 +4062,171 @@ function abrirTelaTelaoPolo(poloNome){
 }
 
 function gerarHtmlTelaoPolo(poloNome){
-  const poloSafe = poloNome.split("'").join("\\'");
-  const SUPA_URL_TV = SUPA_URL;
-  const SUPA_KEY_TV = SUPA_KEY;
-  return `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Telão — ${poloNome}</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#000;color:white;font-family:'Georgia',serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
-#tela{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;position:relative;transition:all .5s}
-.idle{background:#1a0a00;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.idle-logo{font-size:60px;font-weight:bold;color:#C8873A;letter-spacing:4px}
-.idle-sub{font-size:20px;color:rgba(255,255,255,.4);letter-spacing:2px}
-.idle-polo{font-size:14px;color:rgba(255,255,255,.2);margin-top:8px;letter-spacing:3px;text-transform:uppercase}
-/* VÍDEO */
-.video-wrap{width:100%;height:100%;background:#000}
-.video-wrap iframe,.video-wrap video{width:100%;height:100%;border:none;object-fit:contain}
-/* SLIDES */
-.slide{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;position:relative;background-size:cover;background-position:center}
-.slide-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55)}
-.slide-content{position:relative;z-index:1;max-width:900px}
-.slide-titulo{font-size:64px;font-weight:bold;line-height:1.1;color:white;text-shadow:0 2px 20px rgba(0,0,0,.8);margin-bottom:20px}
-.slide-texto{font-size:32px;color:rgba(255,255,255,.9);line-height:1.5;text-shadow:0 1px 10px rgba(0,0,0,.8)}
-.slide-nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}
-.slide-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .2s}
-.slide-dot.active{background:white}
-/* MÚSICA */
-.musica-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:#0D0D0D;width:100%;height:100%}
-.musica-nota{font-size:80px;animation:pulsar 2s infinite}
-@keyframes pulsar{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.musica-titulo{font-size:36px;font-weight:bold;color:#C8873A}
-.musica-sub{font-size:16px;color:rgba(255,255,255,.4)}
-</style>
-</head>
-<body>
-<div id="tela">
-  <div class="idle" style="width:100%;height:100%">
-    <div class="idle-logo">MCJ</div>
-    <div class="idle-sub">Momentos com Jesus</div>
-    <div class="idle-polo">${poloNome}</div>
-  </div>
-</div>
-<script>
-const POLO = '${poloSafe}';
-const SUPA = '${SUPA_URL_TV}';
-const KEY  = '${SUPA_KEY_TV}';
-let slideAtual = 0;
-let slides = [];
-let slideTimer = null;
-let ultimoAtualizado = null;
+  const poloSafe     = poloNome.split("'").join("\\'");
+  const SUPA_URL_TV  = SUPA_URL;
+  const SUPA_KEY_TV  = SUPA_KEY;
 
-function mostrarIdle(){
-  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
-  document.getElementById('tela').innerHTML =
-    '<div class="idle" style="width:100%;height:100%">' +
+  const css = [
+    '*{box-sizing:border-box;margin:0;padding:0}',
+    'body{background:#000;color:white;font-family:Georgia,serif;overflow:hidden;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}',
+    '#tela{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;position:relative}',
+    '.idle{background:#1a0a00;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;width:100%;height:100%}',
+    '.idle-logo{font-size:60px;font-weight:bold;color:#C8873A;letter-spacing:4px}',
+    '.idle-sub{font-size:20px;color:rgba(255,255,255,.4);letter-spacing:2px}',
+    '.idle-polo{font-size:14px;color:rgba(255,255,255,.2);margin-top:8px;letter-spacing:3px;text-transform:uppercase}',
+    '.video-wrap{width:100%;height:100%;background:#000}',
+    '.video-wrap iframe,.video-wrap video{width:100%;height:100%;border:none;object-fit:contain}',
+    '.slide{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px;position:relative;background-size:cover;background-position:center}',
+    '.slide-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55)}',
+    '.slide-content{position:relative;z-index:1;max-width:900px}',
+    '.slide-titulo{font-size:64px;font-weight:bold;line-height:1.1;color:white;text-shadow:0 2px 20px rgba(0,0,0,.8);margin-bottom:20px}',
+    '.slide-texto{font-size:32px;color:rgba(255,255,255,.9);line-height:1.5;text-shadow:0 1px 10px rgba(0,0,0,.8)}',
+    '.slide-nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}',
+    '.slide-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:background .2s}',
+    '.slide-dot.active{background:white}',
+    '.musica-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:#0D0D0D;width:100%;height:100%}',
+    '.musica-nota{font-size:80px}',
+    '.musica-titulo{font-size:36px;font-weight:bold;color:#C8873A}',
+    '.musica-sub{font-size:16px;color:rgba(255,255,255,.4)}'
+  ].join('\n');
+
+  const js = [
+    "var POLO='" + poloSafe + "';",
+    "var SUPA='" + SUPA_URL_TV + "';",
+    "var KEY='"  + SUPA_KEY_TV + "';",
+    "var slideAtual=0,slides=[],slideTimer=null,ultimoAtualizado=null;",
+
+    "function mostrarIdle(){",
+    "  if(slideTimer){clearInterval(slideTimer);slideTimer=null;}",
+    "  document.getElementById('tela').innerHTML=",
+    "    '<div class=idle><div class=idle-logo>MCJ</div>' +",
+    "    '<div class=idle-sub>Momentos com Jesus</div>' +",
+    "    '<div class=idle-polo>'+POLO+'</div></div>';",
+    "}",
+
+    "function normalizarUrl(url){",
+    "  if(!url)return '';",
+    "  if(url.indexOf('drive.google.com/file/d/')!==-1){",
+    "    var p=url.split('/file/d/');",
+    "    if(p[1]){var id=p[1].split('/')[0].split('?')[0];return 'https://drive.google.com/file/d/'+id+'/preview';}",
+    "  }",
+    "  return url;",
+    "}",
+
+    "function getYouTubeId(url){",
+    "  if(!url)return null;",
+    "  if(url.indexOf('youtu.be/')!==-1){var id=url.split('youtu.be/')[1].split('?')[0].split('&')[0];return id.length===11?id:null;}",
+    "  if(url.indexOf('v=')!==-1){var id=url.split('v=')[1].split('&')[0].split('#')[0];return id.length===11?id:null;}",
+    "  if(url.indexOf('/embed/')!==-1){var id=url.split('/embed/')[1].split('?')[0];return id.length===11?id:null;}",
+    "  if(url.indexOf('/shorts/')!==-1){var id=url.split('/shorts/')[1].split('?')[0];return id.length===11?id:null;}",
+    "  return null;",
+    "}",
+
+    "function mostrarVideo(item){",
+    "  if(slideTimer){clearInterval(slideTimer);slideTimer=null;}",
+    "  var src=normalizarUrl(item.url||'');",
+    "  var ytId=getYouTubeId(src);",
+    "  var isDrive=src.indexOf('drive.google.com')!==-1;",
+    "  var embed='';",
+    "  if(ytId){",
+    "    embed='<iframe src=\"https://www.youtube.com/embed/'+ytId+'?autoplay=1&controls=1&rel=0\" allowfullscreen allow=\"autoplay; fullscreen\" style=\"width:100%;height:100%;border:none\"></iframe>';",
+    "    document.getElementById('tela').innerHTML='<div class=video-wrap>'+embed+'</div>';",
+    "  } else if(isDrive){",
+    "    document.getElementById('tela').innerHTML=",
+    "      '<div class=video-wrap id=drive-wrap style=\"display:flex;align-items:center;justify-content:center;background:#111\">'+",
+    "      '<div onclick=\"carregarDrive('+JSON.stringify(src)+')\" style=\"cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:20px\">'+",
+    "      '<div style=\"width:100px;height:100px;border-radius:50%;background:rgba(200,135,58,.9);display:flex;align-items:center;justify-content:center;font-size:48px\">&#9654;</div>'+",
+    "      '<div style=\"color:rgba(255,255,255,.7);font-size:18px\">Clique para reproduzir</div>'+",
+    "      '</div></div>';",
+    "  } else {",
+    "    embed='<video src=\"'+src+'\" autoplay controls style=\"width:100%;height:100%;object-fit:contain;background:#000\"></video>';",
+    "    document.getElementById('tela').innerHTML='<div class=video-wrap>'+embed+'</div>';",
+    "  }",
+    "}",
+
+    "function carregarDrive(src){",
+    "  var w=document.getElementById('drive-wrap');",
+    "  if(w)w.innerHTML='<iframe src=\"'+src+'\" allowfullscreen allow=autoplay style=\"width:100%;height:100%;border:none\"></iframe>';",
+    "}",
+
+    "function mostrarSlides(item){",
+    "  slides=item.slides||[];slideAtual=0;renderSlide();",
+    "  if(slideTimer)clearInterval(slideTimer);",
+    "  slideTimer=setInterval(function(){slideAtual=(slideAtual+1)%slides.length;renderSlide();},8000);",
+    "}",
+
+    "function renderSlide(){",
+    "  var s=slides[slideAtual]||{};",
+    "  var bg=s.bg?'background-image:url('+JSON.stringify(s.bg)+');background-size:cover;background-position:center':'background:linear-gradient(135deg,#1a0a00,#3D2410)';",
+    "  var dots='';for(var i=0;i<slides.length;i++)dots+='<div class=\"slide-dot'+(i===slideAtual?' active':'')+'\" onclick=\"slideAtual='+i+';renderSlide()\"></div>';",
+    "  document.getElementById('tela').innerHTML=",
+    "    '<div class=slide style=\"'+bg+'\">'+",
+    "    '<div class=slide-overlay></div>'+",
+    "    '<div class=slide-content>'+",
+    "    (s.titulo?'<div class=slide-titulo>'+s.titulo+'</div>':'')+",
+    "    (s.texto?'<div class=slide-texto>'+s.texto+'</div>':'')+",
+    "    '</div></div>'+",
+    "    (slides.length>1?'<div class=slide-nav>'+dots+'</div>':'');",
+    "}",
+
+    "function mostrarMusica(item){",
+    "  if(slideTimer){clearInterval(slideTimer);slideTimer=null;}",
+    "  document.getElementById('tela').innerHTML=",
+    "    '<div class=musica-wrap>'+",
+    "    '<div class=musica-nota>&#127925;</div>'+",
+    "    '<div class=musica-titulo>'+(item.titulo||'')+'</div>'+",
+    "    (item.descricao?'<div class=musica-sub>'+item.descricao+'</div>':'')+",
+    "    (item.url?'<audio src=\"'+item.url+'\" autoplay controls style=\"margin-top:20px;width:300px\"></audio>':'')+",
+    "    '</div>';",
+    "}",
+
+    "function aplicar(data){",
+    "  if(!data||data.tipo==='idle'){mostrarIdle();return;}",
+    "  var item=data.conteudo||data;",
+    "  if(!item||!item.tipo){mostrarIdle();return;}",
+    "  if(item.tipo==='video')mostrarVideo(item);",
+    "  else if(item.tipo==='slide')mostrarSlides(item);",
+    "  else if(item.tipo==='musica')mostrarMusica(item);",
+    "}",
+
+    "var bc=new BroadcastChannel('mcj-midia-'+POLO);",
+    "bc.onmessage=function(e){aplicar(e.data);};",
+
+    "async function pollEstado(){",
+    "  try{",
+    "    var r=await fetch(SUPA+'/rest/v1/midia_estado?polo=eq.'+encodeURIComponent(POLO)+'&limit=1',",
+    "      {headers:{apikey:KEY,'Authorization':'Bearer '+KEY}});",
+    "    var data=await r.json();",
+    "    var row=data&&data[0];",
+    "    if(!row)return;",
+    "    if(row.atualizado_em!==ultimoAtualizado){ultimoAtualizado=row.atualizado_em;aplicar(row);}",
+    "  }catch(e){}",
+    "}",
+    "setInterval(pollEstado,2000);",
+    "pollEstado();",
+
+    "document.addEventListener('keydown',function(e){",
+    "  if(e.key==='f'||e.key==='F')document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();",
+    "  if(e.key==='ArrowRight'&&slides.length>1){slideAtual=(slideAtual+1)%slides.length;renderSlide();}",
+    "  if(e.key==='ArrowLeft'&&slides.length>1){slideAtual=(slideAtual-1+slides.length)%slides.length;renderSlide();}",
+    "});",
+    "document.getElementById('tela').addEventListener('dblclick',function(){",
+    "  if(document.fullscreenElement)document.exitFullscreen&&document.exitFullscreen();",
+    "  else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();",
+    "});"
+  ].join('\n');
+
+  return '<!DOCTYPE html>\n<html lang="pt-BR">\n<head>\n<meta charset="UTF-8">\n' +
+    '<title>Telao - ' + poloNome + '</title>\n' +
+    '<style>\n' + css + '\n</style>\n</head>\n<body>\n' +
+    '<div id="tela"><div class="idle" style="width:100%;height:100%">' +
     '<div class="idle-logo">MCJ</div>' +
     '<div class="idle-sub">Momentos com Jesus</div>' +
-    '<div class="idle-polo">'+POLO+'</div>' +
-    '</div>';
+    '<div class="idle-polo">' + poloNome + '</div>' +
+    '</div></div>\n' +
+    '<script>\n' + js + '\n</scr'+'ipt>\n</body>\n</html>';
 }
 
-function normalizarUrl(url){
-  if(!url) return '';
-  if(url.indexOf('drive.google.com/file/d/')!==-1){
-    var parts = url.split('/file/d/');
-    if(parts[1]){
-      var id = parts[1].split('/')[0].split('?')[0];
-      return 'https://drive.google.com/file/d/'+id+'/preview';
-    }
-  }
-  return url;
-}
-
-function getYouTubeId(url){
-  if(!url) return null;
-  var u = url.replace('youtu.be/', 'youtube.com/watch?v=');
-  var idx = u.indexOf('v=');
-  if(idx===-1) idx = u.indexOf('embed/');
-  if(idx===-1) idx = u.indexOf('shorts/');
-  if(idx===-1) return null;
-  var id = u.substring(idx+2).split('&')[0].split('?')[0].split('/')[0];
-  return id.length===11 ? id : null;
-}
-
-function mostrarVideo(item){
-  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
-  const src = normalizarUrl(item.url||'');
-  const ytId = getYouTubeId(src);
-  const isDrive = src.indexOf('drive.google.com')!==-1;
-  let embed = '';
-  if(ytId){
-    embed = '<iframe src="https://www.youtube.com/embed/'+ytId+'?autoplay=1&controls=1&rel=0" allowfullscreen allow="autoplay; fullscreen" style="width:100%;height:100%;border:none"></iframe>';
-    document.getElementById('tela').innerHTML = '<div class="video-wrap">'+embed+'</div>';
-  } else if(isDrive){
-    // Drive não permite autoplay — mostra botão play que carrega o iframe
-    document.getElementById('tela').innerHTML =
-      '<div class="video-wrap" id="drive-wrap" style="position:relative;background:#000;display:flex;align-items:center;justify-content:center">' +
-      '<div onclick="carregarDrive(\''+src+'\')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:20px">' +
-      '<div style="width:100px;height:100px;border-radius:50%;background:rgba(200,135,58,.9);display:flex;align-items:center;justify-content:center">' +
-      '<span style="font-size:48px;margin-left:8px">▶</span></div>' +
-      '<div style="color:rgba(255,255,255,.7);font-size:18px">Clique para reproduzir</div>' +
-      '</div></div>';
-  } else {
-    embed = '<video src="'+src+'" autoplay controls style="width:100%;height:100%;object-fit:contain;background:#000"></video>';
-    document.getElementById('tela').innerHTML = '<div class="video-wrap">'+embed+'</div>';
-  }
-}
-
-function carregarDrive(src){
-  var wrap = document.getElementById('drive-wrap');
-  if(wrap) wrap.innerHTML = '<iframe src="'+src+'" allowfullscreen allow="autoplay" style="width:100%;height:100%;border:none"></iframe>';
-}
-
-function mostrarSlides(item){
-  slides = item.slides||[];
-  slideAtual = 0;
-  renderSlide();
-  if(slideTimer) clearInterval(slideTimer);
-  slideTimer = setInterval(function(){ slideAtual=(slideAtual+1)%slides.length; renderSlide(); }, 8000);
-}
-
-function renderSlide(){
-  const s = slides[slideAtual]||{};
-  const bgStyle = s.bg ? 'background-image:url("'+s.bg+'");background-size:cover;background-position:center' : 'background:linear-gradient(135deg,#1a0a00,#3D2410)';
-  let dots = '';
-  for(let i=0;i<slides.length;i++) dots += '<div class="slide-dot'+(i===slideAtual?' active':'')+'" onclick="slideAtual='+i+';renderSlide()"></div>';
-  document.getElementById('tela').innerHTML =
-    '<div class="slide" style="'+bgStyle+'">' +
-    '<div class="slide-overlay"></div>' +
-    '<div class="slide-content">' +
-    (s.titulo?'<div class="slide-titulo">'+s.titulo+'</div>':'') +
-    (s.texto?'<div class="slide-texto">'+s.texto+'</div>':'') +
-    '</div></div>' +
-    (slides.length>1?'<div class="slide-nav">'+dots+'</div>':'');
-}
-
-function mostrarMusica(item){
-  if(slideTimer){ clearInterval(slideTimer); slideTimer=null; }
-  document.getElementById('tela').innerHTML =
-    '<div class="musica-wrap">' +
-    '<div class="musica-nota">🎵</div>' +
-    '<div class="musica-titulo">'+(item.titulo||'')+'</div>' +
-    (item.descricao?'<div class="musica-sub">'+item.descricao+'</div>':'') +
-    (item.url?'<audio src="'+item.url+'" autoplay controls style="margin-top:20px;width:300px"></audio>':'') +
-    '</div>';
-}
-
-function aplicar(data){
-  if(!data||data.tipo==='idle'){ mostrarIdle(); return; }
-  const item = data.conteudo||data;
-  if(!item||!item.tipo){ mostrarIdle(); return; }
-  if(item.tipo==='video')       mostrarVideo(item);
-  else if(item.tipo==='slide')  mostrarSlides(item);
-  else if(item.tipo==='musica') mostrarMusica(item);
-}
-
-// BroadcastChannel — instantâneo quando painel e telão estão na mesma máquina
-const bc = new BroadcastChannel('mcj-midia-'+POLO);
-bc.onmessage = function(e){ aplicar(e.data); };
-
-// Polling Supabase a cada 2s — fallback para outras máquinas
-async function pollEstado(){
-  try {
-    const r = await fetch(SUPA+'/rest/v1/midia_estado?polo=eq.'+encodeURIComponent(POLO)+'&limit=1',
-      {headers:{apikey:KEY,'Authorization':'Bearer '+KEY}});
-    const data = await r.json();
-    const row = data&&data[0];
-    if(!row) return;
-    if(row.atualizado_em!==ultimoAtualizado){
-      ultimoAtualizado = row.atualizado_em;
-      aplicar(row);
-    }
-  } catch(e){}
-}
-setInterval(pollEstado, 2000);
-pollEstado();
-
-document.addEventListener('keydown', function(e){
-  if(e.key==='f'||e.key==='F') document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
-  if(e.key==='ArrowRight'&&slides.length>1){ slideAtual=(slideAtual+1)%slides.length; renderSlide(); }
-  if(e.key==='ArrowLeft' &&slides.length>1){ slideAtual=(slideAtual-1+slides.length)%slides.length; renderSlide(); }
-});
-document.getElementById('tela').addEventListener('dblclick', function(){
-  if(document.fullscreenElement) document.exitFullscreen&&document.exitFullscreen();
-  else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
-});
-<\/script>
-</body>
-</html>`;
-}
 function renderRelatorios(){
   const wrap = document.getElementById('relatorios-wrap');
   if(!wrap) return;
