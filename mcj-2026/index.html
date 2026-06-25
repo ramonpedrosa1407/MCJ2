@@ -1497,21 +1497,46 @@ async function setUsers(){
 
 async function setCfgEvento(){
   try {
-    if(supaConfigurado())
-      await supa('POST','config', [{ id:'evento', dados: _cfgEvento }]);
+    if(supaConfigurado()){
+      const id = window._EVENTO_OVERRIDE?.id ? window._EVENTO_OVERRIDE.id : 'main';
+      await supa('POST','config', [{ id, dados: _cfgEvento }]);
+    }
   } catch(e){ console.error('setCfgEvento error:', e); }
 }
 
 async function carregarConfig(){
   if(!supaConfigurado()){ POLOS=[...POLOS_DEFAULT]; return; }
   try {
-    const rows = await supa('GET','config?select=dados&id=eq.main');
-    if(rows && rows[0]?.dados && Array.isArray(rows[0].dados)){
-      POLOS = rows[0].dados;
+    // Se for um evento novo (via _EVENTO_OVERRIDE), busca config do Supabase pelo evento_id
+    const eventoId = window._EVENTO_OVERRIDE?.id;
+    if(eventoId){
+      // Busca config do evento na tabela eventos
+      const evRows = await supa('GET','eventos?id=eq.'+eventoId+'&select=config');
+      if(evRows?.[0]?.config){
+        const cfg = evRows[0].config;
+        if(cfg.titulo)    _cfgEvento.titulo    = cfg.titulo;
+        if(cfg.subtitulo) _cfgEvento.subtitulo = cfg.subtitulo;
+        if(cfg.data)      _cfgEvento.data      = cfg.data;
+        if(cfg.horario)   _cfgEvento.horario   = cfg.horario;
+        if(cfg.local)     _cfgEvento.local     = cfg.local;
+      }
+      // Busca polos do evento (config salva no Supabase)
+      const cfgRows = await supa('GET','config?select=dados&id=eq.'+eventoId);
+      if(cfgRows?.[0]?.dados && Array.isArray(cfgRows[0].dados)){
+        POLOS = cfgRows[0].dados;
+      } else {
+        POLOS = []; // evento novo começa sem polos
+      }
     } else {
-      POLOS = JSON.parse(JSON.stringify(POLOS_DEFAULT));
+      // MCJ padrão
+      const rows = await supa('GET','config?select=dados&id=eq.main');
+      if(rows?.[0]?.dados && Array.isArray(rows[0].dados)){
+        POLOS = rows[0].dados;
+      } else {
+        POLOS = JSON.parse(JSON.stringify(POLOS_DEFAULT));
+      }
     }
-  } catch(e){ POLOS=JSON.parse(JSON.stringify(POLOS_DEFAULT)); console.error('carregarConfig:',e); }
+  } catch(e){ POLOS = window._EVENTO_OVERRIDE ? [] : JSON.parse(JSON.stringify(POLOS_DEFAULT)); console.error('carregarConfig:',e); }
   _cache.config = POLOS;
 }
 
@@ -2220,16 +2245,28 @@ let _cfgEvento = {
 // Aplica override se o evento foi criado pelo portal (não é o MCJ padrão)
 if(window._EVENTO_OVERRIDE){
   const ov = window._EVENTO_OVERRIDE;
-  if(ov.titulo)    _cfgEvento.titulo    = ov.titulo;
-  if(ov.subtitulo) _cfgEvento.subtitulo = ov.subtitulo;
-  if(ov.data)      _cfgEvento.data      = ov.data;
-  if(ov.horario)   _cfgEvento.horario   = ov.horario;
-  if(ov.local)     _cfgEvento.local     = ov.local;
-  if(ov.thumb)     _cfgEvento.thumb     = ov.thumb;
-  if(ov.video_abertura) _cfgEvento.video_url = ov.video_abertura;
+  if(ov.titulo)         _cfgEvento.titulo         = ov.titulo;
+  if(ov.subtitulo)      _cfgEvento.subtitulo      = ov.subtitulo;
+  if(ov.data)           _cfgEvento.data           = ov.data;
+  if(ov.horario)        _cfgEvento.horario        = ov.horario;
+  if(ov.local)          _cfgEvento.local          = ov.local;
+  if(ov.thumb)          _cfgEvento.thumb          = ov.thumb;
+  if(ov.video_abertura) _cfgEvento.video_url      = ov.video_abertura;
   if(ov.cor_primaria && _cfgEvento.design) _cfgEvento.design.cor_primaria = ov.cor_primaria;
   _cfgEvento._evento_id   = ov.id;
   _cfgEvento._evento_slug = ov.slug;
+
+  // Evento novo — começa virgem sem polos e sem dados do MCJ
+  // Os temas, expositores e demais configs são zerados
+  _cfgEvento.tema_manha = '';
+  _cfgEvento.tema_tarde = '';
+  _cfgEvento.expositores_lista = [];
+  _cfgEvento.campos_extras = [];
+  _cfgEvento.materiais = [];
+  _cfgEvento.inscricao_sub = 'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.';
+
+  // Zera POLOS_DEFAULT para evento novo começar sem polos
+  POLOS_DEFAULT.length = 0;
 }
 
 /* ═══════════ FIM ═══════════ */
