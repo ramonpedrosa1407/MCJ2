@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jornada Espírita — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,600;0,700;0,800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dark:#1a0a00;--gold:#C8873A;--mid:#6B4C2A;--cream:#FDF8F3;--sand:#E8DDD0;
+  --gray-50:#FAF7F4;--gray-100:#F0EAE0;--gray-300:#C8B8A0;--gray-400:#A08060;
+  --gray-500:#7A5A3A;--gray-600:#5A3A1A;--green:#10B981;--red:#EF4444;
+}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
+
+/* LOGIN */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);padding:1rem}
+.login-box{background:white;border-radius:20px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.login-logo{font-family:'EB Garamond',Georgia,serif;font-size:32px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--gray-400);margin-bottom:2rem}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field label{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
+.field input{padding:11px 14px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;outline:none}
+.field input:focus{border-color:var(--gold)}
+.btn{width:100%;padding:13px;background:var(--gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
+.err{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px;font-size:13px;color:#991B1B;display:none;margin-bottom:8px}
+
+/* HEADER */
+.header{background:var(--dark);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-logo{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white;display:flex;align-items:center;gap:8px}
+.header-logo span{color:var(--gold)}
+.header-right{display:flex;align-items:center;gap:12px}
+.header-user{font-size:12px;color:rgba(255,255,255,.5)}
+.header-logout{padding:6px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:white;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.page-title{font-family:'EB Garamond',Georgia,serif;font-size:28px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--gray-400);margin-bottom:2rem}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:2rem}
+.stat-card{background:white;border-radius:12px;border:1px solid var(--sand);padding:1.25rem}
+.stat-num{font-size:32px;font-weight:700;color:var(--dark)}
+.stat-lbl{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* ACTIONS */
+.actions-bar{display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap}
+.btn-add{padding:10px 20px;background:var(--gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-add:hover{opacity:.9}
+
+/* EVENTOS TABLE */
+.eventos-table-wrap{background:white;border-radius:14px;border:1px solid var(--sand);overflow:hidden}
+.table-header{padding:1rem 1.25rem;border-bottom:1px solid var(--sand);display:flex;align-items:center;justify-content:space-between}
+.table-title{font-size:14px;font-weight:600;color:var(--dark)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);padding:10px 14px;text-align:left;border-bottom:1px solid var(--gray-100)}
+td{font-size:13px;padding:12px 14px;color:var(--dark);border-bottom:1px solid var(--gray-50);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase}
+.badge-green{background:#ECFDF5;color:#065F46}
+.badge-gray{background:var(--gray-100);color:var(--gray-500)}
+.btn-table{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif}
+.btn-acessar{background:var(--gold);color:white}
+.btn-editar{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
+.btn-toggle{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
+
+/* MODAL CRIAR EVENTO */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem}
+.overlay.show{display:flex}
+.modal{background:white;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-head{background:var(--dark);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;position:sticky;top:0}
+.modal-head h3{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white}
+.modal-body{padding:1.5rem;display:flex;flex-direction:column;gap:12px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-field{display:flex;flex-direction:column;gap:5px}
+.form-field label{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
+.form-field input,.form-field select,.form-field textarea{padding:10px 12px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;outline:none}
+.form-field input:focus,.form-field select:focus{border-color:var(--gold)}
+.modal-foot{padding:1rem 1.25rem;border-top:1px solid var(--sand);display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{padding:10px 18px;background:white;border:1px solid var(--sand);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-save{padding:10px 18px;background:var(--gold);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.progress-wrap{background:var(--gray-50);border-radius:10px;padding:1rem;border:1px solid var(--sand);display:none}
+.progress-bar{height:6px;background:var(--sand);border-radius:3px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .3s;width:0%}
+.progress-msg{font-size:12px;color:var(--gray-400)}
+.slug-preview{font-size:11px;color:var(--gold);margin-top:3px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Jornada <span>Espírita</span></div>
+    <div class="login-sub">Dashboard — Área Administrativa</div>
+    <div class="err" id="login-err">Credenciais inválidas.</div>
+    <div class="field"><label>Usuário</label><input type="text" id="login-u" placeholder="admin"></div>
+    <div class="field"><label>Senha</label><input type="password" id="login-p" placeholder="••••••" onkeydown="if(event.key==='Enter')login()"></div>
+    <div class="field"><label>GitHub Token (para publicar eventos)</label><input type="password" id="login-gh" placeholder="ghp_..."></div>
+    <button class="btn" onclick="login()">Entrar →</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none">
+  <div class="header">
+    <div class="header-logo">Jornada <span>Espírita</span></div>
+    <div class="header-right">
+      <span class="header-user">Admin Master</span>
+      <button class="header-logout" onclick="sair()">Sair</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub">Gerencie todos os eventos da plataforma</div>
+
+    <div class="stats" id="stats-wrap">
+      <div class="stat-card"><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Total de eventos</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-ativos">—</div><div class="stat-lbl">Eventos ativos</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-inscritos">—</div><div class="stat-lbl">Inscrições totais</div></div>
+    </div>
+
+    <div class="actions-bar">
+      <button class="btn-add" onclick="abrirModalCriar()">+ Criar novo evento</button>
+    </div>
+
+    <div class="eventos-table-wrap">
+      <div class="table-header">
+        <span class="table-title">📋 Todos os eventos</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Evento</th><th>Slug / URL</th><th>Data</th><th>Inscrições</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="tbody-eventos"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CRIAR EVENTO -->
+<div class="overlay" id="modal-criar" onclick="if(event.target===this)fecharModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3>✨ Criar novo evento</h3>
+      <button onclick="fecharModal()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-field" style="grid-column:1/-1">
+          <label>Nome do evento *</label>
+          <input type="text" id="ev-nome" placeholder="Ex: MCJ 2027" oninput="gerarSlug()">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Slug (URL do evento) *</label>
+        <input type="text" id="ev-slug" placeholder="mcj-2027">
+        <span class="slug-preview" id="slug-preview">jornadaespirita.com.br/mcj-2027</span>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Subtítulo</label>
+          <input type="text" id="ev-sub" placeholder="Ex: Momentos com Jesus">
+        </div>
+        <div class="form-field">
+          <label>Data do evento</label>
+          <input type="text" id="ev-data" placeholder="Ex: 20 de setembro de 2027">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Horário</label>
+          <input type="text" id="ev-hora" placeholder="Ex: 8h às 18h">
+        </div>
+        <div class="form-field">
+          <label>Local</label>
+          <input type="text" id="ev-local" placeholder="Ex: Rio de Janeiro">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Cor primária (hex)</label>
+        <input type="color" id="ev-cor" value="#C8873A" style="height:44px;padding:4px 8px;cursor:pointer">
+      </div>
+
+      <!-- PROGRESSO -->
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-msg" id="progress-msg">Criando evento...</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-save" onclick="criarEvento()" id="btn-criar">✨ Criar evento</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL = 'https://sdwxwdqnfukxeofscmpd.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
+const GH_TOKEN = localStorage.getItem('je_gh_token')||'';
+const GH_REPO  = 'ramonpedrosa1407/MCJ2';
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'mcj2026@rj';
+
+let _logado = false;
+let _eventos = [];
+
+// AUTH
+function login(){
+  const u = document.getElementById('login-u').value.trim();
+  const p = document.getElementById('login-p').value;
+  if(u===ADMIN_USER && p===ADMIN_PASS){
+    const gh = document.getElementById('login-gh').value.trim();
+    if(gh) localStorage.setItem('je_gh_token', gh);
+    _logado = true;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    carregarDados();
+  } else {
+    const err = document.getElementById('login-err');
+    err.style.display='block';
+    setTimeout(()=>err.style.display='none',3000);
+  }
+}
+function sair(){ location.reload(); }
+
+// SUPABASE
+async function supa(method, path, body){
+  const opts = { method, headers:{ apikey:SUPA_KEY, 'Authorization':'Bearer '+SUPA_KEY, 'Content-Type':'application/json', 'Prefer':'return=representation' } };
+  if(body) opts.body = JSON.stringify(body);
+  const r = await fetch(SUPA_URL+'/rest/v1/'+path, opts);
+  if(!r.ok){ const t=await r.text(); throw new Error(t); }
+  return r.json();
+}
+
+// CARREGAR DADOS
+async function carregarDados(){
+  try {
+    _eventos = await supa('GET','eventos?select=*&order=criado_em.desc') || [];
+    const inscritos = await supa('GET','inscricoes?select=evento_id') || [];
+    document.getElementById('stat-total').textContent  = _eventos.length;
+    document.getElementById('stat-ativos').textContent = _eventos.filter(e=>e.ativo).length;
+    document.getElementById('stat-inscritos').textContent = inscritos.length;
+    renderTabela();
+  } catch(e){ console.warn(e); }
+}
+
+function renderTabela(){
+  const tb = document.getElementById('tbody-eventos');
+  if(!_eventos.length){
+    tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado ainda.</td></tr>';
+    return;
+  }
+  tb.innerHTML = _eventos.map(e=>{
+    const cfg = e.config||{};
+    return '<tr>' +
+      '<td><strong>'+e.nome+'</strong><br><span style="font-size:11px;color:var(--gray-400)">'+(cfg.subtitulo||'')+'</span></td>' +
+      '<td><a href="/'+e.slug+'" target="_blank" style="color:var(--gold);font-size:12px">jornadaespirita.com.br/'+e.slug+'</a></td>' +
+      '<td style="font-size:12px">'+(cfg.data||'—')+'</td>' +
+      '<td style="font-size:12px">—</td>' +
+      '<td><span class="badge '+(e.ativo?'badge-green':'badge-gray')+'">'+(e.ativo?'Ativo':'Inativo')+'</span></td>' +
+      '<td style="display:flex;gap:6px">' +
+      '<button class="btn-table btn-acessar" onclick="window.open(\'/'+e.slug+'\',\'_blank\')">Acessar</button>' +
+      '<button class="btn-table btn-toggle" onclick="toggleEvento(\''+e.id+'\','+e.ativo+')">'+(e.ativo?'Desativar':'Ativar')+'</button>' +
+      '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+async function toggleEvento(id, ativo){
+  await supa('PATCH','eventos?id=eq.'+id,{ativo:!ativo});
+  carregarDados();
+}
+
+// MODAL CRIAR
+function abrirModalCriar(){
+  document.getElementById('modal-criar').classList.add('show');
+  document.getElementById('ev-nome').focus();
+}
+function fecharModal(){
+  document.getElementById('modal-criar').classList.remove('show');
+  document.getElementById('progress-wrap').style.display='none';
+  document.getElementById('btn-criar').disabled=false;
+  document.getElementById('btn-criar').textContent='✨ Criar evento';
+}
+
+function gerarSlug(){
+  const nome = document.getElementById('ev-nome').value;
+  const slug = nome.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s-]/g,'')
+    .trim().replace(/\s+/g,'-');
+  document.getElementById('ev-slug').value = slug;
+  document.getElementById('slug-preview').textContent = 'jornadaespirita.com.br/' + (slug||'...');
+}
+
+function setProgress(pct, msg){
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-msg').textContent = msg;
+}
+
+async function criarEvento(){
+  const nome  = document.getElementById('ev-nome').value.trim();
+  const slug  = document.getElementById('ev-slug').value.trim();
+  const sub   = document.getElementById('ev-sub').value.trim();
+  const data  = document.getElementById('ev-data').value.trim();
+  const hora  = document.getElementById('ev-hora').value.trim();
+  const local = document.getElementById('ev-local').value.trim();
+  const cor   = document.getElementById('ev-cor').value;
+
+  if(!nome||!slug){ alert('Preencha o nome e o slug do evento.'); return; }
+
+  document.getElementById('progress-wrap').style.display='block';
+  document.getElementById('btn-criar').disabled=true;
+  document.getElementById('btn-criar').textContent='Criando...';
+
+  try {
+    // 1. Cria no Supabase
+    setProgress(20,'Criando evento no banco de dados...');
+    const config = { titulo:nome, subtitulo:sub, data, horario:hora, local, cor_primaria:cor, inscricoes_abertas:true };
+    const rows = await supa('POST','eventos',[{slug, nome, config, ativo:true}]);
+    const eventoId = rows[0]?.id;
+
+    // 2. Busca template MCJ como base
+    setProgress(50,'Gerando página do evento...');
+    const htmlEvento = gerarHtmlEvento(nome, slug, sub, data, hora, local, cor, eventoId);
+
+    // 3. Sobe no GitHub
+    setProgress(75,'Publicando em jornadaespirita.com.br/'+slug+'...');
+    await githubCreateFile(slug+'/index.html', htmlEvento, 'Criar evento: '+nome);
+
+    setProgress(100,'✅ Evento criado com sucesso!');
+    setTimeout(()=>{
+      fecharModal();
+      carregarDados();
+      if(confirm('Evento criado! Acessar ' + slug + ' agora?')) window.open('/'+slug,'_blank');
+    }, 1500);
+
+  } catch(e){
+    setProgress(0,'❌ Erro: '+e.message);
+    document.getElementById('btn-criar').disabled=false;
+    document.getElementById('btn-criar').textContent='✨ Criar evento';
+    console.error(e);
+  }
+}
+
+// GITHUB API
+async function githubCreateFile(path, content, message){
+  // Verifica se arquivo já existe para pegar o SHA
+  let sha = null;
+  try {
+    const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+      {headers:{Authorization:'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
+    if(r.ok){ const d=await r.json(); sha=d.sha; }
+  } catch(e){}
+
+  const body = { message, content: btoa(unescape(encodeURIComponent(content))) };
+  if(sha) body.sha = sha;
+
+  const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,{
+    method:'PUT',
+    headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok){ const t=await r.text(); throw new Error('GitHub: '+t); }
+  return r.json();
+}
+
+// GERAR HTML DO EVENTO
+function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor, eventoId){
+  // Gera um HTML simples que carrega o sistema MCJ configurado para este evento
+  return '<!DOCTYPE html>\n<html lang="pt-BR">\n<head>\n' +
+    '<meta charset="UTF-8">\n' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">\n' +
+    '<title>' + nome + '</title>\n' +
+    '<meta http-equiv="refresh" content="0;url=https://jornadaespirita.com.br/' + slug + '/app">\n' +
+    '<style>body{font-family:sans-serif;background:#1a0a00;color:white;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}</style>\n' +
+    '</head>\n<body>\n' +
+    '<div>\n' +
+    '<h1 style="color:#C8873A;font-size:48px;margin-bottom:8px">' + nome + '</h1>\n' +
+    '<p style="color:rgba(255,255,255,.6)">' + (subtitulo||'') + '</p>\n' +
+    '<p style="margin-top:20px;color:rgba(255,255,255,.4);font-size:14px">Carregando...</p>\n' +
+    '</div>\n' +
+    '<script>\n' +
+    '// Configuração do evento\n' +
+    'window.EVENTO_CONFIG = ' + JSON.stringify({id:eventoId, slug, nome, subtitulo, data, horario, local, cor_primaria:cor}) + ';\n' +
+    'window.SUPA_URL = "https://sdwxwdqnfukxeofscmpd.supabase.co";\n' +
+    'window.SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo";\n' +
+    '<\/script>\n' +
+    '</body>\n</html>';
+}
+
+// Verifica se já logado ao carregar
+if(sessionStorage.getItem('je_admin')==='1'){
+  _logado=true;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  carregarDados();
+}
+</script>
+</body>
+</html>
