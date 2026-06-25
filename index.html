@@ -181,7 +181,7 @@ async function carregarEventos(){
       const status = cfg.inscricoes_abertas!==false ? 'ativo' : 'encerrado';
       const badgeClass = status==='ativo' ? 'badge-ativo' : 'badge-encerrado';
       const badgeText  = status==='ativo' ? 'Inscrições abertas' : 'Encerrado';
-      return '<a href="/' + e.slug + '" class="evento-card">' +
+      return '<a href="/' + e.slug + '/" class="evento-card">' +
         '<div class="evento-card-img">' +
         (cfg.thumb ? '<img src="' + cfg.thumb + '" alt="' + e.nome + '">' : '') +
         '<span class="evento-card-badge ' + badgeClass + '">' + badgeText + '</span>' +
