@@ -170,7 +170,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 /* ADMIN INTERNAL TABS */
 .admin-tabs{display:flex;border-bottom:2px solid var(--mcj-sand);margin-bottom:1.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .admin-tabs::-webkit-scrollbar{display:none}
-.atab-btn{background:none;border:none;border-bottom:2px solid transparent;padding:10px 10px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:500;color:var(--gray-400);cursor:pointer;white-space:nowrap;margin-bottom:-2px;min-height:44px;-webkit-appearance:none;transition:color .15s}
+.cfg-subtab-btn{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-100);background:white;color:var(--gray-500);font-family:'Inter',sans-serif;transition:all .15s}
+.cfg-subtab-btn.active{background:var(--mcj-dark);color:white;border-color:var(--mcj-dark)}background:none;border:none;border-bottom:2px solid transparent;padding:10px 10px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:500;color:var(--gray-400);cursor:pointer;white-space:nowrap;margin-bottom:-2px;min-height:44px;-webkit-appearance:none;transition:color .15s}
 .atab-btn.active{color:var(--mcj-gold);border-bottom-color:var(--mcj-gold);font-weight:700}
 .admin-panel{display:none}.admin-panel.active{display:block}
 
@@ -906,11 +907,9 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <button class="atab-btn" id="atab-equipe" onclick="switchAdminTab('equipe',this)">🔧 Equipe</button>
       <button class="atab-btn" id="atab-recepcao" onclick="switchAdminTab('recepcao',this)">🎫 Recepção</button>
       <button class="atab-btn" id="atab-comunicacao" onclick="switchAdminTab('comunicacao',this)">💬 Comunicação</button>
-      <button class="atab-btn" id="atab-config" onclick="switchAdminTab('config',this)">⚙ Polos</button>
-      <button class="atab-btn" id="atab-evento" onclick="switchAdminTab('evento',this)">✨ Evento</button>
-      <button class="atab-btn" id="atab-expositores-admin" onclick="switchAdminTab('expositores-admin',this)">🎤 Expositores</button>
+      <button class="atab-btn" id="atab-configuracoes" onclick="switchAdminTab('configuracoes',this)">⚙ Configurações</button>
       <button class="atab-btn" id="atab-avaliacao" onclick="switchAdminTab('avaliacao',this)">⭐ Avaliações</button>
-      <button class="atab-btn" id="atab-usuarios" onclick="switchAdminTab('usuarios',this)">👥 Usuários</button>
+
       <button class="atab-btn" id="atab-relatorios" onclick="switchAdminTab('relatorios',this)">📊 Relatórios</button>
     </div>
     <div class="admin-panel active" id="apanel-inscricoes">
@@ -941,12 +940,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
     <div class="admin-panel" id="apanel-avaliacao">
       <div id="avaliacao-admin-wrap"></div>
-    </div>
-    <div class="admin-panel" id="apanel-expositores-admin">
-      <div id="expositores-admin-wrap"></div>
-    </div>
-    <div class="admin-panel" id="apanel-evento">
-      <div id="evento-admin-wrap"></div>
     </div>
     <div class="admin-panel" id="apanel-usuarios">
       <div class="users-header">
@@ -2562,11 +2555,9 @@ function aplicarEscopoAdmin(){
   document.getElementById('atab-equipe').style.display      = (isRecepcao||isMidia||isFinanceiro)?'none':'';
   document.getElementById('atab-recepcao').style.display    = (isMidia||isFinanceiro)?'none':'';
   document.getElementById('atab-comunicacao').style.display = (isRecepcao||isMidia||isFinanceiro)?'none':'';
-  document.getElementById('atab-config').style.display      = (isAdmin||isAdminPolo||isCoord)?'':'none';
-  document.getElementById('atab-evento').style.display              = isAdmin?'':'none';
-  document.getElementById('atab-expositores-admin').style.display   = isAdmin?'':'none';
+  document.getElementById('atab-configuracoes').style.display = (isAdmin||isAdminPolo||isCoord)?'':'none';
   document.getElementById('atab-avaliacao').style.display           = (isAdmin||isAdminPolo||isCoord)?'':'none';
-  document.getElementById('atab-usuarios').style.display            = (isAdmin||isAdminPolo||isCoord)?'':'none';
+
   document.getElementById('atab-relatorios').style.display          = (isAdmin||isAdminPolo||isCoord)?'':'none';
 
   if(isRecepcao)  switchAdminTab('recepcao',   document.getElementById('atab-recepcao'));
@@ -2577,6 +2568,22 @@ function aplicarEscopoAdmin(){
     : isRecepcao   ? 'Recepção — '+SESSION.polos.join(', ')
     : isFinanceiro ? 'Financeiro — '+SESSION.polos.join(', ')
     : 'Inscrições — '+SESSION.polos.join(', ');
+}
+
+function switchCfgTab(id, btn){
+  // Atualiza botões
+  document.querySelectorAll('.cfg-subtab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  // Esconde todos os sub-painéis
+  ['polos','evento','expositores','usuarios'].forEach(t=>{
+    const el = document.getElementById('cfg-sub-'+t);
+    if(el) el.style.display = t===id ? '' : 'none';
+  });
+  // Renderiza o conteúdo
+  if(id==='polos')       renderConfig();
+  if(id==='evento')      renderEventoAdmin();
+  if(id==='expositores') renderExpositoresAdmin();
+  if(id==='usuarios')    renderUsuarios();
 }
 
 function switchAdminTab(id, btn){
@@ -2606,11 +2613,8 @@ function _renderTab(id){
   if(id==='equipe')      renderEquipe();
   if(id==='recepcao')    renderRecepcao();
   if(id==='comunicacao') renderComunicacao();
-  if(id==='config')      renderConfig();
-  if(id==='evento')           renderEventoAdmin();
-  if(id==='expositores-admin') renderExpositoresAdmin();
-  if(id==='avaliacao')        renderAvaliacaoAdmin();
-  if(id==='usuarios')    renderUsuarios();
+  if(id==='configuracoes') switchCfgTab('polos', document.getElementById('cstab-polos'));
+  if(id==='avaliacao')   renderAvaliacaoAdmin();
   if(id==='relatorios')  renderRelatorios();
 }
 
@@ -5911,7 +5915,7 @@ function toggleInscricoesPolo(i){
   POLOS[i].inscricoes_abertas = !POLOS[i].inscricoes_abertas;
   setCfg();
   renderPoloGrid(); atualizarBanner(); renderAdmin();
-  if(document.getElementById('apanel-config').classList.contains('active')) renderConfig();
+  if(document.getElementById('apanel-configuracoes')?.classList.contains('active')) renderConfig();
 }
 
 /* ================================================================
