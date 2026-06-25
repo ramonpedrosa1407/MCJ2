@@ -300,6 +300,7 @@ function renderTabela(){
       '<td style="display:flex;gap:6px">' +
       '<button class="btn-table btn-acessar" onclick="window.open(\'/'+e.slug+'\',\'_blank\')">Acessar</button>' +
       '<button class="btn-table btn-toggle" onclick="toggleEvento(\''+e.id+'\','+e.ativo+')">'+(e.ativo?'Desativar':'Ativar')+'</button>' +
+      '<button class="btn-table" onclick="excluirEvento(\\\''+e.id+'\\\''+",'"+e.nome+"')" style="background:#FEF2F2;color:#EF4444;border:1px solid #FECACA">🗑 Excluir</button>' +
       '</td>' +
       '</tr>';
   }).join('');
