@@ -937,8 +937,8 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     <div class="admin-panel" id="apanel-configuracoes">
       <!-- Sub-abas -->
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;border-bottom:1px solid var(--mcj-sand);padding-bottom:1rem">
-        <button class="cfg-subtab-btn active" id="cstab-polos"       onclick="switchCfgTab('polos',this)">⚙ Polos</button>
-        <button class="cfg-subtab-btn"        id="cstab-evento"      onclick="switchCfgTab('evento',this)">✨ Evento</button>
+        <button class="cfg-subtab-btn active" id="cstab-evento"      onclick="switchCfgTab('evento',this)">✨ Evento</button>
+        <button class="cfg-subtab-btn"        id="cstab-polos"       onclick="switchCfgTab('polos',this)">⚙ Polos</button>
         <button class="cfg-subtab-btn"        id="cstab-expositores" onclick="switchCfgTab('expositores',this)">🎤 Expositores</button>
         <button class="cfg-subtab-btn"        id="cstab-usuarios"    onclick="switchCfgTab('usuarios',this)">👥 Usuários</button>
       </div>
@@ -2632,7 +2632,7 @@ function _renderTab(id){
   if(id==='equipe')      renderEquipe();
   if(id==='recepcao')    renderRecepcao();
   if(id==='comunicacao') renderComunicacao();
-  if(id==='configuracoes') switchCfgTab('polos', document.getElementById('cstab-polos'));
+  if(id==='configuracoes') switchCfgTab('evento', document.getElementById('cstab-evento'));
   if(id==='avaliacao')   renderAvaliacaoAdmin();
   if(id==='relatorios')  renderRelatorios();
 }
