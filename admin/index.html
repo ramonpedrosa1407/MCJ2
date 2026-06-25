@@ -480,13 +480,14 @@ async function githubCreateFile(path, content, message){
       {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
     if(r.ok){ const d=await r.json(); sha=d.sha; }
   } catch(e){}
-  const bytes   = new TextEncoder().encode(content);
-  // Chunked btoa to avoid stack overflow on large files
-  let b64 = '';
-  const chunk = 8192;
-  for(let i=0;i<bytes.length;i+=chunk){
-    b64 += btoa(String.fromCharCode(...bytes.subarray(i,i+chunk)));
-  }
+  // Use Blob + FileReader for large file base64 encoding
+  const b64 = await new Promise((resolve, reject) => {
+    const blob = new Blob([content], {type:'text/html'});
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
   const body    = {message, content:b64};
   if(sha) body.sha = sha;
   const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,{
