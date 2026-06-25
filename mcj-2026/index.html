@@ -2216,6 +2216,24 @@ let _cfgEvento = {
 };
 
 
+
+// Aplica override se o evento foi criado pelo portal (não é o MCJ padrão)
+if(window._EVENTO_OVERRIDE){
+  const ov = window._EVENTO_OVERRIDE;
+  if(ov.titulo)    _cfgEvento.titulo    = ov.titulo;
+  if(ov.subtitulo) _cfgEvento.subtitulo = ov.subtitulo;
+  if(ov.data)      _cfgEvento.data      = ov.data;
+  if(ov.horario)   _cfgEvento.horario   = ov.horario;
+  if(ov.local)     _cfgEvento.local     = ov.local;
+  if(ov.thumb)     _cfgEvento.thumb     = ov.thumb;
+  if(ov.video_abertura) _cfgEvento.video_url = ov.video_abertura;
+  if(ov.cor_primaria && _cfgEvento.design) _cfgEvento.design.cor_primaria = ov.cor_primaria;
+  _cfgEvento._evento_id   = ov.id;
+  _cfgEvento._evento_slug = ov.slug;
+}
+
+/* ═══════════ FIM ═══════════ */
+
 const TEMAS_DESIGN = [
   { nome:'Terra Santa', descricao:'Clássico e espiritual',
     cor_primaria:'#3D2410', cor_destaque:'#C8873A', cor_fundo:'#F2EDE4', cor_texto:'#2C1A08',
