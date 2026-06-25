@@ -912,7 +912,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <button class="atab-btn" id="atab-avaliacao" onclick="switchAdminTab('avaliacao',this)">⭐ Avaliações</button>
       <button class="atab-btn" id="atab-usuarios" onclick="switchAdminTab('usuarios',this)">👥 Usuários</button>
       <button class="atab-btn" id="atab-relatorios" onclick="switchAdminTab('relatorios',this)">📊 Relatórios</button>
-      <button class="atab-btn" id="atab-midia" onclick="switchAdminTab('midia',this)">🎬 Mídia</button>
     </div>
     <div class="admin-panel active" id="apanel-inscricoes">
       <div class="summary-grid" id="summary-grid"></div>
@@ -939,9 +938,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
     <div class="admin-panel" id="apanel-relatorios">
       <div id="relatorios-wrap"></div>
-    </div>
-    <div class="admin-panel" id="apanel-midia">
-      <div id="midia-wrap"></div>
     </div>
     <div class="admin-panel" id="apanel-avaliacao">
       <div id="avaliacao-admin-wrap"></div>
@@ -1001,16 +997,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           </table>
         </div>
       </div>
-      <!-- Mídia -->
-      <div class="users-table-wrap">
-        <div class="users-table-title">🎬 Mídia — acesso somente à aba Mídia</div>
-        <div class="users-table-scroll">
-          <table class="users-table">
-            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
-            <tbody id="tbody-midias"></tbody>
-          </table>
-        </div>
-      </div>
       <!-- Financeiro -->
       <div class="users-table-wrap">
         <div class="users-table-title">💰 Financeiro — acesso somente à aba Inscrições</div>
@@ -1041,7 +1027,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           <option value="admin_polo">Administrador de Polo</option>
           <option value="coord">Coordenador</option>
           <option value="recepcao">Recepção</option>
-          <option value="midia">Mídia</option>
           <option value="financeiro">Financeiro</option>
         </select>
       </div>
@@ -2583,16 +2568,13 @@ function aplicarEscopoAdmin(){
   document.getElementById('atab-avaliacao').style.display           = (isAdmin||isAdminPolo||isCoord)?'':'none';
   document.getElementById('atab-usuarios').style.display            = (isAdmin||isAdminPolo||isCoord)?'':'none';
   document.getElementById('atab-relatorios').style.display          = (isAdmin||isAdminPolo||isCoord)?'':'none';
-  document.getElementById('atab-midia').style.display               = (isAdmin||isMidia||isAdminPolo||isCoord)?'':'none';
 
   if(isRecepcao)  switchAdminTab('recepcao',   document.getElementById('atab-recepcao'));
-  if(isMidia)     switchAdminTab('midia',       document.getElementById('atab-midia'));
   if(isFinanceiro)switchAdminTab('inscricoes',  document.getElementById('atab-inscricoes'));
 
   document.getElementById('admin-panel-title').textContent = isAdmin
     ? 'Painel de inscrições'
     : isRecepcao   ? 'Recepção — '+SESSION.polos.join(', ')
-    : isMidia      ? 'Mídia — '+SESSION.polos.join(', ')
     : isFinanceiro ? 'Financeiro — '+SESSION.polos.join(', ')
     : 'Inscrições — '+SESSION.polos.join(', ');
 }
@@ -2630,7 +2612,6 @@ function _renderTab(id){
   if(id==='avaliacao')        renderAvaliacaoAdmin();
   if(id==='usuarios')    renderUsuarios();
   if(id==='relatorios')  renderRelatorios();
-  if(id==='midia')       renderMidia();
 }
 
 /* ================================================================
