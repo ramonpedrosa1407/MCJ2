@@ -86,6 +86,16 @@ tr:last-child td{border-bottom:none}
 .progress-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .3s;width:0%}
 .progress-msg{font-size:12px;color:var(--gray-400)}
 .slug-preview{font-size:11px;color:var(--gold);margin-top:3px}
+.upload-area{border:2px dashed var(--sand);border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .15s;position:relative;background:var(--gray-50)}
+.upload-area:hover{border-color:var(--gold)}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-area .icon{font-size:28px;margin-bottom:6px}
+.upload-area .label{font-size:12px;color:var(--gray-400);font-weight:600}
+.upload-area .sub{font-size:11px;color:var(--gray-300);margin-top:2px}
+.upload-preview{width:100%;height:140px;object-fit:cover;border-radius:10px;margin-top:8px;display:none}
+.upload-progress{height:4px;background:var(--sand);border-radius:2px;margin-top:8px;overflow:hidden;display:none}
+.upload-progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s;width:0%}
+.upload-status{font-size:11px;margin-top:4px;display:none}
 </style>
 </head>
 <body>
@@ -182,6 +192,33 @@ tr:last-child td{border-bottom:none}
       <div class="form-field">
         <label>Cor primária (hex)</label>
         <input type="color" id="ev-cor" value="#C8873A" style="height:44px;padding:4px 8px;cursor:pointer">
+      </div>
+
+      <div class="form-field" style="grid-column:1/-1">
+        <label>📷 Foto de capa do evento</label>
+        <div class="upload-area" id="upload-capa-area" onclick="document.getElementById('upload-capa').click()">
+          <input type="file" id="upload-capa" accept="image/*,video/mp4" style="display:none" onchange="handleUpload(this,'capa','upload-capa-area')">
+          <div class="icon">🖼</div>
+          <div class="label">Clique para selecionar</div>
+          <div class="sub">JPG, PNG ou MP4 · máx 50MB</div>
+        </div>
+        <img id="preview-capa" class="upload-preview">
+        <div class="upload-progress" id="prog-capa"><div class="upload-progress-fill" id="progfill-capa"></div></div>
+        <div class="upload-status" id="status-capa"></div>
+        <input type="hidden" id="ev-thumb" value="">
+      </div>
+
+      <div class="form-field" style="grid-column:1/-1">
+        <label>🎬 Vídeo de abertura (opcional)</label>
+        <div class="upload-area" id="upload-video-area" onclick="document.getElementById('upload-video').click()">
+          <input type="file" id="upload-video" accept="video/mp4" style="display:none" onchange="handleUpload(this,'video','upload-video-area')">
+          <div class="icon">🎬</div>
+          <div class="label">Clique para selecionar</div>
+          <div class="sub">MP4 · máx 100MB</div>
+        </div>
+        <div class="upload-progress" id="prog-video"><div class="upload-progress-fill" id="progfill-video"></div></div>
+        <div class="upload-status" id="status-video"></div>
+        <input type="hidden" id="ev-video" value="">
       </div>
 
       <!-- PROGRESSO -->
@@ -300,6 +337,60 @@ function setProgress(pct, msg){
   document.getElementById('progress-msg').textContent = msg;
 }
 
+
+// UPLOAD SUPABASE STORAGE
+async function handleUpload(input, tipo, areaId){
+  const file = input.files[0];
+  if(!file) return;
+
+  const area = document.getElementById(areaId);
+  const prog = document.getElementById('prog-'+tipo);
+  const fill = document.getElementById('progfill-'+tipo);
+  const status = document.getElementById('status-'+tipo);
+
+  prog.style.display = 'block';
+  status.style.display = 'block';
+  status.style.color = 'var(--gray-400)';
+  status.textContent = 'Enviando...';
+  fill.style.width = '30%';
+
+  // Preview imediato para imagens
+  if(file.type.startsWith('image/')){
+    const preview = document.getElementById('preview-'+tipo);
+    if(preview){ preview.src = URL.createObjectURL(file); preview.style.display='block'; }
+  }
+
+  const ext  = file.name.split('.').pop();
+  const path = tipo + '/' + Date.now() + '.' + ext;
+
+  try {
+    fill.style.width = '60%';
+    const r = await fetch(SUPA_URL+'/storage/v1/object/eventos-media/'+path, {
+      method: 'POST',
+      headers: { apikey: SUPA_KEY, Authorization: 'Bearer '+SUPA_KEY, 'Content-Type': file.type },
+      body: file
+    });
+
+    if(!r.ok){ const t=await r.text(); throw new Error(t); }
+
+    fill.style.width = '100%';
+    const url = SUPA_URL+'/storage/v1/object/public/eventos-media/'+path;
+    document.getElementById('ev-'+tipo === 'ev-capa' ? 'thumb' : tipo).value = url;
+
+    if(tipo==='capa') document.getElementById('ev-thumb').value = url;
+    if(tipo==='video') document.getElementById('ev-video').value = url;
+
+    status.textContent = '✅ Upload concluído!';
+    status.style.color = '#10B981';
+    setTimeout(()=>{ prog.style.display='none'; },2000);
+  } catch(e){
+    status.textContent = '❌ Erro: '+e.message;
+    status.style.color = 'var(--red)';
+    fill.style.width = '0%';
+    console.error(e);
+  }
+}
+
 async function criarEvento(){
   const nome  = document.getElementById('ev-nome').value.trim();
   const slug  = document.getElementById('ev-slug').value.trim();
@@ -318,7 +409,9 @@ async function criarEvento(){
   try {
     // 1. Cria no Supabase
     setProgress(20,'Criando evento no banco de dados...');
-    const config = { titulo:nome, subtitulo:sub, data, horario:hora, local, cor_primaria:cor, inscricoes_abertas:true };
+    const thumb = document.getElementById('ev-thumb')?.value||'';
+    const video = document.getElementById('ev-video')?.value||'';
+    const config = { titulo:nome, subtitulo:sub, data, horario:hora, local, cor_primaria:cor, inscricoes_abertas:true, thumb, video_abertura:video };
     const rows = await supa('POST','eventos',[{slug, nome, config, ativo:true}]);
     const eventoId = rows[0]?.id;
 
