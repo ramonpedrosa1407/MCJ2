@@ -922,82 +922,101 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     <div class="admin-panel" id="apanel-equipe">
       <div id="equipe-wrap"></div>
     </div>
-    <div class="admin-panel" id="apanel-config">
-      <div class="config-actions-bar">
-        <h3>Polos cadastrados</h3>
-        <button class="btn-add-polo" onclick="abrirAddPolo()">+ Adicionar polo</button>
-      </div>
-      <div class="config-grid" id="config-grid"></div>
-    </div>
     <div class="admin-panel" id="apanel-comunicacao">
       <div id="comunicacao-wrap"></div>
     </div>
     <div class="admin-panel" id="apanel-recepcao">
       <div id="recepcao-wrap"></div>
     </div>
-    <div class="admin-panel" id="apanel-relatorios">
-      <div id="relatorios-wrap"></div>
-    </div>
     <div class="admin-panel" id="apanel-avaliacao">
       <div id="avaliacao-admin-wrap"></div>
     </div>
-    <div class="admin-panel" id="apanel-usuarios">
-      <div class="users-header">
-        <h3>Gestão de usuários</h3>
-        <button class="btn-add-user" onclick="abrirUserModal()">+ Novo usuário</button>
+    <div class="admin-panel" id="apanel-relatorios">
+      <div id="relatorios-wrap"></div>
+    </div>
+    <div class="admin-panel" id="apanel-configuracoes">
+      <!-- Sub-abas -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;border-bottom:1px solid var(--mcj-sand);padding-bottom:1rem">
+        <button class="cfg-subtab-btn active" id="cstab-polos"       onclick="switchCfgTab('polos',this)">⚙ Polos</button>
+        <button class="cfg-subtab-btn"        id="cstab-evento"      onclick="switchCfgTab('evento',this)">✨ Evento</button>
+        <button class="cfg-subtab-btn"        id="cstab-expositores" onclick="switchCfgTab('expositores',this)">🎤 Expositores</button>
+        <button class="cfg-subtab-btn"        id="cstab-usuarios"    onclick="switchCfgTab('usuarios',this)">👥 Usuários</button>
       </div>
 
-      <!-- Administradores Gerais -->
-      <div class="users-table-wrap">
-        <div class="users-table-title">🔒 Administradores Gerais — acesso total ao sistema</div>
-        <div class="users-table-scroll">
-          <table class="users-table">
-            <thead><tr><th>Usuário</th><th>Nome</th><th>Acesso</th><th>Status</th><th>Ações</th></tr></thead>
-            <tbody id="tbody-admins"></tbody>
-          </table>
+      <!-- Polos -->
+      <div id="cfg-sub-polos">
+        <div class="config-actions-bar">
+          <h3>Polos cadastrados</h3>
+          <button class="btn-add-polo" onclick="abrirAddPolo()">+ Adicionar polo</button>
         </div>
+        <div class="config-grid" id="config-grid"></div>
       </div>
 
-      <!-- Administradores de Polo -->
-      <div class="users-table-wrap">
-        <div class="users-table-title">🏫 Administradores de Polo — tudo referente ao polo</div>
-        <div class="users-table-scroll">
-          <table class="users-table">
-            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
-            <tbody id="tbody-admin-polos"></tbody>
-          </table>
-        </div>
+      <!-- Evento -->
+      <div id="cfg-sub-evento" style="display:none">
+        <div id="evento-admin-wrap"></div>
       </div>
 
-      <!-- Coordenadores -->
-      <div class="users-table-wrap">
-        <div class="users-table-title">👤 Coordenadores — inscrição, recepção, turmas e equipe</div>
-        <div class="users-table-scroll">
-          <table class="users-table">
-            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
-            <tbody id="tbody-coords"></tbody>
-          </table>
-        </div>
+      <!-- Expositores -->
+      <div id="cfg-sub-expositores" style="display:none">
+        <div id="expositores-admin-wrap"></div>
       </div>
 
-      <!-- Recepção -->
-      <div class="users-table-wrap">
-        <div class="users-table-title">🎫 Recepção — acesso somente à aba Recepção</div>
-        <div class="users-table-scroll">
-          <table class="users-table">
-            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
-            <tbody id="tbody-recepcoes"></tbody>
-          </table>
+      <!-- Usuários -->
+      <div id="cfg-sub-usuarios" style="display:none">
+        <div class="users-header">
+          <h3>Gestão de usuários</h3>
+          <button class="btn-add-user" onclick="abrirUserModal()">+ Novo usuário</button>
         </div>
-      </div>
-      <!-- Financeiro -->
-      <div class="users-table-wrap">
-        <div class="users-table-title">💰 Financeiro — acesso somente à aba Inscrições</div>
-        <div class="users-table-scroll">
-          <table class="users-table">
-            <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
-            <tbody id="tbody-financeiros"></tbody>
-          </table>
+        <!-- Administradores Gerais -->
+        <div class="users-table-wrap">
+          <div class="users-table-title">🔒 Administradores Gerais — acesso total ao sistema</div>
+          <div class="users-table-scroll">
+            <table class="users-table">
+              <thead><tr><th>Usuário</th><th>Nome</th><th>Acesso</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="tbody-admins"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Administradores de Polo -->
+        <div class="users-table-wrap">
+          <div class="users-table-title">🏫 Administradores de Polo — tudo referente ao polo</div>
+          <div class="users-table-scroll">
+            <table class="users-table">
+              <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="tbody-admin-polos"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Coordenadores -->
+        <div class="users-table-wrap">
+          <div class="users-table-title">👤 Coordenadores — inscrição, recepção, turmas e equipe</div>
+          <div class="users-table-scroll">
+            <table class="users-table">
+              <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="tbody-coords"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Recepção -->
+        <div class="users-table-wrap">
+          <div class="users-table-title">🎫 Recepção — acesso somente à aba Recepção</div>
+          <div class="users-table-scroll">
+            <table class="users-table">
+              <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="tbody-recepcoes"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Financeiro -->
+        <div class="users-table-wrap">
+          <div class="users-table-title">💰 Financeiro — acesso somente à aba Inscrições</div>
+          <div class="users-table-scroll">
+            <table class="users-table">
+              <thead><tr><th>Usuário</th><th>Nome</th><th>Polos atribuídos</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="tbody-financeiros"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -3504,7 +3523,7 @@ function renderTurmas(){
 
   const salasAdulto   = getSalasAdulto(polo.nome);
   const salasMocidade = getSalasMocidade(polo.nome);
-  const salasAtivas   = _turmaTurmaAtiva==='Adulto' ? salasAdulto : salasMocidade;
+  const salasAtivas   = _turmaTurmaAtiva==='Adulto' ? salasAdulto : _turmaTurmaAtiva==='Mocidade' ? salasMocidade : (polo.salas_evang||[]).map(s=>s.nome||s);
 
   // filtrar por turma ativa
   const inscrFiltrados = inscritos.filter(p=>p.turma===_turmaTurmaAtiva);
@@ -5915,7 +5934,7 @@ function toggleInscricoesPolo(i){
   POLOS[i].inscricoes_abertas = !POLOS[i].inscricoes_abertas;
   setCfg();
   renderPoloGrid(); atualizarBanner(); renderAdmin();
-  if(document.getElementById('apanel-configuracoes')?.classList.contains('active')) renderConfig();
+  if(document.getElementById('apanel-configuracoes')?.classList.contains('active')) switchCfgTab('polos', document.getElementById('cstab-polos'));
 }
 
 /* ================================================================
