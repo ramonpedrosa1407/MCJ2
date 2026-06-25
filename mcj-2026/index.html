@@ -2243,13 +2243,18 @@ let _cfgEvento = {
 
 
 // Aplica override se o evento foi criado pelo portal (não é o MCJ padrão)
-// Lê parâmetros da URL (evento_id, evento_slug) se vier de redirecionamento
+// Lê parâmetros da URL (evento_id, evento_slug, cor_primaria) se vier de redirecionamento
 if(!window._EVENTO_OVERRIDE){
   const urlParams = new URLSearchParams(window.location.search);
   const eId   = urlParams.get('evento_id');
   const eSlug = urlParams.get('evento_slug');
+  const eCor  = urlParams.get('cor_primaria') ? decodeURIComponent(urlParams.get('cor_primaria')) : '';
   if(eId && eSlug){
-    window._EVENTO_OVERRIDE = { id: eId, slug: eSlug, titulo: eSlug, subtitulo: '', data: '', horario: '', local: '', cor_primaria: '', thumb: '', video_abertura: '' };
+    window._EVENTO_OVERRIDE = {
+      id: eId, slug: eSlug, titulo: eSlug, subtitulo: '',
+      data: '', horario: '', local: '',
+      cor_primaria: eCor, thumb: '', video_abertura: ''
+    };
   }
 }
 
