@@ -333,12 +333,30 @@ function fecharModal(){
 
 function gerarSlug(){
   const nome = document.getElementById('ev-nome').value;
-  const ano  = document.getElementById('ev-data').value.match(/\d{4}/)?.[0] || new Date().getFullYear();
+  const dataStr = document.getElementById('ev-data').value;
+
+  // Extrai dia, mes, ano do campo data
+  const meses = {janeiro:'01',fevereiro:'02',março:'03',abril:'04',maio:'05',junho:'06',
+    julho:'07',agosto:'08',setembro:'09',outubro:'10',novembro:'11',dezembro:'12'};
+  let dd='', mm='', aa='';
+  const nums = dataStr.match(/\d+/g)||[];
+  if(nums.length>=3){ dd=nums[0].padStart(2,'0'); mm=nums[1].padStart(2,'0'); aa=String(nums[2]).slice(-2); }
+  else if(nums.length>=2){
+    dd=nums[0].padStart(2,'0');
+    for(const [m,n] of Object.entries(meses)){ if(dataStr.toLowerCase().includes(m)){ mm=n; break; } }
+    aa=String(nums[nums.length-1]).slice(-2);
+  } else if(nums.length===1){
+    dd='';
+    for(const [m,n] of Object.entries(meses)){ if(dataStr.toLowerCase().includes(m)){ mm=n; break; } }
+    aa=String(nums[0]).slice(-2);
+  }
+  const dataSufixo = dd&&mm&&aa ? dd+'.'+mm+'.'+aa : mm&&aa ? mm+'.'+aa : aa||'';
+
   const base = nome.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-z0-9\s-]/g,'')
     .trim().replace(/\s+/g,'-');
-  const slug = base ? base + '-' + ano : '';
+  const slug = base && dataSufixo ? base+'-'+dataSufixo : base||'';
   document.getElementById('ev-slug').value = slug;
   document.getElementById('slug-preview').textContent = 'jornadaespirita.com.br/' + (slug||'...');
 }
