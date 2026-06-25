@@ -418,14 +418,14 @@ async function criarEvento(){
     // 1. Cria no Supabase
     setProgress(20,'Criando evento no banco de dados...');
     const thumb = document.getElementById('ev-thumb')?.value||'';
-    const video = document.getElementById('ev-video')?.value||'';
+    const video  = document.getElementById('ev-video')?.value||'';
     const config = { titulo:nome, subtitulo:sub, data, horario:hora, local, cor_primaria:cor, inscricoes_abertas:true, thumb, video_abertura:video };
     const rows = await supa('POST','eventos',[{slug, nome, config, ativo:true}]);
     const eventoId = rows[0]?.id;
 
     // 2. Busca template MCJ como base
     setProgress(50,'Gerando página do evento...');
-    const htmlEvento = gerarHtmlEvento(nome, slug, sub, data, hora, local, cor, eventoId);
+    const htmlEvento = await gerarHtmlEvento(nome, slug, sub, data, hora, local, cor, eventoId, thumb, video);
 
     // 3. Sobe no GitHub
     setProgress(75,'Publicando em jornadaespirita.com.br/'+slug+'...');
@@ -468,29 +468,42 @@ async function githubCreateFile(path, content, message){
   return r.json();
 }
 
-// GERAR HTML DO EVENTO
-function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor, eventoId){
-  // Gera um HTML simples que carrega o sistema MCJ configurado para este evento
-  return '<!DOCTYPE html>\n<html lang="pt-BR">\n<head>\n' +
-    '<meta charset="UTF-8">\n' +
-    '<meta name="viewport" content="width=device-width,initial-scale=1">\n' +
-    '<title>' + nome + '</title>\n' +
-    '<meta http-equiv="refresh" content="0;url=https://jornadaespirita.com.br/' + slug + '/app">\n' +
-    '<style>body{font-family:sans-serif;background:#1a0a00;color:white;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}</style>\n' +
-    '</head>\n<body>\n' +
-    '<div>\n' +
-    '<h1 style="color:#C8873A;font-size:48px;margin-bottom:8px">' + nome + '</h1>\n' +
-    '<p style="color:rgba(255,255,255,.6)">' + (subtitulo||'') + '</p>\n' +
-    '<p style="margin-top:20px;color:rgba(255,255,255,.4);font-size:14px">Carregando...</p>\n' +
-    '</div>\n' +
-    '<script>\n' +
-    '// Configuração do evento\n' +
-    'window.EVENTO_CONFIG = ' + JSON.stringify({id:eventoId, slug, nome, subtitulo, data, horario, local, cor_primaria:cor}) + ';\n' +
-    'window.SUPA_URL = "https://sdwxwdqnfukxeofscmpd.supabase.co";\n' +
-    'window.SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo";\n' +
-    '<\/script>\n' +
-    '</body>\n</html>';
+// GERAR HTML DO EVENTO — busca template MCJ do GitHub e configura para o novo evento
+async function githubGetFile(path){
+  const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+    {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
+  if(!r.ok) throw new Error('Erro ao buscar template: '+r.status);
+  const d = await r.json();
+  return atob(d.content.replace(/\n/g,''));
 }
+
+async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor, eventoId, thumb, video){
+  // Busca o template MCJ
+  const template = await githubGetFile('mcj-2026/index.html');
+
+  // Injeta configuração do novo evento logo após <script>
+  const inject = `
+// ═══════════════════════════════════════════
+// CONFIGURAÇÃO DO EVENTO: ${nome}
+// ═══════════════════════════════════════════
+window._EVENTO_OVERRIDE = {
+  id: "${eventoId}",
+  slug: "${slug}",
+  titulo: "${nome}",
+  subtitulo: "${subtitulo}",
+  data: "${data}",
+  horario: "${horario}",
+  local: "${local}",
+  cor_primaria: "${cor}",
+  thumb: "${thumb||''}",
+  video_abertura: "${video||''}"
+};
+`;
+
+  // Injeta antes do fechamento do <script> principal
+  return template.replace('/* ═══════════ FIM ═══════════ */', inject + '\n/* ═══════════ FIM ═══════════ */');
+}
+
 
 // Verifica se já logado ao carregar
 if(sessionStorage.getItem('je_admin')==='1'){
