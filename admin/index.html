@@ -165,9 +165,10 @@ tr:last-child td{border-bottom:none}
         </div>
       </div>
       <div class="form-field">
-        <label>Slug (URL do evento) *</label>
+        <label>Slug (URL única — gerado automaticamente) *</label>
         <input type="text" id="ev-slug" placeholder="mcj-2027">
-        <span class="slug-preview" id="slug-preview">jornadaespirita.com.br/mcj-2027</span>
+        <span class="slug-preview" id="slug-preview">jornadaespirita.com.br/...</span>
+        <span style="font-size:10px;color:var(--gray-300);margin-top:2px">O slug é único por evento. Edite se necessário.</span>
       </div>
       <div class="form-row">
         <div class="form-field">
@@ -176,7 +177,7 @@ tr:last-child td{border-bottom:none}
         </div>
         <div class="form-field">
           <label>Data do evento</label>
-          <input type="text" id="ev-data" placeholder="Ex: 20 de setembro de 2027">
+          <input type="text" id="ev-data" placeholder="Ex: 20 de setembro de 2027" oninput="gerarSlug()">
         </div>
       </div>
       <div class="form-row">
@@ -332,10 +333,12 @@ function fecharModal(){
 
 function gerarSlug(){
   const nome = document.getElementById('ev-nome').value;
-  const slug = nome.toLowerCase()
+  const ano  = document.getElementById('ev-data').value.match(/\d{4}/)?.[0] || new Date().getFullYear();
+  const base = nome.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-z0-9\s-]/g,'')
     .trim().replace(/\s+/g,'-');
+  const slug = base ? base + '-' + ano : '';
   document.getElementById('ev-slug').value = slug;
   document.getElementById('slug-preview').textContent = 'jornadaespirita.com.br/' + (slug||'...');
 }
