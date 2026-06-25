@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Jornada Espírita — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,600;0,700;0,800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --dark:#1a0a00;--gold:#C8873A;--mid:#6B4C2A;--cream:#FDF8F3;--sand:#E8DDD0;
-  --gray-50:#FAF7F4;--gray-100:#F0EAE0;--gray-300:#C8B8A0;--gray-400:#A08060;
-  --gray-500:#7A5A3A;--gray-600:#5A3A1A;--green:#10B981;--red:#EF4444;
+  --dark:#0D2B4E;--gold:#7EB8D4;--cream:#F0F4F8;--sand:#C8DFF0;
+  --gray-50:#F8FAFC;--gray-100:#E2EDF8;--gray-300:#94B8D4;--gray-400:#6B8FAD;
+  --gray-500:#4A6F8A;--gray-600:#2C5F8A;--green:#10B981;--red:#EF4444;
 }
 body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
 
@@ -18,17 +18,18 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);mi
 .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);padding:1rem}
 .login-box{background:white;border-radius:20px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .login-logo{font-family:'EB Garamond',Georgia,serif;font-size:32px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.login-logo span{color:var(--gold)}
 .login-sub{font-size:13px;color:var(--gray-400);margin-bottom:2rem}
 .field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .field label{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
 .field input{padding:11px 14px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;outline:none}
-.field input:focus{border-color:var(--gold)}
-.btn{width:100%;padding:13px;background:var(--gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
+.field input:focus{border-color:var(--dark)}
+.btn-login{width:100%;padding:13px;background:var(--dark);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
 .err{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px;font-size:13px;color:#991B1B;display:none;margin-bottom:8px}
 
 /* HEADER */
 .header{background:var(--dark);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.header-logo{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white;display:flex;align-items:center;gap:8px}
+.header-logo{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white}
 .header-logo span{color:var(--gold)}
 .header-right{display:flex;align-items:center;gap:12px}
 .header-user{font-size:12px;color:rgba(255,255,255,.5)}
@@ -46,56 +47,58 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);mi
 .stat-lbl{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
 /* ACTIONS */
-.actions-bar{display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap}
-.btn-add{padding:10px 20px;background:var(--gold);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+.actions-bar{display:flex;gap:10px;margin-bottom:1.5rem}
+.btn-add{padding:10px 20px;background:var(--dark);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
 .btn-add:hover{opacity:.9}
 
-/* EVENTOS TABLE */
-.eventos-table-wrap{background:white;border-radius:14px;border:1px solid var(--sand);overflow:hidden}
-.table-header{padding:1rem 1.25rem;border-bottom:1px solid var(--sand);display:flex;align-items:center;justify-content:space-between}
+/* TABLE */
+.table-wrap{background:white;border-radius:14px;border:1px solid var(--sand);overflow:hidden}
+.table-header{padding:1rem 1.25rem;border-bottom:1px solid var(--sand)}
 .table-title{font-size:14px;font-weight:600;color:var(--dark)}
 table{width:100%;border-collapse:collapse}
 th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);padding:10px 14px;text-align:left;border-bottom:1px solid var(--gray-100)}
-td{font-size:13px;padding:12px 14px;color:var(--dark);border-bottom:1px solid var(--gray-50);vertical-align:middle}
+td{font-size:13px;padding:12px 14px;border-bottom:1px solid var(--gray-50);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 .badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase}
 .badge-green{background:#ECFDF5;color:#065F46}
 .badge-gray{background:var(--gray-100);color:var(--gray-500)}
-.btn-table{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif}
-.btn-acessar{background:var(--gold);color:white}
-.btn-editar{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
-.btn-toggle{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
+.btn-t{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;margin-right:4px}
+.btn-t-blue{background:var(--dark);color:white}
+.btn-t-gray{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
+.btn-t-red{background:#FEF2F2;color:#EF4444;border:1px solid #FECACA}
 
-/* MODAL CRIAR EVENTO */
+/* OVERLAY */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem}
 .overlay.show{display:flex}
-.modal{background:white;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal{background:white;border-radius:16px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .modal-head{background:var(--dark);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;position:sticky;top:0}
 .modal-head h3{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white}
+.modal-head button{background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer}
 .modal-body{padding:1.5rem;display:flex;flex-direction:column;gap:12px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-field{display:flex;flex-direction:column;gap:5px}
 .form-field label{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
-.form-field input,.form-field select,.form-field textarea{padding:10px 12px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;outline:none}
-.form-field input:focus,.form-field select:focus{border-color:var(--gold)}
-.modal-foot{padding:1rem 1.25rem;border-top:1px solid var(--sand);display:flex;gap:8px;justify-content:flex-end}
+.form-field input,.form-field select{padding:10px 12px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;outline:none}
+.form-field input:focus{border-color:var(--dark)}
+.slug-preview{font-size:11px;color:var(--gold);margin-top:3px;font-weight:600}
+.slug-note{font-size:10px;color:var(--gray-300);margin-top:1px}
+.modal-foot{padding:1rem 1.25rem;border-top:1px solid var(--sand);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:white}
 .btn-cancel{padding:10px 18px;background:white;border:1px solid var(--sand);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-.btn-save{padding:10px 18px;background:var(--gold);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-save{padding:10px 18px;background:var(--dark);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* UPLOAD */
+.upload-area{border:2px dashed var(--sand);border-radius:12px;padding:1.25rem;text-align:center;cursor:pointer;background:var(--gray-50);position:relative}
+.upload-area:hover{border-color:var(--dark)}
+.upload-preview{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:8px;display:none}
+.upload-bar{height:4px;background:var(--sand);border-radius:2px;margin-top:8px;overflow:hidden;display:none}
+.upload-fill{height:100%;background:var(--dark);border-radius:2px;transition:width .3s;width:0}
+.upload-status{font-size:11px;margin-top:4px;display:none;color:var(--gray-400)}
+
+/* PROGRESS */
 .progress-wrap{background:var(--gray-50);border-radius:10px;padding:1rem;border:1px solid var(--sand);display:none}
 .progress-bar{height:6px;background:var(--sand);border-radius:3px;overflow:hidden;margin:8px 0}
-.progress-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .3s;width:0%}
+.progress-fill{height:100%;background:var(--dark);border-radius:3px;transition:width .3s;width:0}
 .progress-msg{font-size:12px;color:var(--gray-400)}
-.slug-preview{font-size:11px;color:var(--gold);margin-top:3px}
-.upload-area{border:2px dashed var(--sand);border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .15s;position:relative;background:var(--gray-50)}
-.upload-area:hover{border-color:var(--gold)}
-.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload-area .icon{font-size:28px;margin-bottom:6px}
-.upload-area .label{font-size:12px;color:var(--gray-400);font-weight:600}
-.upload-area .sub{font-size:11px;color:var(--gray-300);margin-top:2px}
-.upload-preview{width:100%;height:140px;object-fit:cover;border-radius:10px;margin-top:8px;display:none}
-.upload-progress{height:4px;background:var(--sand);border-radius:2px;margin-top:8px;overflow:hidden;display:none}
-.upload-progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s;width:0%}
-.upload-status{font-size:11px;margin-top:4px;display:none}
 </style>
 </head>
 <body>
@@ -107,8 +110,8 @@ tr:last-child td{border-bottom:none}
     <div class="login-sub">Dashboard — Área Administrativa</div>
     <div class="err" id="login-err">Credenciais inválidas.</div>
     <div class="field"><label>Usuário</label><input type="text" id="login-u" placeholder="admin"></div>
-    <div class="field"><label>Senha</label><input type="password" id="login-p" placeholder="••••••" onkeydown="if(event.key==='Enter')login()"></div>
-    <button class="btn" onclick="login()">Entrar →</button>
+    <div class="field"><label>Senha</label><input type="password" id="login-p" placeholder="••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+    <button class="btn-login" onclick="fazerLogin()">Entrar →</button>
   </div>
 </div>
 
@@ -118,32 +121,26 @@ tr:last-child td{border-bottom:none}
     <div class="header-logo">Jornada <span>Espírita</span></div>
     <div class="header-right">
       <span class="header-user">Admin Master</span>
-      <button class="header-logout" onclick="sair()">Sair</button>
+      <button class="header-logout" onclick="location.reload()">Sair</button>
     </div>
   </div>
-
   <div class="main">
     <div class="page-title">Dashboard</div>
     <div class="page-sub">Gerencie todos os eventos da plataforma</div>
-
-    <div class="stats" id="stats-wrap">
+    <div class="stats">
       <div class="stat-card"><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Total de eventos</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-ativos">—</div><div class="stat-lbl">Eventos ativos</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-inscritos">—</div><div class="stat-lbl">Inscrições totais</div></div>
     </div>
-
     <div class="actions-bar">
-      <button class="btn-add" onclick="abrirModalCriar()">+ Criar novo evento</button>
+      <button class="btn-add" onclick="abrirModal()">+ Criar novo evento</button>
     </div>
-
-    <div class="eventos-table-wrap">
-      <div class="table-header">
-        <span class="table-title">📋 Todos os eventos</span>
-      </div>
+    <div class="table-wrap">
+      <div class="table-header"><span class="table-title">📋 Todos os eventos</span></div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Evento</th><th>Slug / URL</th><th>Data</th><th>Inscrições</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody id="tbody-eventos"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
+          <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="tbody-eventos"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -155,74 +152,74 @@ tr:last-child td{border-bottom:none}
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
       <h3>✨ Criar novo evento</h3>
-      <button onclick="fecharModal()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer">×</button>
+      <button onclick="fecharModal()">×</button>
     </div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="form-field" style="grid-column:1/-1">
-          <label>Nome do evento *</label>
-          <input type="text" id="ev-nome" placeholder="Ex: MCJ 2027" oninput="gerarSlug()">
-        </div>
-      </div>
       <div class="form-field">
-        <label>Slug (URL única — gerado automaticamente) *</label>
-        <input type="text" id="ev-slug" placeholder="mcj-2027">
-        <span class="slug-preview" id="slug-preview">jornadaespirita.com.br/...</span>
-        <span style="font-size:10px;color:var(--gray-300);margin-top:2px">O slug é único por evento. Edite se necessário.</span>
+        <label>Nome do evento *</label>
+        <input type="text" id="ev-nome" placeholder="Ex: Mocidade" oninput="gerarSlug()">
       </div>
       <div class="form-row">
         <div class="form-field">
           <label>Subtítulo</label>
-          <input type="text" id="ev-sub" placeholder="Ex: Momentos com Jesus">
+          <input type="text" id="ev-sub" placeholder="Ex: A Turminha do Barulho">
         </div>
         <div class="form-field">
-          <label>Data do evento</label>
-          <input type="text" id="ev-data" placeholder="Ex: 20 de setembro de 2027" oninput="gerarSlug()">
+          <label>Data do evento *</label>
+          <input type="text" id="ev-data" placeholder="Ex: 15 de novembro de 2026" oninput="gerarSlug()">
         </div>
+      </div>
+      <div class="form-field">
+        <label>Slug (URL única) *</label>
+        <input type="text" id="ev-slug" placeholder="mocidade-15.11.26">
+        <span class="slug-preview" id="slug-preview">jornadaespirita.com.br/...</span>
+        <span class="slug-note">Gerado automaticamente. Edite se necessário.</span>
       </div>
       <div class="form-row">
         <div class="form-field">
           <label>Horário</label>
-          <input type="text" id="ev-hora" placeholder="Ex: 8h às 18h">
+          <input type="text" id="ev-hora" placeholder="Ex: 8h às 16h">
         </div>
         <div class="form-field">
           <label>Local</label>
-          <input type="text" id="ev-local" placeholder="Ex: Rio de Janeiro">
+          <input type="text" id="ev-local" placeholder="Ex: Teresópolis, RJ">
         </div>
       </div>
       <div class="form-field">
-        <label>Cor primária (hex)</label>
-        <input type="color" id="ev-cor" value="#C8873A" style="height:44px;padding:4px 8px;cursor:pointer">
+        <label>Cor primária</label>
+        <input type="color" id="ev-cor" value="#0D2B4E" style="height:44px;padding:4px 8px;cursor:pointer;border-radius:10px;border:1.5px solid var(--sand)">
       </div>
 
-      <div class="form-field" style="grid-column:1/-1">
-        <label>📷 Foto de capa do evento</label>
-        <div class="upload-area" id="upload-capa-area" onclick="document.getElementById('upload-capa').click()">
-          <input type="file" id="upload-capa" accept="image/*,video/mp4" style="display:none" onchange="handleUpload(this,'capa','upload-capa-area')">
-          <div class="icon">🖼</div>
-          <div class="label">Clique para selecionar</div>
-          <div class="sub">JPG, PNG ou MP4 · máx 50MB</div>
+      <!-- Upload capa -->
+      <div class="form-field">
+        <label>📷 Foto de capa</label>
+        <div class="upload-area" onclick="document.getElementById('upload-capa').click()">
+          <input type="file" id="upload-capa" accept="image/*" style="display:none" onchange="handleUpload(this,'capa')">
+          <div style="font-size:24px;margin-bottom:4px">🖼</div>
+          <div style="font-size:12px;color:var(--gray-400);font-weight:600">Clique para selecionar</div>
+          <div style="font-size:11px;color:var(--gray-300);margin-top:2px">JPG ou PNG</div>
         </div>
         <img id="preview-capa" class="upload-preview">
-        <div class="upload-progress" id="prog-capa"><div class="upload-progress-fill" id="progfill-capa"></div></div>
-        <div class="upload-status" id="status-capa"></div>
-        <input type="hidden" id="ev-thumb" value="">
+        <div class="upload-bar" id="bar-capa"><div class="upload-fill" id="fill-capa"></div></div>
+        <div class="upload-status" id="st-capa"></div>
+        <input type="hidden" id="ev-thumb">
       </div>
 
-      <div class="form-field" style="grid-column:1/-1">
+      <!-- Upload video -->
+      <div class="form-field">
         <label>🎬 Vídeo de abertura (opcional)</label>
-        <div class="upload-area" id="upload-video-area" onclick="document.getElementById('upload-video').click()">
-          <input type="file" id="upload-video" accept="video/mp4" style="display:none" onchange="handleUpload(this,'video','upload-video-area')">
-          <div class="icon">🎬</div>
-          <div class="label">Clique para selecionar</div>
-          <div class="sub">MP4 · máx 100MB</div>
+        <div class="upload-area" onclick="document.getElementById('upload-video').click()">
+          <input type="file" id="upload-video" accept="video/mp4" style="display:none" onchange="handleUpload(this,'video')">
+          <div style="font-size:24px;margin-bottom:4px">🎬</div>
+          <div style="font-size:12px;color:var(--gray-400);font-weight:600">Clique para selecionar</div>
+          <div style="font-size:11px;color:var(--gray-300);margin-top:2px">MP4 · máx 100MB</div>
         </div>
-        <div class="upload-progress" id="prog-video"><div class="upload-progress-fill" id="progfill-video"></div></div>
-        <div class="upload-status" id="status-video"></div>
-        <input type="hidden" id="ev-video" value="">
+        <div class="upload-bar" id="bar-video"><div class="upload-fill" id="fill-video"></div></div>
+        <div class="upload-status" id="st-video"></div>
+        <input type="hidden" id="ev-video">
       </div>
 
-      <!-- PROGRESSO -->
+      <!-- Progresso criação -->
       <div class="progress-wrap" id="progress-wrap">
         <div class="progress-msg" id="progress-msg">Criando evento...</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
@@ -230,7 +227,7 @@ tr:last-child td{border-bottom:none}
     </div>
     <div class="modal-foot">
       <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-save" onclick="criarEvento()" id="btn-criar">✨ Criar evento</button>
+      <button class="btn-save" id="btn-criar" onclick="criarEvento()">✨ Criar evento</button>
     </div>
   </div>
 </div>
@@ -238,186 +235,184 @@ tr:last-child td{border-bottom:none}
 <script>
 const SUPA_URL = 'https://sdwxwdqnfukxeofscmpd.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
-const GH_TOKEN = 'ghp_kxKXV2J4pJiUFr8iX'+'hEXqoEAJPxnQp11F3zF';
+const GH_TOKEN = 'ghp_kxKXV2J4pJi'+'UFr8iXhEXqoEAJPxnQp11F3zF';
 const GH_REPO  = 'ramonpedrosa1407/MCJ2';
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'mcj2026@rj';
+const ADMIN_U  = 'admin';
+const ADMIN_P  = 'mcj2026@rj';
 
-let _logado = false;
 let _eventos = [];
 
-// AUTH
-function login(){
+/* ── AUTH ── */
+function fazerLogin(){
   const u = document.getElementById('login-u').value.trim();
   const p = document.getElementById('login-p').value;
-  if(u===ADMIN_USER && p===ADMIN_PASS){
-    _logado = true;
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('dashboard').style.display='block';
+  const err = document.getElementById('login-err');
+  if(u===ADMIN_U && p===ADMIN_P){
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
     carregarDados();
   } else {
-    const err = document.getElementById('login-err');
-    err.style.display='block';
-    setTimeout(()=>err.style.display='none',3000);
+    err.style.display = 'block';
+    setTimeout(()=>err.style.display='none', 3000);
   }
 }
-function sair(){ location.reload(); }
 
-// SUPABASE
+/* ── SUPABASE ── */
 async function supa(method, path, body){
-  const opts = { method, headers:{ apikey:SUPA_KEY, 'Authorization':'Bearer '+SUPA_KEY, 'Content-Type':'application/json', 'Prefer':'return=representation' } };
+  const opts = {
+    method,
+    headers:{ apikey:SUPA_KEY, 'Authorization':'Bearer '+SUPA_KEY, 'Content-Type':'application/json', 'Prefer':'return=representation' }
+  };
   if(body) opts.body = JSON.stringify(body);
   const r = await fetch(SUPA_URL+'/rest/v1/'+path, opts);
   if(!r.ok){ const t=await r.text(); throw new Error(t); }
-  return r.json();
+  const txt = await r.text();
+  return txt ? JSON.parse(txt) : [];
 }
 
-// CARREGAR DADOS
+/* ── DADOS ── */
 async function carregarDados(){
   try {
     _eventos = await supa('GET','eventos?select=*&order=criado_em.desc') || [];
-    const inscritos = await supa('GET','inscricoes?select=evento_id') || [];
-    document.getElementById('stat-total').textContent  = _eventos.length;
-    document.getElementById('stat-ativos').textContent = _eventos.filter(e=>e.ativo).length;
-    document.getElementById('stat-inscritos').textContent = inscritos.length;
+    let inscritos = 0;
+    try { inscritos = (await supa('GET','inscricoes?select=id') || []).length; } catch(e){}
+    document.getElementById('stat-total').textContent   = _eventos.length;
+    document.getElementById('stat-ativos').textContent  = _eventos.filter(e=>e.ativo).length;
+    document.getElementById('stat-inscritos').textContent = inscritos;
     renderTabela();
-  } catch(e){ console.warn(e); }
+  } catch(e){ console.error(e); }
 }
 
 function renderTabela(){
   const tb = document.getElementById('tbody-eventos');
   if(!_eventos.length){
-    tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado ainda.</td></tr>';
+    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado.</td></tr>';
     return;
   }
   tb.innerHTML = _eventos.map(e=>{
     const cfg = e.config||{};
     return '<tr>' +
       '<td><strong>'+e.nome+'</strong><br><span style="font-size:11px;color:var(--gray-400)">'+(cfg.subtitulo||'')+'</span></td>' +
-      '<td><a href="/'+e.slug+'" target="_blank" style="color:var(--gold);font-size:12px">jornadaespirita.com.br/'+e.slug+'</a></td>' +
+      '<td><a href="/'+e.slug+'/" target="_blank" style="color:var(--gold);font-size:12px">jornadaespirita.com.br/'+e.slug+'/</a></td>' +
       '<td style="font-size:12px">'+(cfg.data||'—')+'</td>' +
-      '<td style="font-size:12px">—</td>' +
       '<td><span class="badge '+(e.ativo?'badge-green':'badge-gray')+'">'+(e.ativo?'Ativo':'Inativo')+'</span></td>' +
-      '<td style="display:flex;gap:6px">' +
-      '<button class="btn-table btn-acessar" onclick="window.open(\'/'+e.slug+'\',\'_blank\')">Acessar</button>' +
-      '<button class="btn-table btn-toggle" onclick="toggleEvento(\''+e.id+'\','+e.ativo+')">'+(e.ativo?'Desativar':'Ativar')+'</button> <button class="btn-table" onclick="excluirEvento(\''+e.id+'\')" style="background:#FEF2F2;color:#EF4444;border:1px solid #FECACA">🗑</button>' +
+      '<td>' +
+        '<button class="btn-t btn-t-blue" onclick="window.open(\'/'+e.slug+'/\',\'_blank\')">Acessar</button>' +
+        '<button class="btn-t btn-t-gray" onclick="toggleEvento(\''+e.id+'\','+e.ativo+')">'+(e.ativo?'Desativar':'Ativar')+'</button>' +
+        '<button class="btn-t btn-t-red" onclick="excluirEvento(\''+e.id+'\',\''+e.nome+'\')">🗑 Excluir</button>' +
       '</td>' +
       '</tr>';
   }).join('');
 }
 
-async function excluirEvento(id, slug){
-  if(!confirm('Tem certeza que deseja EXCLUIR o evento "'+slug+'"? Esta ação não pode ser desfeita.')) return;
+async function toggleEvento(id, ativo){
+  await supa('PATCH','eventos?id=eq.'+id, {ativo:!ativo});
+  carregarDados();
+}
+
+async function excluirEvento(id, nome){
+  if(!confirm('Excluir o evento "'+nome+'"?\nEsta ação não pode ser desfeita.')) return;
   try {
     await supa('DELETE','eventos?id=eq.'+id);
     carregarDados();
   } catch(e){ alert('Erro ao excluir: '+e.message); }
 }
 
-async function toggleEvento(id, ativo){
-  await supa('PATCH','eventos?id=eq.'+id,{ativo:!ativo});
-  carregarDados();
-}
-
-// MODAL CRIAR
-function abrirModalCriar(){
+/* ── MODAL ── */
+function abrirModal(){
   document.getElementById('modal-criar').classList.add('show');
   document.getElementById('ev-nome').focus();
 }
 function fecharModal(){
   document.getElementById('modal-criar').classList.remove('show');
-  document.getElementById('progress-wrap').style.display='none';
-  document.getElementById('btn-criar').disabled=false;
-  document.getElementById('btn-criar').textContent='✨ Criar evento';
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('btn-criar').disabled = false;
+  document.getElementById('btn-criar').textContent = '✨ Criar evento';
+  ['capa','video'].forEach(t=>{
+    document.getElementById('bar-'+t).style.display='none';
+    document.getElementById('st-'+t).style.display='none';
+    document.getElementById('fill-'+t).style.width='0';
+  });
+  document.getElementById('preview-capa').style.display='none';
+  document.getElementById('ev-thumb').value='';
+  document.getElementById('ev-video').value='';
 }
 
+/* ── SLUG ── */
 function gerarSlug(){
-  const nome = document.getElementById('ev-nome').value;
+  const nome    = document.getElementById('ev-nome').value;
   const dataStr = document.getElementById('ev-data').value;
 
-  // Extrai dia, mes, ano do campo data
-  const meses = {janeiro:'01',fevereiro:'02',março:'03',abril:'04',maio:'05',junho:'06',
-    julho:'07',agosto:'08',setembro:'09',outubro:'10',novembro:'11',dezembro:'12'};
+  const meses = {
+    janeiro:'01',fevereiro:'02','março':'03',abril:'04',maio:'05',junho:'06',
+    julho:'07',agosto:'08',setembro:'09',outubro:'10',novembro:'11',dezembro:'12'
+  };
+
   let dd='', mm='', aa='';
   const nums = dataStr.match(/\d+/g)||[];
-  if(nums.length>=3){ dd=nums[0].padStart(2,'0'); mm=nums[1].padStart(2,'0'); aa=String(nums[2]).slice(-2); }
-  else if(nums.length>=2){
-    dd=nums[0].padStart(2,'0');
-    for(const [m,n] of Object.entries(meses)){ if(dataStr.toLowerCase().includes(m)){ mm=n; break; } }
-    aa=String(nums[nums.length-1]).slice(-2);
-  } else if(nums.length===1){
-    dd='';
-    for(const [m,n] of Object.entries(meses)){ if(dataStr.toLowerCase().includes(m)){ mm=n; break; } }
-    aa=String(nums[0]).slice(-2);
+  if(nums.length>=3){
+    dd = nums[0].padStart(2,'0');
+    mm = nums[1].padStart(2,'0');
+    aa = String(nums[2]).slice(-2);
+  } else {
+    if(nums.length>=1) dd = nums[0].padStart(2,'0');
+    for(const [m,n] of Object.entries(meses)){
+      if(dataStr.toLowerCase().includes(m)){ mm=n; break; }
+    }
+    if(nums.length>=2) aa = String(nums[nums.length-1]).slice(-2);
+    else if(nums.length===1) aa = String(nums[0]).slice(-2);
   }
-  const dataSufixo = dd&&mm&&aa ? dd+'.'+mm+'.'+aa : mm&&aa ? mm+'.'+aa : aa||'';
 
-  const base = nome.toLowerCase()
+  const sufixo = [dd,mm,aa].filter(Boolean).join('.');
+  const base   = nome.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9\s-]/g,'')
-    .trim().replace(/\s+/g,'-');
-  const slug = base && dataSufixo ? base+'-'+dataSufixo : base||'';
+    .replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+  const slug   = base && sufixo ? base+'-'+sufixo : base||'';
+
   document.getElementById('ev-slug').value = slug;
-  document.getElementById('slug-preview').textContent = 'jornadaespirita.com.br/' + (slug||'...');
+  document.getElementById('slug-preview').textContent = 'jornadaespirita.com.br/'+(slug||'...');
 }
 
-function setProgress(pct, msg){
-  document.getElementById('progress-fill').style.width = pct+'%';
-  document.getElementById('progress-msg').textContent = msg;
-}
-
-
-// UPLOAD SUPABASE STORAGE
-async function handleUpload(input, tipo, areaId){
+/* ── UPLOAD ── */
+async function handleUpload(input, tipo){
   const file = input.files[0];
   if(!file) return;
-
-  const area = document.getElementById(areaId);
-  const prog = document.getElementById('prog-'+tipo);
-  const fill = document.getElementById('progfill-'+tipo);
-  const status = document.getElementById('status-'+tipo);
-
-  prog.style.display = 'block';
-  status.style.display = 'block';
-  status.style.color = 'var(--gray-400)';
-  status.textContent = 'Enviando...';
-  fill.style.width = '30%';
-
-  // Preview imediato para imagens
-  if(file.type.startsWith('image/')){
-    const preview = document.getElementById('preview-'+tipo);
-    if(preview){ preview.src = URL.createObjectURL(file); preview.style.display='block'; }
+  const bar  = document.getElementById('bar-'+tipo);
+  const fill = document.getElementById('fill-'+tipo);
+  const st   = document.getElementById('st-'+tipo);
+  bar.style.display='block'; st.style.display='block';
+  st.style.color='var(--gray-400)'; st.textContent='Enviando...';
+  fill.style.width='30%';
+  if(tipo==='capa' && file.type.startsWith('image/')){
+    const prev = document.getElementById('preview-capa');
+    prev.src = URL.createObjectURL(file);
+    prev.style.display = 'block';
   }
-
   const ext  = file.name.split('.').pop();
-  const path = tipo + '/' + Date.now() + '.' + ext;
-
+  const path = tipo+'/'+Date.now()+'.'+ext;
   try {
-    fill.style.width = '60%';
-    const r = await fetch(SUPA_URL+'/storage/v1/object/eventos-media/'+path, {
-      method: 'POST',
-      headers: { apikey: SUPA_KEY, Authorization: 'Bearer '+SUPA_KEY, 'Content-Type': file.type },
-      body: file
+    fill.style.width='60%';
+    const r = await fetch(SUPA_URL+'/storage/v1/object/eventos-media/'+path,{
+      method:'POST',
+      headers:{apikey:SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type},
+      body:file
     });
-
-    if(!r.ok){ const t=await r.text(); throw new Error(t); }
-
-    fill.style.width = '100%';
+    if(!r.ok) throw new Error(await r.text());
+    fill.style.width='100%';
     const url = SUPA_URL+'/storage/v1/object/public/eventos-media/'+path;
-    document.getElementById('ev-'+tipo === 'ev-capa' ? 'thumb' : tipo).value = url;
-
-    if(tipo==='capa') document.getElementById('ev-thumb').value = url;
-    if(tipo==='video') document.getElementById('ev-video').value = url;
-
-    status.textContent = '✅ Upload concluído!';
-    status.style.color = '#10B981';
-    setTimeout(()=>{ prog.style.display='none'; },2000);
+    document.getElementById('ev-'+(tipo==='capa'?'thumb':'video')).value = url;
+    st.textContent='✅ Upload concluído!'; st.style.color='#10B981';
+    setTimeout(()=>bar.style.display='none',2000);
   } catch(e){
-    status.textContent = '❌ Erro: '+e.message;
-    status.style.color = 'var(--red)';
-    fill.style.width = '0%';
-    console.error(e);
+    st.textContent='❌ '+e.message; st.style.color='#EF4444';
+    fill.style.width='0';
   }
+}
+
+/* ── CRIAR EVENTO ── */
+function setProgress(pct, msg){
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-msg').textContent  = msg;
 }
 
 async function criarEvento(){
@@ -428,110 +423,94 @@ async function criarEvento(){
   const hora  = document.getElementById('ev-hora').value.trim();
   const local = document.getElementById('ev-local').value.trim();
   const cor   = document.getElementById('ev-cor').value;
+  const thumb = document.getElementById('ev-thumb').value;
+  const video = document.getElementById('ev-video').value;
 
-  if(!nome||!slug){ alert('Preencha o nome e o slug do evento.'); return; }
+  if(!nome||!slug){ alert('Preencha o nome e a data do evento.'); return; }
 
-  document.getElementById('progress-wrap').style.display='block';
-  document.getElementById('btn-criar').disabled=true;
-  document.getElementById('btn-criar').textContent='Criando...';
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('btn-criar').disabled = true;
+  document.getElementById('btn-criar').textContent = 'Criando...';
 
   try {
     // 1. Cria no Supabase
     setProgress(20,'Criando evento no banco de dados...');
-    const thumb = document.getElementById('ev-thumb')?.value||'';
-    const video  = document.getElementById('ev-video')?.value||'';
-    const config = { titulo:nome, subtitulo:sub, data, horario:hora, local, cor_primaria:cor, inscricoes_abertas:true, thumb, video_abertura:video };
-    const rows = await supa('POST','eventos',[{slug, nome, config, ativo:true}]);
+    const config = {titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,inscricoes_abertas:true,thumb,video_abertura:video};
+    const rows   = await supa('POST','eventos',[{slug,nome,config,ativo:true}]);
     const eventoId = rows[0]?.id;
 
-    // 2. Busca template MCJ como base
-    setProgress(50,'Gerando página do evento...');
-    const htmlEvento = await gerarHtmlEvento(nome, slug, sub, data, hora, local, cor, eventoId, thumb, video);
+    // 2. Busca template MCJ
+    setProgress(50,'Buscando template do sistema...');
+    const htmlEvento = await gerarHtmlEvento(nome,slug,sub,data,hora,local,cor,eventoId,thumb,video);
 
     // 3. Sobe no GitHub
-    setProgress(75,'Publicando em jornadaespirita.com.br/'+slug+'...');
+    setProgress(75,'Publicando página do evento...');
     await githubCreateFile(slug+'/index.html', htmlEvento, 'Criar evento: '+nome);
 
     setProgress(100,'✅ Evento criado com sucesso!');
     setTimeout(()=>{
       fecharModal();
       carregarDados();
-      if(confirm('Evento criado! Acessar ' + slug + ' agora?')) window.open('/'+slug,'_blank');
-    }, 1500);
+      if(confirm('Evento criado! Acessar jornadaespirita.com.br/'+slug+'/ agora?'))
+        window.open('/'+slug+'/','_blank');
+    },1500);
 
   } catch(e){
     setProgress(0,'❌ Erro: '+e.message);
-    document.getElementById('btn-criar').disabled=false;
-    document.getElementById('btn-criar').textContent='✨ Criar evento';
+    document.getElementById('btn-criar').disabled = false;
+    document.getElementById('btn-criar').textContent = '✨ Criar evento';
     console.error(e);
   }
 }
 
-// GITHUB API
+/* ── GITHUB ── */
+async function githubGetFile(path){
+  const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+    {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
+  if(!r.ok) throw new Error('GitHub '+r.status+': '+await r.text());
+  const d = await r.json();
+  const bytes = Uint8Array.from(atob(d.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+  return new TextDecoder('utf-8').decode(bytes);
+}
+
 async function githubCreateFile(path, content, message){
-  // Verifica se arquivo já existe para pegar o SHA
   let sha = null;
   try {
     const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
-      {headers:{Authorization:'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
+      {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
     if(r.ok){ const d=await r.json(); sha=d.sha; }
   } catch(e){}
-
-  const body = { message, content: btoa(unescape(encodeURIComponent(content))) };
+  const bytes   = new TextEncoder().encode(content);
+  const b64     = btoa(String.fromCharCode(...bytes));
+  const body    = {message, content:b64};
   if(sha) body.sha = sha;
-
   const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,{
     method:'PUT',
     headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
     body:JSON.stringify(body)
   });
-  if(!r.ok){ const t=await r.text(); throw new Error('GitHub: '+t); }
+  if(!r.ok) throw new Error('GitHub: '+await r.text());
   return r.json();
 }
 
-// GERAR HTML DO EVENTO — busca template MCJ do GitHub e configura para o novo evento
-async function githubGetFile(path){
-  const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
-    {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
-  if(!r.ok) throw new Error('Erro ao buscar template: '+r.status);
-  const d = await r.json();
-  return atob(d.content.replace(/\n/g,''));
-}
-
+/* ── GERAR HTML ── */
 async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor, eventoId, thumb, video){
-  // Busca o template MCJ
-  const template = await githubGetFile('mcj-2026/index.html');
-
-  // Injeta configuração do novo evento logo após <script>
-  const inject = `
-// ═══════════════════════════════════════════
-// CONFIGURAÇÃO DO EVENTO: ${nome}
-// ═══════════════════════════════════════════
-window._EVENTO_OVERRIDE = {
-  id: "${eventoId}",
-  slug: "${slug}",
-  titulo: "${nome}",
-  subtitulo: "${subtitulo}",
-  data: "${data}",
-  horario: "${horario}",
-  local: "${local}",
-  cor_primaria: "${cor}",
-  thumb: "${thumb||''}",
-  video_abertura: "${video||''}"
-};
-`;
-
-  // Injeta antes do fechamento do <script> principal
-  return template.replace('/* ═══════════ FIM ═══════════ */', inject + '\n/* ═══════════ FIM ═══════════ */');
-}
-
-
-// Verifica se já logado ao carregar
-if(sessionStorage.getItem('je_admin')==='1'){
-  _logado=true;
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('dashboard').style.display='block';
-  carregarDados();
+  let template = await githubGetFile('mcj-2026/index.html');
+  const override = [
+    'window._EVENTO_OVERRIDE = {',
+    '  id: '+JSON.stringify(eventoId)+',',
+    '  slug: '+JSON.stringify(slug)+',',
+    '  titulo: '+JSON.stringify(nome)+',',
+    '  subtitulo: '+JSON.stringify(subtitulo)+',',
+    '  data: '+JSON.stringify(data)+',',
+    '  horario: '+JSON.stringify(horario)+',',
+    '  local: '+JSON.stringify(local)+',',
+    '  cor_primaria: '+JSON.stringify(cor)+',',
+    '  thumb: '+JSON.stringify(thumb||'')+',',
+    '  video_abertura: '+JSON.stringify(video||''),
+    '};'
+  ].join('\n');
+  return template.replace('/* ═══════════ FIM ═══════════ */', override+'\n/* ═══════════ FIM ═══════════ */');
 }
 </script>
 </body>
