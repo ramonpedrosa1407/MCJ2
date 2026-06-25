@@ -468,40 +468,39 @@ async function githubCreateFile(path, content, message){
   return r.json();
 }
 
-// GERAR HTML DO EVENTO — busca template MCJ do GitHub e configura para o novo evento
+// GERAR HTML DO EVENTO — gera página leve que carrega o app MCJ
 async function githubGetFile(path){
   const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
     {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
   if(!r.ok) throw new Error('Erro ao buscar template: '+r.status);
   const d = await r.json();
-  return atob(d.content.replace(/\n/g,''));
+  // Decode base64 preserving UTF-8
+  const bytes = Uint8Array.from(atob(d.content.replace(/\n/g,'')), c=>c.charCodeAt(0));
+  return new TextDecoder('utf-8').decode(bytes);
 }
 
-async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor, eventoId, thumb, video){
-  // Busca o template MCJ
-  const template = await githubGetFile('mcj-2026/index.html');
+async function gerarHtmlEvento(nome, slug, subtitulo, evData, horario, local, cor, eventoId, thumb, video){
+  // Busca o template MCJ do GitHub
+  let template = await githubGetFile('mcj-2026/index.html');
 
-  // Injeta configuração do novo evento logo após <script>
-  const inject = `
-// ═══════════════════════════════════════════
-// CONFIGURAÇÃO DO EVENTO: ${nome}
-// ═══════════════════════════════════════════
-window._EVENTO_OVERRIDE = {
-  id: "${eventoId}",
-  slug: "${slug}",
-  titulo: "${nome}",
-  subtitulo: "${subtitulo}",
-  data: "${data}",
-  horario: "${horario}",
-  local: "${local}",
-  cor_primaria: "${cor}",
-  thumb: "${thumb||''}",
-  video_abertura: "${video||''}"
-};
-`;
+  // Injeta override antes do marcador FIM
+  const override = [
+    'window._EVENTO_OVERRIDE = {',
+    '  id: ' + JSON.stringify(eventoId) + ',',
+    '  slug: ' + JSON.stringify(slug) + ',',
+    '  titulo: ' + JSON.stringify(nome) + ',',
+    '  subtitulo: ' + JSON.stringify(subtitulo) + ',',
+    '  data: ' + JSON.stringify(evData) + ',',
+    '  horario: ' + JSON.stringify(horario) + ',',
+    '  local: ' + JSON.stringify(local) + ',',
+    '  cor_primaria: ' + JSON.stringify(cor) + ',',
+    '  thumb: ' + JSON.stringify(thumb||'') + ',',
+    '  video_abertura: ' + JSON.stringify(video||''),
+    '};'
+  ].join('\n');
 
-  // Injeta antes do fechamento do <script> principal
-  return template.replace('/* ═══════════ FIM ═══════════ */', inject + '\n/* ═══════════ FIM ═══════════ */');
+  template = template.replace('/* ═══════════ FIM ═══════════ */', override + '\n/* ═══════════ FIM ═══════════ */');
+  return template;
 }
 
 
