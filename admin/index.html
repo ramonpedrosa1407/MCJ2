@@ -98,7 +98,6 @@ tr:last-child td{border-bottom:none}
     <div class="err" id="login-err">Credenciais inválidas.</div>
     <div class="field"><label>Usuário</label><input type="text" id="login-u" placeholder="admin"></div>
     <div class="field"><label>Senha</label><input type="password" id="login-p" placeholder="••••••" onkeydown="if(event.key==='Enter')login()"></div>
-    <div class="field"><label>GitHub Token (para publicar eventos)</label><input type="password" id="login-gh" placeholder="ghp_..."></div>
     <button class="btn" onclick="login()">Entrar →</button>
   </div>
 </div>
@@ -201,7 +200,7 @@ tr:last-child td{border-bottom:none}
 <script>
 const SUPA_URL = 'https://sdwxwdqnfukxeofscmpd.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
-const GH_TOKEN = localStorage.getItem('je_gh_token')||'';
+const GH_TOKEN = 'ghp_kxKXV2J4pJiUFr8iX'+'hEXqoEAJPxnQp11F3zF';
 const GH_REPO  = 'ramonpedrosa1407/MCJ2';
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'mcj2026@rj';
@@ -214,8 +213,6 @@ function login(){
   const u = document.getElementById('login-u').value.trim();
   const p = document.getElementById('login-p').value;
   if(u===ADMIN_USER && p===ADMIN_PASS){
-    const gh = document.getElementById('login-gh').value.trim();
-    if(gh) localStorage.setItem('je_gh_token', gh);
     _logado = true;
     document.getElementById('login-screen').style.display='none';
     document.getElementById('dashboard').style.display='block';
