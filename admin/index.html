@@ -305,6 +305,14 @@ function renderTabela(){
   }).join('');
 }
 
+async function excluirEvento(id, slug){
+  if(!confirm('Tem certeza que deseja EXCLUIR o evento "'+slug+'"? Esta ação não pode ser desfeita.')) return;
+  try {
+    await supa('DELETE','eventos?id=eq.'+id);
+    carregarDados();
+  } catch(e){ alert('Erro ao excluir: '+e.message); }
+}
+
 async function toggleEvento(id, ativo){
   await supa('PATCH','eventos?id=eq.'+id,{ativo:!ativo});
   carregarDados();
