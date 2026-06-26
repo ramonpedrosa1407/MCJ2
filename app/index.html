@@ -1741,7 +1741,7 @@ function aplicarConfigEvento(){
   const e = _cfgEvento;
   const titulo    = e.titulo    || (_cfgEvento.titulo||'');
   const subtitulo = e.subtitulo || '';
-  const tagline   = e.design?.hero_tagline || 'Jornada de Estudos Espíritas do Evangelho';
+  const tagline   = e.design?.hero_tagline || '';
   const data      = e.data      || '';
   const horario   = e.horario || '';
   const local     = e.local || '';
@@ -2265,7 +2265,7 @@ let _cfgEvento = {
     fonte_titulo: 'EB Garamond',
     fonte_texto:  'Raleway',
     titulo_size:  'clamp(3rem,11vw,6.5rem)',
-    hero_tagline: 'Jornada de Estudos Espíritas do Evangelho',
+    hero_tagline: '',
   }
 };
 
@@ -2322,19 +2322,19 @@ if(window._EVENTO_OVERRIDE){
 const TEMAS_DESIGN = [
   { nome:'Terra Santa', descricao:'Clássico e espiritual',
     cor_primaria:'#1a1a2e', cor_destaque:'#5B8DB8', cor_fundo:'#F5F5F5', cor_texto:'#0f0f1a',
-    fonte_titulo:'EB Garamond', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+    fonte_titulo:'EB Garamond', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Céu Profundo', descricao:'Sereno e contemplativo',
     cor_primaria:'#0D2B4E', cor_destaque:'#7EB8D4', cor_fundo:'#F0F4F8', cor_texto:'#0A1E35',
-    fonte_titulo:'Cormorant Garamond', fonte_texto:'Lato', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+    fonte_titulo:'Cormorant Garamond', fonte_texto:'Lato', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Verde Esperança', descricao:'Renovação e vida',
     cor_primaria:'#1B4332', cor_destaque:'#D4A843', cor_fundo:'#F0FAF4', cor_texto:'#0D2B1E',
-    fonte_titulo:'Playfair Display', fonte_texto:'Nunito', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+    fonte_titulo:'Playfair Display', fonte_texto:'Nunito', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Púrpura Real', descricao:'Majestoso e sagrado',
     cor_primaria:'#3B1F5E', cor_destaque:'#C4A8E8', cor_fundo:'#F5F0FF', cor_texto:'#1E0E33',
-    fonte_titulo:'Cinzel', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+    fonte_titulo:'Cinzel', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Amanhecer', descricao:'Quente e acolhedor',
     cor_primaria:'#6B1E2E', cor_destaque:'#E8A87C', cor_fundo:'#FDF5F0', cor_texto:'#3D0E18',
-    fonte_titulo:'Lora', fonte_texto:'Source Sans 3', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'Jornada de Estudos Espíritas do Evangelho' },
+    fonte_titulo:'Lora', fonte_texto:'Source Sans 3', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
 ];
 
 function getDesign(){ return _cfgEvento.design || TEMAS_DESIGN[0]; }
@@ -2385,7 +2385,7 @@ function gerarTemaFromCor(corHex){
     fonte_titulo: ft,
     fonte_texto:  fx,
     titulo_size: 'clamp(3rem,11vw,6.5rem)',
-    hero_tagline: 'Jornada de Estudos Espíritas do Evangelho',
+    hero_tagline: '',
   };
 }
 
