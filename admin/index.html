@@ -903,6 +903,51 @@ async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor,
     </div>
   </div>
 </div>
+
+<!-- MODAL FASES -->
+<div class="fases-modal-overlay" id="fases-modal-overlay" onclick="if(event.target===this)fecharModalFases()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
+    <div class="modal-head">
+      <h3>⚙️ Configurar fases das inscrições</h3>
+      <button onclick="fecharModalFases()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label>Modo de definição</label>
+        <select id="fases-modo" onchange="toggleModoFases()">
+          <option value="datas">📅 Datas fixas</option>
+          <option value="dias">🔢 Quantidade de dias desde a criação</option>
+        </select>
+      </div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🔜 Em breve</div>
+        <div style="font-size:12px;color:var(--gray-400)">Fase inicial — automática até a abertura das inscrições</div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.5px">✅ Inscrições abertas</div>
+        <div class="form-row">
+          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-abertas-de" class="fases-input-date" type="date"></div>
+          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-abertas-ate" class="fases-input-date" type="date"></div>
+        </div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">⏳ Inscrições prorrogadas</div>
+        <div class="form-row">
+          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-de" class="fases-input-date" type="date"></div>
+          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-ate" class="fases-input-date" type="date"></div>
+        </div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔒 Inscrições encerradas</div>
+        <div class="form-field"><label>A partir de <span class="fases-label-data">(data)</span></label><input id="fases-encerradas-de" class="fases-input-date" type="date"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="fecharModalFases()">Cancelar</button>
+      <button class="btn-save" onclick="salvarFases()">💾 Salvar fases</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>// GERAR HTML DO EVENTO — página leve que redireciona para /app/
 async function gerarHtmlEvento(nome, slug, subtitulo, evData, horario, local, cor, eventoId, thumb, video){
