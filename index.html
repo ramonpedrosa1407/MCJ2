@@ -184,7 +184,9 @@ async function carregarEventos(){
     const r = await fetch(SUPA_URL + '/rest/v1/eventos?select=*&ativo=eq.true&order=criado_em.desc', {
       headers:{ apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
     });
-    const eventos = await r.json();
+    const todos = await r.json();
+    // Filtra eventos privados
+    const eventos = todos.filter(e=>(e.config||{}).publico !== false);
     if(!eventos.length){
       grid.innerHTML = '<div class="loading-eventos" style="color:var(--gray-400)">Nenhum evento ativo no momento.</div>';
       return;
