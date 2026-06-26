@@ -1756,16 +1756,16 @@ function aplicarConfigEvento(){
   document.getElementById('meta-app-title')?.setAttribute('content', titulo);
 
   // ── Splash screen ────────────────────────────────────────
+  const splashTitulo = document.getElementById('splash-titulo');
+  if(splashTitulo) splashTitulo.textContent = tituloBase || titulo;
   const splashAno = document.getElementById('splash-ano');
-  if(splashAno) splashAno.textContent = tituloAno || titulo;
+  if(splashAno) splashAno.textContent = tituloAno;
 
   // ── Navbar ───────────────────────────────────────────────
-  const navLogo = document.getElementById('nav-logo');
-  if(navLogo){
-    navLogo.innerHTML = tituloAno
-      ? `${tituloBase} <span id="nav-ano">${tituloAno}</span>`
-      : titulo;
-  }
+  const navTitulo = document.getElementById('nav-titulo');
+  if(navTitulo) navTitulo.textContent = tituloBase || titulo;
+  const navAno = document.getElementById('nav-ano');
+  if(navAno) navAno.textContent = tituloAno;
   const navDate = document.getElementById('nav-date');
   if(navDate) navDate.textContent = data;
 
