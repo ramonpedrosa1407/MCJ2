@@ -82,6 +82,18 @@ tr:last-child td{border-bottom:none}
 .form-field input:focus{border-color:var(--dark)}
 .slug-preview{font-size:11px;color:var(--gold);margin-top:3px;font-weight:600}
 .slug-note{font-size:10px;color:var(--gray-300);margin-top:1px}
+.fase-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif}
+.fase-em-breve{background:#EFF6FF;color:#1D4ED8}
+.fase-abertas{background:#ECFDF5;color:#065F46}
+.fase-prorrogadas{background:#FFFBEB;color:#92400E}
+.fase-encerradas{background:#FEF2F2;color:#991B1B}
+.fase-dropdown{position:fixed;background:white;border:1.5px solid var(--sand);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:9999;min-width:200px;display:none}
+.fase-dropdown.show{display:block}
+.fase-opt{padding:10px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--gray-100)}
+.fase-opt:last-child{border-bottom:none}
+.fase-opt:hover{background:var(--gray-50)}
+.fases-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem}
+.fases-modal-overlay.show{display:flex}
 .modal-foot{padding:1rem 1.25rem;border-top:1px solid var(--sand);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:white}
 .btn-cancel{padding:10px 18px;background:white;border:1px solid var(--sand);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
 .btn-save{padding:10px 18px;background:var(--dark);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
@@ -139,7 +151,7 @@ tr:last-child td{border-bottom:none}
       <div class="table-header"><span class="table-title">📋 Todos os eventos</span></div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
+          <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th>Fase das inscrições</th><th>Ações</th></tr></thead>
           <tbody id="tbody-eventos"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
         </table>
       </div>
@@ -295,7 +307,9 @@ function renderTabela(){
       '<td><strong>'+e.nome+'</strong><br><span style="font-size:11px;color:var(--gray-400)">'+(cfg.subtitulo||'')+'</span></td>' +
       '<td><a href="/'+e.slug+'/" target="_blank" style="color:var(--gold);font-size:12px">jornadaespirita.com.br/'+e.slug+'/</a></td>' +
       '<td style="font-size:12px">'+(cfg.data||'—')+'</td>' +
-      '<td><span class="badge '+(e.ativo?'badge-green':'badge-gray')+'">'+(e.ativo?'Ativo':'Inativo')+'</span></td>' +
+      '<td>' +
+        (()=>{ const fb=getFaseBadge(e.config||{}); return '<button class="fase-badge '+fb.cls+'" onclick="abrirFaseDropdown(\''+e.id+'\',this)">'+fb.label+' ▾</button>'; })() +
+      '</td>' +
       '<td>' +
         '<button class="btn-t btn-t-blue" onclick="window.open(\'/'+e.slug+'/\',\'_blank\')">Acessar</button>' +
         '<button class="btn-t btn-t-gray" onclick="toggleEvento(\''+e.id+'\','+e.ativo+')">'+(e.ativo?'Desativar':'Ativar')+'</button>' +
@@ -409,6 +423,138 @@ async function handleUpload(input, tipo){
     fill.style.width='0';
   }
 }
+
+/* ── FASES ── */
+const FASES = [
+  {id:'em_breve',    label:'🔜 Em breve',    cls:'fase-em-breve'},
+  {id:'abertas',     label:'✅ Abertas',      cls:'fase-abertas'},
+  {id:'prorrogadas', label:'⏳ Prorrogadas',  cls:'fase-prorrogadas'},
+  {id:'encerradas',  label:'🔒 Encerradas',   cls:'fase-encerradas'},
+];
+
+function calcFaseAtual(cfg){
+  if(cfg.fase_forcada) return cfg.fase_forcada;
+  const fases = cfg.fases;
+  if(!fases) return 'em_breve';
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const modo = cfg.modo_fases||'datas';
+  const criado = cfg.criado_em ? new Date(cfg.criado_em) : new Date();
+
+  function toDate(val){
+    if(!val) return null;
+    if(modo==='dias') return new Date(criado.getTime() + val*86400000);
+    return new Date(val);
+  }
+
+  const f = fases;
+  if(f.encerradas && toDate(f.encerradas.de) && hoje >= toDate(f.encerradas.de)) return 'encerradas';
+  if(f.prorrogadas && toDate(f.prorrogadas.de) && hoje >= toDate(f.prorrogadas.de)) return 'prorrogadas';
+  if(f.abertas && toDate(f.abertas.de) && hoje >= toDate(f.abertas.de)) return 'abertas';
+  return 'em_breve';
+}
+
+function getFaseBadge(cfg){
+  const id = calcFaseAtual(cfg);
+  const f = FASES.find(x=>x.id===id)||FASES[0];
+  return {id, label:f.label, cls:f.cls};
+}
+
+let _faseDdEventoId = null;
+
+function abrirFaseDropdown(eventoId, btn){
+  // Fecha outros
+  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
+  let dd = document.getElementById('fase-dd-'+eventoId);
+  if(!dd){
+    dd = document.createElement('div');
+    dd.className = 'fase-dropdown';
+    dd.id = 'fase-dd-'+eventoId;
+    dd.innerHTML = FASES.map(f=>
+      '<div class="fase-opt" onclick="forcarFase(\''+eventoId+'\',\''+f.id+'\')">'+
+      '<span class="fase-badge '+f.cls+'">'+f.label+'</span></div>'
+    ).join('') +
+    '<div class="fase-opt" onclick="forcarFase(\''+eventoId+'\',null)" style="color:var(--gray-400);font-size:12px">🔄 Automático (por data)</div>' +
+    '<div class="fase-opt" onclick="abrirModalFases(\''+eventoId+'\')">⚙️ Configurar datas</div>';
+    document.body.appendChild(dd);
+  }
+  const rect = btn.getBoundingClientRect();
+  dd.style.top  = (rect.bottom+4)+'px';
+  dd.style.left = rect.left+'px';
+  dd.classList.add('show');
+  setTimeout(()=>{
+    const close = e=>{ if(!dd.contains(e.target)){ dd.classList.remove('show'); document.removeEventListener('click',close); } };
+    document.addEventListener('click',close);
+  },50);
+}
+
+async function forcarFase(eventoId, fase){
+  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
+  const ev = _eventos.find(e=>e.id===eventoId);
+  if(!ev) return;
+  const cfg = {...(ev.config||{})};
+  if(fase===null) delete cfg.fase_forcada;
+  else cfg.fase_forcada = fase;
+  try {
+    await supa('PATCH','eventos?id=eq.'+eventoId,{config:cfg});
+    ev.config = cfg;
+    renderTabela();
+  } catch(e){ alert('Erro: '+e.message); }
+}
+
+// Modal de configuração de fases
+let _fasesEventoId = null;
+function abrirModalFases(eventoId){
+  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
+  _fasesEventoId = eventoId;
+  const ev = _eventos.find(e=>e.id===eventoId);
+  const cfg = ev?.config||{};
+  const f   = cfg.fases||{};
+  const modo = cfg.modo_fases||'datas';
+
+  document.getElementById('fases-modo').value = modo;
+  document.getElementById('fases-abertas-de').value    = f.abertas?.de||'';
+  document.getElementById('fases-abertas-ate').value   = f.abertas?.ate||'';
+  document.getElementById('fases-prorrog-de').value    = f.prorrogadas?.de||'';
+  document.getElementById('fases-prorrog-ate').value   = f.prorrogadas?.ate||'';
+  document.getElementById('fases-encerradas-de').value = f.encerradas?.de||'';
+  toggleModoFases();
+  document.getElementById('fases-modal-overlay').classList.add('show');
+}
+
+function fecharModalFases(){
+  document.getElementById('fases-modal-overlay').classList.remove('show');
+}
+
+function toggleModoFases(){
+  const modo = document.getElementById('fases-modo').value;
+  const isDias = modo==='dias';
+  document.querySelectorAll('.fases-label-data').forEach(el=>el.textContent=isDias?'(dias desde criação)':'(data)');
+  document.querySelectorAll('.fases-input-date').forEach(el=>el.type=isDias?'number':'date');
+}
+
+async function salvarFases(){
+  const ev = _eventos.find(e=>e.id===_fasesEventoId);
+  if(!ev) return;
+  const modo = document.getElementById('fases-modo').value;
+  const parse = id => {
+    const v = document.getElementById(id).value;
+    return modo==='dias' ? (v?parseInt(v):null) : (v||null);
+  };
+  const fases = {
+    abertas:     { de: parse('fases-abertas-de'),    ate: parse('fases-abertas-ate') },
+    prorrogadas: { de: parse('fases-prorrog-de'),    ate: parse('fases-prorrog-ate') },
+    encerradas:  { de: parse('fases-encerradas-de') },
+  };
+  const cfg = {...(ev.config||{}), modo_fases:modo, fases, criado_em: ev.config?.criado_em||new Date().toISOString()};
+  delete cfg.fase_forcada;
+  try {
+    await supa('PATCH','eventos?id=eq.'+_fasesEventoId,{config:cfg});
+    ev.config = cfg;
+    fecharModalFases();
+    renderTabela();
+  } catch(e){ alert('Erro: '+e.message); }
+}
+
 
 /* ── CRIAR EVENTO ── */
 function setProgress(pct, msg){
@@ -528,5 +674,50 @@ async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor,
   return template.replace('/* ═══════════ FIM ═══════════ */', override+'\n/* ═══════════ FIM ═══════════ */');
 }
 </script>
+
+<!-- MODAL FASES -->
+<div class="fases-modal-overlay" id="fases-modal-overlay" onclick="if(event.target===this)fecharModalFases()">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
+    <div class="modal-head">
+      <h3>⚙️ Configurar fases das inscrições</h3>
+      <button onclick="fecharModalFases()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label>Modo de definição</label>
+        <select id="fases-modo" onchange="toggleModoFases()">
+          <option value="datas">📅 Datas fixas</option>
+          <option value="dias">🔢 Quantidade de dias desde a criação</option>
+        </select>
+      </div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px">🔜 Em breve</div>
+        <div style="font-size:12px;color:var(--gray-400)">Fase inicial — automática até a abertura das inscrições</div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.5px">✅ Inscrições abertas</div>
+        <div class="form-row">
+          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-abertas-de" class="fases-input-date" type="date"></div>
+          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-abertas-ate" class="fases-input-date" type="date"></div>
+        </div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">⏳ Inscrições prorrogadas</div>
+        <div class="form-row">
+          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-de" class="fases-input-date" type="date"></div>
+          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-ate" class="fases-input-date" type="date"></div>
+        </div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔒 Inscrições encerradas</div>
+        <div class="form-field"><label>A partir de <span class="fases-label-data">(data)</span></label><input id="fases-encerradas-de" class="fases-input-date" type="date"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="fecharModalFases()">Cancelar</button>
+      <button class="btn-save" onclick="salvarFases()">💾 Salvar fases</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
