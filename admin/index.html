@@ -93,6 +93,15 @@ tr:last-child td{border-bottom:none}
 .form-field input:focus{border-color:var(--dark)}
 .slug-preview{font-size:11px;color:var(--gold);margin-top:3px;font-weight:600}
 .slug-note{font-size:10px;color:var(--gray-300);margin-top:1px}
+.toggle-vis{display:flex;border:1.5px solid var(--sand);border-radius:10px;overflow:hidden;margin-top:4px}
+.toggle-vis-btn{flex:1;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;background:white;color:var(--gray-400);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.toggle-vis-btn.active-pub{background:#ECFDF5;color:#065F46}
+.toggle-vis-btn.active-priv{background:#FEF2F2;color:#991B1B}
+.search-wrap{position:relative;margin-bottom:1.25rem}
+.search-input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;outline:none;background:white}
+.search-input:focus{border-color:var(--dark)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-300);font-size:15px}
+.no-results{text-align:center;padding:2rem;color:var(--gray-300);font-size:14px}
 .fase-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif}
 .fase-em-breve{background:#EFF6FF;color:#1D4ED8}
 .fase-abertas{background:#ECFDF5;color:#065F46}
@@ -159,6 +168,10 @@ tr:last-child td{border-bottom:none}
     <div class="actions-bar">
       <button class="btn-add" onclick="abrirModal()">+ Criar novo evento</button>
     </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="busca-eventos" placeholder="Buscar evento por nome, slug ou data..." oninput="filtrarEventos(this.value)">
+    </div>
     <div class="table-wrap">
       <div class="table-header"><span class="table-title">📋 Todos os eventos</span></div>
       <div style="overflow-x:auto">
@@ -212,6 +225,15 @@ tr:last-child td{border-bottom:none}
       <div class="form-field">
         <label>Cor primária</label>
         <input type="color" id="ev-cor" value="#0D2B4E" style="height:44px;padding:4px 8px;cursor:pointer;border-radius:10px;border:1.5px solid var(--sand)">
+      </div>
+
+      <div class="form-field" style="grid-column:1/-1">
+        <label>Visibilidade do evento</label>
+        <div class="toggle-vis" id="toggle-vis">
+          <button class="toggle-vis-btn active-pub" id="btn-publico" onclick="setVisibilidade('publico')">🌐 Público — aparece no portal</button>
+          <button class="toggle-vis-btn" id="btn-privado" onclick="setVisibilidade('privado')">🔒 Privado — só por link direto</button>
+        </div>
+        <input type="hidden" id="ev-publico" value="true">
       </div>
 
       <!-- Upload capa -->
@@ -369,6 +391,7 @@ function fecharModal(){
   document.getElementById('preview-capa').style.display='none';
   document.getElementById('ev-thumb').value='';
   document.getElementById('ev-video').value='';
+  setVisibilidade('publico');
 }
 
 /* ── SLUG ── */
@@ -619,6 +642,40 @@ function baixarQR(){
 }
 
 
+/* ── VISIBILIDADE ── */
+function setVisibilidade(tipo){
+  const pub = tipo === 'publico';
+  document.getElementById('ev-publico').value = pub ? 'true' : 'false';
+  document.getElementById('btn-publico').className = 'toggle-vis-btn' + (pub ? ' active-pub' : '');
+  document.getElementById('btn-privado').className = 'toggle-vis-btn' + (!pub ? ' active-priv' : '');
+}
+
+/* ── BUSCA ── */
+function filtrarEventos(q){
+  q = q.toLowerCase().trim();
+  const rows = document.querySelectorAll('#tbody-eventos tr');
+  let found = 0;
+  rows.forEach(tr => {
+    const txt = tr.textContent.toLowerCase();
+    const show = !q || txt.includes(q);
+    tr.style.display = show ? '' : 'none';
+    if(show) found++;
+  });
+  // Mensagem sem resultados
+  let noRes = document.getElementById('no-results-row');
+  if(!found && q){
+    if(!noRes){
+      noRes = document.createElement('tr');
+      noRes.id = 'no-results-row';
+      noRes.innerHTML = '<td colspan="6" class="no-results">Nenhum evento encontrado para "<strong>'+q+'</strong>"</td>';
+      document.getElementById('tbody-eventos').appendChild(noRes);
+    }
+  } else if(noRes){
+    noRes.remove();
+  }
+}
+
+
 /* ── CRIAR EVENTO ── */
 function setProgress(pct, msg){
   document.getElementById('progress-fill').style.width = pct+'%';
@@ -645,7 +702,8 @@ async function criarEvento(){
   try {
     // 1. Cria no Supabase
     setProgress(20,'Criando evento no banco de dados...');
-    const config = {titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,inscricoes_abertas:true,thumb,video_abertura:video};
+    const publico = document.getElementById('ev-publico').value !== 'false';
+    const config = {titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,inscricoes_abertas:true,thumb,video_abertura:video,publico};
     const rows   = await supa('POST','eventos',[{slug,nome,config,ativo:true}]);
     const eventoId = rows[0]?.id;
 
