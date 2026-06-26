@@ -668,7 +668,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 <!-- VIEW: INSCRIÇÃO -->
 <div class="view active" id="view-inscricao">
   <div class="hero">
-    <div class="hero-video" style="background:linear-gradient(135deg,#0D2B4E 0%,#1a3a5c 50%,rgba(126,184,212,.3) 100%)"></div>
+    <div class="hero-video" id="hero-fallback-bg" style="background:linear-gradient(135deg,var(--mcj-dark) 0%,var(--mcj-mid) 60%,var(--mcj-gold)55 100%)"></div>
     <video class="hero-video" autoplay muted loop playsinline preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0" onerror="this.style.display='none'">
       <source src="" type="video/mp4">
     </video>
@@ -2443,8 +2443,7 @@ function aplicarDesign(){
   // Atualiza fundo do hero com as cores do tema
   const corPrimaria = d.cor_dark || d.cor_primaria || '#0D2B4E';
   const corDestaque = d.cor_destaque || '#7EB8D4';
-  // Gera cor intermediária levemente mais clara que a primária
-  const heroFallback = document.querySelector('.hero-video:not(video):not(source)');
+  const heroFallback = document.getElementById('hero-fallback-bg');
   if(heroFallback){
     heroFallback.style.background = `linear-gradient(135deg,${corPrimaria} 0%,${corPrimaria}CC 60%,${corDestaque}55 100%)`;
   }
