@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#3D2410">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" id="meta-app-title" content="MCJ 2026">
+<meta name="apple-mobile-web-app-title" id="meta-app-title" content="Jornada Espírita">
 <meta name="mobile-web-app-capable" content="yes">
-<title id="page-title">MCJ 2026 — Sistema de Inscrição</title>
+<title id="page-title">Jornada Espírita</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1435,28 +1435,7 @@ let SESSION = { role: null, login: null, nome: null, polos: [] };
 ================================================================ */
 let POLOS = [];
 
-const POLOS_DEFAULT = [
-  { nome:'Campo Grande', salas_adulto:['A','B','C'], salas_mocidade:['D','E'],
-    logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
-    fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
-    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'',
-    tem_mocidade:true, aceita_crianca:false },
-  { nome:'Jacarepaguá', salas_adulto:['A','B','C'], salas_mocidade:['D','E'],
-    logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
-    fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
-    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'',
-    tem_mocidade:true, aceita_crianca:false },
-  { nome:'Vila Isabel', salas_adulto:['A','B'], salas_mocidade:['C'],
-    logradouro:'', cep:'', cidade:'Rio de Janeiro', estado:'RJ', contato:'', apresentacao:'',
-    fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
-    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'',
-    tem_mocidade:true, aceita_crianca:false },
-  { nome:'Teresópolis', salas_adulto:['A','B'], salas_mocidade:['C'],
-    logradouro:'', cep:'', cidade:'Teresópolis', estado:'RJ', contato:'', apresentacao:'',
-    fotos:[], maps_link:'', expositores:[], expositores_salas:{}, inscricoes_abertas:true,
-    setores:['Recepção','Secretaria','Apoio'], mensagem_wa:'',
-    tem_mocidade:true, aceita_crianca:false },
-];
+const POLOS_DEFAULT = [];
 
 /* ================================================================
    STORAGE — CARREGAR / SALVAR
@@ -2262,13 +2241,13 @@ async function deletarInscricao(email, polo, id){
 /* CONFIG DO EVENTO (sobre + expositores globais) */
 let _cfgEvento = {
   // Textos
-  titulo: 'MCJ 2026', subtitulo: 'Momentos com Jesus',
+  titulo: '', subtitulo: '',
   inscricao_sub: 'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.',
   campos_extras: [],
-  descricao: '', tema_manha: 'O Renascer de Nicodemos',
-  tema_tarde: 'Jesus Forja Pedro para o Futuro',
-  data: '20 de setembro de 2026', horario: '8h às 17h30',
-  local: 'Rio de Janeiro',
+  descricao: '', tema_manha: '',
+  tema_tarde: '',
+  data: '', horario: '',
+  local: '',
   // Social
   instagram: '', facebook: '', livreto_url: '',
   materiais: [],
@@ -2447,7 +2426,7 @@ async function salvarDesign(){
 
 function restaurarDesignPadrao(){
   if(!confirm('Restaurar o tema padrão (Terra Santa)?')) return;
-  _cfgEvento.design={...TEMAS_DESIGN[0],tema_ativo:0,video_url:'https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4'};
+  _cfgEvento.design={...TEMAS_DESIGN[0],tema_ativo:0,video_url:''};
   setCfgEvento(); aplicarDesign(); renderEventoAdmin();
 }
 
