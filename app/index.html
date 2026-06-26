@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1a1a2e">
+<meta name="theme-color" content="#3D2410">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" id="meta-app-title" content="Jornada Espírita">
@@ -15,16 +15,16 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   /* Paleta MCJ — tons terrosos e dourados extraídos do cartaz */
-  --mcj-dark:   #1a1a2e;   /* marrom escuro — navbar, textos principais */
-  --mcj-mid:    #2a2a4a;   /* marrom médio — logo MCJ */
-  --mcj-gold:   #5B8DB8;   /* dourado âmbar — destaque, botões */
+  --mcj-dark:   #3D2410;   /* marrom escuro — navbar, textos principais */
+  --mcj-mid:    #6B4C2A;   /* marrom médio — logo MCJ */
+  --mcj-gold:   #C8873A;   /* dourado âmbar — destaque, botões */
   --mcj-gold2:  #E8A855;   /* dourado claro — hover, badges */
-  --mcj-cream:  #F5F5F5;   /* creme — fundo geral */
+  --mcj-cream:  #F2EDE4;   /* creme — fundo geral */
   --mcj-sand:   #E8E0D0;   /* areia — cards, bordas */
-  --mcj-text:   #0f0f1a;   /* texto escuro */
+  --mcj-text:   #2C1A08;   /* texto escuro */
 
   /* Mantém variáveis do sistema (usadas internamente nos cards de polo, badges, etc.) */
-  --blue-50:#F5EFE8;--blue-100:#E0C9A8;--blue-200:#C8A070;--blue-400:#4a7aa0;--blue-600:#2a2a4a;--blue-800:#1a1a2e;--blue-900:#0f0f1a;
+  --blue-50:#F5EFE8;--blue-100:#E0C9A8;--blue-200:#C8A070;--blue-400:#A06830;--blue-600:#6B4C2A;--blue-800:#1a1a2e;--blue-900:#2C1A08;
   --teal-50:#E8F5EE;--teal-100:#9FD9BB;--teal-400:#2D9E6E;--teal-600:#1A6E4A;--teal-800:#0D4A30;
   --amber-50:#FBF0DC;--amber-100:#F5C97A;--amber-800:#7A4208;
   --gray-50:#F5F2EC;--gray-100:#DDD9D0;--gray-200:#BDB9B0;--gray-400:#8A8780;--gray-600:#605D58;--gray-800:#3D3A35;--gray-900:#2C2A26;
@@ -545,11 +545,11 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 .cp-nome-completo{font-size:7px;text-align:center;font-style:italic;color:#A08060;margin-top:-2px}
 .cp-divider{height:1px;background:linear-gradient(to right,transparent,#D4B8A0,transparent);margin:2px 0}
 .cp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
-.cp-item{background:#FAFAFA;border-radius:4px;padding:3px 4px;text-align:center}
+.cp-item{background:#FAF5EF;border-radius:4px;padding:3px 4px;text-align:center}
 .cp-item-label{font-size:5.5px;text-transform:uppercase;letter-spacing:.5px;color:#A08060;font-weight:bold}
-.cp-item-val{font-size:7.5px;font-weight:bold;color:#0f0f1a}
+.cp-item-val{font-size:7.5px;font-weight:bold;color:#2C1A08}
 .cp-inst{font-size:6.5px;text-align:center;font-style:italic;color:#7A5A3A;border-top:1px solid #F0E8DC;padding-top:4px;margin-top:2px}
-.cp-rodape{padding:5px 10px;background:#FAFAFA;border-top:1px solid #E0E0E0;display:flex;align-items:center;justify-content:space-between}
+.cp-rodape{padding:5px 10px;background:#FAF5EF;border-top:1px solid #E8DDD0;display:flex;align-items:center;justify-content:space-between}
 .cp-funcao{font-size:6px;font-weight:bold;padding:1px 5px;border-radius:8px;text-transform:uppercase;letter-spacing:.3px}
 .cp-data{font-size:6px;color:#A08060;letter-spacing:.5px}
 
@@ -702,7 +702,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       </div>
       <div class="polo-card" onclick="selecionarPolo('Vila Isabel')">
         <span class="polo-check">✓</span>
-        <div class="polo-dot" style="background:#5B8DB8"></div>
+        <div class="polo-dot" style="background:#C8873A"></div>
         <div class="polo-name">Vila Isabel</div>
       </div>
       <div class="polo-card" onclick="selecionarPolo('Teresópolis')">
@@ -2260,8 +2260,8 @@ let _cfgEvento = {
     video_url: '',
     cor_primaria: '',   // navbar, topo
     cor_destaque: '',   // dourado, botões
-    cor_fundo:    '#F5F5F5',   // fundo geral
-    cor_texto:    '#0f0f1a',   // texto principal
+    cor_fundo:    '#F2EDE4',   // fundo geral
+    cor_texto:    '#2C1A08',   // texto principal
     fonte_titulo: 'EB Garamond',
     fonte_texto:  'Raleway',
     titulo_size:  'clamp(3rem,11vw,6.5rem)',
@@ -2321,7 +2321,7 @@ if(window._EVENTO_OVERRIDE){
 
 const TEMAS_DESIGN = [
   { nome:'Terra Santa', descricao:'Clássico e espiritual',
-    cor_primaria:'#1a1a2e', cor_destaque:'#5B8DB8', cor_fundo:'#F5F5F5', cor_texto:'#0f0f1a',
+    cor_primaria:'#3D2410', cor_destaque:'#C8873A', cor_fundo:'#F2EDE4', cor_texto:'#2C1A08',
     fonte_titulo:'EB Garamond', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Céu Profundo', descricao:'Sereno e contemplativo',
     cor_primaria:'#0D2B4E', cor_destaque:'#7EB8D4', cor_fundo:'#F0F4F8', cor_texto:'#0A1E35',
@@ -2402,7 +2402,7 @@ function aplicarTema(idx){
     el.style.border=ativo?'2.5px solid var(--mcj-gold)':'2.5px solid var(--gray-100)';
     el.style.background=ativo?'#FFFBF0':'white';
     let badge=el.querySelector('[data-tema-badge]');
-    if(ativo&&!badge){badge=document.createElement('div');badge.setAttribute('data-tema-badge','');badge.style.cssText='font-size:10px;font-weight:700;color:#5B8DB8;margin-top:6px;text-transform:uppercase;letter-spacing:.5px';badge.textContent='✓ Tema ativo';el.appendChild(badge);}
+    if(ativo&&!badge){badge=document.createElement('div');badge.setAttribute('data-tema-badge','');badge.style.cssText='font-size:10px;font-weight:700;color:#C8873A;margin-top:6px;text-transform:uppercase;letter-spacing:.5px';badge.textContent='✓ Tema ativo';el.appendChild(badge);}
     else if(!ativo&&badge){badge.remove();}
   });
   aplicarDesign();
@@ -4233,7 +4233,7 @@ function gerarHtmlTelaoPolo(poloNome){
     'body{background:#000;color:white;font-family:Georgia,serif;overflow:hidden;width:100vw;height:100vh}',
     '#tela{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}',
     '.idle{background:#1a0a00;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;width:100%;height:100%}',
-    '.idle-logo{font-size:60px;font-weight:bold;color:#5B8DB8;letter-spacing:4px}',
+    '.idle-logo{font-size:60px;font-weight:bold;color:#C8873A;letter-spacing:4px}',
     '.idle-sub{font-size:20px;color:rgba(255,255,255,.4)}',
     '.idle-polo{font-size:14px;color:rgba(255,255,255,.2);letter-spacing:3px;text-transform:uppercase}',
     '.vwrap{width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center}',
@@ -4248,7 +4248,7 @@ function gerarHtmlTelaoPolo(poloNome){
     '.sd.on{background:white}',
     '.mwrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:#0D0D0D;width:100%;height:100%}',
     '.mnota{font-size:80px}',
-    '.mtit{font-size:36px;font-weight:bold;color:#5B8DB8}'
+    '.mtit{font-size:36px;font-weight:bold;color:#C8873A}'
   ].join('');
 
   // Build JS as array of lines joined — safe, no template literals
@@ -4344,7 +4344,7 @@ function gerarRelatorio(tipo){
   const e = _cfgEvento;
   const titulo = e.titulo||(_cfgEvento.titulo||'');
 
-  const css = `*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Georgia',serif;background:white;color:#0f0f1a;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:15mm 18mm}h1{font-size:26px;color:#1a1a2e}h2{font-size:17px;color:#1a1a2e;margin:22px 0 10px;border-bottom:2px solid #5B8DB8;padding-bottom:5px}h3{font-size:13px;color:#1a1a2e;margin:14px 0 6px}.header{text-align:center;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid #1a1a2e}.sub{font-size:13px;color:#A08060;margin-top:4px}table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11.5px}th{background:#1a1a2e;color:#5B8DB8;padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px}td{padding:6px 10px;border-bottom:1px solid #F0E8DC}tr:nth-child(even) td{background:#F8F8F8}.card{background:#F8F8F8;border-radius:8px;padding:12px;margin:8px 0;border:1px solid #E0E0E0}.grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:12px 0}.stat{background:#1a1a2e;color:white;border-radius:8px;padding:12px;text-align:center}.stat-num{font-size:26px;font-weight:bold;color:#5B8DB8}.stat-lbl{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}@media print{@page{size:A4 portrait;margin:12mm}body{padding:0}}`;
+  const css = `*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Georgia',serif;background:white;color:#2C1A08;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:15mm 18mm}h1{font-size:26px;color:#1a1a2e}h2{font-size:17px;color:#1a1a2e;margin:22px 0 10px;border-bottom:2px solid #C8873A;padding-bottom:5px}h3{font-size:13px;color:#1a1a2e;margin:14px 0 6px}.header{text-align:center;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid #1a1a2e}.sub{font-size:13px;color:#A08060;margin-top:4px}table{width:100%;border-collapse:collapse;margin:8px 0;font-size:11.5px}th{background:#1a1a2e;color:#C8873A;padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px}td{padding:6px 10px;border-bottom:1px solid #F0E8DC}tr:nth-child(even) td{background:#F8F8F8}.card{background:#F8F8F8;border-radius:8px;padding:12px;margin:8px 0;border:1px solid #E8DDD0}.grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:12px 0}.stat{background:#1a1a2e;color:white;border-radius:8px;padding:12px;text-align:center}.stat-num{font-size:26px;font-weight:bold;color:#C8873A}.stat-lbl{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}@media print{@page{size:A4 portrait;margin:12mm}body{padding:0}}`;
 
   const header = `<div class="header"><h1>${titulo}</h1><div class="sub">${e.subtitulo||''} · ${e.data||''} · ${e.local||''}</div><div class="sub" style="margin-top:5px">Gerado em ${new Date().toLocaleString('pt-BR')}</div></div>`;
 
@@ -4894,12 +4894,12 @@ function getCrachaCfg(){
     bgUrl:     d.video_url||'',
     overlay:   40,
     topoBg:    d.cor_primaria||'#1a1a2e',
-    tituloCor: d.cor_destaque||'#5B8DB8',
-    nomeCor:   '#0f0f1a',
+    tituloCor: d.cor_destaque||'#C8873A',
+    nomeCor:   '#2C1A08',
     nomeSize:  40,
     rodapeTexto: _cfgEvento.data||'',
     rodapeCor: '#A08060',
-    rodapeBg:  '#FAFAFA',
+    rodapeBg:  '#FAF5EF',
   };
 }
 
@@ -5198,13 +5198,13 @@ body{font-family:'Georgia',serif;background:white;-webkit-print-color-adjust:exa
 .c-ano{font-size:25px;font-weight:bold;letter-spacing:5px;margin-top:1px;opacity:.8}
 
 /* 10% — TEMAS */
-.c-temas{height:10%;display:flex;align-items:stretch;border-top:0.5px solid #E0E0E0;border-bottom:0.5px solid #E0E0E0}
+.c-temas{height:10%;display:flex;align-items:stretch;border-top:0.5px solid #E8DDD0;border-bottom:0.5px solid #E8DDD0}
 .c-tema-item{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2px 6px}
 .c-tema-manha{text-align:left}
 .c-tema-tarde{text-align:right}
 .c-tema-label{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:#A08060;margin-bottom:1px;font-family:'Helvetica',sans-serif}
 .c-tema-val{font-size:10px;font-weight:bold;color:#1a1a2e;line-height:1.2}
-.c-tema-sep{width:0.5px;background:#E0E0E0;margin:3px 0}
+.c-tema-sep{width:0.5px;background:#E8DDD0;margin:3px 0}
 
 /* 25% — NOME */
 .c-nome-wrap{height:25%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 10px;text-align:center;border-bottom:0.5px solid #F0E8DC}
@@ -5212,17 +5212,17 @@ body{font-family:'Georgia',serif;background:white;-webkit-print-color-adjust:exa
 .c-nome-completo{font-size:20px;color:#A08060;font-style:italic;margin-top:2px}
 
 /* 10% — TURMA E SALA */
-.c-info-row{height:10%;display:flex;align-items:stretch;background:#FAFAFA;border-bottom:0.5px solid #E0E0E0}
+.c-info-row{height:10%;display:flex;align-items:stretch;background:#FAF5EF;border-bottom:0.5px solid #E8DDD0}
 .c-info-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px 4px}
 .c-info-label{font-size:8px;text-transform:uppercase;letter-spacing:.6px;color:#A08060;font-family:'Helvetica',sans-serif}
 .c-info-val{font-size:14px;font-weight:bold;color:#1a1a2e;margin-top:1px}
-.c-info-div{width:0.5px;background:#E0E0E0;margin:4px 0}
+.c-info-div{width:0.5px;background:#E8DDD0;margin:4px 0}
 
 /* 25% — OBSERVAÇÕES */
-.c-obs{height:25%;display:flex;flex-direction:column;padding:4px 8px;border-bottom:0.5px solid #E0E0E0}
+.c-obs{height:25%;display:flex;flex-direction:column;padding:4px 8px;border-bottom:0.5px solid #E8DDD0}
 .c-obs-label{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:#C8C0B0;margin-bottom:4px;font-family:'Helvetica',sans-serif}
 .c-obs-linhas{flex:1;display:flex;flex-direction:column;justify-content:space-around}
-.c-obs-linha{border-bottom:0.5px solid #E0E0E0}
+.c-obs-linha{border-bottom:0.5px solid #E8DDD0}
 .c-obs-texto{font-size:10px;color:#1a1a2e;line-height:1.5;padding-top:2px}
 
 /* 10% — RODAPÉ */
@@ -7265,8 +7265,8 @@ function exportarAvaliacaoPDF(){
               const m=medias[j]; const d=dist(chave,j);
               return `<tr>
                 <td>${c}</td>
-                <td style="font-weight:700;color:#5B8DB8">${m.toFixed(1)}</td>
-                <td style="color:#5B8DB8;letter-spacing:1px">${estrelas(m)}</td>
+                <td style="font-weight:700;color:#C8873A">${m.toFixed(1)}</td>
+                <td style="color:#C8873A;letter-spacing:1px">${estrelas(m)}</td>
                 ${d.map(v=>`<td style="text-align:center">${v}</td>`).join('')}
               </tr>`;
             }).join('')}
@@ -7289,24 +7289,24 @@ function exportarAvaliacaoPDF(){
 <title> Resultado das Avaliações</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Georgia',serif;color:#0f0f1a;background:white;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.capa{background:#0f0f1a;color:white;padding:40px 32px;text-align:center;margin-bottom:24px}
-.capa h1{font-size:36px;font-weight:bold;color:#5B8DB8;letter-spacing:1px}
+body{font-family:'Georgia',serif;color:#2C1A08;background:white;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.capa{background:#2C1A08;color:white;padding:40px 32px;text-align:center;margin-bottom:24px}
+.capa h1{font-size:36px;font-weight:bold;color:#C8873A;letter-spacing:1px}
 .capa p{font-size:14px;color:rgba(255,255,255,.7);margin-top:8px}
 .capa .filtro-badge{display:inline-block;margin-top:12px;background:rgba(200,135,58,.25);border:1px solid rgba(200,135,58,.5);border-radius:20px;padding:5px 16px;font-size:13px;font-weight:bold;color:#E8A855;letter-spacing:.3px}
 .total{background:#F5F0E8;border:1px solid #D4B8A0;border-radius:10px;padding:14px 20px;margin:0 24px 20px;display:flex;align-items:center;gap:16px}
-.total-num{font-size:36px;font-weight:bold;color:#5B8DB8}
-.total-label{font-size:13px;color:#2a2a4a}
+.total-num{font-size:36px;font-weight:bold;color:#C8873A}
+.total-label{font-size:13px;color:#6B4C2A}
 .sec{margin:0 24px 20px;border:1px solid #D4B8A0;border-radius:10px;overflow:hidden;page-break-inside:avoid}
 .sec-head{background:#1a1a2e;color:white;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:bold}
-.sec-media{font-size:20px;color:#5B8DB8;font-weight:bold}
+.sec-media{font-size:20px;color:#C8873A;font-weight:bold}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{padding:7px 10px;background:#F5F0E8;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#2a2a4a;border-bottom:1px solid #D4B8A0}
+th{padding:7px 10px;background:#F5F0E8;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6B4C2A;border-bottom:1px solid #D4B8A0}
 td{padding:7px 10px;border-bottom:1px solid #F0E8DC}
 tr:last-child td{border-bottom:none}
 tr:nth-child(even) td{background:#FDFAF6}
 .coment-sec{margin:0 24px 20px;border:1px solid #D4B8A0;border-radius:10px;overflow:hidden;page-break-inside:avoid}
-.coment-item{padding:10px 14px;border-bottom:1px solid #F0E8DC;font-size:12px;color:#4A3520;line-height:1.6;border-left:3px solid #5B8DB8;margin:8px 10px;border-radius:4px;background:#FDFAF6}
+.coment-item{padding:10px 14px;border-bottom:1px solid #F0E8DC;font-size:12px;color:#4A3520;line-height:1.6;border-left:3px solid #C8873A;margin:8px 10px;border-radius:4px;background:#FDFAF6}
 .coment-item:last-child{border-bottom:none}
 .coment-data{font-size:10px;color:#A08060;margin-top:4px}
 .footer{text-align:center;font-size:10px;color:#A08060;padding:16px;border-top:1px solid #F0E8DC;margin-top:8px}
@@ -7775,9 +7775,9 @@ function dispararComunicacao(){
     const url = `https://wa.me/55${tel}?text=${encodeURIComponent(msgFinal)}`;
     const pago = p.pagamento==='Confirmado';
     return `<tr style="border-bottom:1px solid #F0E8DC">
-      <td style="padding:8px 10px;font-size:12px;font-weight:600;color:#0f0f1a">${nome}</td>
-      <td style="padding:8px 10px;font-size:12px;color:#2a2a4a">${p.polo}</td>
-      <td style="padding:8px 10px;font-size:12px;color:#2a2a4a">${isEquipe ? setoresP : (p.sala||'—')}</td>
+      <td style="padding:8px 10px;font-size:12px;font-weight:600;color:#2C1A08">${nome}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${p.polo}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${isEquipe ? setoresP : (p.sala||'—')}</td>
       <td style="padding:8px 10px;text-align:center">
         <span style="font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;background:${pago?'#ECFDF5':'#FFF7ED'};color:${pago?'#065F46':'#92400E'}">${pago?'✓ Pago':'Pendente'}</span>
       </td>
@@ -7797,18 +7797,18 @@ function dispararComunicacao(){
 <title>💬 Comunicação</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Georgia,serif;background:#F5F0E8;color:#0f0f1a}
-.header{background:#0f0f1a;padding:20px 24px}
-.header h1{font-size:20px;font-weight:bold;color:#5B8DB8}
+body{font-family:Georgia,serif;background:#F5F0E8;color:#2C1A08}
+.header{background:#2C1A08;padding:20px 24px}
+.header h1{font-size:20px;font-weight:bold;color:#C8873A}
 .header p{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px}
-.info{background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;margin:16px 24px;font-size:12px;color:#2a2a4a;line-height:1.6}
+.info{background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;margin:16px 24px;font-size:12px;color:#6B4C2A;line-height:1.6}
 .filtros{display:flex;flex-wrap:wrap;gap:8px;margin:0 24px 12px}
-.filtro-tag{background:#5B8DB8;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
-.materiais{margin:0 24px 12px;background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;font-size:12px;color:#2a2a4a}
+.filtro-tag{background:#C8873A;color:white;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.materiais{margin:0 24px 12px;background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;font-size:12px;color:#6B4C2A}
 .wrap{margin:0 24px 24px}
 .total{font-size:12px;color:#A08060;text-align:right;margin:8px 0}
 table{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden;border:1px solid #D4B8A0}
-th{padding:8px 10px;background:#F5F0E8;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#2a2a4a;text-align:left;border-bottom:1px solid #D4B8A0}
+th{padding:8px 10px;background:#F5F0E8;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#6B4C2A;text-align:left;border-bottom:1px solid #D4B8A0}
 </style></head><body>
 <div class="header">
   <h1>💬 Comunicação</h1>
@@ -7889,8 +7889,8 @@ function abrirLivretosWA(poloNome){
     const msgP=msg.replace(/\{nome\}/g,primeiroNome);
     const url=`https://wa.me/55${tel}?text=${encodeURIComponent(msgP)}`;
     return `<tr style="border-bottom:1px solid #F0E8DC">
-      <td style="padding:8px 10px;font-size:12px;color:#0f0f1a;font-weight:600">${nome}</td>
-      <td style="padding:8px 10px;font-size:12px;color:#2a2a4a">${p.telefone}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#2C1A08;font-weight:600">${nome}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#6B4C2A">${p.telefone}</td>
       <td style="padding:8px 10px;text-align:center">
         <a href="${url}" target="_blank" rel="noopener"
           style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#25D366;color:white;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600">
@@ -7907,15 +7907,15 @@ function abrirLivretosWA(poloNome){
 <title>Livreto  ${poloNome}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Georgia,serif;background:#F5F0E8;color:#0f0f1a}
-.header{background:#0f0f1a;padding:20px 24px}
-.header h1{font-size:20px;font-weight:bold;color:#5B8DB8}
+body{font-family:Georgia,serif;background:#F5F0E8;color:#2C1A08}
+.header{background:#2C1A08;padding:20px 24px}
+.header h1{font-size:20px;font-weight:bold;color:#C8873A}
 .header p{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px}
-.info{background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;margin:16px 24px;font-size:12px;color:#2a2a4a;line-height:1.6}
+.info{background:white;border:1px solid #D4B8A0;border-radius:10px;padding:12px 16px;margin:16px 24px;font-size:12px;color:#6B4C2A;line-height:1.6}
 .wrap{margin:0 24px 24px}
 .total{font-size:12px;color:#A08060;text-align:right;margin:8px 0}
 table{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden;border:1px solid #D4B8A0}
-th{padding:8px 10px;background:#F5F0E8;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#2a2a4a;text-align:left;border-bottom:1px solid #D4B8A0}
+th{padding:8px 10px;background:#F5F0E8;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#6B4C2A;text-align:left;border-bottom:1px solid #D4B8A0}
 </style></head><body>
 <div class="header">
   <h1>📖 Livreto  ${poloNome}</h1>
