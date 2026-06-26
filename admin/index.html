@@ -857,12 +857,12 @@ async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor,
         <label>Modo de definição</label>
         <select id="fases-modo" onchange="toggleModoFases()">
           <option value="datas">📅 Datas fixas</option>
-          <option value="dias">🔢 Quantidade de dias desde a criação</option>
+          <option value="dias">🔢 Dias desde a criação</option>
         </select>
       </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px">🔜 Em breve</div>
-        <div style="font-size:12px;color:var(--gray-400)">Fase inicial — automática até a abertura das inscrições</div>
+      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;border:1px solid var(--sand)">
+        <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🔜 Em breve</div>
+        <div style="font-size:12px;color:var(--gray-400)">Fase inicial — automática até a abertura</div>
       </div>
       <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
         <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.5px">✅ Inscrições abertas</div>
@@ -872,14 +872,14 @@ async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor,
         </div>
       </div>
       <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">⏳ Inscrições prorrogadas</div>
+        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">⏳ Prorrogadas</div>
         <div class="form-row">
           <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-de" class="fases-input-date" type="date"></div>
           <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-ate" class="fases-input-date" type="date"></div>
         </div>
       </div>
       <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔒 Inscrições encerradas</div>
+        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔒 Encerradas</div>
         <div class="form-field"><label>A partir de <span class="fases-label-data">(data)</span></label><input id="fases-encerradas-de" class="fases-input-date" type="date"></div>
       </div>
     </div>
@@ -904,303 +904,5 @@ async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor,
   </div>
 </div>
 
-<!-- MODAL FASES -->
-<div class="fases-modal-overlay" id="fases-modal-overlay" onclick="if(event.target===this)fecharModalFases()">
-  <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
-    <div class="modal-head">
-      <h3>⚙️ Configurar fases das inscrições</h3>
-      <button onclick="fecharModalFases()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-field">
-        <label>Modo de definição</label>
-        <select id="fases-modo" onchange="toggleModoFases()">
-          <option value="datas">📅 Datas fixas</option>
-          <option value="dias">🔢 Quantidade de dias desde a criação</option>
-        </select>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🔜 Em breve</div>
-        <div style="font-size:12px;color:var(--gray-400)">Fase inicial — automática até a abertura das inscrições</div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.5px">✅ Inscrições abertas</div>
-        <div class="form-row">
-          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-abertas-de" class="fases-input-date" type="date"></div>
-          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-abertas-ate" class="fases-input-date" type="date"></div>
-        </div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">⏳ Inscrições prorrogadas</div>
-        <div class="form-row">
-          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-de" class="fases-input-date" type="date"></div>
-          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-ate" class="fases-input-date" type="date"></div>
-        </div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔒 Inscrições encerradas</div>
-        <div class="form-field"><label>A partir de <span class="fases-label-data">(data)</span></label><input id="fases-encerradas-de" class="fases-input-date" type="date"></div>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn-cancel" onclick="fecharModalFases()">Cancelar</button>
-      <button class="btn-save" onclick="salvarFases()">💾 Salvar fases</button>
-    </div>
-  </div>
-</div>
 </body>
-</html>// GERAR HTML DO EVENTO — página leve que redireciona para /app/
-async function gerarHtmlEvento(nome, slug, subtitulo, evData, horario, local, cor, eventoId, thumb, video){
-  const corEsc = cor.replace('#','%23');
-  const html = [
-    '
-</html>/* ── GERAR HTML DO EVENTO ── */
-async function gerarHtmlEvento(nome, slug, subtitulo, evData, horario, local, cor, eventoId, thumb, video){
-  const LT = '\x3C', GT = '\x3E', SL = '/';
-  const tag  = (t,...c) => LT+t+GT+c.join('')+LT+SL+t+GT;
-  const stag = (t,a='')  => LT+t+(a?' '+a:'')+GT;
-  const info = [evData,local].filter(Boolean).join(' \xB7 ');
-  const css = [
-    '*{margin:0;padding:0;box-sizing:border-box}',
-    'body{background:'+cor+';min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;color:white;text-align:center}',
-    'h1{font-size:clamp(28px,6vw,52px);margin-bottom:8px}',
-    'p{opacity:.6;font-size:14px;margin-bottom:4px}',
-    '.sp{width:36px;height:36px;border:3px solid rgba(255,255,255,.2);border-top-color:white;border-radius:50%;animation:sp .8s linear infinite;margin:20px auto}',
-    '@keyframes sp{to{transform:rotate(360deg)}}'
-  ].join('');
-  const js = 'var p=new URLSearchParams({evento_id:"'+eventoId+'",evento_slug:"'+slug+'",cor_primaria:"'+cor+'"});window.location.replace("/app/?"+p.toString());';
-  return [
-    '\x3C!DOCTYPE html\x3E',
-    stag('html','lang="pt-BR"'),
-    stag('head'),
-    stag('meta','charset="UTF-8"'),
-    stag('meta','name="viewport" content="width=device-width,initial-scale=1"'),
-    tag('title', nome),
-    tag('style', css),
-    LT+SL+'head'+GT,
-    stag('body'),
-    stag('div'),
-    tag('h1', nome),
-    tag('p', subtitulo||''),
-    tag('p', info),
-    stag('div','class="sp"')+LT+SL+'div'+GT,
-    tag('p','Carregando...'),
-    LT+SL+'div'+GT,
-    tag('script', js),
-    LT+SL+'body'+GT,
-    LT+SL+'html'+GT
-  ].join('\n');
-}
-
-
-/* ── CRIAR EVENTO ── */
-function setProgress(pct, msg){
-  document.getElementById('progress-fill').style.width = pct+'%';
-  document.getElementById('progress-msg').textContent  = msg;
-}
-
-async function criarEvento(){
-  const nome  = document.getElementById('ev-nome').value.trim();
-  const slug  = document.getElementById('ev-slug').value.trim();
-  const sub   = document.getElementById('ev-sub').value.trim();
-  const data  = document.getElementById('ev-data').value.trim();
-  const hora  = document.getElementById('ev-hora').value.trim();
-  const local = document.getElementById('ev-local').value.trim();
-  const cor   = document.getElementById('ev-cor').value;
-  const thumb = document.getElementById('ev-thumb').value;
-  const video = document.getElementById('ev-video').value;
-
-  if(!nome||!slug){ alert('Preencha o nome e a data do evento.'); return; }
-
-  document.getElementById('progress-wrap').style.display = 'block';
-  document.getElementById('btn-criar').disabled = true;
-  document.getElementById('btn-criar').textContent = 'Criando...';
-
-  try {
-    // 1. Cria no Supabase
-    setProgress(20,'Criando evento no banco de dados...');
-    const publico    = document.getElementById('ev-publico').value !== 'false';
-    const corDest    = document.getElementById('ev-cor-destaque')?.value||'';
-    const corFundo   = document.getElementById('ev-cor-fundo')?.value||'';
-    const corTexto   = document.getElementById('ev-cor-texto')?.value||'';
-    const temaNome   = document.getElementById('ev-tema-nome')?.value||'';
-    const design     = {cor_primaria:cor,cor_destaque:corDest,cor_fundo:corFundo,cor_texto:corTexto,tema_nome:temaNome};
-    const config     = {titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,design,inscricoes_abertas:true,thumb,video_abertura:video,publico};
-    const rows   = await supa('POST','eventos',[{slug,nome,config,ativo:true}]);
-    const eventoId = rows[0]?.id;
-
-    // 2. Busca template MCJ
-    setProgress(50,'Buscando template do sistema...');
-    const htmlEvento = await gerarHtmlEvento(nome,slug,sub,data,hora,local,cor,eventoId,thumb,video);
-
-    // 3. Sobe no GitHub
-    setProgress(75,'Publicando página do evento...');
-    await githubCreateFile(slug+'/index.html', htmlEvento, 'Criar evento: '+nome);
-
-    setProgress(100,'✅ Evento criado com sucesso!');
-    setTimeout(()=>{
-      fecharModal();
-      carregarDados();
-      if(confirm('Evento criado! Acessar jornadaespirita.com.br/'+slug+'/ agora?'))
-        window.open('/'+slug+'/','_blank');
-    },1500);
-
-  } catch(e){
-    setProgress(0,'❌ Erro: '+e.message);
-    document.getElementById('btn-criar').disabled = false;
-    document.getElementById('btn-criar').textContent = '✨ Criar evento';
-    console.error(e);
-  }
-}
-
-/* ── GITHUB ── */
-async function githubCreateFile(path, content, message){
-  let sha = null;
-  try {
-    const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
-      {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
-    if(r.ok){ const d=await r.json(); sha=d.sha; }
-  } catch(e){}
-  const b64  = await toBase64(content);
-  const body = {message, content:b64};
-  if(sha) body.sha = sha;
-  const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,{
-    method:'PUT',
-    headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  });
-  if(!r.ok) throw new Error('GitHub: '+await r.text());
-  return r.json();
-}
-
-/* ── GERAR HTML ── */
-async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor, eventoId, thumb, video){
-  let template = await githubGetFile('mcj-2026/index.html');
-  const override = [
-    'window._EVENTO_OVERRIDE = {',
-    '  id: '+JSON.stringify(eventoId)+',',
-    '  slug: '+JSON.stringify(slug)+',',
-    '  titulo: '+JSON.stringify(nome)+',',
-    '  subtitulo: '+JSON.stringify(subtitulo)+',',
-    '  data: '+JSON.stringify(data)+',',
-    '  horario: '+JSON.stringify(horario)+',',
-    '  local: '+JSON.stringify(local)+',',
-    '  cor_primaria: '+JSON.stringify(cor)+',',
-    '  thumb: '+JSON.stringify(thumb||'')+',',
-    '  video_abertura: '+JSON.stringify(video||''),
-    '};'
-  ].join('\n');
-  return template.replace('/* ═══════════ FIM ═══════════ */', override+'\n/* ═══════════ FIM ═══════════ */');
-}
-</script>
-
-<!-- MODAL FASES -->
-<div class="fases-modal-overlay" id="fases-modal-overlay" onclick="if(event.target===this)fecharModalFases()">
-  <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
-    <div class="modal-head">
-      <h3>⚙️ Configurar fases das inscrições</h3>
-      <button onclick="fecharModalFases()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-field">
-        <label>Modo de definição</label>
-        <select id="fases-modo" onchange="toggleModoFases()">
-          <option value="datas">📅 Datas fixas</option>
-          <option value="dias">🔢 Quantidade de dias desde a criação</option>
-        </select>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px">🔜 Em breve</div>
-        <div style="font-size:12px;color:var(--gray-400)">Fase inicial — automática até a abertura das inscrições</div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.5px">✅ Inscrições abertas</div>
-        <div class="form-row">
-          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-abertas-de" class="fases-input-date" type="date"></div>
-          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-abertas-ate" class="fases-input-date" type="date"></div>
-        </div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">⏳ Inscrições prorrogadas</div>
-        <div class="form-row">
-          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-de" class="fases-input-date" type="date"></div>
-          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-ate" class="fases-input-date" type="date"></div>
-        </div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔒 Inscrições encerradas</div>
-        <div class="form-field"><label>A partir de <span class="fases-label-data">(data)</span></label><input id="fases-encerradas-de" class="fases-input-date" type="date"></div>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn-cancel" onclick="fecharModalFases()">Cancelar</button>
-      <button class="btn-save" onclick="salvarFases()">💾 Salvar fases</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL QR CODE -->
-<div class="qr-modal-overlay" id="qr-modal-overlay" onclick="if(event.target===this)fecharQR()">
-  <div class="qr-modal" onclick="event.stopPropagation()">
-    <h3 id="qr-nome">Evento</h3>
-    <p>Compartilhe o QR Code do evento</p>
-    <div id="qr-canvas"></div>
-    <div class="qr-url" id="qr-url-texto"></div>
-    <div style="display:flex;gap:8px;justify-content:center">
-      <button class="btn-cancel" onclick="fecharQR()">Fechar</button>
-      <button class="btn-save" onclick="baixarQR()">⬇ Baixar PNG</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL FASES -->
-<div class="fases-modal-overlay" id="fases-modal-overlay" onclick="if(event.target===this)fecharModalFases()">
-  <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
-    <div class="modal-head">
-      <h3>⚙️ Configurar fases das inscrições</h3>
-      <button onclick="fecharModalFases()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-field">
-        <label>Modo de definição</label>
-        <select id="fases-modo" onchange="toggleModoFases()">
-          <option value="datas">📅 Datas fixas</option>
-          <option value="dias">🔢 Quantidade de dias desde a criação</option>
-        </select>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🔜 Em breve</div>
-        <div style="font-size:12px;color:var(--gray-400)">Fase inicial — automática até a abertura das inscrições</div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.5px">✅ Inscrições abertas</div>
-        <div class="form-row">
-          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-abertas-de" class="fases-input-date" type="date"></div>
-          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-abertas-ate" class="fases-input-date" type="date"></div>
-        </div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">⏳ Inscrições prorrogadas</div>
-        <div class="form-row">
-          <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-de" class="fases-input-date" type="date"></div>
-          <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-ate" class="fases-input-date" type="date"></div>
-        </div>
-      </div>
-      <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔒 Inscrições encerradas</div>
-        <div class="form-field"><label>A partir de <span class="fases-label-data">(data)</span></label><input id="fases-encerradas-de" class="fases-input-date" type="date"></div>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn-cancel" onclick="fecharModalFases()">Cancelar</button>
-      <button class="btn-save" onclick="salvarFases()">💾 Salvar fases</button>
-    </div>
-  </div>
-</div>
-</body>
-</html>// GERAR HTML DO EVENTO — página leve que redireciona para /app/
-async function gerarHtmlEvento(nome, slug, subtitulo, evData, horario, local, cor, eventoId, thumb, video){
-  const corEsc = cor.replace('#','%23');
-  const html = [
-    '
 </html>
