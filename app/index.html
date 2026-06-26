@@ -1893,7 +1893,7 @@ function renderSobre(){
         </div>`:''}
         ${e.livreto_url?`
         <div style="background:white;border-radius:12px;border:1px solid var(--mcj-sand);padding:1.25rem;text-align:center">
-          <div style="font-size:14px;color:var(--gray-600);margin-bottom:1rem">O livreto do MCJ 2026 está disponível para download.</div>
+          <div style="font-size:14px;color:var(--gray-600);margin-bottom:1rem">O livreto do evento está disponível para download.</div>
           <a href="${e.livreto_url}" target="_blank" rel="noopener"
             style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--mcj-gold);color:white;border-radius:10px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;text-decoration:none">
             📥 Baixar Livreto
@@ -5127,7 +5127,7 @@ function gerarCrachas(){
 
     return `<div class="cracha verso">
       <div class="verso-topo" style="background:${topoBg}">
-        <div class="verso-titulo" style="color:${tituloCor}">MCJ 2026</div>
+        <div class="verso-titulo" style="color:${tituloCor}">(_cfgEvento.titulo||'Evento')</div>
         <div class="verso-sub"></div>
       </div>
       <div class="verso-corpo">
@@ -5871,7 +5871,7 @@ function dragMouseDown(e, card){
 }
 const MSG_WA_PADRAO =
   'Olá, *{nome}*! 🙌\n\n' +
-  'Seu pagamento referente à inscrição no *MCJ 2026* — *{polo}* foi *confirmado* com sucesso! ✅\n\n' +
+  'Seu pagamento referente à inscrição no *{evento}* — *{polo}* foi *confirmado* com sucesso! ✅\n\n' +
   '📅 Data do evento: *{data}*\n' +
   '📍 Polo: *{polo}*\n\n' +
   'Fique atento às próximas informações. Nos vemos lá! 🎉';
@@ -7313,7 +7313,7 @@ tr:nth-child(even) td{background:#FDFAF6}
 @media print{@page{size:A4;margin:1cm}body{padding:0}}
 </style></head><body>
 <div class="capa">
-  <h1>MCJ 2026</h1>
+  <h1>(_cfgEvento.titulo||'Evento')</h1>
   <p>Resultado das Avaliações · </p>
   <p style="margin-top:4px;font-size:12px">Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
   <div class="filtro-badge">🔍 ${filtroDesc}</div>
@@ -7672,7 +7672,7 @@ function renderComunicacao(){
         <div style="display:flex;flex-direction:column;gap:10px">
           <textarea id="com-mensagem" rows="6"
             style="font-size:13px;padding:10px 12px;border:1px solid var(--gray-100);border-radius:10px;font-family:'Raleway',sans-serif;resize:vertical;background:var(--gray-50)"
-            placeholder="Olá, {nome}! 🙏\n\nEscreva sua mensagem aqui...">${isEquipe?'Olá, {nome}! 🔧\n\nInformações para a equipe de trabalho do MCJ 2026.\n\n':'Olá, {nome}! 🙏\n\nEsperamos você no MCJ 2026! '}</textarea>
+            placeholder="Olá, {nome}! 🙏\n\nEscreva sua mensagem aqui...">${isEquipe?'Olá, {nome}! 🔧\n\nInformações para a equipe de trabalho do evento.\n\n':'Olá, {nome}! 🙏\n\nEsperamos você no evento! '}</textarea>
           <div style="font-size:11px;color:var(--gray-400)">
             Variáveis: <code style="background:var(--gray-50);padding:1px 6px;border-radius:4px">{nome}</code>
             <code style="background:var(--gray-50);padding:1px 6px;border-radius:4px">{polo}</code>
@@ -7794,7 +7794,7 @@ function dispararComunicacao(){
   if(!win){ alert('Permita pop-ups.'); return; }
   win.document.write(`<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="UTF-8">
-<title>💬 Comunicação MCJ 2026</title>
+<title>💬 Comunicação</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Georgia,serif;background:#F5F0E8;color:#0f0f1a}
@@ -7811,7 +7811,7 @@ table{width:100%;border-collapse:collapse;background:white;border-radius:10px;ov
 th{padding:8px 10px;background:#F5F0E8;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#2a2a4a;text-align:left;border-bottom:1px solid #D4B8A0}
 </style></head><body>
 <div class="header">
-  <h1>💬 Comunicação MCJ 2026</h1>
+  <h1>💬 Comunicação</h1>
   <p>${filtrados.length} destinatário${filtrados.length!==1?'s':''} · ${new Date().toLocaleDateString('pt-BR')}</p>
 </div>
 <div class="filtros">
@@ -7852,7 +7852,7 @@ function dispararLivretoPolo(poloNome){
       <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
         <div style="background:var(--mcj-cream);border-radius:10px;padding:.875rem 1rem;border-left:3px solid var(--mcj-gold)">
           <div style="font-size:12px;font-weight:600;color:var(--mcj-dark);margin-bottom:6px">Mensagem:</div>
-          <textarea id="livreto-msg" rows="5" style="width:100%;font-size:13px;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;resize:vertical">Olá, {nome}! 🙏\n\nO livreto do MCJ 2026 já está disponível:\n📖 ${_cfgEvento.livreto_url}\n\nBoa leitura e até sábado! 🙌</textarea>
+          <textarea id="livreto-msg" rows="5" style="width:100%;font-size:13px;padding:8px 10px;border:1px solid var(--gray-100);border-radius:8px;font-family:'Raleway',sans-serif;resize:vertical">Olá, {nome}! 🙏\n\nO livreto do evento já está disponível:\n📖 ${_cfgEvento.livreto_url}\n\nBoa leitura e até sábado! 🙌</textarea>
           <div style="font-size:11px;color:var(--gray-400);margin-top:4px">Use {nome} para personalizar com o primeiro nome</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
