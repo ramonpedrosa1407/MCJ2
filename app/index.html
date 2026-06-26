@@ -670,7 +670,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   <div class="hero">
     <div class="hero-video" style="background:linear-gradient(135deg,var(--mcj-dark) 0%,#5C3A1E 50%,rgba(200,135,58,.4) 100%)"></div>
     <video class="hero-video" autoplay muted loop playsinline preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0" onerror="this.style.display='none'">
-      <source src="https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4" type="video/mp4">
+      <source src="" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -823,7 +823,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 <div class="view" id="view-sobre">
   <div class="hero" style="min-height:clamp(180px,28vw,300px)">
     <video class="hero-video" autoplay muted loop playsinline>
-      <source src="https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4" type="video/mp4">
+      <source src="" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -838,7 +838,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 <div class="view" id="view-expositores">
   <div class="hero" style="min-height:clamp(180px,28vw,300px)">
     <video class="hero-video" autoplay muted loop playsinline>
-      <source src="https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4" type="video/mp4">
+      <source src="" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -870,7 +870,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 <div class="view" id="view-polos">
   <div class="hero" style="min-height:clamp(180px,30vw,320px)">
     <video class="hero-video" autoplay muted loop playsinline>
-      <source src="https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4" type="video/mp4">
+      <source src="" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -1402,7 +1402,7 @@ const cor = i => PALETA[i % PALETA.length];
 ================================================================ */
 const KEY_AUTH = 'mcj2026_admin_session';
 const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'mcj2026@rj';
+const ADMIN_PASS = '';
 
 const SALAS_ADULTO_DEFAULT   = ['A','B','C','D','E','F','G'];
 const SALAS_MOCIDADE_DEFAULT = ['1','2','3','4','5'];
@@ -1743,8 +1743,8 @@ function aplicarConfigEvento(){
   const subtitulo = e.subtitulo || '';
   const tagline   = e.design?.hero_tagline || 'Jornada de Estudos Espíritas do Evangelho';
   const data      = e.data      || '';
-  const horario   = e.horario   || '';
-  const local     = e.local     || '';
+  const horario   = e.horario || '';
+  const local     = e.local || '';
 
   // Extrai nome base e ano
   const m = titulo.match(/^(.+?)\s*(\d{4})$/);
@@ -2257,9 +2257,9 @@ let _cfgEvento = {
   expositores_lista: [],
   // Design visual
   design: {
-    video_url: 'https://raw.githubusercontent.com/ramonpedrosa1407/MCJ2/main/assets/capa2.mp4',
-    cor_primaria: '#3D2410',   // navbar, topo
-    cor_destaque: '#C8873A',   // dourado, botões
+    video_url: '',
+    cor_primaria: '',   // navbar, topo
+    cor_destaque: '',   // dourado, botões
     cor_fundo:    '#F2EDE4',   // fundo geral
     cor_texto:    '#2C1A08',   // texto principal
     fonte_titulo: 'EB Garamond',
@@ -5343,7 +5343,7 @@ function imprimirListagemTurmas(poloNome, tipoTurma){
       </div>
       <div style="height:1px;background:${c.badge};margin-bottom:12px;opacity:.5;margin-top:10px"></div>
       ${tabelaHtml(lista)}
-      <div class="pagina-footer">MCJ 2026 · Polo ${poloNome} · ${tipoTurma} · Sala ${sala}</div>
+      <div class="pagina-footer"> Polo ${poloNome} · ${tipoTurma} · Sala ${sala}</div>
     </div>`;
   });
 
@@ -5360,7 +5360,7 @@ function imprimirListagemTurmas(poloNome, tipoTurma){
       </div>
       <div style="height:1px;background:#ccc;margin-bottom:12px"></div>
       ${tabelaHtml(semSalaLista)}
-      <div class="pagina-footer">MCJ 2026 · Polo ${poloNome} · ${tipoTurma} · Sem sala</div>
+      <div class="pagina-footer"> Polo ${poloNome} · ${tipoTurma} · Sem sala</div>
     </div>` : '';
 
   const html = `<!DOCTYPE html>
@@ -5636,7 +5636,7 @@ function imprimirListagemEquipe(poloNome){
       </div>
       <div style="height:1px;background:${c.badge};margin-bottom:12px;opacity:.5"></div>
       ${tabelaEquipeHtml(membros)}
-      <div class="pagina-footer">MCJ 2026 · Polo ${poloNome} · Setor ${setor}</div>
+      <div class="pagina-footer"> Polo ${poloNome} · Setor ${setor}</div>
     </div>`;
   });
 
@@ -5653,7 +5653,7 @@ function imprimirListagemEquipe(poloNome){
       </div>
       <div style="height:1px;background:#ccc;margin-bottom:12px"></div>
       ${tabelaEquipeHtml(semSetor)}
-      <div class="pagina-footer">MCJ 2026 · Polo ${poloNome} · Sem setor</div>
+      <div class="pagina-footer"> Polo ${poloNome} · Sem setor</div>
     </div>` : '';
 
   if(paginasSetores.length===0 && !paginaSemSetor){
@@ -6040,7 +6040,7 @@ async function enviarEmailConfirmacao(p){
         evento:            _cfgEvento.titulo||'MCJ 2026',
         data:              _cfgEvento.data||'',
         horario:           _cfgEvento.horario||'',
-        local:             _cfgEvento.local||'Rio de Janeiro',
+        local:             _cfgEvento.local||'',
         emailPolo:         polo.email_polo||'',
         valorInscricao:    polo.valorExibir||'',
         valorAlmoco:       p.almoco==='Sim' ? (polo.almoco_valor||'') : '',
@@ -6730,7 +6730,7 @@ function confirmarAddPolo(){
   POLOS.push({
     nome, endereco:document.getElementById('addpolo-endereco').value.trim(),
     valorExibir:document.getElementById('addpolo-valor').value.trim()||'R$ —,—',
-    pixChave:'pix@mcj2026.com.br', pixNome:'MCJ 2026 — '+nome,
+    pixChave:''  //', pixNome:(_cfgEvento.titulo||'')+' — '+nome,
     responsavel:'', telefone_polo:'', email_polo:'', capacidade:'', obs:'',
     inscricoes_abertas:true, almoco_ativo:false, almoco_valor:'', msg_pagamento:'', salas_adulto:[], salas_mocidade:[], setores:[], expositores:[], expositores_salas:{}, apresentacao:'', fotos:[], maps_link:''
   });
@@ -7332,7 +7332,7 @@ ${comentarios.length?`
     ${comentarios.map(r=>`<div class="coment-item">${r.comentario}<div class="coment-data">${r.polo||''} ${r.turma?'· '+r.turma:''} · ${r.data_resposta?new Date(r.data_resposta).toLocaleDateString('pt-BR'):''}</div></div>`).join('')}
   </div>
 </div>`:''}
-<div class="footer">MCJ 2026 · Momentos com Jesus · Relatório de Avaliações</div>
+<div class="footer"> · Relatório de Avaliações</div>
 </body></html>`;
 
   const win=window.open('','_blank');
