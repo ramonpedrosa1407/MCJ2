@@ -5127,7 +5127,7 @@ function gerarCrachas(){
 
     return `<div class="cracha verso">
       <div class="verso-topo" style="background:${topoBg}">
-        <div class="verso-titulo" style="color:${tituloCor}">(_cfgEvento.titulo||'Evento')</div>
+        <div class="verso-titulo" style="color:${tituloCor}">${_cfgEvento.titulo||''}</div>
         <div class="verso-sub"></div>
       </div>
       <div class="verso-corpo">
@@ -7313,7 +7313,7 @@ tr:nth-child(even) td{background:#FDFAF6}
 @media print{@page{size:A4;margin:1cm}body{padding:0}}
 </style></head><body>
 <div class="capa">
-  <h1>(_cfgEvento.titulo||'Evento')</h1>
+  <h1>${_cfgEvento.titulo||''}</h1>
   <p>Resultado das Avaliações · </p>
   <p style="margin-top:4px;font-size:12px">Gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
   <div class="filtro-badge">🔍 ${filtroDesc}</div>
