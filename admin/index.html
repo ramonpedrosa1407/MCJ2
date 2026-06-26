@@ -66,6 +66,17 @@ tr:last-child td{border-bottom:none}
 .btn-t-blue{background:var(--dark);color:white}
 .btn-t-gray{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
 .btn-t-red{background:#FEF2F2;color:#EF4444;border:1px solid #FECACA}
+.btn-t-green{background:#ECFDF5;color:#065F46;border:1px solid #BBF7D0}
+.toggle-pub{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif}
+.toggle-pub-on{background:#ECFDF5;color:#065F46;border:1px solid #BBF7D0}
+.toggle-pub-off{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+.qr-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:700;display:none;align-items:center;justify-content:center;padding:1rem}
+.qr-modal-overlay.show{display:flex}
+.qr-modal{background:white;border-radius:20px;padding:2rem;text-align:center;width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.qr-modal h3{font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.qr-modal p{font-size:12px;color:var(--gray-400);margin-bottom:1.5rem}
+#qr-canvas{display:flex;justify-content:center;margin-bottom:1.5rem}
+.qr-url{font-size:11px;color:var(--gold);word-break:break-all;margin-bottom:1.25rem;padding:8px;background:var(--gray-50);border-radius:8px;font-weight:600}
 
 /* OVERLAY */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem}
@@ -112,6 +123,7 @@ tr:last-child td{border-bottom:none}
 .progress-fill{height:100%;background:var(--dark);border-radius:3px;transition:width .3s;width:0}
 .progress-msg{font-size:12px;color:var(--gray-400)}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -151,7 +163,7 @@ tr:last-child td{border-bottom:none}
       <div class="table-header"><span class="table-title">📋 Todos os eventos</span></div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th>Fase das inscrições</th><th>Ações</th></tr></thead>
+          <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th>Fase</th><th>Visib.</th><th>Ações</th></tr></thead>
           <tbody id="tbody-eventos"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
         </table>
       </div>
@@ -309,6 +321,12 @@ function renderTabela(){
       '<td style="font-size:12px">'+(cfg.data||'—')+'</td>' +
       '<td>' +
         (()=>{ const fb=getFaseBadge(e.config||{}); return '<button class="fase-badge '+fb.cls+'" onclick="abrirFaseDropdown(\''+e.id+'\',this)">'+fb.label+' ▾</button>'; })() +
+      '</td>' +
+      '<td>' +
+        (()=>{
+          const pub = (e.config||{}).publico !== false;
+          return '<button class="toggle-pub '+(pub?'toggle-pub-on':'toggle-pub-off')+'" onclick="togglePublico(\''+e.id+'\')">'+(pub?'🌐 Público':'🔒 Privado')+'</button>';
+        })() +
       '</td>' +
       '<td>' +
         '<button class="btn-t btn-t-blue" onclick="window.open(\'/'+e.slug+'/\',\'_blank\')">Acessar</button>' +
@@ -556,6 +574,51 @@ async function salvarFases(){
 }
 
 
+/* ── PÚBLICO / PRIVADO ── */
+async function togglePublico(eventoId){
+  const ev = _eventos.find(e=>e.id===eventoId);
+  if(!ev) return;
+  const cfg = {...(ev.config||{})};
+  cfg.publico = cfg.publico === false ? true : false;
+  try {
+    await supa('PATCH','eventos?id=eq.'+eventoId, {config:cfg});
+    ev.config = cfg;
+    renderTabela();
+  } catch(e){ alert('Erro: '+e.message); }
+}
+
+/* ── QR CODE ── */
+function abrirQR(slug, nome){
+  const url = 'https://jornadaespirita.com.br/'+slug+'/';
+  document.getElementById('qr-nome').textContent = nome;
+  document.getElementById('qr-url-texto').textContent = url;
+  const canvas = document.getElementById('qr-canvas');
+  canvas.innerHTML = '';
+  new QRCode(canvas, {
+    text: url,
+    width: 220,
+    height: 220,
+    colorDark: '#0D2B4E',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  document.getElementById('qr-modal-overlay').classList.add('show');
+}
+
+function fecharQR(){
+  document.getElementById('qr-modal-overlay').classList.remove('show');
+}
+
+function baixarQR(){
+  const canvas = document.querySelector('#qr-canvas canvas');
+  if(!canvas){ alert('QR não gerado ainda.'); return; }
+  const link = document.createElement('a');
+  link.download = 'qrcode-'+document.getElementById('qr-url-texto').textContent.split('/').filter(Boolean).pop()+'.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+
 /* ── CRIAR EVENTO ── */
 function setProgress(pct, msg){
   document.getElementById('progress-fill').style.width = pct+'%';
@@ -695,6 +758,20 @@ async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor,
     </div>
   </div>
 </div>
+
+<!-- MODAL QR CODE -->
+<div class="qr-modal-overlay" id="qr-modal-overlay" onclick="if(event.target===this)fecharQR()">
+  <div class="qr-modal" onclick="event.stopPropagation()">
+    <h3 id="qr-nome">Evento</h3>
+    <p>Compartilhe o QR Code do evento</p>
+    <div id="qr-canvas"></div>
+    <div class="qr-url" id="qr-url-texto"></div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn-cancel" onclick="fecharQR()">Fechar</button>
+      <button class="btn-save" onclick="baixarQR()">⬇ Baixar PNG</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>// GERAR HTML DO EVENTO — página leve que redireciona para /app/
 async function gerarHtmlEvento(nome, slug, subtitulo, evData, horario, local, cor, eventoId, thumb, video){
@@ -714,7 +791,8 @@ async function gerarHtmlEvento(nome, slug, subtitulo, evData, horario, local, co
     '.sp{width:36px;height:36px;border:3px solid rgba(255,255,255,.2);border-top-color:white;border-radius:50%;animation:sp .8s linear infinite;margin:20px auto}',
     '@keyframes sp{to{transform:rotate(360deg)}}',
     '</style>',
-    '</head>',
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>',
     '<body>',
     '<div>',
     '  <h1>' + nome + '</h1>',
@@ -731,7 +809,21 @@ async function gerarHtmlEvento(nome, slug, subtitulo, evData, horario, local, co
     '});',
     'window.location.replace("/app/?" + p.toString());',
     "<\/script>",
-    '</body>',
+    '
+<!-- MODAL QR CODE -->
+<div class="qr-modal-overlay" id="qr-modal-overlay" onclick="if(event.target===this)fecharQR()">
+  <div class="qr-modal" onclick="event.stopPropagation()">
+    <h3 id="qr-nome">Evento</h3>
+    <p>Compartilhe o QR Code do evento</p>
+    <div id="qr-canvas"></div>
+    <div class="qr-url" id="qr-url-texto"></div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn-cancel" onclick="fecharQR()">Fechar</button>
+      <button class="btn-save" onclick="baixarQR()">⬇ Baixar PNG</button>
+    </div>
+  </div>
+</div>
+</body>',
     '</html>'
   ].join('\n');
   return html;
