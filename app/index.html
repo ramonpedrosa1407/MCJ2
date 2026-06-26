@@ -2439,6 +2439,16 @@ function aplicarDesign(){
   if(d.cor_texto)   { r.style.setProperty('--mcj-text', d.cor_texto); }
   if(d.cor_mid)     { r.style.setProperty('--mcj-mid', d.cor_mid); }
   if(d.cor_primaria && !d.cor_dark){ r.style.setProperty('--mcj-mid', d.cor_primaria); }
+
+  // Atualiza fundo do hero com as cores do tema
+  const corPrimaria = d.cor_dark || d.cor_primaria || '#0D2B4E';
+  const corDestaque = d.cor_destaque || '#7EB8D4';
+  // Gera cor intermediária levemente mais clara que a primária
+  const heroFallback = document.querySelector('.hero-video:not(video):not(source)');
+  if(heroFallback){
+    heroFallback.style.background = `linear-gradient(135deg,${corPrimaria} 0%,${corPrimaria}CC 60%,${corDestaque}55 100%)`;
+  }
+
   if(d.video_url){
     document.querySelectorAll('.hero-video source').forEach(s=>s.src=d.video_url);
     document.querySelectorAll('.hero-video').forEach(v=>{ if(typeof v.load==='function') v.load(); });
