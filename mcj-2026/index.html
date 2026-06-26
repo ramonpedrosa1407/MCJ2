@@ -1498,8 +1498,32 @@ async function setUsers(){
 async function setCfgEvento(){
   try {
     if(supaConfigurado()){
-      const id = window._EVENTO_OVERRIDE?.id ? window._EVENTO_OVERRIDE.id : 'main';
+      const eventoId = window._EVENTO_OVERRIDE?.id;
+      const id = eventoId || 'main';
+      // Salva config completa na tabela config (polos e dados do evento)
       await supa('POST','config', [{ id, dados: _cfgEvento }]);
+      // Se for evento novo, também atualiza o config na tabela eventos (cores, design, textos)
+      if(eventoId){
+        const d = _cfgEvento.design||{};
+        const configEvento = {
+          titulo:      _cfgEvento.titulo,
+          subtitulo:   _cfgEvento.subtitulo,
+          data:        _cfgEvento.data,
+          horario:     _cfgEvento.horario,
+          local:       _cfgEvento.local,
+          tema_manha:  _cfgEvento.tema_manha,
+          tema_tarde:  _cfgEvento.tema_tarde,
+          thumb:       _cfgEvento.thumb,
+          video_abertura: _cfgEvento.video_url,
+          campos_extras:  _cfgEvento.campos_extras,
+          materiais:      _cfgEvento.materiais,
+          instagram:      _cfgEvento.instagram,
+          facebook:       _cfgEvento.facebook,
+          cor_primaria: d.cor_primaria||d.cor_dark,
+          design: d,
+        };
+        await supa('PATCH','eventos?id=eq.'+eventoId, {config: configEvento});
+      }
     }
   } catch(e){ console.error('setCfgEvento error:', e); }
 }
@@ -1507,25 +1531,45 @@ async function setCfgEvento(){
 async function carregarConfig(){
   if(!supaConfigurado()){ POLOS=[...POLOS_DEFAULT]; return; }
   try {
-    // Se for um evento novo (via _EVENTO_OVERRIDE), busca config do Supabase pelo evento_id
     const eventoId = window._EVENTO_OVERRIDE?.id;
     if(eventoId){
-      // Busca config do evento na tabela eventos
+      // Busca config completa do evento no Supabase
       const evRows = await supa('GET','eventos?id=eq.'+eventoId+'&select=config');
       if(evRows?.[0]?.config){
         const cfg = evRows[0].config;
-        if(cfg.titulo)    _cfgEvento.titulo    = cfg.titulo;
-        if(cfg.subtitulo) _cfgEvento.subtitulo = cfg.subtitulo;
-        if(cfg.data)      _cfgEvento.data      = cfg.data;
-        if(cfg.horario)   _cfgEvento.horario   = cfg.horario;
-        if(cfg.local)     _cfgEvento.local     = cfg.local;
+        // Aplica TODOS os campos do config — incluindo cores e design
+        if(cfg.titulo)      _cfgEvento.titulo      = cfg.titulo;
+        if(cfg.subtitulo)   _cfgEvento.subtitulo   = cfg.subtitulo;
+        if(cfg.data)        _cfgEvento.data        = cfg.data;
+        if(cfg.horario)     _cfgEvento.horario     = cfg.horario;
+        if(cfg.local)       _cfgEvento.local       = cfg.local;
+        if(cfg.tema_manha)  _cfgEvento.tema_manha  = cfg.tema_manha;
+        if(cfg.tema_tarde)  _cfgEvento.tema_tarde  = cfg.tema_tarde;
+        if(cfg.thumb)       _cfgEvento.thumb       = cfg.thumb;
+        if(cfg.video_abertura) _cfgEvento.video_url = cfg.video_abertura;
+        if(cfg.campos_extras)  _cfgEvento.campos_extras = cfg.campos_extras;
+        if(cfg.materiais)      _cfgEvento.materiais     = cfg.materiais;
+        if(cfg.instagram)      _cfgEvento.instagram     = cfg.instagram;
+        if(cfg.facebook)       _cfgEvento.facebook      = cfg.facebook;
+        // Design/cores — prioridade máxima: sobrepõe o _EVENTO_OVERRIDE
+        if(cfg.cor_primaria || cfg.design){
+          if(!_cfgEvento.design) _cfgEvento.design = {};
+          if(cfg.design) Object.assign(_cfgEvento.design, cfg.design);
+          if(cfg.cor_primaria){
+            // Regera o tema completo da cor salva
+            const tema = gerarTemaFromCor(cfg.cor_primaria);
+            Object.assign(_cfgEvento.design, tema);
+          }
+        }
+        // Reaplica o design com as cores atualizadas do Supabase
+        aplicarDesign();
       }
-      // Busca polos do evento (config salva no Supabase)
+      // Busca polos do evento
       const cfgRows = await supa('GET','config?select=dados&id=eq.'+eventoId);
       if(cfgRows?.[0]?.dados && Array.isArray(cfgRows[0].dados)){
         POLOS = cfgRows[0].dados;
       } else {
-        POLOS = []; // evento novo começa sem polos
+        POLOS = [];
       }
     } else {
       // MCJ padrão
