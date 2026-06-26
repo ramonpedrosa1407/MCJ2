@@ -1647,6 +1647,12 @@ async function carregarTudo(){
   if(sess){
     SESSION = sess;
     aplicarEscopoAdmin();
+    // Abre aba específica se vier por URL param ?admin=...
+    const adminParam = new URLSearchParams(window.location.search).get('admin');
+    if(adminParam){
+      const btn = document.getElementById('atab-'+adminParam);
+      if(btn) setTimeout(()=>switchAdminTab(adminParam, btn), 300);
+    }
   }
 
   // URL param: avaliação
