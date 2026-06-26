@@ -93,6 +93,14 @@ tr:last-child td{border-bottom:none}
 .form-field input:focus{border-color:var(--dark)}
 .slug-preview{font-size:11px;color:var(--gold);margin-top:3px;font-weight:600}
 .slug-note{font-size:10px;color:var(--gray-300);margin-top:1px}
+.tema-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
+.tema-card{border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative}
+.tema-card.selected{border-color:var(--dark);box-shadow:0 0 0 3px rgba(13,43,78,.2)}
+.tema-card:hover{transform:scale(1.03)}
+.tema-preview{height:52px;width:100%}
+.tema-label{padding:5px 6px;font-size:10px;font-weight:600;background:white;color:var(--dark);text-align:center;line-height:1.2}
+.tema-check{position:absolute;top:4px;right:4px;width:18px;height:18px;background:var(--dark);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:10px;color:white}
+.tema-card.selected .tema-check{display:flex}
 .toggle-vis{display:flex;border:1.5px solid var(--sand);border-radius:10px;overflow:hidden;margin-top:4px}
 .toggle-vis-btn{flex:1;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;background:white;color:var(--gray-400);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
 .toggle-vis-btn.active-pub{background:#ECFDF5;color:#065F46}
@@ -222,9 +230,55 @@ tr:last-child td{border-bottom:none}
           <input type="text" id="ev-local" placeholder="Ex: Teresópolis, RJ">
         </div>
       </div>
-      <div class="form-field">
-        <label>Cor primária</label>
-        <input type="color" id="ev-cor" value="#0D2B4E" style="height:44px;padding:4px 8px;cursor:pointer;border-radius:10px;border:1.5px solid var(--sand)">
+      <div class="form-field" style="grid-column:1/-1">
+        <label>Design visual do evento</label>
+        <div class="tema-grid" id="tema-grid">
+          <div class="tema-card selected" onclick="selecionarTema(this,'#3D2410','#C8873A','#F2EDE4','#2C1A08')" data-tema="Terra Santa">
+            <div class="tema-preview" style="background:linear-gradient(135deg,#3D2410 0%,#6B4C2A 60%,#C8873A88 100%)"></div>
+            <div class="tema-label">Terra Santa</div>
+            <div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#0D2B4E','#7EB8D4','#F0F4F8','#0A1E35')" data-tema="Céu Profundo">
+            <div class="tema-preview" style="background:linear-gradient(135deg,#0D2B4E 0%,#1a3a5c 60%,#7EB8D455 100%)"></div>
+            <div class="tema-label">Céu Profundo</div>
+            <div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#1B4332','#D4A843','#F0FAF4','#0D2B1E')" data-tema="Verde Esperança">
+            <div class="tema-preview" style="background:linear-gradient(135deg,#1B4332 0%,#2d6a4f 60%,#D4A84355 100%)"></div>
+            <div class="tema-label">Verde Esperança</div>
+            <div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#3B1F5E','#C4A8E8','#F5F0FF','#1E0E33')" data-tema="Púrpura Real">
+            <div class="tema-preview" style="background:linear-gradient(135deg,#3B1F5E 0%,#5c3a8a 60%,#C4A8E855 100%)"></div>
+            <div class="tema-label">Púrpura Real</div>
+            <div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#6B1E2E','#E8A87C','#FDF5F0','#3D0E18')" data-tema="Amanhecer">
+            <div class="tema-preview" style="background:linear-gradient(135deg,#6B1E2E 0%,#8B2E40 60%,#E8A87C55 100%)"></div>
+            <div class="tema-label">Amanhecer</div>
+            <div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#1A3A4A','#4ECDC4','#F0F9F8','#0A1E28')" data-tema="Água Viva">
+            <div class="tema-preview" style="background:linear-gradient(135deg,#1A3A4A 0%,#2a5a6a 60%,#4ECDC455 100%)"></div>
+            <div class="tema-label">Água Viva</div>
+            <div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#2D1B69','#F7C59F','#FFF8F3','#180E3A')" data-tema="Noite Estrelada">
+            <div class="tema-preview" style="background:linear-gradient(135deg,#2D1B69 0%,#4a2e8a 60%,#F7C59F55 100%)"></div>
+            <div class="tema-label">Noite Estrelada</div>
+            <div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#4A1942','#F9A825','#FFF8E6','#2A0A26')" data-tema="Chama Divina">
+            <div class="tema-preview" style="background:linear-gradient(135deg,#4A1942 0%,#6B2460 60%,#F9A82555 100%)"></div>
+            <div class="tema-label">Chama Divina</div>
+            <div class="tema-check">✓</div>
+          </div>
+        </div>
+        <input type="hidden" id="ev-cor" value="#3D2410">
+        <input type="hidden" id="ev-cor-destaque" value="#C8873A">
+        <input type="hidden" id="ev-cor-fundo" value="#F2EDE4">
+        <input type="hidden" id="ev-cor-texto" value="#2C1A08">
+        <input type="hidden" id="ev-tema-nome" value="Terra Santa">
       </div>
 
       <div class="form-field" style="grid-column:1/-1">
@@ -392,6 +446,8 @@ function fecharModal(){
   document.getElementById('ev-thumb').value='';
   document.getElementById('ev-video').value='';
   setVisibilidade('publico');
+  document.querySelectorAll('.tema-card').forEach((c,i)=>c.classList.toggle('selected',i===0));
+  document.getElementById('ev-cor').value='#3D2410';
 }
 
 /* ── SLUG ── */
@@ -676,6 +732,18 @@ function filtrarEventos(q){
 }
 
 
+/* ── TEMA VISUAL ── */
+function selecionarTema(card, cor, destaque, fundo, texto){
+  document.querySelectorAll('.tema-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('ev-cor').value          = cor;
+  document.getElementById('ev-cor-destaque').value = destaque;
+  document.getElementById('ev-cor-fundo').value    = fundo;
+  document.getElementById('ev-cor-texto').value    = texto;
+  document.getElementById('ev-tema-nome').value    = card.dataset.tema||'';
+}
+
+
 /* ── CRIAR EVENTO ── */
 function setProgress(pct, msg){
   document.getElementById('progress-fill').style.width = pct+'%';
@@ -702,8 +770,13 @@ async function criarEvento(){
   try {
     // 1. Cria no Supabase
     setProgress(20,'Criando evento no banco de dados...');
-    const publico = document.getElementById('ev-publico').value !== 'false';
-    const config = {titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,inscricoes_abertas:true,thumb,video_abertura:video,publico};
+    const publico    = document.getElementById('ev-publico').value !== 'false';
+    const corDest    = document.getElementById('ev-cor-destaque')?.value||'';
+    const corFundo   = document.getElementById('ev-cor-fundo')?.value||'';
+    const corTexto   = document.getElementById('ev-cor-texto')?.value||'';
+    const temaNome   = document.getElementById('ev-tema-nome')?.value||'';
+    const design     = {cor_primaria:cor,cor_destaque:corDest,cor_fundo:corFundo,cor_texto:corTexto,tema_nome:temaNome};
+    const config     = {titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,design,inscricoes_abertas:true,thumb,video_abertura:video,publico};
     const rows   = await supa('POST','eventos',[{slug,nome,config,ativo:true}]);
     const eventoId = rows[0]?.id;
 
