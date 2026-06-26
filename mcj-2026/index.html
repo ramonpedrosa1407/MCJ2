@@ -1340,7 +1340,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       </div>
       <div class="cfg-field">
         <label>Título *</label>
-        <input type="text" id="midia-titulo-input" placeholder="Ex: Abertura MCJ 2026">
+        <input type="text" id="midia-titulo-input" placeholder="Ex: Abertura do evento">
       </div>
       <div class="cfg-field" id="midia-url-wrap">
         <label>URL do arquivo</label>
@@ -1446,7 +1446,7 @@ function getExpByNome(nome){ return getExpositores().find(e=>e.nome===nome)||nul
 function getMateriais(){
   const lista = _cfgEvento.materiais||[];
   if(_cfgEvento.livreto_url && !lista.find(m=>m.url===_cfgEvento.livreto_url)){
-    return [{nome:'📖 Livreto MCJ 2026', url:_cfgEvento.livreto_url}, ...lista];
+    return [{nome:'📖 Livreto '+(_cfgEvento.titulo||'Evento'), url:_cfgEvento.livreto_url}, ...lista];
   }
   return lista;
 }
@@ -1740,11 +1740,11 @@ function renderHeroSocial(){
 function aplicarConfigEvento(){
   const e = _cfgEvento;
   const titulo    = e.titulo    || 'MCJ 2026';
-  const subtitulo = e.subtitulo || 'Momentos com Jesus';
+  const subtitulo = e.subtitulo || '';
   const tagline   = e.design?.hero_tagline || 'Jornada de Estudos Espíritas do Evangelho';
-  const data      = e.data      || '20 de setembro de 2026';
-  const horario   = e.horario   || '8h às 17h30';
-  const local     = e.local     || 'Rio de Janeiro';
+  const data      = e.data      || '';
+  const horario   = e.horario   || '';
+  const local     = e.local     || '';
 
   // Extrai nome base e ano
   const m = titulo.match(/^(.+?)\s*(\d{4})$/);
@@ -5880,7 +5880,7 @@ function resolverMsg(template, nome, polo){
   return (template||MSG_WA_PADRAO)
     .replace(/\{nome\}/g, nome)
     .replace(/\{polo\}/g, polo)
-    .replace(/\{data\}/g, '20 de setembro de 2026');
+    .replace(/\{data\}/g, _cfgEvento.data||'');
 }
 
 function montarLinkWA(telNumeros, nomeInscrito, poloNome){
