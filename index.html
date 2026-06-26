@@ -47,6 +47,8 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);mi
 .evento-card-badge{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .badge-ativo{background:#10B981;color:white}
 .badge-encerrado{background:rgba(0,0,0,.4);color:rgba(255,255,255,.7)}
+  .badge-em-breve{background:#1D4ED8;color:white}
+  .badge-prorrogadas{background:#B45309;color:white}
 .badge-em-breve{background:#F59E0B;color:white}
 .evento-card-body{padding:1.25rem}
 .evento-card-nome{font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:700;color:var(--dark);margin-bottom:4px}
@@ -189,9 +191,27 @@ async function carregarEventos(){
     }
     grid.innerHTML = eventos.map(e=>{
       const cfg = e.config||{};
-      const status = cfg.inscricoes_abertas!==false ? 'ativo' : 'encerrado';
-      const badgeClass = status==='ativo' ? 'badge-ativo' : 'badge-encerrado';
-      const badgeText  = status==='ativo' ? 'Inscrições abertas' : 'Encerrado';
+      // Calcula fase automaticamente
+      function calcFase(cfg){
+        if(cfg.fase_forcada) return cfg.fase_forcada;
+        const fases = cfg.fases; if(!fases) return 'em_breve';
+        const hoje = new Date(); hoje.setHours(0,0,0,0);
+        const modo = cfg.modo_fases||'datas';
+        const criado = cfg.criado_em ? new Date(cfg.criado_em) : new Date();
+        function toDate(v){ if(!v)return null; return modo==='dias'?new Date(criado.getTime()+v*86400000):new Date(v); }
+        if(fases.encerradas?.de && hoje>=toDate(fases.encerradas.de)) return 'encerradas';
+        if(fases.prorrogadas?.de && hoje>=toDate(fases.prorrogadas.de)) return 'prorrogadas';
+        if(fases.abertas?.de && hoje>=toDate(fases.abertas.de)) return 'abertas';
+        return 'em_breve';
+      }
+      const fase = calcFase(cfg);
+      const faseMap = {
+        em_breve:    {cls:'badge-em-breve',   txt:'🔜 Em breve'},
+        abertas:     {cls:'badge-ativo',       txt:'✅ Inscrições abertas'},
+        prorrogadas: {cls:'badge-prorrogadas', txt:'⏳ Prorrogadas'},
+        encerradas:  {cls:'badge-encerrado',   txt:'🔒 Encerradas'},
+      };
+      const {cls:badgeClass, txt:badgeText} = faseMap[fase]||faseMap.em_breve;
       return '<a href="/' + e.slug + '/" class="evento-card">' +
         '<div class="evento-card-img">' +
         (cfg.thumb ? '<img src="' + cfg.thumb + '" alt="' + e.nome + '">' : '') +
