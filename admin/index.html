@@ -5,16 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Jornada Espírita — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --dark:#0D2B4E;--gold:#7EB8D4;--cream:#F0F4F8;--sand:#C8DFF0;
   --gray-50:#F8FAFC;--gray-100:#E2EDF8;--gray-300:#94B8D4;--gray-400:#6B8FAD;
-  --gray-500:#4A6F8A;--gray-600:#2C5F8A;--green:#10B981;--red:#EF4444;
+  --gray-500:#4A6F8A;--green:#10B981;--red:#EF4444;
 }
 body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
-
-/* LOGIN */
 .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);padding:1rem}
 .login-box{background:white;border-radius:20px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .login-logo{font-family:'EB Garamond',Georgia,serif;font-size:32px;font-weight:700;color:var(--dark);margin-bottom:4px}
@@ -26,35 +25,27 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);mi
 .field input:focus{border-color:var(--dark)}
 .btn-login{width:100%;padding:13px;background:var(--dark);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
 .err{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px;font-size:13px;color:#991B1B;display:none;margin-bottom:8px}
-
-/* HEADER */
 .header{background:var(--dark);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.header-logo{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white}
+.header-logo{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;text-decoration:none;color:white}
 .header-logo span{color:var(--gold)}
 .header-right{display:flex;align-items:center;gap:12px}
 .header-user{font-size:12px;color:rgba(255,255,255,.5)}
 .header-logout{padding:6px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:white;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif}
-
-/* MAIN */
 .main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
-.page-title{font-family:'EB Garamond',Georgia,serif;font-size:28px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.page-title{font-family:'EB Garamond',Georgia,serif;font-size:28px;font-weight:700;margin-bottom:4px}
 .page-sub{font-size:13px;color:var(--gray-400);margin-bottom:2rem}
-
-/* STATS */
 .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:2rem}
 .stat-card{background:white;border-radius:12px;border:1px solid var(--sand);padding:1.25rem}
-.stat-num{font-size:32px;font-weight:700;color:var(--dark)}
+.stat-num{font-size:32px;font-weight:700}
 .stat-lbl{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-
-/* ACTIONS */
-.actions-bar{display:flex;gap:10px;margin-bottom:1.5rem}
-.btn-add{padding:10px 20px;background:var(--dark);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
-.btn-add:hover{opacity:.9}
-
-/* TABLE */
+.actions-bar{display:flex;gap:10px;margin-bottom:1.25rem}
+.btn-add{padding:10px 20px;background:var(--dark);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.search-wrap{position:relative;margin-bottom:1.25rem}
+.search-input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;outline:none;background:white}
+.search-input:focus{border-color:var(--dark)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-300)}
 .table-wrap{background:white;border-radius:14px;border:1px solid var(--sand);overflow:hidden}
-.table-header{padding:1rem 1.25rem;border-bottom:1px solid var(--sand)}
-.table-title{font-size:14px;font-weight:600;color:var(--dark)}
+.table-header{padding:1rem 1.25rem;border-bottom:1px solid var(--sand);font-size:14px;font-weight:600}
 table{width:100%;border-collapse:collapse}
 th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);padding:10px 14px;text-align:left;border-bottom:1px solid var(--gray-100)}
 td{font-size:13px;padding:12px 14px;border-bottom:1px solid var(--gray-50);vertical-align:middle}
@@ -67,21 +58,22 @@ tr:last-child td{border-bottom:none}
 .btn-t-gray{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
 .btn-t-red{background:#FEF2F2;color:#EF4444;border:1px solid #FECACA}
 .btn-t-green{background:#ECFDF5;color:#065F46;border:1px solid #BBF7D0}
+.fase-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif}
+.fase-em-breve{background:#EFF6FF;color:#1D4ED8}
+.fase-abertas{background:#ECFDF5;color:#065F46}
+.fase-prorrogadas{background:#FFFBEB;color:#92400E}
+.fase-encerradas{background:#FEF2F2;color:#991B1B}
+.fase-dropdown{position:fixed;background:white;border:1.5px solid var(--sand);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:9999;min-width:200px;display:none}
+.fase-dropdown.show{display:block}
+.fase-opt{padding:10px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--gray-100)}
+.fase-opt:last-child{border-bottom:none}
+.fase-opt:hover{background:var(--gray-50)}
 .toggle-pub{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif}
 .toggle-pub-on{background:#ECFDF5;color:#065F46;border:1px solid #BBF7D0}
 .toggle-pub-off{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
-.qr-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:700;display:none;align-items:center;justify-content:center;padding:1rem}
-.qr-modal-overlay.show{display:flex}
-.qr-modal{background:white;border-radius:20px;padding:2rem;text-align:center;width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.qr-modal h3{font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:700;color:var(--dark);margin-bottom:4px}
-.qr-modal p{font-size:12px;color:var(--gray-400);margin-bottom:1.5rem}
-#qr-canvas{display:flex;justify-content:center;margin-bottom:1.5rem}
-.qr-url{font-size:11px;color:var(--gold);word-break:break-all;margin-bottom:1.25rem;padding:8px;background:var(--gray-50);border-radius:8px;font-weight:600}
-
-/* OVERLAY */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem}
 .overlay.show{display:flex}
-.modal{background:white;border-radius:16px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal{background:white;border-radius:16px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .modal-head{background:var(--dark);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;position:sticky;top:0}
 .modal-head h3{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white}
 .modal-head button{background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer}
@@ -93,54 +85,41 @@ tr:last-child td{border-bottom:none}
 .form-field input:focus{border-color:var(--dark)}
 .slug-preview{font-size:11px;color:var(--gold);margin-top:3px;font-weight:600}
 .slug-note{font-size:10px;color:var(--gray-300);margin-top:1px}
-.tema-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
-.tema-card{border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative}
-.tema-card.selected{border-color:var(--dark);box-shadow:0 0 0 3px rgba(13,43,78,.2)}
-.tema-card:hover{transform:scale(1.03)}
-.tema-preview{height:52px;width:100%}
-.tema-label{padding:5px 6px;font-size:10px;font-weight:600;background:white;color:var(--dark);text-align:center;line-height:1.2}
-.tema-check{position:absolute;top:4px;right:4px;width:18px;height:18px;background:var(--dark);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:10px;color:white}
-.tema-card.selected .tema-check{display:flex}
-.toggle-vis{display:flex;border:1.5px solid var(--sand);border-radius:10px;overflow:hidden;margin-top:4px}
-.toggle-vis-btn{flex:1;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;background:white;color:var(--gray-400);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
-.toggle-vis-btn.active-pub{background:#ECFDF5;color:#065F46}
-.toggle-vis-btn.active-priv{background:#FEF2F2;color:#991B1B}
-.search-wrap{position:relative;margin-bottom:1.25rem}
-.search-input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;outline:none;background:white}
-.search-input:focus{border-color:var(--dark)}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-300);font-size:15px}
-.no-results{text-align:center;padding:2rem;color:var(--gray-300);font-size:14px}
-.fase-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif}
-.fase-em-breve{background:#EFF6FF;color:#1D4ED8}
-.fase-abertas{background:#ECFDF5;color:#065F46}
-.fase-prorrogadas{background:#FFFBEB;color:#92400E}
-.fase-encerradas{background:#FEF2F2;color:#991B1B}
-.fase-dropdown{position:fixed;background:white;border:1.5px solid var(--sand);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:9999;min-width:200px;display:none}
-.fase-dropdown.show{display:block}
-.fase-opt{padding:10px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--gray-100)}
-.fase-opt:last-child{border-bottom:none}
-.fase-opt:hover{background:var(--gray-50)}
-.fases-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem}
-.fases-modal-overlay.show{display:flex}
 .modal-foot{padding:1rem 1.25rem;border-top:1px solid var(--sand);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:white}
 .btn-cancel{padding:10px 18px;background:white;border:1px solid var(--sand);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
 .btn-save{padding:10px 18px;background:var(--dark);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-
-/* UPLOAD */
-.upload-area{border:2px dashed var(--sand);border-radius:12px;padding:1.25rem;text-align:center;cursor:pointer;background:var(--gray-50);position:relative}
+.upload-area{border:2px dashed var(--sand);border-radius:12px;padding:1.25rem;text-align:center;cursor:pointer;background:var(--gray-50)}
 .upload-area:hover{border-color:var(--dark)}
 .upload-preview{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:8px;display:none}
 .upload-bar{height:4px;background:var(--sand);border-radius:2px;margin-top:8px;overflow:hidden;display:none}
 .upload-fill{height:100%;background:var(--dark);border-radius:2px;transition:width .3s;width:0}
 .upload-status{font-size:11px;margin-top:4px;display:none;color:var(--gray-400)}
-
-/* PROGRESS */
 .progress-wrap{background:var(--gray-50);border-radius:10px;padding:1rem;border:1px solid var(--sand);display:none}
 .progress-bar{height:6px;background:var(--sand);border-radius:3px;overflow:hidden;margin:8px 0}
 .progress-fill{height:100%;background:var(--dark);border-radius:3px;transition:width .3s;width:0}
 .progress-msg{font-size:12px;color:var(--gray-400)}
+.toggle-vis{display:flex;border:1.5px solid var(--sand);border-radius:10px;overflow:hidden;margin-top:4px}
+.toggle-vis-btn{flex:1;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;background:white;color:var(--gray-400)}
+.toggle-vis-btn.active-pub{background:#ECFDF5;color:#065F46}
+.toggle-vis-btn.active-priv{background:#FEF2F2;color:#991B1B}
+.tema-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
+.tema-card{border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative}
+.tema-card.selected{border-color:var(--dark);box-shadow:0 0 0 3px rgba(13,43,78,.2)}
+.tema-card:hover{transform:scale(1.03)}
+.tema-preview{height:52px;width:100%}
+.tema-label{padding:5px 6px;font-size:10px;font-weight:600;background:white;color:var(--dark);text-align:center}
+.tema-check{position:absolute;top:4px;right:4px;width:18px;height:18px;background:var(--dark);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:10px;color:white}
+.tema-card.selected .tema-check{display:flex}
+.fases-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem}
+.fases-modal-overlay.show{display:flex}
+.qr-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:700;display:none;align-items:center;justify-content:center;padding:1rem}
+.qr-modal-overlay.show{display:flex}
+.qr-modal{background:white;border-radius:20px;padding:2rem;text-align:center;width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.qr-modal h3{font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:700;color:var(--dark);margin-bottom:4px}
+.qr-modal p{font-size:12px;color:var(--gray-400);margin-bottom:1.5rem}
+#qr-canvas{display:flex;justify-content:center;margin-bottom:1.5rem}
+.qr-url{font-size:11px;color:var(--gold);word-break:break-all;margin-bottom:1.25rem;padding:8px;background:var(--gray-50);border-radius:8px;font-weight:600}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -159,7 +138,7 @@ tr:last-child td{border-bottom:none}
 <!-- DASHBOARD -->
 <div id="dashboard" style="display:none">
   <div class="header">
-    <a href="/" class="header-logo" style="text-decoration:none;color:white">Jornada <span>Espírita</span></a>
+    <a href="/" class="header-logo">Jornada <span>Espírita</span></a>
     <div class="header-right">
       <span class="header-user">Admin Master</span>
       <button class="header-logout" onclick="location.reload()">Sair</button>
@@ -170,7 +149,8 @@ tr:last-child td{border-bottom:none}
     <div class="page-sub">Gerencie todos os eventos da plataforma</div>
     <div class="stats">
       <div class="stat-card"><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Total de eventos</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-ativos">—</div><div class="stat-lbl">Eventos ativos</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-ativos">—</div><div class="stat-lbl">Ativos</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-publicos">—</div><div class="stat-lbl">Públicos</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-inscritos">—</div><div class="stat-lbl">Inscrições totais</div></div>
     </div>
     <div class="actions-bar">
@@ -181,11 +161,11 @@ tr:last-child td{border-bottom:none}
       <input class="search-input" id="busca-eventos" placeholder="Buscar evento por nome, slug ou data..." oninput="filtrarEventos(this.value)">
     </div>
     <div class="table-wrap">
-      <div class="table-header"><span class="table-title">📋 Todos os eventos</span></div>
+      <div class="table-header">📋 Todos os eventos</div>
       <div style="overflow-x:auto">
         <table>
           <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th>Fase</th><th>Visib.</th><th>Ações</th></tr></thead>
-          <tbody id="tbody-eventos"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
+          <tbody id="tbody-eventos"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -230,45 +210,47 @@ tr:last-child td{border-bottom:none}
           <input type="text" id="ev-local" placeholder="Ex: Teresópolis, RJ">
         </div>
       </div>
+
+      <!-- Design visual -->
       <div class="form-field" style="grid-column:1/-1">
         <label>Design visual do evento</label>
         <div class="tema-grid" id="tema-grid">
-          <div class="tema-card selected" onclick="selecionarTema(this,'#3D2410','#C8873A','#F2EDE4','#2C1A08')" data-tema="Terra Santa">
+          <div class="tema-card selected" onclick="selecionarTema(this,'#3D2410','#C8873A','#F2EDE4','#2C1A08','Terra Santa')" data-tema="Terra Santa">
             <div class="tema-preview" style="background:linear-gradient(135deg,#3D2410 0%,#6B4C2A 60%,#C8873A88 100%)"></div>
             <div class="tema-label">Terra Santa</div>
             <div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#0D2B4E','#7EB8D4','#F0F4F8','#0A1E35')" data-tema="Céu Profundo">
+          <div class="tema-card" onclick="selecionarTema(this,'#0D2B4E','#7EB8D4','#F0F4F8','#0A1E35','Céu Profundo')" data-tema="Céu Profundo">
             <div class="tema-preview" style="background:linear-gradient(135deg,#0D2B4E 0%,#1a3a5c 60%,#7EB8D455 100%)"></div>
             <div class="tema-label">Céu Profundo</div>
             <div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#1B4332','#D4A843','#F0FAF4','#0D2B1E')" data-tema="Verde Esperança">
+          <div class="tema-card" onclick="selecionarTema(this,'#1B4332','#D4A843','#F0FAF4','#0D2B1E','Verde Esperança')" data-tema="Verde Esperança">
             <div class="tema-preview" style="background:linear-gradient(135deg,#1B4332 0%,#2d6a4f 60%,#D4A84355 100%)"></div>
             <div class="tema-label">Verde Esperança</div>
             <div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#3B1F5E','#C4A8E8','#F5F0FF','#1E0E33')" data-tema="Púrpura Real">
+          <div class="tema-card" onclick="selecionarTema(this,'#3B1F5E','#C4A8E8','#F5F0FF','#1E0E33','Púrpura Real')" data-tema="Púrpura Real">
             <div class="tema-preview" style="background:linear-gradient(135deg,#3B1F5E 0%,#5c3a8a 60%,#C4A8E855 100%)"></div>
             <div class="tema-label">Púrpura Real</div>
             <div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#6B1E2E','#E8A87C','#FDF5F0','#3D0E18')" data-tema="Amanhecer">
+          <div class="tema-card" onclick="selecionarTema(this,'#6B1E2E','#E8A87C','#FDF5F0','#3D0E18','Amanhecer')" data-tema="Amanhecer">
             <div class="tema-preview" style="background:linear-gradient(135deg,#6B1E2E 0%,#8B2E40 60%,#E8A87C55 100%)"></div>
             <div class="tema-label">Amanhecer</div>
             <div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#1A3A4A','#4ECDC4','#F0F9F8','#0A1E28')" data-tema="Água Viva">
+          <div class="tema-card" onclick="selecionarTema(this,'#1A3A4A','#4ECDC4','#F0F9F8','#0A1E28','Água Viva')" data-tema="Água Viva">
             <div class="tema-preview" style="background:linear-gradient(135deg,#1A3A4A 0%,#2a5a6a 60%,#4ECDC455 100%)"></div>
             <div class="tema-label">Água Viva</div>
             <div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#2D1B69','#F7C59F','#FFF8F3','#180E3A')" data-tema="Noite Estrelada">
+          <div class="tema-card" onclick="selecionarTema(this,'#2D1B69','#F7C59F','#FFF8F3','#180E3A','Noite Estrelada')" data-tema="Noite Estrelada">
             <div class="tema-preview" style="background:linear-gradient(135deg,#2D1B69 0%,#4a2e8a 60%,#F7C59F55 100%)"></div>
             <div class="tema-label">Noite Estrelada</div>
             <div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#4A1942','#F9A825','#FFF8E6','#2A0A26')" data-tema="Chama Divina">
+          <div class="tema-card" onclick="selecionarTema(this,'#4A1942','#F9A825','#FFF8E6','#2A0A26','Chama Divina')" data-tema="Chama Divina">
             <div class="tema-preview" style="background:linear-gradient(135deg,#4A1942 0%,#6B2460 60%,#F9A82555 100%)"></div>
             <div class="tema-label">Chama Divina</div>
             <div class="tema-check">✓</div>
@@ -281,9 +263,10 @@ tr:last-child td{border-bottom:none}
         <input type="hidden" id="ev-tema-nome" value="Terra Santa">
       </div>
 
+      <!-- Visibilidade -->
       <div class="form-field" style="grid-column:1/-1">
-        <label>Visibilidade do evento</label>
-        <div class="toggle-vis" id="toggle-vis">
+        <label>Visibilidade</label>
+        <div class="toggle-vis">
           <button class="toggle-vis-btn active-pub" id="btn-publico" onclick="setVisibilidade('publico')">🌐 Público — aparece no portal</button>
           <button class="toggle-vis-btn" id="btn-privado" onclick="setVisibilidade('privado')">🔒 Privado — só por link direto</button>
         </div>
@@ -291,7 +274,7 @@ tr:last-child td{border-bottom:none}
       </div>
 
       <!-- Upload capa -->
-      <div class="form-field">
+      <div class="form-field" style="grid-column:1/-1">
         <label>📷 Foto de capa</label>
         <div class="upload-area" onclick="document.getElementById('upload-capa').click()">
           <input type="file" id="upload-capa" accept="image/*" style="display:none" onchange="handleUpload(this,'capa')">
@@ -306,7 +289,7 @@ tr:last-child td{border-bottom:none}
       </div>
 
       <!-- Upload video -->
-      <div class="form-field">
+      <div class="form-field" style="grid-column:1/-1">
         <label>🎬 Vídeo de abertura (opcional)</label>
         <div class="upload-area" onclick="document.getElementById('upload-video').click()">
           <input type="file" id="upload-video" accept="video/mp4" style="display:none" onchange="handleUpload(this,'video')">
@@ -319,7 +302,6 @@ tr:last-child td{border-bottom:none}
         <input type="hidden" id="ev-video">
       </div>
 
-      <!-- Progresso criação -->
       <div class="progress-wrap" id="progress-wrap">
         <div class="progress-msg" id="progress-msg">Criando evento...</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
@@ -332,519 +314,6 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<script>
-const SUPA_URL = 'https://sdwxwdqnfukxeofscmpd.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
-const GH_TOKEN = 'ghp_kxKXV2J4pJi'+'UFr8iXhEXqoEAJPxnQp11F3zF';
-const GH_REPO  = 'ramonpedrosa1407/MCJ2';
-const ADMIN_U  = 'admin';
-const ADMIN_P  = 'mcj2026@rj';
-
-let _eventos = [];
-
-/* ── AUTH ── */
-function fazerLogin(){
-  const u = document.getElementById('login-u').value.trim();
-  const p = document.getElementById('login-p').value;
-  const err = document.getElementById('login-err');
-  if(u===ADMIN_U && p===ADMIN_P){
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    carregarDados();
-  } else {
-    err.style.display = 'block';
-    setTimeout(()=>err.style.display='none', 3000);
-  }
-}
-
-/* ── SUPABASE ── */
-async function supa(method, path, body){
-  const opts = {
-    method,
-    headers:{ apikey:SUPA_KEY, 'Authorization':'Bearer '+SUPA_KEY, 'Content-Type':'application/json', 'Prefer':'return=representation' }
-  };
-  if(body) opts.body = JSON.stringify(body);
-  const r = await fetch(SUPA_URL+'/rest/v1/'+path, opts);
-  if(!r.ok){ const t=await r.text(); throw new Error(t); }
-  const txt = await r.text();
-  return txt ? JSON.parse(txt) : [];
-}
-
-/* ── DADOS ── */
-async function carregarDados(){
-  try {
-    _eventos = await supa('GET','eventos?select=*&order=criado_em.desc') || [];
-    let inscritos = 0;
-    try { inscritos = (await supa('GET','inscricoes?select=id') || []).length; } catch(e){}
-    document.getElementById('stat-total').textContent   = _eventos.length;
-    document.getElementById('stat-ativos').textContent  = _eventos.filter(e=>e.ativo).length;
-    document.getElementById('stat-inscritos').textContent = inscritos;
-    renderTabela();
-  } catch(e){ console.error(e); }
-}
-
-function renderTabela(){
-  const tb = document.getElementById('tbody-eventos');
-  if(!_eventos.length){
-    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado.</td></tr>';
-    return;
-  }
-  tb.innerHTML = _eventos.map(e=>{
-    const cfg = e.config||{};
-    return '<tr>' +
-      '<td><strong>'+e.nome+'</strong><br><span style="font-size:11px;color:var(--gray-400)">'+(cfg.subtitulo||'')+'</span></td>' +
-      '<td><a href="/'+e.slug+'/" target="_blank" style="color:var(--gold);font-size:12px">jornadaespirita.com.br/'+e.slug+'/</a></td>' +
-      '<td style="font-size:12px">'+(cfg.data||'—')+'</td>' +
-      '<td>' +
-        (()=>{ const fb=getFaseBadge(e.config||{}); return '<button class="fase-badge '+fb.cls+'" onclick="abrirFaseDropdown(\''+e.id+'\',this)">'+fb.label+' ▾</button>'; })() +
-      '</td>' +
-      '<td>' +
-        (()=>{
-          const pub = (e.config||{}).publico !== false;
-          return '<button class="toggle-pub '+(pub?'toggle-pub-on':'toggle-pub-off')+'" onclick="togglePublico(\''+e.id+'\')">'+(pub?'🌐 Público':'🔒 Privado')+'</button>';
-        })() +
-      '</td>' +
-      '<td>' +
-        '<button class="btn-t btn-t-blue" onclick="window.open(\'/'+e.slug+'/\',\'_blank\')">Acessar</button>' +
-        '<button class="btn-t btn-t-gray" onclick="toggleEvento(\''+e.id+'\','+e.ativo+')">'+(e.ativo?'Desativar':'Ativar')+'</button>' +
-        '<button class="btn-t btn-t-red" onclick="excluirEvento(\''+e.id+'\',\''+e.nome+'\')">🗑 Excluir</button>' +
-        '<button class="btn-t" onclick="window.open(\'/'+ e.slug +'/?admin=configuracoes\',\'_blank\')" style="background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0">⚙️ Config</button>' +
-      '</td>' +
-      '</tr>';
-  }).join('');
-}
-
-async function toggleEvento(id, ativo){
-  await supa('PATCH','eventos?id=eq.'+id, {ativo:!ativo});
-  carregarDados();
-}
-
-async function excluirEvento(id, nome){
-  if(!confirm('Excluir o evento "'+nome+'"?\nEsta ação não pode ser desfeita.')) return;
-  try {
-    await supa('DELETE','eventos?id=eq.'+id);
-    carregarDados();
-  } catch(e){ alert('Erro ao excluir: '+e.message); }
-}
-
-/* ── MODAL ── */
-function abrirModal(){
-  document.getElementById('modal-criar').classList.add('show');
-  document.getElementById('ev-nome').focus();
-}
-function fecharModal(){
-  document.getElementById('modal-criar').classList.remove('show');
-  document.getElementById('progress-wrap').style.display = 'none';
-  document.getElementById('btn-criar').disabled = false;
-  document.getElementById('btn-criar').textContent = '✨ Criar evento';
-  ['capa','video'].forEach(t=>{
-    document.getElementById('bar-'+t).style.display='none';
-    document.getElementById('st-'+t).style.display='none';
-    document.getElementById('fill-'+t).style.width='0';
-  });
-  document.getElementById('preview-capa').style.display='none';
-  document.getElementById('ev-thumb').value='';
-  document.getElementById('ev-video').value='';
-  setVisibilidade('publico');
-  document.querySelectorAll('.tema-card').forEach((c,i)=>c.classList.toggle('selected',i===0));
-  document.getElementById('ev-cor').value='#3D2410';
-}
-
-/* ── SLUG ── */
-function gerarSlug(){
-  const nome    = document.getElementById('ev-nome').value;
-  const dataStr = document.getElementById('ev-data').value;
-
-  const meses = {
-    janeiro:'01',fevereiro:'02','março':'03',abril:'04',maio:'05',junho:'06',
-    julho:'07',agosto:'08',setembro:'09',outubro:'10',novembro:'11',dezembro:'12'
-  };
-
-  let dd='', mm='', aa='';
-  const nums = dataStr.match(/\d+/g)||[];
-  if(nums.length>=3){
-    dd = nums[0].padStart(2,'0');
-    mm = nums[1].padStart(2,'0');
-    aa = String(nums[2]).slice(-2);
-  } else {
-    if(nums.length>=1) dd = nums[0].padStart(2,'0');
-    for(const [m,n] of Object.entries(meses)){
-      if(dataStr.toLowerCase().includes(m)){ mm=n; break; }
-    }
-    if(nums.length>=2) aa = String(nums[nums.length-1]).slice(-2);
-    else if(nums.length===1) aa = String(nums[0]).slice(-2);
-  }
-
-  const sufixo = [dd,mm,aa].filter(Boolean).join('.');
-  const base   = nome.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
-  const slug   = base && sufixo ? base+'-'+sufixo : base||'';
-
-  document.getElementById('ev-slug').value = slug;
-  document.getElementById('slug-preview').textContent = 'jornadaespirita.com.br/'+(slug||'...');
-}
-
-/* ── UPLOAD ── */
-async function handleUpload(input, tipo){
-  const file = input.files[0];
-  if(!file) return;
-  const bar  = document.getElementById('bar-'+tipo);
-  const fill = document.getElementById('fill-'+tipo);
-  const st   = document.getElementById('st-'+tipo);
-  bar.style.display='block'; st.style.display='block';
-  st.style.color='var(--gray-400)'; st.textContent='Enviando...';
-  fill.style.width='30%';
-  if(tipo==='capa' && file.type.startsWith('image/')){
-    const prev = document.getElementById('preview-capa');
-    prev.src = URL.createObjectURL(file);
-    prev.style.display = 'block';
-  }
-  const ext  = file.name.split('.').pop();
-  const path = tipo+'/'+Date.now()+'.'+ext;
-  try {
-    fill.style.width='60%';
-    const r = await fetch(SUPA_URL+'/storage/v1/object/eventos-media/'+path,{
-      method:'POST',
-      headers:{apikey:SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type},
-      body:file
-    });
-    if(!r.ok) throw new Error(await r.text());
-    fill.style.width='100%';
-    const url = SUPA_URL+'/storage/v1/object/public/eventos-media/'+path;
-    document.getElementById('ev-'+(tipo==='capa'?'thumb':'video')).value = url;
-    st.textContent='✅ Upload concluído!'; st.style.color='#10B981';
-    setTimeout(()=>bar.style.display='none',2000);
-  } catch(e){
-    st.textContent='❌ '+e.message; st.style.color='#EF4444';
-    fill.style.width='0';
-  }
-}
-
-/* ── FASES ── */
-const FASES = [
-  {id:'em_breve',    label:'🔜 Em breve',    cls:'fase-em-breve'},
-  {id:'abertas',     label:'✅ Abertas',      cls:'fase-abertas'},
-  {id:'prorrogadas', label:'⏳ Prorrogadas',  cls:'fase-prorrogadas'},
-  {id:'encerradas',  label:'🔒 Encerradas',   cls:'fase-encerradas'},
-];
-
-function calcFaseAtual(cfg){
-  if(cfg.fase_forcada) return cfg.fase_forcada;
-  const fases = cfg.fases;
-  if(!fases) return 'em_breve';
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const modo = cfg.modo_fases||'datas';
-  const criado = cfg.criado_em ? new Date(cfg.criado_em) : new Date();
-
-  function toDate(val){
-    if(!val) return null;
-    if(modo==='dias') return new Date(criado.getTime() + val*86400000);
-    return new Date(val);
-  }
-
-  const f = fases;
-  if(f.encerradas && toDate(f.encerradas.de) && hoje >= toDate(f.encerradas.de)) return 'encerradas';
-  if(f.prorrogadas && toDate(f.prorrogadas.de) && hoje >= toDate(f.prorrogadas.de)) return 'prorrogadas';
-  if(f.abertas && toDate(f.abertas.de) && hoje >= toDate(f.abertas.de)) return 'abertas';
-  return 'em_breve';
-}
-
-function getFaseBadge(cfg){
-  const id = calcFaseAtual(cfg);
-  const f = FASES.find(x=>x.id===id)||FASES[0];
-  return {id, label:f.label, cls:f.cls};
-}
-
-let _faseDdEventoId = null;
-
-function abrirFaseDropdown(eventoId, btn){
-  // Fecha outros
-  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
-  let dd = document.getElementById('fase-dd-'+eventoId);
-  if(!dd){
-    dd = document.createElement('div');
-    dd.className = 'fase-dropdown';
-    dd.id = 'fase-dd-'+eventoId;
-    dd.innerHTML = FASES.map(f=>
-      '<div class="fase-opt" onclick="forcarFase(\''+eventoId+'\',\''+f.id+'\')">'+
-      '<span class="fase-badge '+f.cls+'">'+f.label+'</span></div>'
-    ).join('') +
-    '<div class="fase-opt" onclick="forcarFase(\''+eventoId+'\',null)" style="color:var(--gray-400);font-size:12px">🔄 Automático (por data)</div>' +
-    '<div class="fase-opt" onclick="abrirModalFases(\''+eventoId+'\')">⚙️ Configurar datas</div>';
-    document.body.appendChild(dd);
-  }
-  const rect = btn.getBoundingClientRect();
-  dd.style.top  = (rect.bottom+4)+'px';
-  dd.style.left = rect.left+'px';
-  dd.classList.add('show');
-  setTimeout(()=>{
-    const close = e=>{ if(!dd.contains(e.target)){ dd.classList.remove('show'); document.removeEventListener('click',close); } };
-    document.addEventListener('click',close);
-  },50);
-}
-
-async function forcarFase(eventoId, fase){
-  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
-  const ev = _eventos.find(e=>e.id===eventoId);
-  if(!ev) return;
-  const cfg = {...(ev.config||{})};
-  if(fase===null) delete cfg.fase_forcada;
-  else cfg.fase_forcada = fase;
-  try {
-    await supa('PATCH','eventos?id=eq.'+eventoId,{config:cfg});
-    ev.config = cfg;
-    renderTabela();
-  } catch(e){ alert('Erro: '+e.message); }
-}
-
-// Modal de configuração de fases
-let _fasesEventoId = null;
-function abrirModalFases(eventoId){
-  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
-  _fasesEventoId = eventoId;
-  const ev = _eventos.find(e=>e.id===eventoId);
-  const cfg = ev?.config||{};
-  const f   = cfg.fases||{};
-  const modo = cfg.modo_fases||'datas';
-
-  document.getElementById('fases-modo').value = modo;
-  document.getElementById('fases-abertas-de').value    = f.abertas?.de||'';
-  document.getElementById('fases-abertas-ate').value   = f.abertas?.ate||'';
-  document.getElementById('fases-prorrog-de').value    = f.prorrogadas?.de||'';
-  document.getElementById('fases-prorrog-ate').value   = f.prorrogadas?.ate||'';
-  document.getElementById('fases-encerradas-de').value = f.encerradas?.de||'';
-  toggleModoFases();
-  document.getElementById('fases-modal-overlay').classList.add('show');
-}
-
-function fecharModalFases(){
-  document.getElementById('fases-modal-overlay').classList.remove('show');
-}
-
-function toggleModoFases(){
-  const modo = document.getElementById('fases-modo').value;
-  const isDias = modo==='dias';
-  document.querySelectorAll('.fases-label-data').forEach(el=>el.textContent=isDias?'(dias desde criação)':'(data)');
-  document.querySelectorAll('.fases-input-date').forEach(el=>el.type=isDias?'number':'date');
-}
-
-async function salvarFases(){
-  const ev = _eventos.find(e=>e.id===_fasesEventoId);
-  if(!ev) return;
-  const modo = document.getElementById('fases-modo').value;
-  const parse = id => {
-    const v = document.getElementById(id).value;
-    return modo==='dias' ? (v?parseInt(v):null) : (v||null);
-  };
-  const fases = {
-    abertas:     { de: parse('fases-abertas-de'),    ate: parse('fases-abertas-ate') },
-    prorrogadas: { de: parse('fases-prorrog-de'),    ate: parse('fases-prorrog-ate') },
-    encerradas:  { de: parse('fases-encerradas-de') },
-  };
-  const cfg = {...(ev.config||{}), modo_fases:modo, fases, criado_em: ev.config?.criado_em||new Date().toISOString()};
-  delete cfg.fase_forcada;
-  try {
-    await supa('PATCH','eventos?id=eq.'+_fasesEventoId,{config:cfg});
-    ev.config = cfg;
-    fecharModalFases();
-    renderTabela();
-  } catch(e){ alert('Erro: '+e.message); }
-}
-
-
-/* ── PÚBLICO / PRIVADO ── */
-async function togglePublico(eventoId){
-  const ev = _eventos.find(e=>e.id===eventoId);
-  if(!ev) return;
-  const cfg = {...(ev.config||{})};
-  cfg.publico = cfg.publico === false ? true : false;
-  try {
-    await supa('PATCH','eventos?id=eq.'+eventoId, {config:cfg});
-    ev.config = cfg;
-    renderTabela();
-  } catch(e){ alert('Erro: '+e.message); }
-}
-
-/* ── QR CODE ── */
-function abrirQR(slug, nome){
-  const url = 'https://jornadaespirita.com.br/'+slug+'/';
-  document.getElementById('qr-nome').textContent = nome;
-  document.getElementById('qr-url-texto').textContent = url;
-  const canvas = document.getElementById('qr-canvas');
-  canvas.innerHTML = '';
-  new QRCode(canvas, {
-    text: url,
-    width: 220,
-    height: 220,
-    colorDark: '#0D2B4E',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.H
-  });
-  document.getElementById('qr-modal-overlay').classList.add('show');
-}
-
-function fecharQR(){
-  document.getElementById('qr-modal-overlay').classList.remove('show');
-}
-
-function baixarQR(){
-  const canvas = document.querySelector('#qr-canvas canvas');
-  if(!canvas){ alert('QR não gerado ainda.'); return; }
-  const link = document.createElement('a');
-  link.download = 'qrcode-'+document.getElementById('qr-url-texto').textContent.split('/').filter(Boolean).pop()+'.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
-
-
-/* ── VISIBILIDADE ── */
-function setVisibilidade(tipo){
-  const pub = tipo === 'publico';
-  document.getElementById('ev-publico').value = pub ? 'true' : 'false';
-  document.getElementById('btn-publico').className = 'toggle-vis-btn' + (pub ? ' active-pub' : '');
-  document.getElementById('btn-privado').className = 'toggle-vis-btn' + (!pub ? ' active-priv' : '');
-}
-
-/* ── BUSCA ── */
-function filtrarEventos(q){
-  q = q.toLowerCase().trim();
-  const rows = document.querySelectorAll('#tbody-eventos tr');
-  let found = 0;
-  rows.forEach(tr => {
-    const txt = tr.textContent.toLowerCase();
-    const show = !q || txt.includes(q);
-    tr.style.display = show ? '' : 'none';
-    if(show) found++;
-  });
-  // Mensagem sem resultados
-  let noRes = document.getElementById('no-results-row');
-  if(!found && q){
-    if(!noRes){
-      noRes = document.createElement('tr');
-      noRes.id = 'no-results-row';
-      noRes.innerHTML = '<td colspan="6" class="no-results">Nenhum evento encontrado para "<strong>'+q+'</strong>"</td>';
-      document.getElementById('tbody-eventos').appendChild(noRes);
-    }
-  } else if(noRes){
-    noRes.remove();
-  }
-}
-
-
-/* ── TEMA VISUAL ── */
-function selecionarTema(card, cor, destaque, fundo, texto){
-  document.querySelectorAll('.tema-card').forEach(c=>c.classList.remove('selected'));
-  card.classList.add('selected');
-  document.getElementById('ev-cor').value          = cor;
-  document.getElementById('ev-cor-destaque').value = destaque;
-  document.getElementById('ev-cor-fundo').value    = fundo;
-  document.getElementById('ev-cor-texto').value    = texto;
-  document.getElementById('ev-tema-nome').value    = card.dataset.tema||'';
-}
-
-
-/* ── CRIAR EVENTO ── */
-function setProgress(pct, msg){
-  document.getElementById('progress-fill').style.width = pct+'%';
-  document.getElementById('progress-msg').textContent  = msg;
-}
-
-async function criarEvento(){
-  const nome  = document.getElementById('ev-nome').value.trim();
-  const slug  = document.getElementById('ev-slug').value.trim();
-  const sub   = document.getElementById('ev-sub').value.trim();
-  const data  = document.getElementById('ev-data').value.trim();
-  const hora  = document.getElementById('ev-hora').value.trim();
-  const local = document.getElementById('ev-local').value.trim();
-  const cor   = document.getElementById('ev-cor').value;
-  const thumb = document.getElementById('ev-thumb').value;
-  const video = document.getElementById('ev-video').value;
-
-  if(!nome||!slug){ alert('Preencha o nome e a data do evento.'); return; }
-
-  document.getElementById('progress-wrap').style.display = 'block';
-  document.getElementById('btn-criar').disabled = true;
-  document.getElementById('btn-criar').textContent = 'Criando...';
-
-  try {
-    // 1. Cria no Supabase
-    setProgress(20,'Criando evento no banco de dados...');
-    const publico    = document.getElementById('ev-publico').value !== 'false';
-    const corDest    = document.getElementById('ev-cor-destaque')?.value||'';
-    const corFundo   = document.getElementById('ev-cor-fundo')?.value||'';
-    const corTexto   = document.getElementById('ev-cor-texto')?.value||'';
-    const temaNome   = document.getElementById('ev-tema-nome')?.value||'';
-    const design     = {cor_primaria:cor,cor_destaque:corDest,cor_fundo:corFundo,cor_texto:corTexto,tema_nome:temaNome};
-    const config     = {titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,design,inscricoes_abertas:true,thumb,video_abertura:video,publico};
-    const rows   = await supa('POST','eventos',[{slug,nome,config,ativo:true}]);
-    const eventoId = rows[0]?.id;
-
-    // 2. Busca template MCJ
-    setProgress(50,'Buscando template do sistema...');
-    const htmlEvento = await gerarHtmlEvento(nome,slug,sub,data,hora,local,cor,eventoId,thumb,video);
-
-    // 3. Sobe no GitHub
-    setProgress(75,'Publicando página do evento...');
-    await githubCreateFile(slug+'/index.html', htmlEvento, 'Criar evento: '+nome);
-
-    setProgress(100,'✅ Evento criado com sucesso!');
-    setTimeout(()=>{
-      fecharModal();
-      carregarDados();
-      if(confirm('Evento criado! Acessar jornadaespirita.com.br/'+slug+'/ agora?'))
-        window.open('/'+slug+'/','_blank');
-    },1500);
-
-  } catch(e){
-    setProgress(0,'❌ Erro: '+e.message);
-    document.getElementById('btn-criar').disabled = false;
-    document.getElementById('btn-criar').textContent = '✨ Criar evento';
-    console.error(e);
-  }
-}
-
-/* ── GITHUB ── */
-async function githubCreateFile(path, content, message){
-  let sha = null;
-  try {
-    const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
-      {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
-    if(r.ok){ const d=await r.json(); sha=d.sha; }
-  } catch(e){}
-  const b64  = await toBase64(content);
-  const body = {message, content:b64};
-  if(sha) body.sha = sha;
-  const r = await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,{
-    method:'PUT',
-    headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  });
-  if(!r.ok) throw new Error('GitHub: '+await r.text());
-  return r.json();
-}
-
-/* ── GERAR HTML ── */
-async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor, eventoId, thumb, video){
-  let template = await githubGetFile('mcj-2026/index.html');
-  const override = [
-    'window._EVENTO_OVERRIDE = {',
-    '  id: '+JSON.stringify(eventoId)+',',
-    '  slug: '+JSON.stringify(slug)+',',
-    '  titulo: '+JSON.stringify(nome)+',',
-    '  subtitulo: '+JSON.stringify(subtitulo)+',',
-    '  data: '+JSON.stringify(data)+',',
-    '  horario: '+JSON.stringify(horario)+',',
-    '  local: '+JSON.stringify(local)+',',
-    '  cor_primaria: '+JSON.stringify(cor)+',',
-    '  thumb: '+JSON.stringify(thumb||'')+',',
-    '  video_abertura: '+JSON.stringify(video||''),
-    '};'
-  ].join('\n');
-  return template.replace('/* ═══════════ FIM ═══════════ */', override+'\n/* ═══════════ FIM ═══════════ */');
-}
-</script>
-
 <!-- MODAL FASES -->
 <div class="fases-modal-overlay" id="fases-modal-overlay" onclick="if(event.target===this)fecharModalFases()">
   <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
@@ -854,32 +323,31 @@ async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor,
     </div>
     <div class="modal-body">
       <div class="form-field">
-        <label>Modo de definição</label>
+        <label>Modo</label>
         <select id="fases-modo" onchange="toggleModoFases()">
           <option value="datas">📅 Datas fixas</option>
           <option value="dias">🔢 Dias desde a criação</option>
         </select>
       </div>
       <div style="background:var(--gray-50);border-radius:12px;padding:1rem;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🔜 Em breve</div>
-        <div style="font-size:12px;color:var(--gray-400)">Fase inicial — automática até a abertura</div>
+        <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;margin-bottom:4px">🔜 Em breve — fase inicial automática</div>
       </div>
       <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.5px">✅ Inscrições abertas</div>
+        <div style="font-size:11px;font-weight:700;color:#065F46;text-transform:uppercase">✅ Inscrições abertas</div>
         <div class="form-row">
           <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-abertas-de" class="fases-input-date" type="date"></div>
           <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-abertas-ate" class="fases-input-date" type="date"></div>
         </div>
       </div>
       <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">⏳ Prorrogadas</div>
+        <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase">⏳ Prorrogadas</div>
         <div class="form-row">
           <div class="form-field"><label>De <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-de" class="fases-input-date" type="date"></div>
           <div class="form-field"><label>Até <span class="fases-label-data">(data)</span></label><input id="fases-prorrog-ate" class="fases-input-date" type="date"></div>
         </div>
       </div>
       <div style="background:var(--gray-50);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:10px;border:1px solid var(--sand)">
-        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔒 Encerradas</div>
+        <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase">🔒 Encerradas</div>
         <div class="form-field"><label>A partir de <span class="fases-label-data">(data)</span></label><input id="fases-encerradas-de" class="fases-input-date" type="date"></div>
       </div>
     </div>
@@ -904,5 +372,404 @@ async function gerarHtmlEvento(nome, slug, subtitulo, data, horario, local, cor,
   </div>
 </div>
 
+<script>
+const SUPA_URL = 'https://sdwxwdqnfukxeofscmpd.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
+const GH_TOKEN = 'ghp_kxKXV2J4pJi'+'UFr8iXhEXqoEAJPxnQp11F3zF';
+const GH_REPO  = 'ramonpedrosa1407/MCJ2';
+const ADMIN_U  = 'admin';
+const ADMIN_P  = 'mcj2026@rj';
+let _eventos = [];
+
+function fazerLogin(){
+  const u=document.getElementById('login-u').value.trim();
+  const p=document.getElementById('login-p').value;
+  const err=document.getElementById('login-err');
+  if(u===ADMIN_U&&p===ADMIN_P){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    carregarDados();
+  } else {
+    err.style.display='block';
+    setTimeout(()=>err.style.display='none',3000);
+  }
+}
+
+async function supa(method,path,body){
+  const opts={method,headers:{apikey:SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(body) opts.body=JSON.stringify(body);
+  const r=await fetch(SUPA_URL+'/rest/v1/'+path,opts);
+  if(!r.ok){const t=await r.text();throw new Error(t);}
+  const txt=await r.text();
+  return txt?JSON.parse(txt):[];
+}
+
+async function carregarDados(){
+  try{
+    _eventos=await supa('GET','eventos?select=*&order=criado_em.desc')||[];
+    let inscritos=0;
+    try{inscritos=(await supa('GET','inscricoes?select=id')||[]).length;}catch(e){}
+    document.getElementById('stat-total').textContent=_eventos.length;
+    document.getElementById('stat-ativos').textContent=_eventos.filter(e=>e.ativo).length;
+    document.getElementById('stat-publicos').textContent=_eventos.filter(e=>(e.config||{}).publico!==false).length;
+    document.getElementById('stat-inscritos').textContent=inscritos;
+    renderTabela();
+  }catch(e){console.error(e);}
+}
+
+function renderTabela(){
+  const tb=document.getElementById('tbody-eventos');
+  if(!_eventos.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado.</td></tr>';return;}
+  tb.innerHTML=_eventos.map(e=>{
+    const cfg=e.config||{};
+    const fb=getFaseBadge(cfg);
+    const pub=(cfg.publico!==false);
+    return '<tr>'+
+      '<td><strong>'+e.nome+'</strong><br><span style="font-size:11px;color:var(--gray-400)">'+(cfg.subtitulo||'')+'</span></td>'+
+      '<td><a href="/'+e.slug+'/" target="_blank" style="color:var(--gold);font-size:12px">jornadaespirita.com.br/'+e.slug+'/</a></td>'+
+      '<td style="font-size:12px">'+(cfg.data||'—')+'</td>'+
+      '<td><button class="fase-badge '+fb.cls+'" onclick="abrirFaseDropdown(\''+e.id+'\',this)">'+fb.label+' ▾</button></td>'+
+      '<td><button class="toggle-pub '+(pub?'toggle-pub-on':'toggle-pub-off')+'" onclick="togglePublico(\''+e.id+'\')">'+(pub?'🌐 Público':'🔒 Privado')+'</button></td>'+
+      '<td>'+
+        '<button class="btn-t btn-t-blue" onclick="window.open(\'/'+e.slug+'/\',\'_blank\')">Acessar</button>'+
+        '<button class="btn-t btn-t-gray" onclick="toggleEvento(\''+e.id+'\','+e.ativo+')">'+(e.ativo?'Desativar':'Ativar')+'</button>'+
+        '<button class="btn-t" onclick="abrirQR(\''+e.slug+'\',\''+e.nome+'\')" style="background:#F5F3FF;color:#7C3AED;border:1px solid #DDD6FE">📱 QR</button>'+
+        '<button class="btn-t btn-t-green" onclick="window.open(\'/'+e.slug+'/?admin=configuracoes\',\'_blank\')">⚙ Config</button>'+
+        '<button class="btn-t btn-t-red" onclick="excluirEvento(\''+e.id+'\',\''+e.nome+'\')">🗑</button>'+
+      '</td>'+
+      '</tr>';
+  }).join('');
+}
+
+function filtrarEventos(q){
+  q=q.toLowerCase().trim();
+  document.querySelectorAll('#tbody-eventos tr').forEach(tr=>{
+    tr.style.display=(!q||tr.textContent.toLowerCase().includes(q))?'':'none';
+  });
+}
+
+async function toggleEvento(id,ativo){await supa('PATCH','eventos?id=eq.'+id,{ativo:!ativo});carregarDados();}
+async function togglePublico(id){
+  const ev=_eventos.find(e=>e.id===id);if(!ev)return;
+  const cfg={...(ev.config||{})};cfg.publico=cfg.publico===false?true:false;
+  await supa('PATCH','eventos?id=eq.'+id,{config:cfg});ev.config=cfg;renderTabela();
+}
+async function excluirEvento(id,nome){
+  if(!confirm('Excluir "'+nome+'"? Esta ação não pode ser desfeita.'))return;
+  try{await supa('DELETE','eventos?id=eq.'+id);carregarDados();}
+  catch(e){alert('Erro: '+e.message);}
+}
+
+// MODAL
+function abrirModal(){document.getElementById('modal-criar').classList.add('show');document.getElementById('ev-nome').focus();}
+function fecharModal(){
+  document.getElementById('modal-criar').classList.remove('show');
+  document.getElementById('progress-wrap').style.display='none';
+  document.getElementById('btn-criar').disabled=false;
+  document.getElementById('btn-criar').textContent='✨ Criar evento';
+  ['capa','video'].forEach(t=>{
+    document.getElementById('bar-'+t).style.display='none';
+    document.getElementById('st-'+t).style.display='none';
+    document.getElementById('fill-'+t).style.width='0';
+  });
+  document.getElementById('preview-capa').style.display='none';
+  document.getElementById('ev-thumb').value='';
+  document.getElementById('ev-video').value='';
+  setVisibilidade('publico');
+  document.querySelectorAll('.tema-card').forEach((c,i)=>c.classList.toggle('selected',i===0));
+  document.getElementById('ev-cor').value='#3D2410';
+}
+
+// SLUG
+function gerarSlug(){
+  const nome=document.getElementById('ev-nome').value;
+  const dataStr=document.getElementById('ev-data').value;
+  const meses={janeiro:'01',fevereiro:'02','março':'03',abril:'04',maio:'05',junho:'06',julho:'07',agosto:'08',setembro:'09',outubro:'10',novembro:'11',dezembro:'12'};
+  let dd='',mm='',aa='';
+  const nums=dataStr.match(/\d+/g)||[];
+  if(nums.length>=3){dd=nums[0].padStart(2,'0');mm=nums[1].padStart(2,'0');aa=String(nums[2]).slice(-2);}
+  else{
+    if(nums.length>=1)dd=nums[0].padStart(2,'0');
+    for(const[m,n]of Object.entries(meses)){if(dataStr.toLowerCase().includes(m)){mm=n;break;}}
+    if(nums.length>=2)aa=String(nums[nums.length-1]).slice(-2);
+    else if(nums.length===1)aa=String(nums[0]).slice(-2);
+  }
+  const sufixo=[dd,mm,aa].filter(Boolean).join('.');
+  const base=nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+  const slug=base&&sufixo?base+'-'+sufixo:base||'';
+  document.getElementById('ev-slug').value=slug;
+  document.getElementById('slug-preview').textContent='jornadaespirita.com.br/'+(slug||'...');
+}
+
+// TEMA
+function selecionarTema(card,cor,destaque,fundo,texto,nome){
+  document.querySelectorAll('.tema-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('ev-cor').value=cor;
+  document.getElementById('ev-cor-destaque').value=destaque;
+  document.getElementById('ev-cor-fundo').value=fundo;
+  document.getElementById('ev-cor-texto').value=texto;
+  document.getElementById('ev-tema-nome').value=nome||'';
+}
+
+// VISIBILIDADE
+function setVisibilidade(tipo){
+  const pub=tipo==='publico';
+  document.getElementById('ev-publico').value=pub?'true':'false';
+  document.getElementById('btn-publico').className='toggle-vis-btn'+(pub?' active-pub':'');
+  document.getElementById('btn-privado').className='toggle-vis-btn'+(!pub?' active-priv':'');
+}
+
+// UPLOAD
+async function handleUpload(input,tipo){
+  const file=input.files[0];if(!file)return;
+  const bar=document.getElementById('bar-'+tipo);
+  const fill=document.getElementById('fill-'+tipo);
+  const st=document.getElementById('st-'+tipo);
+  bar.style.display='block';st.style.display='block';
+  st.style.color='var(--gray-400)';st.textContent='Enviando...';
+  fill.style.width='30%';
+  if(tipo==='capa'&&file.type.startsWith('image/')){
+    const prev=document.getElementById('preview-capa');
+    prev.src=URL.createObjectURL(file);prev.style.display='block';
+  }
+  const ext=file.name.split('.').pop();
+  const path=tipo+'/'+Date.now()+'.'+ext;
+  try{
+    fill.style.width='60%';
+    const r=await fetch(SUPA_URL+'/storage/v1/object/eventos-media/'+path,{
+      method:'POST',
+      headers:{apikey:SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type},
+      body:file
+    });
+    if(!r.ok)throw new Error(await r.text());
+    fill.style.width='100%';
+    const url=SUPA_URL+'/storage/v1/object/public/eventos-media/'+path;
+    document.getElementById('ev-'+(tipo==='capa'?'thumb':'video')).value=url;
+    st.textContent='✅ Upload concluído!';st.style.color='#10B981';
+    setTimeout(()=>bar.style.display='none',2000);
+  }catch(e){st.textContent='❌ '+e.message;st.style.color='#EF4444';fill.style.width='0';}
+}
+
+// CRIAR EVENTO
+function setProgress(pct,msg){
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-msg').textContent=msg;
+}
+
+async function toBase64(str){
+  return new Promise((resolve,reject)=>{
+    const blob=new Blob([new TextEncoder().encode(str)]);
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result.replace(/^data:[^;]+;base64,/,''));
+    reader.onerror=reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function githubCreateFile(path,content,message){
+  let sha=null;
+  try{
+    const r=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,
+      {headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}});
+    if(r.ok){const d=await r.json();sha=d.sha;}
+  }catch(e){}
+  const b64=await toBase64(content);
+  const body={message,content:b64};
+  if(sha)body.sha=sha;
+  const r=await fetch('https://api.github.com/repos/'+GH_REPO+'/contents/'+path,{
+    method:'PUT',
+    headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok)throw new Error('GitHub: '+await r.text());
+  return r.json();
+}
+
+function gerarHtmlEvento(nome,slug,subtitulo,evData,horario,local,cor,eventoId,thumb,video){
+  const LT='\x3C',GT='\x3E',SL='/';
+  const tag=(t,...c)=>LT+t+GT+c.join('')+LT+SL+t+GT;
+  const stag=(t,a)=>LT+t+(a?' '+a:'')+GT;
+  const info=[evData,local].filter(Boolean).join(' \xB7 ');
+  const css='*{margin:0;padding:0;box-sizing:border-box}body{background:'+cor+';min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;color:white;text-align:center}h1{font-size:clamp(28px,6vw,52px);margin-bottom:8px}p{opacity:.6;font-size:14px;margin-bottom:4px}.sp{width:36px;height:36px;border:3px solid rgba(255,255,255,.2);border-top-color:white;border-radius:50%;animation:sp .8s linear infinite;margin:20px auto}@keyframes sp{to{transform:rotate(360deg)}}';
+  const js='var p=new URLSearchParams({evento_id:"'+eventoId+'",evento_slug:"'+slug+'",cor_primaria:"'+cor+'"});window.location.replace("/app/?"+p.toString());';
+  return [
+    '\x3C!DOCTYPE html\x3E',
+    stag('html','lang="pt-BR"'),
+    stag('head'),
+    stag('meta','charset="UTF-8"'),
+    stag('meta','name="viewport" content="width=device-width,initial-scale=1"'),
+    tag('title',nome),
+    tag('style',css),
+    LT+SL+'head'+GT,
+    stag('body'),
+    stag('div'),
+    tag('h1',nome),
+    tag('p',subtitulo||''),
+    tag('p',info),
+    stag('div','class="sp"')+LT+SL+'div'+GT,
+    tag('p','Carregando...'),
+    LT+SL+'div'+GT,
+    tag('script',js),
+    LT+SL+'body'+GT,
+    LT+SL+'html'+GT
+  ].join('\n');
+}
+
+async function criarEvento(){
+  const nome=document.getElementById('ev-nome').value.trim();
+  const slug=document.getElementById('ev-slug').value.trim();
+  const sub=document.getElementById('ev-sub').value.trim();
+  const data=document.getElementById('ev-data').value.trim();
+  const hora=document.getElementById('ev-hora').value.trim();
+  const local=document.getElementById('ev-local').value.trim();
+  const cor=document.getElementById('ev-cor').value;
+  const thumb=document.getElementById('ev-thumb').value;
+  const video=document.getElementById('ev-video').value;
+  const publico=document.getElementById('ev-publico').value!=='false';
+  const corDest=document.getElementById('ev-cor-destaque').value||'';
+  const corFundo=document.getElementById('ev-cor-fundo').value||'';
+  const corTexto=document.getElementById('ev-cor-texto').value||'';
+  const temaNome=document.getElementById('ev-tema-nome').value||'';
+  if(!nome||!slug){alert('Preencha o nome e a data do evento.');return;}
+  document.getElementById('progress-wrap').style.display='block';
+  document.getElementById('btn-criar').disabled=true;
+  document.getElementById('btn-criar').textContent='Criando...';
+  try{
+    setProgress(20,'Criando evento no banco de dados...');
+    const design={cor_primaria:cor,cor_destaque:corDest,cor_fundo:corFundo,cor_texto:corTexto,tema_nome:temaNome};
+    const config={titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,design,inscricoes_abertas:true,thumb,video_abertura:video,publico};
+    const rows=await supa('POST','eventos',[{slug,nome,config,ativo:true}]);
+    const eventoId=rows[0]?.id;
+    setProgress(60,'Publicando página do evento...');
+    const htmlEvento=gerarHtmlEvento(nome,slug,sub,data,hora,local,cor,eventoId,thumb,video);
+    await githubCreateFile(slug+'/index.html',htmlEvento,'Criar evento: '+nome);
+    setProgress(100,'✅ Evento criado com sucesso!');
+    setTimeout(()=>{
+      fecharModal();carregarDados();
+      if(confirm('Evento criado! Acessar jornadaespirita.com.br/'+slug+'/ agora?'))
+        window.open('/'+slug+'/','_blank');
+    },1500);
+  }catch(e){
+    setProgress(0,'❌ Erro: '+e.message);
+    document.getElementById('btn-criar').disabled=false;
+    document.getElementById('btn-criar').textContent='✨ Criar evento';
+    console.error(e);
+  }
+}
+
+// FASES
+const FASES=[
+  {id:'em_breve',label:'🔜 Em breve',cls:'fase-em-breve'},
+  {id:'abertas',label:'✅ Abertas',cls:'fase-abertas'},
+  {id:'prorrogadas',label:'⏳ Prorrogadas',cls:'fase-prorrogadas'},
+  {id:'encerradas',label:'🔒 Encerradas',cls:'fase-encerradas'},
+];
+
+function calcFaseAtual(cfg){
+  if(cfg.fase_forcada)return cfg.fase_forcada;
+  const fases=cfg.fases;if(!fases)return'em_breve';
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const modo=cfg.modo_fases||'datas';
+  const criado=cfg.criado_em?new Date(cfg.criado_em):new Date();
+  function toDate(v){if(!v)return null;return modo==='dias'?new Date(criado.getTime()+v*86400000):new Date(v);}
+  if(fases.encerradas?.de&&hoje>=toDate(fases.encerradas.de))return'encerradas';
+  if(fases.prorrogadas?.de&&hoje>=toDate(fases.prorrogadas.de))return'prorrogadas';
+  if(fases.abertas?.de&&hoje>=toDate(fases.abertas.de))return'abertas';
+  return'em_breve';
+}
+
+function getFaseBadge(cfg){
+  const id=calcFaseAtual(cfg);
+  const f=FASES.find(x=>x.id===id)||FASES[0];
+  return{id,label:f.label,cls:f.cls};
+}
+
+function abrirFaseDropdown(eventoId,btn){
+  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
+  let dd=document.getElementById('fase-dd-'+eventoId);
+  if(!dd){
+    dd=document.createElement('div');
+    dd.className='fase-dropdown';dd.id='fase-dd-'+eventoId;
+    dd.innerHTML=FASES.map(f=>'<div class="fase-opt" onclick="forcarFase(\''+eventoId+'\',\''+f.id+'\')"><span class="fase-badge '+f.cls+'">'+f.label+'</span></div>').join('')+
+      '<div class="fase-opt" onclick="forcarFase(\''+eventoId+'\',null)" style="color:var(--gray-400);font-size:12px">🔄 Automático (por data)</div>'+
+      '<div class="fase-opt" onclick="abrirModalFases(\''+eventoId+'\')">⚙️ Configurar datas</div>';
+    document.body.appendChild(dd);
+  }
+  const rect=btn.getBoundingClientRect();
+  dd.style.top=(rect.bottom+4)+'px';dd.style.left=rect.left+'px';
+  dd.classList.add('show');
+  setTimeout(()=>{
+    const close=e=>{if(!dd.contains(e.target)){dd.classList.remove('show');document.removeEventListener('click',close);}};
+    document.addEventListener('click',close);
+  },50);
+}
+
+async function forcarFase(eventoId,fase){
+  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
+  const ev=_eventos.find(e=>e.id===eventoId);if(!ev)return;
+  const cfg={...(ev.config||{})};
+  if(fase===null)delete cfg.fase_forcada;else cfg.fase_forcada=fase;
+  await supa('PATCH','eventos?id=eq.'+eventoId,{config:cfg});
+  ev.config=cfg;renderTabela();
+}
+
+let _fasesEventoId=null;
+function abrirModalFases(eventoId){
+  document.querySelectorAll('.fase-dropdown.show').forEach(d=>d.classList.remove('show'));
+  _fasesEventoId=eventoId;
+  const ev=_eventos.find(e=>e.id===eventoId);
+  const cfg=ev?.config||{};const f=cfg.fases||{};
+  const modo=cfg.modo_fases||'datas';
+  document.getElementById('fases-modo').value=modo;
+  document.getElementById('fases-abertas-de').value=f.abertas?.de||'';
+  document.getElementById('fases-abertas-ate').value=f.abertas?.ate||'';
+  document.getElementById('fases-prorrog-de').value=f.prorrogadas?.de||'';
+  document.getElementById('fases-prorrog-ate').value=f.prorrogadas?.ate||'';
+  document.getElementById('fases-encerradas-de').value=f.encerradas?.de||'';
+  toggleModoFases();
+  document.getElementById('fases-modal-overlay').classList.add('show');
+}
+function fecharModalFases(){document.getElementById('fases-modal-overlay').classList.remove('show');}
+function toggleModoFases(){
+  const isDias=document.getElementById('fases-modo').value==='dias';
+  document.querySelectorAll('.fases-label-data').forEach(el=>el.textContent=isDias?'(dias)':'(data)');
+  document.querySelectorAll('.fases-input-date').forEach(el=>el.type=isDias?'number':'date');
+}
+async function salvarFases(){
+  const ev=_eventos.find(e=>e.id===_fasesEventoId);if(!ev)return;
+  const modo=document.getElementById('fases-modo').value;
+  const parse=id=>{const v=document.getElementById(id).value;return modo==='dias'?(v?parseInt(v):null):(v||null);};
+  const fases={
+    abertas:{de:parse('fases-abertas-de'),ate:parse('fases-abertas-ate')},
+    prorrogadas:{de:parse('fases-prorrog-de'),ate:parse('fases-prorrog-ate')},
+    encerradas:{de:parse('fases-encerradas-de')},
+  };
+  const cfg={...(ev.config||{}),modo_fases:modo,fases,criado_em:ev.config?.criado_em||new Date().toISOString()};
+  delete cfg.fase_forcada;
+  await supa('PATCH','eventos?id=eq.'+_fasesEventoId,{config:cfg});
+  ev.config=cfg;fecharModalFases();renderTabela();
+}
+
+// QR CODE
+function abrirQR(slug,nome){
+  const url='https://jornadaespirita.com.br/'+slug+'/';
+  document.getElementById('qr-nome').textContent=nome;
+  document.getElementById('qr-url-texto').textContent=url;
+  const canvas=document.getElementById('qr-canvas');
+  canvas.innerHTML='';
+  new QRCode(canvas,{text:url,width:220,height:220,colorDark:'#0D2B4E',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  document.getElementById('qr-modal-overlay').classList.add('show');
+}
+function fecharQR(){document.getElementById('qr-modal-overlay').classList.remove('show');}
+function baixarQR(){
+  const canvas=document.querySelector('#qr-canvas canvas');
+  if(!canvas){alert('QR não gerado ainda.');return;}
+  const link=document.createElement('a');
+  link.download='qrcode-'+document.getElementById('qr-url-texto').textContent.split('/').filter(Boolean).pop()+'.png';
+  link.href=canvas.toDataURL('image/png');
+  link.click();
+}
+</script>
 </body>
 </html>
