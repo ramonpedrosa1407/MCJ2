@@ -1959,7 +1959,6 @@ function renderSobre(){
           ${e.data?`<span class="hero-pill" style="background:var(--mcj-dark);color:var(--mcj-gold)">📅 ${e.data}</span>`:''}
           ${e.horario?`<span class="hero-pill" style="background:var(--mcj-dark);color:rgba(255,255,255,.8)">⏰ ${e.horario}</span>`:''}
           ${e.local?`<span class="hero-pill" style="background:var(--mcj-dark);color:rgba(255,255,255,.8)">📍 ${e.local}</span>`:''}
-          ${polosAbertos.map((p,i)=>{const c=cor(i);return `<span class="hero-pill" style="background:${c.bg};color:${c.text};border:1px solid ${c.border}">${p.nome}</span>`;}).join('')}
         </div>
         ${(e.tema_manha||e.tema_tarde)?`
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
@@ -1980,6 +1979,23 @@ function renderSobre(){
             📥 Baixar Livreto
           </a>
         </div>`:''}
+
+        ${polosAbertos.length ? `
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--mcj-gold);margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--mcj-sand)">📍 Polos do Evento</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+            ${polosAbertos.map((p,i)=>`
+              <div style="background:white;border-radius:12px;border:1px solid var(--mcj-sand);overflow:hidden;cursor:pointer" onclick="irParaPolo('${p.nome}')">
+                ${p.foto_url?`<img src="${p.foto_url}" alt="${p.nome}" style="width:100%;height:140px;object-fit:cover" onerror="this.style.display='none'">`
+                : `<div style="width:100%;height:140px;background:linear-gradient(135deg,var(--mcj-dark),var(--mcj-mid));display:flex;align-items:center;justify-content:center;font-size:2rem">📍</div>`}
+                <div style="padding:.875rem 1rem">
+                  <div style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:var(--mcj-dark);margin-bottom:4px">${p.nome}</div>
+                  ${p.endereco?`<div style="font-size:12px;color:var(--gray-500)">${p.endereco}</div>`:''}
+                  ${p.valorExibir&&p.valorExibir!=='R$ —,—'?`<div style="font-size:12px;font-weight:600;color:var(--mcj-gold);margin-top:4px">${p.valorExibir}</div>`:''}
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>` : ''}
       </div>
     </div>`;
 }
