@@ -141,7 +141,7 @@ tr:last-child td{border-bottom:none}
     <a href="/" class="header-logo">Jornada <span>Espírita</span></a>
     <div class="header-right">
       <span class="header-user">Admin Master</span>
-      <button type="button" class="header-logout" onclickonclick="location.reload()">Sair</button>
+      <button type="button" class="header-logout" onclickonclick="localStorage.removeItem('je_admin');location.reload()">Sair</button>
     </div>
   </div>
   <div class="main">
@@ -381,11 +381,22 @@ const ADMIN_U  = 'admin';
 const ADMIN_P  = 'mcj2026@rj';
 let _eventos = [];
 
+// Verifica sessão salva
+(function(){
+  if(localStorage.getItem('je_admin')==='ok'){
+    localStorage.setItem('je_admin','ok');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    carregarDados();
+  }
+})();
+
 function fazerLogin(){
   const u=document.getElementById('login-u').value.trim();
   const p=document.getElementById('login-p').value;
   const err=document.getElementById('login-err');
   if(u===ADMIN_U&&p===ADMIN_P){
+    localStorage.setItem('je_admin','ok');
     document.getElementById('login-screen').style.display='none';
     document.getElementById('dashboard').style.display='block';
     carregarDados();
@@ -803,6 +814,27 @@ function baixarQR(){
   link.href=canvas.toDataURL('image/png');
   link.click();
 }
+
+// Event delegation — todos os botões da tabela
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  const tr = btn.closest('tr[data-id]');
+  if(!tr) return;
+  const id    = tr.dataset.id;
+  const slug  = tr.dataset.slug;
+  const nome  = tr.dataset.nome;
+  const ativo = tr.dataset.ativo === 'true';
+  switch(btn.dataset.action){
+    case 'acessar':  window.open('/'+slug+'/', '_blank'); break;
+    case 'toggle':   toggleEvento(id, ativo); break;
+    case 'publico':  togglePublico(id); break;
+    case 'excluir':  excluirEvento(id, nome); break;
+    case 'qr':       abrirQR(slug, nome); break;
+    case 'config':   window.open('/'+slug+'/?admin=configuracoes', '_blank'); break;
+    case 'fase':     abrirFaseDropdown(id, btn); break;
+  }
+});
 </script>
 </body>
 </html>
