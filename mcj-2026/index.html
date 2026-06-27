@@ -1762,7 +1762,8 @@ async function carregarTudo(){
   renderHeroSocial();
   renderBannerAvaliacao();
   renderPoloGrid();
-  atualizarBanner();
+  // Só mostra banner se já souber que é privado (via _EVENTO_OVERRIDE ou localStorage)
+  if(_cfgEvento.publico !== false) atualizarBanner();
   renderSobre();
   renderCamposExtrasForm();
 
