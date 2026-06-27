@@ -2209,12 +2209,12 @@ function renderEventoAdmin(){
               <label>Visibilidade do evento</label>
               <div style="display:flex;gap:8px;margin-top:4px">
                 <button type="button" id="btn-vis-publico"
-                  onclick="setVisibilidadeCfg('publico')"
+                  data-action="vis-publico"
                   style="padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1.5px solid ${e.publico!==false?'var(--mcj-gold)':'var(--mcj-sand)'};background:${e.publico!==false?'rgba(200,135,58,.1)':'white'};color:${e.publico!==false?'var(--mcj-dark)':'var(--gray-400)'}">
                   🌐 Público
                 </button>
                 <button type="button" id="btn-vis-privado"
-                  onclick="setVisibilidadeCfg('privado')"
+                  data-action="vis-privado"
                   style="padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1.5px solid ${e.publico===false?'var(--mcj-gold)':'var(--mcj-sand)'};background:${e.publico===false?'rgba(200,135,58,.1)':'white'};color:${e.publico===false?'var(--mcj-dark)':'var(--gray-400)'}">
                   🔒 Privado
                 </button>
@@ -2239,7 +2239,7 @@ function renderEventoAdmin(){
             <span style="color:var(--mcj-gold);font-size:16px">📋</span>
             <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Campos do formulário de inscrição</span>
           </div>
-          <button onclick="abrirModalCampo(null)" style="padding:6px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">+ Novo campo</button>
+          <button type="button" data-action="novo-campo" style="padding:6px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">+ Novo campo</button>
         </div>
         <div style="padding:1.25rem">
           <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">
@@ -2259,8 +2259,8 @@ function renderEventoAdmin(){
                       ${c.opcoes?.length?`· Opções: ${c.opcoes.join(', ')}`:''}
                     </div>
                   </div>
-                  <button onclick="abrirModalCampo(${i})" style="padding:5px 10px;font-size:11px;font-weight:600;background:white;border:1px solid var(--gray-100);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif">✏️ Editar</button>
-                  <button onclick="removerCampoExtra(${i})" style="padding:5px 10px;font-size:11px;font-weight:600;background:white;border:1px solid var(--red-100);color:var(--red-400);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif">🗑</button>
+                  <button type="button" data-action="editar-campo" data-idx="${i}" style="padding:5px 10px;font-size:11px;font-weight:600;background:white;border:1px solid var(--gray-100);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif">✏️ Editar</button>
+                  <button type="button" data-action="remover-campo" data-idx="${i}" style="padding:5px 10px;font-size:11px;font-weight:600;background:white;border:1px solid var(--red-100);color:var(--red-400);border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif">🗑</button>
                 </div>`).join('')}
           </div>
         </div>
@@ -8385,6 +8385,22 @@ function fecharLightbox(){
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') fecharLightbox(); });
+
+/* ================================================================
+   EVENT DELEGATION GLOBAL
+================================================================ */
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  const action = btn.dataset.action;
+  switch(action){
+    case 'novo-campo':    abrirModalCampo(null); break;
+    case 'editar-campo':  abrirModalCampo(parseInt(btn.dataset.idx)); break;
+    case 'remover-campo': removerCampoExtra(parseInt(btn.dataset.idx)); break;
+    case 'vis-publico':   setVisibilidadeCfg('publico'); break;
+    case 'vis-privado':   setVisibilidadeCfg('privado'); break;
+  }
+});
 
 /* ================================================================
    INIT
