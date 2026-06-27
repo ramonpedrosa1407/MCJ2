@@ -2188,7 +2188,7 @@ function renderEventoAdmin(){
             <span style="color:var(--mcj-gold);font-size:16px">📋</span>
             <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Campos do formulário de inscrição</span>
           </div>
-          <button type="button" data-action="novo-campo" style="padding:6px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">+ Novo campo</button>
+          <button type="button" onclick="abrirModalCampo(null)" style="padding:6px 14px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer">+ Novo campo</button>
         </div>
         <div style="padding:1.25rem">
           <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">
@@ -2216,6 +2216,18 @@ function renderEventoAdmin(){
       </div>
 
     </div>`;
+
+  // Listeners diretos — onclick inline não funciona em innerHTML
+  setTimeout(()=>{
+    const w = document.getElementById('evento-admin-wrap');
+    if(!w) return;
+    const btnNovo = w.querySelector('[data-action="novo-campo"]');
+    if(btnNovo) btnNovo.onclick = ()=>abrirModalCampo(null);
+    w.querySelectorAll('[data-action="editar-campo"]').forEach(b=>{ b.onclick=()=>abrirModalCampo(parseInt(b.dataset.idx)); });
+    w.querySelectorAll('[data-action="remover-campo"]').forEach(b=>{ b.onclick=()=>removerCampoExtra(parseInt(b.dataset.idx)); });
+    w.querySelectorAll('[data-action="vis-publico"]').forEach(b=>{ b.onclick=()=>setVisibilidadeCfg('publico'); });
+    w.querySelectorAll('[data-action="vis-privado"]').forEach(b=>{ b.onclick=()=>setVisibilidadeCfg('privado'); });
+  }, 50);
 }
 // Fila de escritas para config/users — evita chamadas paralelas
 let _savingCfg = false;
