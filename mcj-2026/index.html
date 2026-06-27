@@ -1293,51 +1293,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   </div>
 </div>
 
-<!-- MODAL: CAMPO EXTRA -->
-<div id="modal-campo-overlay" onclick="if(event.target===this)fecharModalCampo()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:700;display:none;align-items:center;justify-content:center;padding:1rem">
-  <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)" onclick="event.stopPropagation()">
-    <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
-      <span id="modal-campo-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">Novo campo</span>
-      <button onclick="fecharModalCampo()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0">×</button>
-    </div>
-    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
-      <div class="cfg-field">
-        <label>Label do campo *</label>
-        <input type="text" id="campo-label" placeholder="Ex: Nome da Igreja, Você é médium?">
-      </div>
-      <div class="cfg-field">
-        <label>Tipo de campo *</label>
-        <select id="campo-tipo" onchange="toggleCampoOpcoes()">
-          <option value="text">📝 Texto livre</option>
-          <option value="number">🔢 Número</option>
-          <option value="select">📋 Seleção (lista de opções)</option>
-          <option value="checkbox">☑️ Checkbox (sim/não)</option>
-        </select>
-      </div>
-      <div id="campo-opcoes-wrap" style="display:none">
-        <div class="cfg-field">
-          <label>Opções (uma por linha)</label>
-          <textarea id="campo-opcoes" rows="4" placeholder="Sim&#10;Não&#10;Talvez"></textarea>
-          <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Cada linha vira uma opção no select</span>
-        </div>
-      </div>
-      <div class="cfg-field">
-        <label>Texto de ajuda (opcional)</label>
-        <input type="text" id="campo-placeholder" placeholder="Ex: Digite o nome completo da sua instituição">
-      </div>
-      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500">
-        <input type="checkbox" id="campo-obrigatorio" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--mcj-gold)">
-        Campo obrigatório
-      </label>
-      <div id="campo-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800)"></div>
-    </div>
-    <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
-      <button onclick="fecharModalCampo()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancelar</button>
-      <button onclick="salvarCampoExtra()" class="btn-cfg-save">Salvar campo</button>
-    </div>
-  </div>
-</div>
-
+<!-- Modal campo extra: veja final do body -->
 <!-- MODAL: MÍDIA -->
 <div class="login-overlay" id="midia-modal-overlay" onclick="if(event.target===this)fecharModalMidia()" style="align-items:center;padding:1rem;z-index:700">
   <div style="background:white;border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)" onclick="event.stopPropagation()">
@@ -2500,10 +2456,10 @@ if(!window._EVENTO_OVERRIDE){
   const eCor  = urlParams.get('cor_primaria') ? decodeURIComponent(urlParams.get('cor_primaria')) : '';
   if(eId && eSlug){
     window._EVENTO_OVERRIDE = {
-  id: '65505544-01e3-40f2-91b6-e9c86ac63a56',
-  slug: 'mcj-2026',
-  cor_primaria: '#3D2410'
-};
+      id: eId, slug: eSlug, titulo: eSlug, subtitulo: '',
+      data: '', horario: '', local: '',
+      cor_primaria: eCor, thumb: '', video_abertura: ''
+    };
   }
 }
 
@@ -8434,5 +8390,50 @@ carregarTudo();
 // Segurança: remove splash após 1s mesmo se algo falhar
 setTimeout(removeSplash, 1000);
 </script>
+
+<!-- MODAL: CAMPO EXTRA -->
+<div id="modal-campo-overlay" onclick="if(event.target===this)fecharModalCampo()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:none;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)" onclick="event.stopPropagation()">
+    <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
+      <span id="modal-campo-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">Novo campo</span>
+      <button onclick="fecharModalCampo()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0">×</button>
+    </div>
+    <div style="padding:1.25rem;display:flex;flex-direction:column;gap:12px">
+      <div class="cfg-field">
+        <label>Label do campo *</label>
+        <input type="text" id="campo-label" placeholder="Ex: Nome da Igreja, Você é médium?">
+      </div>
+      <div class="cfg-field">
+        <label>Tipo de campo *</label>
+        <select id="campo-tipo" onchange="toggleCampoOpcoes()">
+          <option value="text">📝 Texto livre</option>
+          <option value="number">🔢 Número</option>
+          <option value="select">📋 Seleção (lista de opções)</option>
+          <option value="checkbox">☑️ Checkbox (sim/não)</option>
+        </select>
+      </div>
+      <div id="campo-opcoes-wrap" style="display:none">
+        <div class="cfg-field">
+          <label>Opções (uma por linha)</label>
+          <textarea id="campo-opcoes" rows="4" placeholder="Sim&#10;Não&#10;Talvez"></textarea>
+          <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Cada linha vira uma opção no select</span>
+        </div>
+      </div>
+      <div class="cfg-field">
+        <label>Texto de ajuda (opcional)</label>
+        <input type="text" id="campo-placeholder" placeholder="Ex: Digite o nome completo da sua instituição">
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--gray-100);background:var(--gray-50);cursor:pointer;font-size:14px;font-weight:500">
+        <input type="checkbox" id="campo-obrigatorio" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--mcj-gold)">
+        Campo obrigatório
+      </label>
+      <div id="campo-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800)"></div>
+    </div>
+    <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="fecharModalCampo()" style="padding:10px 18px;background:white;border:1px solid var(--gray-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancelar</button>
+      <button onclick="salvarCampoExtra()" class="btn-cfg-save">Salvar campo</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
