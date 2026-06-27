@@ -1381,6 +1381,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 
 <footer id="site-footer"></footer>
 
+<script src="/assets/je-config.js"></script>
 <script>
 /* ================================================================
    PALETA DINÂMICA DE CORES
@@ -1401,8 +1402,8 @@ const cor = i => PALETA[i % PALETA.length];
    DADOS PADRÃO E CONFIGURAÇÃO
 ================================================================ */
 const KEY_AUTH = 'mcj2026_admin_session';
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = '';
+const ADMIN_USER = window.JE_ADMIN_USER||'admin';
+const ADMIN_PASS = window.JE_ADMIN_PASS||'mcj2026@rj';
 
 const SALAS_ADULTO_DEFAULT   = ['A','B','C','D','E','F','G'];
 const SALAS_MOCIDADE_DEFAULT = ['1','2','3','4','5'];
