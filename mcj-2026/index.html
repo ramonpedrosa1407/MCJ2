@@ -1404,6 +1404,8 @@ const cor = i => PALETA[i % PALETA.length];
 const KEY_AUTH = 'mcj2026_admin_session';
 const ADMIN_USER = window.JE_ADMIN_USER||'admin';
 const ADMIN_PASS = window.JE_ADMIN_PASS||'mcj2026@rj';
+const SUPA_URL  = window.JE_SUPA_URL||'https://sdwxwdqnfukxeofscmpd.supabase.co';
+const SUPA_KEY  = window.JE_SUPA_KEY||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
 
 const SALAS_ADULTO_DEFAULT   = ['A','B','C','D','E','F','G'];
 const SALAS_MOCIDADE_DEFAULT = ['1','2','3','4','5'];
@@ -1412,8 +1414,7 @@ const SALAS_MOCIDADE_DEFAULT = ['1','2','3','4','5'];
    ██████╗  ██████╗   SUPABASE CONFIG
    Preencha com suas credenciais do projeto Supabase
 ================================================================ */
-const SUPA_URL  = 'https://sdwxwdqnfukxeofscmpd.supabase.co';
-const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkd3h3ZHFuZnVreGVvZnNjbXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjAwNjQsImV4cCI6MjA5NzUzNjA2NH0.S3UmOhXEhNv3-1qYWbN8NUFU9alxX0OZZUSAfU6TZuo';
+// Credenciais já definidas acima via je-config.js ou fallback hardcoded
 /* ============================================================== */
 
 const SUPA_HEADERS = {
