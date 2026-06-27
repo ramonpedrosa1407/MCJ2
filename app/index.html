@@ -1749,7 +1749,7 @@ function atualizarBanner(){
   if(abertos.length===0){
     banner.classList.add('show');
     const txt = document.getElementById('banner-fechado-text');
-    if(txt) txt.textContent = 'As inscrições estão encerradas.';
+    if(txt) txt.textContent = 'As inscrições estão fechadas.';
   } else {
     banner.classList.remove('show');
   }
@@ -3054,7 +3054,7 @@ function renderPolos(){
         </span>
         ${aberto
           ? '<span style="font-size:11px;font-weight:600;color:var(--teal-600);background:var(--teal-50);border:1px solid var(--teal-100);padding:3px 9px;border-radius:20px">● Inscrições abertas</span>'
-          : '<span style="font-size:11px;font-weight:600;color:var(--red-400);background:var(--red-50);border:1px solid var(--red-100);padding:3px 9px;border-radius:20px">● Encerradas</span>'}
+          : '<span style="font-size:11px;font-weight:600;color:var(--red-400);background:var(--red-50);border:1px solid var(--red-100);padding:3px 9px;border-radius:20px">● Fechadas</span>'}
       </div>
 
       ${(p.fotos&&p.fotos.length) ? `<div class="polo-fotos">${fotosHtml}</div>` : ''}
@@ -3622,7 +3622,7 @@ async function inscrever(){
       }
     }
   }
-  if(poloSelCfg?.inscricoes_abertas===false){ alerta('err','As inscrições para este polo estão encerradas.'); return; }
+  if(poloSelCfg?.inscricoes_abertas===false){ alerta('err','As inscrições para este polo estão fechadas.'); return; }
   if(!nome){ alerta('err','Informe o nome completo.'); return; }
   if(!nascimento){ alerta('err','Informe a data de nascimento.'); return; }
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alerta('err','Informe um e-mail válido.'); return; }
@@ -4006,7 +4006,7 @@ function renderPanels(){
         <div class="polo-panel-title">
           <span class="polo-badge" style="background:${cl.bg};color:${cl.text};border:1px solid ${cl.border}">${polo.nome}</span>
           ${lista.length} inscrito${lista.length!==1?'s':''}
-          ${polo.inscricoes_abertas===false?'<span class="polo-status-badge polo-status-fechado">Encerradas</span>':''}
+          ${polo.inscricoes_abertas===false?'<span class="polo-status-badge polo-status-fechado">Fechadas</span>':''}
           ${pagoResumo}${trabResumo}
         </div>
         <div style="display:flex;gap:6px">${extraActions}${fecharBtn}</div>
@@ -4780,7 +4780,7 @@ function gerarRelatorio(tipo){
     <tr><td><strong>E-mail</strong></td><td>${p.email_polo||'—'}</td></tr>
     <tr><td><strong>Salas Adulto</strong></td><td>${(p.salas_adulto||[]).join(', ')||'—'}</td></tr>
     <tr><td><strong>Salas Mocidade</strong></td><td>${p.tem_mocidade!==false?(p.salas_mocidade||[]).join(', ')||'—':'Desativado'}</td></tr>
-    <tr><td><strong>Inscrições</strong></td><td>${p.inscricoes_abertas!==false?'✓ Abertas':'✗ Encerradas'}</td></tr>
+    <tr><td><strong>Inscrições</strong></td><td>${p.inscricoes_abertas!==false?'✓ Abertas':'✗ Fechadas'}</td></tr>
     <tr><td><strong>Almoço</strong></td><td>${p.almoco_ativo?`Sim — ${p.almoco_valor||''}`:'Não'}</td></tr>
     <tr><td><strong>Total inscritos</strong></td><td>${d.filter(x=>x.polo===p.nome).length}</td></tr>
     </table></div>`).join('');
@@ -6507,7 +6507,7 @@ function renderConfig(){
     const inscritos=d.filter(x=>x.polo===p.nome).length;
     const badge=aberto
       ?'<span class="polo-status-badge polo-status-aberto">● Abertas</span>'
-      :'<span class="polo-status-badge polo-status-fechado">● Encerradas</span>';
+      :'<span class="polo-status-badge polo-status-fechado">● Fechadas</span>';
 
     // botão remover: só admin, e só se sem inscrições
     const removeBtn = isAdmin
