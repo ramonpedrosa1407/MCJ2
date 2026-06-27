@@ -2497,20 +2497,15 @@ if(window._EVENTO_OVERRIDE){
   if(ov.thumb)          _cfgEvento.thumb          = ov.thumb;
   if(ov.video_abertura) _cfgEvento.video_url      = ov.video_abertura;
 
-  // Aplica design/cor — garante que _cfgEvento.design existe antes
+  // Fundo provisório do hero apenas para evitar flash da cor padrão.
+  // NÃO geramos tema calculado aqui — o design real (curado) vem do Supabase
+  // em carregarConfig() e é a única fonte de verdade para cores e fontes.
   if(ov.cor_primaria){
-    if(!_cfgEvento.design) _cfgEvento.design = {...TEMAS_DESIGN[0]};
-    const tema = gerarTemaFromCor(ov.cor_primaria);
-    Object.assign(_cfgEvento.design, tema);
-    // Aplica imediatamente no hero antes do Supabase responder
     const hb = document.getElementById('hero-fallback-bg');
-    if(hb) hb.style.background = `linear-gradient(135deg,${ov.cor_primaria} 0%,${ov.cor_primaria}CC 60%,${tema.cor_destaque||'#7EB8D4'}55 100%)`;
+    if(hb) hb.style.background = `linear-gradient(135deg,${ov.cor_primaria} 0%,${ov.cor_primaria}CC 60%,${ov.cor_primaria}55 100%)`;
     const r = document.documentElement;
-    r.style.setProperty('--mcj-dark',  ov.cor_primaria);
-    r.style.setProperty('--mcj-gold',  tema.cor_destaque||'#7EB8D4');
-    r.style.setProperty('--mcj-gold2', tema.cor_destaque||'#7EB8D4');
-    r.style.setProperty('--mcj-cream', tema.cor_fundo||'#F5F5F5');
-    r.style.setProperty('--mcj-text',  tema.cor_texto||'#1a1a2e');
+    r.style.setProperty('--mcj-dark', ov.cor_primaria);
+    r.style.setProperty('--mcj-mid',  ov.cor_primaria);
   }
 
   _cfgEvento._evento_id   = ov.id;
