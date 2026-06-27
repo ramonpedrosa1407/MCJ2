@@ -2208,12 +2208,16 @@ function renderEventoAdmin(){
             <div class="cfg-field" style="grid-column:1/-1">
               <label>Visibilidade do evento</label>
               <div style="display:flex;gap:8px;margin-top:4px">
-                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 12px;border-radius:8px;border:1.5px solid var(--mcj-sand)">
-                  <input type="radio" name="ev-vis" value="publico" ${e.publico!==false?'checked':''} onchange="document.getElementById('ev-codigo-wrap').style.display='none'"> 🌐 Público
-                </label>
-                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 12px;border-radius:8px;border:1.5px solid var(--mcj-sand)">
-                  <input type="radio" name="ev-vis" value="privado" ${e.publico===false?'checked':''} onchange="document.getElementById('ev-codigo-wrap').style.display='block'"> 🔒 Privado
-                </label>
+                <button type="button" id="btn-vis-publico"
+                  onclick="setVisibilidadeCfg('publico')"
+                  style="padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1.5px solid ${e.publico!==false?'var(--mcj-gold)':'var(--mcj-sand)'};background:${e.publico!==false?'rgba(200,135,58,.1)':'white'};color:${e.publico!==false?'var(--mcj-dark)':'var(--gray-400)'}">
+                  🌐 Público
+                </button>
+                <button type="button" id="btn-vis-privado"
+                  onclick="setVisibilidadeCfg('privado')"
+                  style="padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1.5px solid ${e.publico===false?'var(--mcj-gold)':'var(--mcj-sand)'};background:${e.publico===false?'rgba(200,135,58,.1)':'white'};color:${e.publico===false?'var(--mcj-dark)':'var(--gray-400)'}">
+                  🔒 Privado
+                </button>
               </div>
             </div>
             <div class="cfg-field" id="ev-codigo-wrap" style="display:${e.publico===false?'block':'none'}">
@@ -2755,6 +2759,27 @@ function limparUploadExpositor(idx){
   setCfgEvento(); renderEventoAdmin();
 }
 
+let _visibilidadeCfg = null; // null = não alterado, 'publico' ou 'privado'
+
+function setVisibilidadeCfg(tipo){
+  _visibilidadeCfg = tipo;
+  const pub = tipo === 'publico';
+  const btnPub  = document.getElementById('btn-vis-publico');
+  const btnPriv = document.getElementById('btn-vis-privado');
+  const codWrap = document.getElementById('ev-codigo-wrap');
+  if(btnPub){
+    btnPub.style.borderColor  = pub  ? 'var(--mcj-gold)' : 'var(--mcj-sand)';
+    btnPub.style.background   = pub  ? 'rgba(200,135,58,.1)' : 'white';
+    btnPub.style.color        = pub  ? 'var(--mcj-dark)' : 'var(--gray-400)';
+  }
+  if(btnPriv){
+    btnPriv.style.borderColor = !pub ? 'var(--mcj-gold)' : 'var(--mcj-sand)';
+    btnPriv.style.background  = !pub ? 'rgba(200,135,58,.1)' : 'white';
+    btnPriv.style.color       = !pub ? 'var(--mcj-dark)' : 'var(--gray-400)';
+  }
+  if(codWrap) codWrap.style.display = pub ? 'none' : 'block';
+}
+
 function aplicarTema(idx){
   if(!_cfgEvento.design) _cfgEvento.design={};
   _cfgEvento.design.tema_ativo = idx;
@@ -2851,23 +2876,9 @@ async function salvarEventoCfg(){
   _cfgEvento.instagram    = g('ev-instagram');
   _cfgEvento.facebook     = g('ev-facebook');
   // Visibilidade e código de acesso
-  const vis = document.querySelector('input[name="ev-vis"]:checked')?.value;
-  if(vis !== undefined) _cfgEvento.publico = (vis === 'publico');
+  if(_visibilidadeCfg !== null) _cfgEvento.publico = (_visibilidadeCfg === 'publico');
   _cfgEvento.codigo_acesso = g('ev-codigo-cfg').toUpperCase();
-
-  // Atualiza também na tabela eventos (publico e codigo_acesso ficam no config do evento)
-  const eventoId = window._EVENTO_OVERRIDE?.id;
-  if(eventoId && supaConfigurado()){
-    supa('PATCH','eventos?id=eq.'+eventoId, {
-      config: {
-        ...(_cfgEvento),
-        publico: _cfgEvento.publico,
-        codigo_acesso: _cfgEvento.codigo_acesso
-      }
-    }).catch(e=>console.error('Erro ao salvar visibilidade:', e));
-  } else if(supaConfigurado()){
-    // MCJ — salva na tabela config
-  }
+  _visibilidadeCfg = null; // reset
   // Tagline — salva no design
   const tagline = g('ev-tagline');
   if(!_cfgEvento.design) _cfgEvento.design = {};
