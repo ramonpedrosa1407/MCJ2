@@ -459,7 +459,25 @@ async function togglePublico(id){
   await supa('PATCH','eventos?id=eq.'+id,{config:cfg});ev.config=cfg;renderTabela();
 }
 async function excluirEvento(id,nome){
-  if(!confirm('Excluir "'+nome+'"? Esta ação não pode ser desfeita.'))return;
+  // Cria modal de confirmação inline (confirm() bloqueado em alguns contextos)
+  const ok = await new Promise(resolve=>{
+    const overlay = document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem';
+    overlay.innerHTML='<div style="background:white;border-radius:16px;padding:2rem;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center">'+
+      '<div style="font-size:32px;margin-bottom:12px">🗑</div>'+
+      '<div style="font-weight:700;font-size:16px;margin-bottom:8px">Excluir evento?</div>'+
+      '<div style="font-size:14px;color:#6B8FAD;margin-bottom:1.5rem">"'+nome+'" será removido permanentemente.</div>'+
+      '<div style="display:flex;gap:8px;justify-content:center">'+
+        '<button id="confirm-cancel" style="padding:10px 20px;border:1.5px solid #C8DFF0;border-radius:8px;background:white;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Cancelar</button>'+
+        '<button id="confirm-ok" style="padding:10px 20px;background:#EF4444;border:none;border-radius:8px;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Excluir</button>'+
+      '</div>'+
+    '</div>';
+    document.body.appendChild(overlay);
+    overlay.querySelector('#confirm-ok').onclick=()=>{overlay.remove();resolve(true);};
+    overlay.querySelector('#confirm-cancel').onclick=()=>{overlay.remove();resolve(false);};
+    overlay.onclick=e=>{if(e.target===overlay){overlay.remove();resolve(false);}};
+  });
+  if(!ok) return;
   try{await supa('DELETE','eventos?id=eq.'+id);carregarDados();}
   catch(e){alert('Erro: '+e.message);}
 }
