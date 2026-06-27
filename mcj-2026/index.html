@@ -752,6 +752,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <span style="font-size:22px">🔒</span>
       <div class="banner-text" id="banner-fechado-text"></div>
     </div>
+    <p id="inscricao-sub-txt" style="font-size:14px;color:var(--mcj-mid);margin-bottom:1.25rem;line-height:1.6;text-align:center">Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.</p>
     <div class="section-eyebrow">Dados do participante</div>
     <div class="polo-required-msg" id="polo-msg">⚠ Selecione um polo antes de enviar a inscrição.</div>
     <input type="hidden" id="f-polo" value="">
@@ -1811,9 +1812,18 @@ function aplicarConfigEvento(){
 
   const heroSub = document.getElementById('hero-sub');
   if(heroSub){
-    const sub = e.inscricao_sub || 'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.';
-    heroSub.textContent = subtitulo + ' — ' + sub;
+    if(subtitulo){
+      heroSub.textContent = subtitulo;
+      heroSub.style.display = '';
+    } else {
+      heroSub.textContent = '';
+      heroSub.style.display = 'none';
+    }
   }
+
+  // Texto de inscrição (abaixo do hero)
+  const inscSub = document.getElementById('inscricao-sub-txt');
+  if(inscSub) inscSub.textContent = e.inscricao_sub || 'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.';
 
   // Pills
   const pillData    = document.getElementById('pill-data');
