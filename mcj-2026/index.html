@@ -1530,15 +1530,15 @@ async function carregarConfig(){
         if(cfg.materiais)      _cfgEvento.materiais     = cfg.materiais;
         if(cfg.instagram)      _cfgEvento.instagram     = cfg.instagram;
         if(cfg.facebook)       _cfgEvento.facebook      = cfg.facebook;
-        // Design/cores — prioridade máxima: sobrepõe o _EVENTO_OVERRIDE
-        if(cfg.cor_primaria || cfg.design){
+        // Design/cores — usa o design completo salvo, sem regenerar
+        if(cfg.design && Object.keys(cfg.design).length > 0){
           if(!_cfgEvento.design) _cfgEvento.design = {};
-          if(cfg.design) Object.assign(_cfgEvento.design, cfg.design);
-          if(cfg.cor_primaria){
-            // Regera o tema completo da cor salva
-            const tema = gerarTemaFromCor(cfg.cor_primaria);
-            Object.assign(_cfgEvento.design, tema);
-          }
+          Object.assign(_cfgEvento.design, cfg.design);
+        } else if(cfg.cor_primaria){
+          // Fallback: só gera tema se não tem design salvo
+          if(!_cfgEvento.design) _cfgEvento.design = {};
+          const tema = gerarTemaFromCor(cfg.cor_primaria);
+          Object.assign(_cfgEvento.design, tema);
         }
         // Reaplica o design com as cores atualizadas do Supabase
         aplicarDesign();
