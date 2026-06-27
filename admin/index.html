@@ -816,6 +816,7 @@ function baixarQR(){
 }
 
 // Event delegation — todos os botões da tabela
+document.addEventListener('DOMContentLoaded', function(){
 document.addEventListener('click', function(e){
   const btn = e.target.closest('[data-action]');
   if(!btn) return;
@@ -835,6 +836,7 @@ document.addEventListener('click', function(e){
     case 'fase':     abrirFaseDropdown(id, btn); break;
   }
 });
+}); // DOMContentLoaded
 </script>
 </body>
 </html>
