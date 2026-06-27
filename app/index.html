@@ -688,7 +688,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 <!-- VIEW: INSCRIÇÃO -->
 <div class="view active" id="view-inscricao">
   <div class="hero">
-    <div class="hero-video" id="hero-fallback-bg" style="background:linear-gradient(135deg,var(--mcj-dark) 0%,var(--mcj-mid) 60%,var(--mcj-gold)55 100%)"></div>
+    <div class="hero-video" id="hero-fallback-bg" style="background:linear-gradient(135deg,var(--mcj-dark) 0%,var(--mcj-dark) 35%,var(--mcj-mid) 100%)"></div>
     <video class="hero-video" autoplay muted loop playsinline preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0" onerror="this.style.display='none'">
       <source src="" type="video/mp4">
     </video>
@@ -2513,7 +2513,7 @@ if(window._EVENTO_OVERRIDE){
   // em carregarConfig() e é a única fonte de verdade para cores e fontes.
   if(ov.cor_primaria){
     const hb = document.getElementById('hero-fallback-bg');
-    if(hb) hb.style.background = `linear-gradient(135deg,${ov.cor_primaria} 0%,${ov.cor_primaria}CC 60%,${ov.cor_primaria}55 100%)`;
+    if(hb) hb.style.background = `linear-gradient(135deg,${ov.cor_primaria}22 0%,${ov.cor_primaria} 100%)`;
     const r = document.documentElement;
     r.style.setProperty('--mcj-dark', ov.cor_primaria);
     r.style.setProperty('--mcj-mid',  ov.cor_primaria);
@@ -2817,12 +2817,12 @@ function aplicarDesign(){
   if(d.cor_mid)     { r.style.setProperty('--mcj-mid', d.cor_mid); }
   if(d.cor_primaria && !d.cor_dark){ r.style.setProperty('--mcj-mid', d.cor_primaria); }
 
-  // Atualiza fundo do hero com as cores do tema
-  const corPrimaria = d.cor_dark || d.cor_primaria || '#0D2B4E';
-  const corDestaque = d.cor_destaque || '#7EB8D4';
+  // Atualiza fundo do hero: escuro -> cor primária (sem dourado)
+  const corDark    = d.cor_dark || d.cor_primaria || '#0D2B4E';
+  const corPrimaria = d.cor_primaria || d.cor_dark || '#0D2B4E';
   const heroFallback = document.getElementById('hero-fallback-bg');
   if(heroFallback){
-    heroFallback.style.background = `linear-gradient(135deg,${corPrimaria} 0%,${corPrimaria}CC 60%,${corDestaque}55 100%)`;
+    heroFallback.style.background = `linear-gradient(135deg,${corDark} 0%,${corDark} 35%,${corPrimaria} 100%)`;
   }
 
   if(d.video_url){
