@@ -215,8 +215,8 @@ async function carregarEventos(){
       };
       const {cls:badgeClass, txt:badgeText} = faseMap[fase]||faseMap.em_breve;
       return '<a href="/' + e.slug + '/" class="evento-card">' +
-        '<div class="evento-card-img">' +
-        (cfg.thumb ? '<img src="' + cfg.thumb + '" alt="' + e.nome + '">' : '') +
+        '<div class="evento-card-img" style="' + (!cfg.thumb ? 'background:linear-gradient(135deg,'+(cfg.design?.cor_primaria||cfg.cor_primaria||'#0D2B4E')+' 0%,'+(cfg.design?.cor_primaria||cfg.cor_primaria||'#0D2B4E')+'CC 60%,'+(cfg.design?.cor_destaque||'#7EB8D4')+'55 100%)' : '') + '">' +
+        (cfg.thumb ? '<img src="' + cfg.thumb + '" alt="' + e.nome + '">' : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:EB Garamond,Georgia,serif;font-size:2rem;font-weight:700;color:white;text-align:center;padding:1rem">' + e.nome + '</div>') +
         '<span class="evento-card-badge ' + badgeClass + '">' + badgeText + '</span>' +
         '</div>' +
         '<div class="evento-card-body">' +
