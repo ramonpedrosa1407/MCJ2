@@ -4219,28 +4219,49 @@ let _editCampoIdx = null;
 function abrirModalCampo(idx){
   _editCampoIdx = idx;
   const c = idx!==null ? (_cfgEvento.campos_extras||[])[idx] : null;
-  document.getElementById('modal-campo-titulo').textContent = idx!==null ? 'Editar campo' : 'Novo campo';
-  document.getElementById('campo-label').value       = c?.label||'';
-  document.getElementById('campo-tipo').value        = c?.tipo||'text';
-  document.getElementById('campo-placeholder').value = c?.placeholder||'';
-  document.getElementById('campo-obrigatorio').checked= c?.obrigatorio||false;
-  document.getElementById('campo-opcoes').value      = (c?.opcoes||[]).join('\n');
-  document.getElementById('campo-erro').style.display='none';
+  const ov = document.getElementById('modal-campo-overlay');
+  if(!ov){ console.error('modal-campo-overlay não encontrado'); return; }
+
+  // Preenche os campos com proteção contra null
+  const set = (id, prop, val) => { const el=document.getElementById(id); if(el) el[prop]=val; };
+  set('modal-campo-titulo', 'textContent', idx!==null ? 'Editar campo' : 'Novo campo');
+  set('campo-label', 'value', c?.label||'');
+  set('campo-tipo', 'value', c?.tipo||'text');
+  set('campo-placeholder', 'value', c?.placeholder||'');
+  set('campo-obrigatorio', 'checked', c?.obrigatorio||false);
+  set('campo-opcoes', 'value', (c?.opcoes||[]).join('\n'));
+  const erroEl = document.getElementById('campo-erro');
+  if(erroEl) erroEl.style.display='none';
   toggleCampoOpcoes();
-  document.getElementById('modal-campo-overlay').style.display='flex';
+
+  // Move para o body (caso esteja preso em container com overflow)
+  if(ov.parentElement !== document.body) document.body.appendChild(ov);
+
+  // Força TODOS os estilos inline com !important via cssText
+  ov.style.cssText = [
+    'position:fixed','top:0','left:0','right:0','bottom:0',
+    'width:100vw','height:100vh',
+    'background:rgba(0,0,0,.6)','z-index:2147483647',
+    'display:flex','align-items:center','justify-content:center',
+    'padding:1rem','margin:0','overflow:auto'
+  ].join(' !important;') + ' !important';
+
   document.body.style.overflow='hidden';
-  setTimeout(()=>document.getElementById('campo-label').focus(),100);
+  setTimeout(()=>{ const el=document.getElementById('campo-label'); if(el) el.focus(); },100);
 }
 
 function fecharModalCampo(){
-  document.getElementById('modal-campo-overlay').style.display='none';
+  const ov = document.getElementById('modal-campo-overlay');
+  if(ov) ov.style.cssText = 'display:none';
   document.body.style.overflow='';
   _editCampoIdx = null;
 }
 
 function toggleCampoOpcoes(){
-  const tipo = document.getElementById('campo-tipo').value;
-  document.getElementById('campo-opcoes-wrap').style.display = tipo==='select' ? 'block' : 'none';
+  const tipoEl = document.getElementById('campo-tipo');
+  const wrapEl = document.getElementById('campo-opcoes-wrap');
+  if(!tipoEl || !wrapEl) return;
+  wrapEl.style.display = tipoEl.value==='select' ? 'block' : 'none';
 }
 
 function salvarCampoExtra(){
