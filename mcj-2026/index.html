@@ -2852,8 +2852,22 @@ async function salvarEventoCfg(){
   _cfgEvento.facebook     = g('ev-facebook');
   // Visibilidade e código de acesso
   const vis = document.querySelector('input[name="ev-vis"]:checked')?.value;
-  if(vis) _cfgEvento.publico = vis === 'publico';
+  if(vis !== undefined) _cfgEvento.publico = (vis === 'publico');
   _cfgEvento.codigo_acesso = g('ev-codigo-cfg').toUpperCase();
+
+  // Atualiza também na tabela eventos (publico e codigo_acesso ficam no config do evento)
+  const eventoId = window._EVENTO_OVERRIDE?.id;
+  if(eventoId && supaConfigurado()){
+    supa('PATCH','eventos?id=eq.'+eventoId, {
+      config: {
+        ...(_cfgEvento),
+        publico: _cfgEvento.publico,
+        codigo_acesso: _cfgEvento.codigo_acesso
+      }
+    }).catch(e=>console.error('Erro ao salvar visibilidade:', e));
+  } else if(supaConfigurado()){
+    // MCJ — salva na tabela config
+  }
   // Tagline — salva no design
   const tagline = g('ev-tagline');
   if(!_cfgEvento.design) _cfgEvento.design = {};
@@ -4279,7 +4293,8 @@ function salvarCampoExtra(){
 }
 
 function removerCampoExtra(idx){
-  if(!confirm(`Remover o campo "${_cfgEvento.campos_extras[idx]?.label}"?`)) return;
+  const label = _cfgEvento.campos_extras[idx]?.label||'este campo';
+  if(!window.confirm(`Remover "${label}"?`)) return;
   _cfgEvento.campos_extras.splice(idx,1);
   setCfgEvento();
   renderEventoAdmin();
