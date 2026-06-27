@@ -8398,19 +8398,31 @@ document.addEventListener('click', function(e){
 /* ================================================================
    INIT
 ================================================================ */
-// Aplica tema padrão (TEMAS_DESIGN[0]) imediatamente nas CSS vars
-// para que o hero tenha as cores certas mesmo sem config no Supabase
+// Aplica tema imediatamente — usa cor do evento se disponível, senão Terra Santa
 (function(){
-  const d = TEMAS_DESIGN[0];
+  const ov  = window._EVENTO_OVERRIDE;
+  const cor = ov?.cor_primaria;
+
+  let d;
+  if(cor){
+    // Gera tema a partir da cor do evento
+    d = gerarTemaFromCor(cor);
+  } else {
+    // Fallback: Terra Santa
+    d = TEMAS_DESIGN[0];
+  }
+
   const r = document.documentElement;
-  r.style.setProperty('--mcj-dark',  d.cor_primaria || '#3D2410');
+  r.style.setProperty('--mcj-dark',  d.cor_primaria || d.cor_dark  || '#3D2410');
   r.style.setProperty('--mcj-mid',   d.cor_mid      || '#6B4C2A');
   r.style.setProperty('--mcj-gold',  d.cor_destaque || '#C8873A');
   r.style.setProperty('--mcj-gold2', d.cor_destaque || '#C8873A');
   r.style.setProperty('--mcj-cream', d.cor_fundo    || '#F2EDE4');
   r.style.setProperty('--mcj-text',  d.cor_texto    || '#2C1A08');
   const hb = document.getElementById('hero-fallback-bg');
-  if(hb) hb.style.background = `linear-gradient(135deg,${d.cor_primaria} 0%,${d.cor_primaria}CC 60%,${d.cor_destaque}55 100%)`;
+  const corBase = d.cor_primaria || d.cor_dark || '#3D2410';
+  const corDest = d.cor_destaque || '#C8873A';
+  if(hb) hb.style.background = `linear-gradient(135deg,${corBase} 0%,${corBase}CC 60%,${corDest}55 100%)`;
 })();
 
 // Aplica defaults imediatamente — antes do Supabase responder
