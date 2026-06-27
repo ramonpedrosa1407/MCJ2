@@ -8383,46 +8383,41 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') fecharLightbox();
    EVENT DELEGATION GLOBAL
 ================================================================ */
 document.addEventListener('click', function(e){
-  const btn = e.target.closest('[data-action]');
-  if(!btn) return;
-  const action = btn.dataset.action;
-  switch(action){
-    case 'novo-campo':    abrirModalCampo(null); break;
-    case 'editar-campo':  abrirModalCampo(parseInt(btn.dataset.idx)); break;
-    case 'remover-campo': removerCampoExtra(parseInt(btn.dataset.idx)); break;
-    case 'vis-publico':   setVisibilidadeCfg('publico'); break;
-    case 'vis-privado':   setVisibilidadeCfg('privado'); break;
+  // Sobe a árvore manualmente para encontrar data-action
+  let el = e.target;
+  while(el && el !== document){
+    if(el.dataset && el.dataset.action){
+      const action = el.dataset.action;
+      switch(action){
+        case 'novo-campo':    e.stopPropagation(); abrirModalCampo(null); return;
+        case 'editar-campo':  e.stopPropagation(); abrirModalCampo(parseInt(el.dataset.idx)); return;
+        case 'remover-campo': e.stopPropagation(); removerCampoExtra(parseInt(el.dataset.idx)); return;
+        case 'vis-publico':   e.stopPropagation(); setVisibilidadeCfg('publico'); return;
+        case 'vis-privado':   e.stopPropagation(); setVisibilidadeCfg('privado'); return;
+      }
+      break;
+    }
+    el = el.parentElement;
   }
-});
+}, true); // capture: true — pega antes de qualquer outro listener
 
 /* ================================================================
    INIT
 ================================================================ */
-// Aplica tema imediatamente — usa cor do evento se disponível, senão Terra Santa
 (function(){
   const ov  = window._EVENTO_OVERRIDE;
-  const cor = ov?.cor_primaria;
-
-  let d;
-  if(cor){
-    // Gera tema a partir da cor do evento
-    d = gerarTemaFromCor(cor);
-  } else {
-    // Fallback: Terra Santa
-    d = TEMAS_DESIGN[0];
-  }
-
-  const r = document.documentElement;
-  r.style.setProperty('--mcj-dark',  d.cor_primaria || d.cor_dark  || '#3D2410');
-  r.style.setProperty('--mcj-mid',   d.cor_mid      || '#6B4C2A');
-  r.style.setProperty('--mcj-gold',  d.cor_destaque || '#C8873A');
-  r.style.setProperty('--mcj-gold2', d.cor_destaque || '#C8873A');
-  r.style.setProperty('--mcj-cream', d.cor_fundo    || '#F2EDE4');
-  r.style.setProperty('--mcj-text',  d.cor_texto    || '#2C1A08');
+  const cor = ov?.cor_primaria || '#3D2410';
+  const r   = document.documentElement;
+  r.style.setProperty('--mcj-dark',  cor);
+  r.style.setProperty('--mcj-mid',   cor+'CC');
+  // Se tiver design salvo no _cfgEvento usa, senão usa só a cor primária
+  const d = _cfgEvento?.design;
+  if(d?.cor_destaque) r.style.setProperty('--mcj-gold',  d.cor_destaque);
+  if(d?.cor_destaque) r.style.setProperty('--mcj-gold2', d.cor_destaque);
+  if(d?.cor_fundo)    r.style.setProperty('--mcj-cream', d.cor_fundo);
+  if(d?.cor_texto)    r.style.setProperty('--mcj-text',  d.cor_texto);
   const hb = document.getElementById('hero-fallback-bg');
-  const corBase = d.cor_primaria || d.cor_dark || '#3D2410';
-  const corDest = d.cor_destaque || '#C8873A';
-  if(hb) hb.style.background = `linear-gradient(135deg,${corBase} 0%,${corBase}CC 60%,${corDest}55 100%)`;
+  if(hb) hb.style.background = `linear-gradient(135deg,${cor} 0%,${cor}CC 60%,${cor}88 100%)`;
 })();
 
 // Aplica defaults imediatamente — antes do Supabase responder
