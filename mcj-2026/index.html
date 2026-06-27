@@ -784,7 +784,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         </div>
         <div id="campos-extras-form" style="display:none"></div>
 
-        <div class="field full">
+        <div class="field full" id="turma-field" style="display:none">
           <label>Turma <span class="req">*</span></label>
           <div class="radio-turma-wrap">
             <label class="radio-turma-label" id="lbl-adulto">
@@ -1564,6 +1564,18 @@ async function carregarConfig(){
     }
   } catch(e){ POLOS = window._EVENTO_OVERRIDE ? [] : JSON.parse(JSON.stringify(POLOS_DEFAULT)); console.error('carregarConfig:',e); }
   _cache.config = POLOS;
+
+  // Migração única: turma de Mocidade passou a ser desligada por padrão.
+  // Zera tem_mocidade dos polos existentes uma só vez (marca _moc_migrado).
+  try {
+    if(Array.isArray(POLOS) && POLOS.length){
+      const pendentes = POLOS.filter(p => p && p._moc_migrado !== true);
+      if(pendentes.length){
+        POLOS.forEach(p => { if(p){ p.tem_mocidade = false; p._moc_migrado = true; } });
+        await setCfg();
+      }
+    }
+  } catch(e){ console.error('migração mocidade:', e); }
 }
 
 async function carregarUsuarios(){
@@ -3275,18 +3287,23 @@ function selecionarPolo(nome){
   // Busca config do polo
   const polo = POLOS.find(p=>p.nome===nome);
 
-  // Mocidade — mostra/oculta baseado no config do polo
+  // Turma — só aparece o seletor se o polo tiver Mocidade ativa.
+  // Sem Mocidade: oculta o campo inteiro e grava 'Adulto' como padrão implícito.
+  const temMocidade = !!(polo && polo.tem_mocidade === true);
+  const turmaField  = document.getElementById('turma-field');
   const lblMocidade = document.getElementById('lbl-mocidade');
-  if(lblMocidade){
-    const temMocidade = !polo || polo.tem_mocidade !== false;
-    lblMocidade.style.display = temMocidade ? '' : 'none';
-    // Se estava marcado Mocidade e desabilitou, volta para Adulto
-    if(!temMocidade){
-      const radAdulto = document.querySelector('input[name="turma"][value="Adulto"]');
-      if(radAdulto) radAdulto.checked = true;
-      document.getElementById('lbl-adulto')?.classList.add('sel');
-      lblMocidade.classList.remove('sel');
-    }
+  const radAdulto   = document.querySelector('input[name="turma"][value="Adulto"]');
+  if(temMocidade){
+    if(turmaField)  turmaField.style.display = '';
+    if(lblMocidade) lblMocidade.style.display = '';
+    // Sem seleção forçada — usuário escolhe Adulto ou Mocidade
+  } else {
+    // Oculta o campo de turma; Adulto vira padrão automático
+    if(turmaField)  turmaField.style.display = 'none';
+    if(lblMocidade) lblMocidade.style.display = 'none';
+    if(radAdulto)   radAdulto.checked = true;
+    document.getElementById('lbl-adulto')?.classList.add('sel');
+    lblMocidade?.classList.remove('sel');
   }
 
   // Almoço — mostra/oculta
@@ -3591,7 +3608,10 @@ async function inscrever(){
   const tel        = document.getElementById('f-telefone')?.value.trim()||'';
   const inst       = document.getElementById('f-instituicao')?.value.trim()||'';
   const cracha     = document.getElementById('f-cracha')?.value.trim()||'';
-  const turma      = document.querySelector('input[name="turma"]:checked')?.value||'';
+  const _temMoc     = !!(poloSelCfg && poloSelCfg.tem_mocidade === true);
+  const turma       = _temMoc
+    ? (document.querySelector('input[name="turma"]:checked')?.value||'')
+    : 'Adulto';
   const almocoChk        = document.getElementById('f-almoco');
   const almoco           = almocoChk?.checked || false;
   const almocoCriancaChk = document.getElementById('f-almoco-crianca');
@@ -3621,7 +3641,7 @@ async function inscrever(){
   if(!nascimento){ alerta('err','Informe a data de nascimento.'); return; }
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alerta('err','Informe um e-mail válido.'); return; }
   if(!tel||tel.replace(/\D/g,'').length<10){ alerta('err','Informe um telefone válido com DDD.'); return; }
-  if(!turma){ alerta('err','Selecione uma turma: Adulto ou Mocidade.'); return; }
+  if(_temMoc && !turma){ alerta('err','Selecione uma turma: Adulto ou Mocidade.'); return; }
 
   // Valida campos extras obrigatórios
   if(!validarCamposExtras()) return;
@@ -4188,7 +4208,7 @@ function renderTurmas(){
       </div>
       <div class="turmas-turma-tabs">
         <button class="turma-tab ${_turmaTurmaAtiva==='Adulto'?'active':''}" onclick="selecionarTurmaTipo('Adulto',this)">👤 Adulto (${inscritos.filter(p=>p.turma==='Adulto').length})</button>
-        ${polo.tem_mocidade!==false?`<button class="turma-tab ${_turmaTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarTurmaTipo('Mocidade',this)">🌟 Mocidade (${inscritos.filter(p=>p.turma==='Mocidade').length})</button>`:''}
+        ${polo.tem_mocidade===true?`<button class="turma-tab ${_turmaTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarTurmaTipo('Mocidade',this)">🌟 Mocidade (${inscritos.filter(p=>p.turma==='Mocidade').length})</button>`:''}
         ${polo.aceita_crianca?`<button class="turma-tab ${_turmaTurmaAtiva==='Evangelizacao'?'active':''}" onclick="selecionarTurmaTipo('Evangelizacao',this)" style="${_turmaTurmaAtiva==='Evangelizacao'?'border-color:#4ADE80;color:#15803D;background:#F0FDF4':''}">👶 Evangelização (${inscritos.reduce((acc,p)=>acc+(p.criancas?.length||0),0)})</button>`:''}
       </div>
       <div class="turmas-layout">
@@ -4795,7 +4815,7 @@ function gerarRelatorio(tipo){
     <tr><td><strong>Contato</strong></td><td>${p.telefone_polo||p.contato||'—'}</td></tr>
     <tr><td><strong>E-mail</strong></td><td>${p.email_polo||'—'}</td></tr>
     <tr><td><strong>Salas Adulto</strong></td><td>${(p.salas_adulto||[]).join(', ')||'—'}</td></tr>
-    <tr><td><strong>Salas Mocidade</strong></td><td>${p.tem_mocidade!==false?(p.salas_mocidade||[]).join(', ')||'—':'Desativado'}</td></tr>
+    <tr><td><strong>Salas Mocidade</strong></td><td>${p.tem_mocidade===true?(p.salas_mocidade||[]).join(', ')||'—':'Desativado'}</td></tr>
     <tr><td><strong>Inscrições</strong></td><td>${p.inscricoes_abertas!==false?'✓ Abertas':'✗ Fechadas'}</td></tr>
     <tr><td><strong>Almoço</strong></td><td>${p.almoco_ativo?`Sim — ${p.almoco_valor||''}`:'Não'}</td></tr>
     <tr><td><strong>Total inscritos</strong></td><td>${d.filter(x=>x.polo===p.nome).length}</td></tr>
@@ -6614,7 +6634,7 @@ function renderConfig(){
               <div class="toggle-lbl-main">🌟 Turma Mocidade</div>
               <div class="toggle-lbl-sub">Ative para exibir a opção Mocidade no formulário de inscrição</div>
             </div>
-            <label class="toggle-switch"><input type="checkbox" id="cfg-mocidade-${i}" ${p.tem_mocidade!==false?'checked':''}><span class="toggle-slider"></span></label>
+            <label class="toggle-switch"><input type="checkbox" id="cfg-mocidade-${i}" ${p.tem_mocidade===true?'checked':''} onchange="toggleMocidade(${i})"><span class="toggle-slider"></span></label>
           </div>
           <div class="toggle-wrap" style="border-color:#B9F5D0;margin-top:8px">
             <div>
@@ -6686,9 +6706,11 @@ function renderConfig(){
               </div>
             </div>
 
-            <!-- MOCIDADE — só se tem_mocidade ativo -->
-            ${p.tem_mocidade!==false ? `
-            <div style="background:#EFF6FF;border-radius:10px;padding:12px;border:1px solid #BFDBFE">
+            <!-- MOCIDADE — sempre no DOM; visibilidade controlada pelo toggle em Status -->
+            <div id="cfg-mocidade-aviso-${i}" style="display:${p.tem_mocidade===true?'none':'block'};background:var(--gray-50);border-radius:10px;padding:10px 12px;border:1px dashed var(--gray-100);font-size:12px;color:var(--gray-400)">
+              🌟 Turma Mocidade desativada neste polo — ative o toggle em Status para definir as salas.
+            </div>
+            <div id="cfg-mocidade-salas-wrap-${i}" style="display:${p.tem_mocidade===true?'block':'none'};background:#EFF6FF;border-radius:10px;padding:12px;border:1px solid #BFDBFE">
               <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">🌟 Mocidade</div>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
                 <label style="font-size:12px;color:var(--gray-600);font-weight:500;white-space:nowrap">Qtd de salas:</label>
@@ -6703,9 +6725,7 @@ function renderConfig(){
                     <input type="text" id="cfg-sala-mocidade-${i}-${j}" value="${esc(nome)}" placeholder="Nome da sala" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px;border-color:#BFDBFE">
                   </div>`).join('')}
               </div>
-            </div>` : `<div style="background:var(--gray-50);border-radius:10px;padding:10px 12px;border:1px dashed var(--gray-100);font-size:12px;color:var(--gray-400)">
-              🌟 Turma Mocidade desativada neste polo — ative o toggle em Status para habilitar.
-            </div>`}
+            </div>
 
             <!-- EVANGELIZAÇÃO — só se aceita_crianca ativo -->
             ${p.aceita_crianca ? `
@@ -6843,6 +6863,15 @@ function toggleAlmocoCrianca(i){
   const chk  = document.getElementById('cfg-almoco-crianca-'+i);
   const wrap = document.getElementById('cfg-almoco-crianca-valor-wrap-'+i);
   if(wrap) wrap.style.display = chk?.checked ? 'flex' : 'none';
+}
+
+function toggleMocidade(i){
+  const chk   = document.getElementById('cfg-mocidade-'+i);
+  const wrap  = document.getElementById('cfg-mocidade-salas-wrap-'+i);
+  const aviso = document.getElementById('cfg-mocidade-aviso-'+i);
+  const ligado = !!chk?.checked;
+  if(wrap)  wrap.style.display  = ligado ? 'block' : 'none';
+  if(aviso) aviso.style.display = ligado ? 'none' : 'block';
 }
 
 /* Lê os campos de nome das salas do formulário */
@@ -7036,7 +7065,7 @@ function salvarPolo(i){
     p.almoco_valor           = document.getElementById('cfg-almoco-valor-'+i)?.value.trim()||'';
     p.almoco_crianca_ativo   = document.getElementById('cfg-almoco-crianca-'+i)?.checked || false;
     p.almoco_crianca_valor   = document.getElementById('cfg-almoco-crianca-valor-'+i)?.value.trim()||'';
-    p.tem_mocidade      = document.getElementById('cfg-mocidade-'+i)?.checked ?? true;
+    p.tem_mocidade      = document.getElementById('cfg-mocidade-'+i)?.checked || false;
     p.aceita_crianca    = document.getElementById('cfg-crianca-'+i)?.checked || false;
     p.idade_minima_evang= parseInt(document.getElementById('cfg-idade-min-'+i)?.value||'0')||0;
     p.msg_pagamento     = document.getElementById('cfg-msg-pag-'+i)?.value.trim()||'';
