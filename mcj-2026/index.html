@@ -2356,7 +2356,11 @@ function _setCacheIns(d){ _cache.inscricoes = d; }
 async function carregarInscricoes(){
   if(!supaConfigurado()){ _cache.inscricoes=[]; return; }
   try {
-    const rows = await supa('GET', 'inscricoes?select=*&order=created_at.asc');
+    const eventoId = window._EVENTO_OVERRIDE?.id;
+    const query = eventoId
+      ? `inscricoes?select=*&evento_id=eq.${eventoId}&order=created_at.asc`
+      : `inscricoes?select=*&evento_id=is.null&order=created_at.asc`;
+    const rows = await supa('GET', query);
     _cache.inscricoes = rows || [];
   } catch(e){ _cache.inscricoes=[]; console.error('Erro ao carregar inscrições:', e.message); }
 }
@@ -2366,7 +2370,7 @@ async function carregarInscricoes(){
 const SUPA_INS_COLS = ['nome','nascimento','email','telefone','instituicao','cracha','turma','polo',
   'almoco','almoco_valor','almoco_crianca','almoco_crianca_valor',
   'sala','setores','pagamento','pagamento_em','trabalhador','data_inscricao',
-  'crianca','criancas','campos_extras','observacao'];
+  'crianca','criancas','campos_extras','observacao','evento_id'];
 
 function filtrarColunas(obj){
   const out = {};
@@ -2383,6 +2387,9 @@ async function inserirInscricao(ins){
   showLoading('Inscrevendo...');
   try {
     const payload = filtrarColunas(ins);
+    // Garante que evento_id está no payload
+    const eventoId = window._EVENTO_OVERRIDE?.id;
+    if(eventoId) payload.evento_id = eventoId;
     const rows = await supa('POST', 'inscricoes', [payload]);
     // Substitui o registro temporário pelo retornado com id real
     if(rows && rows[0]){
