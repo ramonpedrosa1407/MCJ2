@@ -1294,7 +1294,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 </div>
 
 <!-- MODAL: CAMPO EXTRA -->
-<div class="login-overlay" id="modal-campo-overlay" onclick="if(event.target===this)fecharModalCampo()" style="align-items:center;padding:1rem;z-index:700">
+<div id="modal-campo-overlay" onclick="if(event.target===this)fecharModalCampo()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:700;display:none;align-items:center;justify-content:center;padding:1rem">
   <div style="background:white;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.2)" onclick="event.stopPropagation()">
     <div style="padding:1rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
       <span id="modal-campo-titulo" style="font-family:'EB Garamond',Georgia,serif;font-size:17px;font-weight:700;color:white">Novo campo</span>
@@ -1950,13 +1950,16 @@ function renderBannerAvaliacao(){
    NAVEGAÇÃO ENTRE VIEWS
 ================================================================ */
 function irParaPolo(nomeOuIdx){
-  // Vai para aba Sobre (que contém os polos) e abre o detalhe do polo
+  // Vai para aba Sobre (que contém os polos) e faz scroll até a seção de polos
   showView('sobre');
   setTimeout(()=>{
-    const polo = typeof nomeOuIdx==='number' ? POLOS[nomeOuIdx] : POLOS.find(p=>p.nome===nomeOuIdx);
-    if(polo) abrirPoloDetalhe(polo.nome);
-  }, 200);
+    const el = document.getElementById('sobre-polos-section');
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 300);
 }
+
+// Alias para compatibilidade
+function abrirPoloDetalhe(nome){ irParaPolo(nome); }
 
 function showView(id, btn){
   // Polos agora fica dentro de Sobre o Evento
@@ -2029,7 +2032,7 @@ function renderSobre(){
         </div>`:''}
 
         ${polosAbertos.length ? `
-        <div>
+        <div id="sobre-polos-section">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--mcj-gold);margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--mcj-sand)">📍 Polos do Evento</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
             ${polosAbertos.map((p,i)=>`
@@ -4231,13 +4234,13 @@ function abrirModalCampo(idx){
   document.getElementById('campo-opcoes').value      = (c?.opcoes||[]).join('\n');
   document.getElementById('campo-erro').style.display='none';
   toggleCampoOpcoes();
-  document.getElementById('modal-campo-overlay').classList.add('show');
+  document.getElementById('modal-campo-overlay').style.display='flex';
   document.body.style.overflow='hidden';
   setTimeout(()=>document.getElementById('campo-label').focus(),100);
 }
 
 function fecharModalCampo(){
-  document.getElementById('modal-campo-overlay').classList.remove('show');
+  document.getElementById('modal-campo-overlay').style.display='none';
   document.body.style.overflow='';
   _editCampoIdx = null;
 }
