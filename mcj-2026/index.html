@@ -1528,8 +1528,10 @@ async function setCfgEvento(){
         const d = _cfgEvento.design||{};
         const configEvento = {
           ...configParaSalvar,
-          cor_primaria: d.cor_primaria||d.cor_dark,
-          video_abertura: _cfgEvento.video_url,
+          cor_primaria:    d.cor_primaria||d.cor_dark,
+          video_abertura:  _cfgEvento.video_url,
+          publico:         _cfgEvento.publico,
+          codigo_acesso:   _cfgEvento.codigo_acesso,
         };
         await supa('PATCH','eventos?id=eq.'+eventoId, {config: configEvento});
       }
@@ -1542,67 +1544,55 @@ async function carregarConfig(){
   try {
     const eventoId = window._EVENTO_OVERRIDE?.id;
     if(eventoId){
-      // Busca config completa do evento no Supabase
+      // Busca config completa do evento na tabela eventos
       const evRows = await supa('GET','eventos?id=eq.'+eventoId+'&select=config');
       if(evRows?.[0]?.config){
         const cfg = evRows[0].config;
-        // Aplica TODOS os campos do config — incluindo cores e design
-        if(cfg.titulo)      _cfgEvento.titulo      = cfg.titulo;
-        if(cfg.subtitulo)   _cfgEvento.subtitulo   = cfg.subtitulo;
-        if(cfg.data)        _cfgEvento.data        = cfg.data;
-        if(cfg.horario)     _cfgEvento.horario     = cfg.horario;
-        if(cfg.local)       _cfgEvento.local       = cfg.local;
-        if(cfg.tema_manha)  _cfgEvento.tema_manha  = cfg.tema_manha;
-        if(cfg.tema_tarde)  _cfgEvento.tema_tarde  = cfg.tema_tarde;
-        if(cfg.thumb)       _cfgEvento.thumb       = cfg.thumb;
+        // Aplica TODOS os campos
+        const campos = ['titulo','subtitulo','data','horario','local','tema_manha','tema_tarde',
+                        'thumb','logo_url','instagram','facebook','inscricao_sub','descricao',
+                        'campos_extras','materiais'];
+        campos.forEach(k=>{ if(cfg[k]!==undefined) _cfgEvento[k]=cfg[k]; });
         if(cfg.video_abertura) _cfgEvento.video_url = cfg.video_abertura;
-        if(cfg.campos_extras)  _cfgEvento.campos_extras = cfg.campos_extras;
-        if(cfg.materiais)      _cfgEvento.materiais     = cfg.materiais;
-        if(cfg.instagram)      _cfgEvento.instagram     = cfg.instagram;
-        if(cfg.facebook)       _cfgEvento.facebook      = cfg.facebook;
-        // Design/cores — usa o design completo salvo, sem regenerar
+        if(cfg.video_url)      _cfgEvento.video_url = cfg.video_url;
+        // Público/privado e código
+        if(cfg.publico !== undefined) _cfgEvento.publico = cfg.publico;
+        if(cfg.codigo_acesso)         _cfgEvento.codigo_acesso = cfg.codigo_acesso;
+        // Tagline
+        if(cfg.design?.hero_tagline !== undefined){
+          if(!_cfgEvento.design) _cfgEvento.design = {};
+          _cfgEvento.design.hero_tagline = cfg.design.hero_tagline;
+        }
+        // Design completo — usa o salvo sem regenerar
         if(cfg.design && Object.keys(cfg.design).length > 0){
           if(!_cfgEvento.design) _cfgEvento.design = {};
           Object.assign(_cfgEvento.design, cfg.design);
         } else if(cfg.cor_primaria){
-          // Fallback: só gera tema se não tem design salvo
           if(!_cfgEvento.design) _cfgEvento.design = {};
           const tema = gerarTemaFromCor(cfg.cor_primaria);
           Object.assign(_cfgEvento.design, tema);
         }
-        // Reaplica o design com as cores atualizadas do Supabase
+        // Aplica tudo na tela
         aplicarDesign();
+        aplicarConfigEvento();
       }
       // Busca polos do evento
       const polosId = eventoId+'-polos';
       const cfgRows = await supa('GET','config?select=dados&id=eq.'+polosId);
-      if(cfgRows?.[0]?.dados && Array.isArray(cfgRows[0].dados)){
-        POLOS = cfgRows[0].dados;
-      } else {
-        POLOS = [];
-      }
+      POLOS = cfgRows?.[0]?.dados && Array.isArray(cfgRows[0].dados) ? cfgRows[0].dados : [];
     } else {
-      // MCJ padrão — busca config da tabela config (que tem dados completos)
+      // MCJ padrão
       const rows = await supa('GET','config?select=dados&id=eq.main');
       if(rows?.[0]?.dados){
         const cfg = rows[0].dados;
         if(cfg && typeof cfg === 'object' && !Array.isArray(cfg)){
-          if(cfg.titulo)       _cfgEvento.titulo       = cfg.titulo;
-          if(cfg.subtitulo)    _cfgEvento.subtitulo    = cfg.subtitulo;
-          if(cfg.data)         _cfgEvento.data         = cfg.data;
-          if(cfg.horario)      _cfgEvento.horario      = cfg.horario;
-          if(cfg.local)        _cfgEvento.local        = cfg.local;
-          if(cfg.tema_manha)   _cfgEvento.tema_manha   = cfg.tema_manha;
-          if(cfg.tema_tarde)   _cfgEvento.tema_tarde   = cfg.tema_tarde;
-          if(cfg.thumb)        _cfgEvento.thumb        = cfg.thumb;
-          if(cfg.video_url)    _cfgEvento.video_url    = cfg.video_url;
-          if(cfg.logo_url)     _cfgEvento.logo_url     = cfg.logo_url;
-          if(cfg.instagram)    _cfgEvento.instagram    = cfg.instagram;
-          if(cfg.facebook)     _cfgEvento.facebook     = cfg.facebook;
-          if(cfg.inscricao_sub) _cfgEvento.inscricao_sub = cfg.inscricao_sub;
-          if(cfg.descricao)    _cfgEvento.descricao    = cfg.descricao;
-          if(cfg.campos_extras) _cfgEvento.campos_extras = cfg.campos_extras;
-          if(cfg.materiais)    _cfgEvento.materiais    = cfg.materiais;
+          const campos = ['titulo','subtitulo','data','horario','local','tema_manha','tema_tarde',
+                          'thumb','logo_url','instagram','facebook','inscricao_sub','descricao',
+                          'campos_extras','materiais'];
+          campos.forEach(k=>{ if(cfg[k]!==undefined) _cfgEvento[k]=cfg[k]; });
+          if(cfg.video_url) _cfgEvento.video_url = cfg.video_url;
+          if(cfg.publico !== undefined) _cfgEvento.publico = cfg.publico;
+          if(cfg.codigo_acesso)         _cfgEvento.codigo_acesso = cfg.codigo_acesso;
           if(cfg.design && Object.keys(cfg.design).length > 0){
             if(!_cfgEvento.design) _cfgEvento.design = {};
             Object.assign(_cfgEvento.design, cfg.design);
@@ -1611,13 +1601,10 @@ async function carregarConfig(){
           aplicarConfigEvento();
         }
       }
-      // Busca polos separadamente
       const polosRows = await supa('GET','config?select=dados&id=eq.main-polos');
-      if(polosRows?.[0]?.dados && Array.isArray(polosRows[0].dados)){
-        POLOS = polosRows[0].dados;
-      } else {
-        POLOS = JSON.parse(JSON.stringify(POLOS_DEFAULT));
-      }
+      POLOS = polosRows?.[0]?.dados && Array.isArray(polosRows[0].dados)
+        ? polosRows[0].dados
+        : JSON.parse(JSON.stringify(POLOS_DEFAULT));
     }
   } catch(e){ POLOS = window._EVENTO_OVERRIDE ? [] : JSON.parse(JSON.stringify(POLOS_DEFAULT)); console.error('carregarConfig:',e); }
   _cache.config = POLOS;
