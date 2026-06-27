@@ -273,6 +273,13 @@ tr:last-child td{border-bottom:none}
         <input type="hidden" id="ev-publico" value="true">
       </div>
 
+      <!-- Código de acesso (só para privado) -->
+      <div class="form-field" style="grid-column:1/-1;display:none" id="campo-codigo">
+        <label>Código de acesso</label>
+        <input type="text" id="ev-codigo" placeholder="Ex: MCJ2026" style="text-transform:uppercase;letter-spacing:2px">
+        <span class="slug-note">Participantes precisarão digitar este código para se inscrever</span>
+      </div>
+
       <!-- Upload capa -->
       <div class="form-field" style="grid-column:1/-1">
         <label>📷 Foto de capa</label>
@@ -509,6 +516,7 @@ function fecharModal(){
   document.getElementById('ev-thumb').value='';
   document.getElementById('ev-video').value='';
   setVisibilidade('publico');
+  document.getElementById('ev-codigo').value='';
   document.querySelectorAll('.tema-card').forEach((c,i)=>c.classList.toggle('selected',i===0));
   document.getElementById('ev-cor').value='#3D2410';
 }
@@ -551,6 +559,8 @@ function setVisibilidade(tipo){
   document.getElementById('ev-publico').value=pub?'true':'false';
   document.getElementById('btn-publico').className='toggle-vis-btn'+(pub?' active-pub':'');
   document.getElementById('btn-privado').className='toggle-vis-btn'+(!pub?' active-priv':'');
+  const campoCodigo=document.getElementById('campo-codigo');
+  if(campoCodigo) campoCodigo.style.display=pub?'none':'block';
 }
 
 // UPLOAD
