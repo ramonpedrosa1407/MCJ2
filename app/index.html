@@ -1989,10 +1989,10 @@ function renderEventoAdmin(){
                 <button class="upload-clear" onclick="limparUpload('thumb')" title="Remover">✕</button>
               </div>` : ''}
             <div class="upload-box" style="margin-top:6px">
-              <input type="file" accept="image/*" onchange="handleUploadCfg(this,'capa','prev-capa','bar-capa')">
+              <input type="file" accept="image/*,video/mp4" onchange="handleUploadCfg(this,'capa','prev-capa','bar-capa')">
               <div class="upload-box-icon">🖼</div>
-              <div class="upload-box-label">${d.thumb||e.thumb ? 'Substituir imagem' : 'Clique para selecionar'}</div>
-              <div class="upload-box-sub">JPG, PNG · máx 10MB</div>
+              <div class="upload-box-label">${d.thumb||e.thumb ? 'Substituir mídia' : 'Clique para selecionar'}</div>
+              <div class="upload-box-sub">JPG, PNG ou MP4 · máx 100MB</div>
             </div>
             <img id="prev-capa" class="upload-preview-img" style="display:none">
             <div class="upload-bar" id="bar-capa"><div class="upload-bar-fill"></div></div>
@@ -2512,8 +2512,18 @@ async function handleUploadCfg(input, campo, previewId, barId){
 
   try {
     const url = await uploadArquivo(file, campo, pct=>{ if(fill) fill.style.width=pct+'%'; });
-    // Salva no _cfgEvento
-    if(campo==='capa')       { _cfgEvento.thumb     = url; _cfgEvento.design = _cfgEvento.design||{}; _cfgEvento.design.thumb = url; }
+    // Salva no _cfgEvento — vídeo vai para video_url, imagem para thumb
+    if(campo==='capa'){
+      if(file.type.startsWith('video/')){
+        _cfgEvento.design = _cfgEvento.design||{};
+        _cfgEvento.design.video_url = url;
+        _cfgEvento.video_url = url;
+      } else {
+        _cfgEvento.thumb = url;
+        _cfgEvento.design = _cfgEvento.design||{};
+        _cfgEvento.design.thumb = url;
+      }
+    }
     if(campo==='logo')       { _cfgEvento.logo_url  = url; }
     await setCfgEvento();
     if(st) { st.textContent='✅ Upload concluído!'; st.style.color='#10B981'; }
