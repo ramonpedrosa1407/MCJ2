@@ -2075,6 +2075,11 @@ function renderEventoAdmin(){
             <div class="cfg-field"><label>Subtítulo</label><input type="text" id="ev-subtitulo" value="${esc(e.subtitulo||'')}"></div>
           </div>
           <div class="cfg-field">
+            <label>Tag / Chamada (acima do título)</label>
+            <input type="text" id="ev-tagline" value="${esc(d.hero_tagline||'')}" placeholder="Ex: Jornada de Estudos Espíritas do Evangelho">
+            <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Aparece em destaque acima do título no hero</span>
+          </div>
+          <div class="cfg-field">
             <label>Tag da página de inscrição</label>
             <input type="text" id="ev-inscricao-sub" value="${esc(e.inscricao_sub||'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.')}" placeholder="Texto abaixo do título na página de inscrição">
           </div>
@@ -2720,6 +2725,13 @@ async function salvarEventoCfg(){
   _cfgEvento.descricao    = g('ev-descricao');
   _cfgEvento.instagram    = g('ev-instagram');
   _cfgEvento.facebook     = g('ev-facebook');
+  // Tagline — salva no design
+  const tagline = g('ev-tagline');
+  if(!_cfgEvento.design) _cfgEvento.design = {};
+  _cfgEvento.design.hero_tagline = tagline;
+  // Aplica imediatamente
+  document.querySelectorAll('.hero-tag').forEach(el=>el.textContent=tagline);
+  document.querySelectorAll('.hero-tag').forEach(el=>el.style.display=tagline?'':'none');
   try {
     await setCfgEvento();
     aplicarConfigEvento();
