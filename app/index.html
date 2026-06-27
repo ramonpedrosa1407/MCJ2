@@ -177,7 +177,26 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .atab-btn.active{color:var(--mcj-dark);border-bottom-color:var(--mcj-gold);font-weight:700}
 .admin-panel{display:none}.admin-panel.active{display:block}
 
-/* SUMMARY */
+/* UPLOAD */
+.upload-box{border:2px dashed var(--mcj-sand);border-radius:12px;padding:1.25rem;text-align:center;cursor:pointer;background:var(--mcj-cream);transition:border-color .15s;position:relative}
+.upload-box:hover{border-color:var(--mcj-gold)}
+.upload-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-box-icon{font-size:28px;margin-bottom:6px}
+.upload-box-label{font-size:12px;font-weight:600;color:var(--mcj-mid)}
+.upload-box-sub{font-size:11px;color:var(--gray-400);margin-top:2px}
+.upload-preview-img{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-top:8px;display:block}
+.upload-preview-thumb{width:80px;height:80px;object-fit:cover;border-radius:8px;display:block}
+.upload-bar{height:4px;background:var(--mcj-sand);border-radius:2px;margin-top:8px;overflow:hidden;display:none}
+.upload-bar-fill{height:100%;background:var(--mcj-gold);border-radius:2px;transition:width .3s;width:0}
+.upload-status{font-size:11px;margin-top:4px;color:var(--gray-400)}
+.upload-current{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--mcj-cream);border-radius:8px;margin-top:6px;border:1px solid var(--mcj-sand)}
+.upload-current-url{font-size:11px;color:var(--mcj-mid);word-break:break-all;flex:1}
+.upload-clear{background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:14px;padding:2px}
+
+/* POLO FOTO */
+.polo-foto-wrap{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.polo-foto-thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;border:2px solid var(--mcj-sand)}
+.polo-foto-placeholder{width:64px;height:64px;border-radius:10px;background:var(--mcj-cream);border:2px dashed var(--mcj-sand);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
 .summary-card{background:white;border-radius:12px;border:1px solid var(--gray-100);padding:.9rem 1rem;display:flex;align-items:center;gap:10px}
 .summary-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
@@ -1259,13 +1278,19 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         <input type="text" id="exp-nome" placeholder="Nome completo do expositor">
       </div>
       <div class="cfg-field">
-        <label>Foto (URL da imagem)</label>
-        <input type="url" id="exp-foto" placeholder="https://raw.githubusercontent.com/...">
-        <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Suba a foto no GitHub e cole o link raw aqui</span>
-      </div>
-      <div id="exp-foto-preview" style="display:none;margin-top:-4px">
-        <img id="exp-foto-img" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--mcj-sand)" onerror="document.getElementById('exp-foto-preview').style.display='none'">
-      </div>
+        <label>Foto do expositor</label>
+        <div id="exp-foto-preview" style="display:none;margin-bottom:8px">
+          <img id="exp-foto-img" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--mcj-sand)" onerror="this.parentElement.style.display='none'">
+        </div>
+        <div class="upload-box" style="margin-bottom:6px">
+          <input type="file" id="exp-foto-file" accept="image/*" onchange="handleUploadExpFoto(this)">
+          <div class="upload-box-icon">👤</div>
+          <div class="upload-box-label">Clique para selecionar foto</div>
+          <div class="upload-box-sub">JPG ou PNG · máx 5MB</div>
+        </div>
+        <div class="upload-bar" id="bar-exp-foto"><div class="upload-bar-fill"></div></div>
+        <div class="upload-status" id="st-exp-foto"></div>
+        <input type="hidden" id="exp-foto" value="">
       <div class="cfg-field">
         <label>Bio / Apresentação</label>
         <textarea id="exp-bio" rows="4" placeholder="Breve apresentação do expositor, formação, experiência..." style="resize:vertical"></textarea>
@@ -1946,6 +1971,57 @@ function renderEventoAdmin(){
   wrap.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:1.5rem;max-width:760px">
 
+      <!-- MÍDIA DO EVENTO -->
+      <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
+        <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;gap:8px">
+          <span style="color:var(--mcj-gold);font-size:16px">🖼</span>
+          <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Mídia do Evento</span>
+        </div>
+        <div style="padding:1.25rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+
+          <!-- FOTO DE CAPA -->
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mcj-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📷 Foto de capa</div>
+            ${d.thumb || e.thumb ? `
+              <div class="upload-current">
+                <img src="${esc(d.thumb||e.thumb||'')}" class="upload-preview-thumb" onerror="this.style.display='none'">
+                <span class="upload-current-url">${esc((d.thumb||e.thumb||'').split('/').pop())}</span>
+                <button class="upload-clear" onclick="limparUpload('thumb')" title="Remover">✕</button>
+              </div>` : ''}
+            <div class="upload-box" style="margin-top:6px">
+              <input type="file" accept="image/*" onchange="handleUploadCfg(this,'capa','prev-capa','bar-capa')">
+              <div class="upload-box-icon">🖼</div>
+              <div class="upload-box-label">${d.thumb||e.thumb ? 'Substituir imagem' : 'Clique para selecionar'}</div>
+              <div class="upload-box-sub">JPG, PNG · máx 10MB</div>
+            </div>
+            <img id="prev-capa" class="upload-preview-img" style="display:none">
+            <div class="upload-bar" id="bar-capa"><div class="upload-bar-fill"></div></div>
+            <div class="upload-status" id="st-capa"></div>
+          </div>
+
+          <!-- LOGO DO EVENTO -->
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--mcj-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🏷 Logo do evento</div>
+            ${e.logo_url ? `
+              <div class="upload-current">
+                <img src="${esc(e.logo_url)}" class="upload-preview-thumb" onerror="this.style.display='none'">
+                <span class="upload-current-url">${esc(e.logo_url.split('/').pop())}</span>
+                <button class="upload-clear" onclick="limparUpload('logo')" title="Remover">✕</button>
+              </div>` : ''}
+            <div class="upload-box" style="margin-top:6px">
+              <input type="file" accept="image/*" onchange="handleUploadCfg(this,'logo','prev-logo','bar-logo')">
+              <div class="upload-box-icon">🏷</div>
+              <div class="upload-box-label">${e.logo_url ? 'Substituir logo' : 'Clique para selecionar'}</div>
+              <div class="upload-box-sub">PNG com fundo transparente recomendado</div>
+            </div>
+            <img id="prev-logo" class="upload-preview-img" style="display:none">
+            <div class="upload-bar" id="bar-logo"><div class="upload-bar-fill"></div></div>
+            <div class="upload-status" id="st-logo"></div>
+          </div>
+
+        </div>
+      </div>
+
       <!-- DESIGN VISUAL -->
       <div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden">
         <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;gap:8px">
@@ -2404,6 +2480,126 @@ function gerarTemaFromCor(corHex){
   };
 }
 
+// UPLOAD SUPABASE STORAGE
+async function uploadArquivo(file, pasta, onProgress){
+  const ext  = file.name.split('.').pop().toLowerCase();
+  const path = pasta + '/' + Date.now() + '.' + ext;
+  if(onProgress) onProgress(40);
+  const r = await fetch(SUPA_URL+'/storage/v1/object/eventos-media/'+path, {
+    method:'POST',
+    headers:{apikey:SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type},
+    body:file
+  });
+  if(!r.ok) throw new Error(await r.text());
+  if(onProgress) onProgress(100);
+  return SUPA_URL+'/storage/v1/object/public/eventos-media/'+path;
+}
+
+async function handleUploadCfg(input, campo, previewId, barId){
+  const file = input.files[0]; if(!file) return;
+  const bar  = document.getElementById(barId);
+  const fill = bar?.querySelector('.upload-bar-fill');
+  const st   = bar?.nextElementSibling;
+  if(bar) bar.style.display='block';
+  if(st)  {st.textContent='Enviando...'; st.style.color='var(--gray-400)';}
+  if(fill) fill.style.width='30%';
+
+  // Preview imediato
+  if(file.type.startsWith('image/')){
+    const prev = document.getElementById(previewId);
+    if(prev){ prev.src=URL.createObjectURL(file); prev.style.display='block'; }
+  }
+
+  try {
+    const url = await uploadArquivo(file, campo, pct=>{ if(fill) fill.style.width=pct+'%'; });
+    // Salva no _cfgEvento
+    if(campo==='capa')       { _cfgEvento.thumb     = url; _cfgEvento.design = _cfgEvento.design||{}; _cfgEvento.design.thumb = url; }
+    if(campo==='logo')       { _cfgEvento.logo_url  = url; }
+    await setCfgEvento();
+    if(st) { st.textContent='✅ Upload concluído!'; st.style.color='#10B981'; }
+    setTimeout(()=>renderEventoAdmin(), 2000);
+  } catch(e){
+    if(st) { st.textContent='❌ '+e.message; st.style.color='#EF4444'; }
+    if(fill) fill.style.width='0';
+  }
+}
+
+async function handleUploadPolo(input, poloNome, tipo){
+  const file = input.files[0]; if(!file) return;
+  const polo = POLOS.find(p=>p.nome===poloNome); if(!polo) return;
+  try {
+    const url = await uploadArquivo(file, 'polos');
+    if(tipo==='foto') polo.foto_url = url;
+    await setCfg();
+    renderConfig();
+  } catch(e){ alert('Erro no upload: '+e.message); }
+}
+
+async function handleUploadExpositor(input, expIdx){
+  const file = input.files[0]; if(!file) return;
+  try {
+    const url = await uploadArquivo(file, 'expositores');
+    const exps = _cfgEvento.expositores_lista||[];
+    if(exps[expIdx]) exps[expIdx].foto = url;
+    _cfgEvento.expositores_lista = exps;
+    await setCfgEvento();
+    renderEventoAdmin();
+  } catch(e){ alert('Erro no upload: '+e.message); }
+}
+
+async function handleUploadPoloFoto(input, poloNome){
+  const file = input.files[0]; if(!file) return;
+  const polo = POLOS.find(p=>p.nome===poloNome); if(!polo) return;
+  try {
+    const url = await uploadArquivo(file, 'polos');
+    polo.foto_url = url;
+    await setCfg();
+    renderConfig();
+  } catch(e){ alert('Erro no upload: '+e.message); }
+}
+
+async function handleUploadExpFoto(input){
+  const file = input.files[0]; if(!file) return;
+  const bar  = document.getElementById('bar-exp-foto');
+  const fill = bar?.querySelector('.upload-bar-fill');
+  const st   = document.getElementById('st-exp-foto');
+  const prev = document.getElementById('exp-foto-preview');
+  const img  = document.getElementById('exp-foto-img');
+  if(bar) bar.style.display='block';
+  if(st)  {st.textContent='Enviando...'; st.style.color='var(--gray-400)';}
+  if(fill) fill.style.width='30%';
+  // Preview imediato
+  if(prev && img){ img.src=URL.createObjectURL(file); prev.style.display='block'; }
+  try {
+    const url = await uploadArquivo(file, 'expositores', pct=>{ if(fill) fill.style.width=pct+'%'; });
+    document.getElementById('exp-foto').value = url;
+    if(st){ st.textContent='✅ Upload concluído!'; st.style.color='#10B981'; }
+  } catch(e){
+    if(st){ st.textContent='❌ '+e.message; st.style.color='#EF4444'; }
+    if(fill) fill.style.width='0';
+  }
+}
+
+function limparUpload(campo){
+  if(campo==='thumb')   { _cfgEvento.thumb=''; if(_cfgEvento.design) _cfgEvento.design.thumb=''; }
+  if(campo==='logo')    { _cfgEvento.logo_url=''; }
+  setCfgEvento();
+  renderEventoAdmin();
+}
+
+function limparUploadPolo(poloNome, tipo){
+  const polo = POLOS.find(p=>p.nome===poloNome); if(!polo) return;
+  if(tipo==='foto') polo.foto_url='';
+  setCfg(); renderConfig();
+}
+
+function limparUploadExpositor(idx){
+  const exps = _cfgEvento.expositores_lista||[];
+  if(exps[idx]) exps[idx].foto='';
+  _cfgEvento.expositores_lista=exps;
+  setCfgEvento(); renderEventoAdmin();
+}
+
 function aplicarTema(idx){
   if(!_cfgEvento.design) _cfgEvento.design={};
   _cfgEvento.design.tema_ativo = idx;
@@ -2559,21 +2755,21 @@ function abrirModalExpositor(idx){
   const bioEl  = document.getElementById('exp-bio');
   const erroEl = document.getElementById('exp-erro');
   if(nomeEl) nomeEl.value = ex?.nome||'';
-  if(fotoEl){
-    fotoEl.value = ex?.foto||'';
-    // Live preview
-    fotoEl.oninput = function(){
-      const prev = document.getElementById('exp-foto-preview');
-      const img  = document.getElementById('exp-foto-img');
-      if(this.value){ prev.style.display='block'; img.src=this.value; }
-      else prev.style.display='none';
-    };
-    // Mostra preview se já tem foto
-    const prev = document.getElementById('exp-foto-preview');
-    const img  = document.getElementById('exp-foto-img');
+  if(fotoEl) fotoEl.value = ex?.foto||'';
+  // Mostra preview se já tem foto
+  const prev = document.getElementById('exp-foto-preview');
+  const img  = document.getElementById('exp-foto-img');
+  if(prev && img){
     if(ex?.foto){ prev.style.display='block'; img.src=ex.foto; }
-    else prev.style.display='none';
+    else { prev.style.display='none'; img.src=''; }
   }
+  // Reset upload status
+  const bar = document.getElementById('bar-exp-foto');
+  const st  = document.getElementById('st-exp-foto');
+  if(bar) bar.style.display='none';
+  if(st)  st.textContent='';
+  const fileInput = document.getElementById('exp-foto-file');
+  if(fileInput) fileInput.value='';
   if(bioEl)  bioEl.value  = ex?.bio||'';
   if(erroEl) erroEl.style.display = 'none';
   const ov = document.getElementById('modal-expositor-overlay');
@@ -6177,6 +6373,25 @@ function renderConfig(){
         ${removeBtn}
       </div>
       <div class="config-polo-body">
+
+        <!-- ── FOTO DO POLO ─────────────────────────────────── -->
+        <div class="cfg-section">
+          <div class="cfg-section-title">📷 Foto do polo</div>
+          <div class="polo-foto-wrap">
+            ${p.foto_url
+              ? `<img src="${esc(p.foto_url)}" class="polo-foto-thumb" onerror="this.outerHTML='<div class=polo-foto-placeholder>📷</div>'">`
+              : `<div class="polo-foto-placeholder">📷</div>`
+            }
+            <div style="flex:1">
+              <div class="upload-box">
+                <input type="file" accept="image/*" onchange="handleUploadPoloFoto(this,'${esc(p.nome)}')">
+                <div class="upload-box-label">${p.foto_url ? 'Substituir foto' : 'Adicionar foto do polo'}</div>
+                <div class="upload-box-sub">JPG ou PNG · máx 5MB</div>
+              </div>
+              ${p.foto_url ? `<button onclick="limparUploadPolo('${esc(p.nome)}','foto')" style="margin-top:6px;background:none;border:none;font-size:12px;color:var(--gray-400);cursor:pointer">✕ Remover foto</button>` : ''}
+            </div>
+          </div>
+        </div>
 
         <!-- ── SEÇÃO 1: STATUS ─────────────────────────────── -->
         <div class="cfg-section">
