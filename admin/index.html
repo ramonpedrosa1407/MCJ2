@@ -131,7 +131,7 @@ tr:last-child td{border-bottom:none}
     <div class="err" id="login-err">Credenciais inválidas.</div>
     <div class="field"><label>Usuário</label><input type="text" id="login-u" placeholder="admin"></div>
     <div class="field"><label>Senha</label><input type="password" id="login-p" placeholder="••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
-    <button type="button" class="btn-login" onclickonclick="fazerLogin()">Entrar →</button>
+    <button type="button" class="btn-login" onclick="fazerLogin()">Entrar →</button>
   </div>
 </div>
 
@@ -141,7 +141,7 @@ tr:last-child td{border-bottom:none}
     <a href="/" class="header-logo">Jornada <span>Espírita</span></a>
     <div class="header-right">
       <span class="header-user">Admin Master</span>
-      <button type="button" class="header-logout" onclickonclick="localStorage.removeItem('je_admin');location.reload()">Sair</button>
+      <button type="button" class="header-logout" onclick="localStorage.removeItem('je_admin');location.reload()">Sair</button>
     </div>
   </div>
   <div class="main">
@@ -154,7 +154,7 @@ tr:last-child td{border-bottom:none}
       <div class="stat-card"><div class="stat-num" id="stat-inscritos">—</div><div class="stat-lbl">Inscrições totais</div></div>
     </div>
     <div class="actions-bar">
-      <button type="button" class="btn-add" onclickonclick="abrirModal()">+ Criar novo evento</button>
+      <button type="button" class="btn-add" onclick="abrirModal()">+ Criar novo evento</button>
     </div>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
@@ -177,7 +177,7 @@ tr:last-child td{border-bottom:none}
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
       <h3>✨ Criar novo evento</h3>
-      <button type="button" onclickonclick="fecharModal()">×</button>
+      <button type="button" onclick="fecharModal()">×</button>
     </div>
     <div class="modal-body">
       <div class="form-field">
@@ -267,8 +267,8 @@ tr:last-child td{border-bottom:none}
       <div class="form-field" style="grid-column:1/-1">
         <label>Visibilidade</label>
         <div class="toggle-vis">
-          <button type="button" class="toggle-vis-btn active-pub" id="btn-publico" onclickonclick="setVisibilidade('publico')">🌐 Público — aparece no portal</button>
-          <button type="button" class="toggle-vis-btn" id="btn-privado" onclickonclick="setVisibilidade('privado')">🔒 Privado — só por link direto</button>
+          <button type="button" class="toggle-vis-btn active-pub" id="btn-publico" onclick="setVisibilidade('publico')">🌐 Público — aparece no portal</button>
+          <button type="button" class="toggle-vis-btn" id="btn-privado" onclick="setVisibilidade('privado')">🔒 Privado — só por link direto</button>
         </div>
         <input type="hidden" id="ev-publico" value="true">
       </div>
@@ -308,8 +308,8 @@ tr:last-child td{border-bottom:none}
       </div>
     </div>
     <div class="modal-foot">
-      <button type="button" class="btn-cancel" onclickonclick="fecharModal()">Cancelar</button>
-      <button type="button" class="btn-save" id="btn-criar" onclickonclick="criarEvento()">✨ Criar evento</button>
+      <button type="button" class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button type="button" class="btn-save" id="btn-criar" onclick="criarEvento()">✨ Criar evento</button>
     </div>
   </div>
 </div>
@@ -319,7 +319,7 @@ tr:last-child td{border-bottom:none}
   <div class="modal" onclick="event.stopPropagation()" style="max-width:480px">
     <div class="modal-head">
       <h3>⚙️ Configurar fases das inscrições</h3>
-      <button type="button" onclickonclick="fecharModalFases()">×</button>
+      <button type="button" onclick="fecharModalFases()">×</button>
     </div>
     <div class="modal-body">
       <div class="form-field">
@@ -352,8 +352,8 @@ tr:last-child td{border-bottom:none}
       </div>
     </div>
     <div class="modal-foot">
-      <button type="button" class="btn-cancel" onclickonclick="fecharModalFases()">Cancelar</button>
-      <button type="button" class="btn-save" onclickonclick="salvarFases()">💾 Salvar fases</button>
+      <button type="button" class="btn-cancel" onclick="fecharModalFases()">Cancelar</button>
+      <button type="button" class="btn-save" onclick="salvarFases()">💾 Salvar fases</button>
     </div>
   </div>
 </div>
@@ -366,8 +366,8 @@ tr:last-child td{border-bottom:none}
     <div id="qr-canvas"></div>
     <div class="qr-url" id="qr-url-texto"></div>
     <div style="display:flex;gap:8px;justify-content:center">
-      <button type="button" class="btn-cancel" onclickonclick="fecharQR()">Fechar</button>
-      <button type="button" class="btn-save" onclickonclick="baixarQR()">⬇ Baixar PNG</button>
+      <button type="button" class="btn-cancel" onclick="fecharQR()">Fechar</button>
+      <button type="button" class="btn-save" onclick="baixarQR()">⬇ Baixar PNG</button>
     </div>
   </div>
 </div>
