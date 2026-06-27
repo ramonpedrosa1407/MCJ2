@@ -419,23 +419,27 @@ async function carregarDados(){
 
 function renderTabela(){
   const tb=document.getElementById('tbody-eventos');
-  if(!_eventos.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado.</td></tr>';return;}
+  if(!_eventos.length){
+    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado.</td></tr>';
+    return;
+  }
   tb.innerHTML=_eventos.map(e=>{
     const cfg=e.config||{};
     const fb=getFaseBadge(cfg);
     const pub=(cfg.publico!==false);
-    return '<tr>'+
+    const nomeEsc=e.nome.replace(/"/g,'&quot;');
+    return '<tr data-id="'+e.id+'" data-slug="'+e.slug+'" data-nome="'+nomeEsc+'" data-ativo="'+e.ativo+'">'+
       '<td><strong>'+e.nome+'</strong><br><span style="font-size:11px;color:var(--gray-400)">'+(cfg.subtitulo||'')+'</span></td>'+
       '<td><a href="/'+e.slug+'/" target="_blank" style="color:var(--gold);font-size:12px">jornadaespirita.com.br/'+e.slug+'/</a></td>'+
       '<td style="font-size:12px">'+(cfg.data||'—')+'</td>'+
-      '<td><button type="button" class="fase-badge '+fb.cls+'" onclickonclick="abrirFaseDropdown(\''+e.id+'\',this)">'+fb.label+' ▾</button></td>'+
-      '<td><button type="button" class="toggle-pub '+(pub?'toggle-pub-on':'toggle-pub-off')+'" onclickonclick="togglePublico(\''+e.id+'\')">'+(pub?'🌐 Público':'🔒 Privado')+'</button></td>'+
+      '<td><button type="button" class="fase-badge '+fb.cls+'" data-action="fase">'+fb.label+' ▾</button></td>'+
+      '<td><button type="button" class="toggle-pub '+(pub?'toggle-pub-on':'toggle-pub-off')+'" data-action="publico">'+(pub?'🌐 Público':'🔒 Privado')+'</button></td>'+
       '<td>'+
-        '<button type="button" class="btn-t btn-t-blue" onclickonclick="window.open(\'/'+e.slug+'/\',\'_blank\')">Acessar</button>'+
-        '<button type="button" class="btn-t btn-t-gray" onclickonclick="toggleEvento(\''+e.id+'\','+e.ativo+')">'+(e.ativo?'Desativar':'Ativar')+'</button>'+
-        '<button type="button" class="btn-t" onclickonclick="abrirQR(\''+e.slug+'\',\''+e.nome+'\')" style="background:#F5F3FF;color:#7C3AED;border:1px solid #DDD6FE">📱 QR</button>'+
-        '<button type="button" class="btn-t btn-t-green" onclickonclick="window.open(\'/'+e.slug+'/?admin=configuracoes\',\'_blank\')">⚙ Config</button>'+
-        '<button type="button" class="btn-t btn-t-red" onclickonclick="excluirEvento(\''+e.id+'\',\''+e.nome+'\')">🗑</button>'+
+        '<button type="button" class="btn-t btn-t-blue" data-action="acessar">Acessar</button>'+
+        '<button type="button" class="btn-t btn-t-gray" data-action="toggle">'+(e.ativo?'Desativar':'Ativar')+'</button>'+
+        '<button type="button" class="btn-t" data-action="qr" style="background:#F5F3FF;color:#7C3AED;border:1px solid #DDD6FE">📱 QR</button>'+
+        '<button type="button" class="btn-t btn-t-green" data-action="config">⚙ Config</button>'+
+        '<button type="button" class="btn-t btn-t-red" data-action="excluir">🗑</button>'+
       '</td>'+
       '</tr>';
   }).join('');
