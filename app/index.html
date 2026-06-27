@@ -1701,21 +1701,22 @@ function atualizarBanner(){
     const codigoOk = sessionStorage.getItem('je_codigo_'+(_cfgEvento._evento_id||'main'));
     if(!codigoOk){
       banner.classList.add('show');
-      banner.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:280px;background:var(--mcj-dark);border-radius:16px;padding:2rem;margin:1.5rem 1rem;color:white';
+      banner.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem 1rem;margin:1rem 0;color:var(--mcj-dark)';
       const txt = document.getElementById('banner-fechado-text');
       if(txt) txt.innerHTML = `
-        <div style="font-family:'EB Garamond',Georgia,serif;font-size:24px;font-weight:700;margin-bottom:8px">🔒 Evento Privado</div>
-        <div style="font-size:14px;opacity:.8;margin-bottom:20px">Digite o código de acesso para visualizar as inscrições</div>
-        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <div style="width:56px;height:56px;background:var(--mcj-cream);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 1rem">🔒</div>
+        <div style="font-family:'EB Garamond',Georgia,serif;font-size:26px;font-weight:700;color:var(--mcj-dark);margin-bottom:6px">Evento Privado</div>
+        <div style="font-size:14px;color:var(--mcj-mid);margin-bottom:1.5rem;max-width:300px">Digite o código de acesso para visualizar as inscrições</div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:400px">
           <input id="campo-codigo-acesso" type="text" placeholder="CÓDIGO" 
-            style="padding:12px 18px;border-radius:8px;border:none;font-size:18px;letter-spacing:4px;text-transform:uppercase;text-align:center;width:200px;font-family:'Inter',sans-serif"
+            style="flex:1;min-width:160px;padding:12px 18px;border-radius:10px;border:1.5px solid var(--mcj-sand);font-size:18px;letter-spacing:4px;text-transform:uppercase;text-align:center;font-family:'Inter',sans-serif;outline:none;background:white;color:var(--mcj-dark)"
             onkeydown="if(event.key==='Enter')validarCodigoAcesso()">
           <button onclick="validarCodigoAcesso()" 
-            style="padding:12px 22px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">
+            style="padding:12px 24px;background:var(--mcj-dark);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap">
             Confirmar →
           </button>
         </div>
-        <div id="codigo-acesso-erro" style="font-size:13px;color:#FECACA;margin-top:10px;display:none">Código incorreto. Tente novamente.</div>`;
+        <div id="codigo-acesso-erro" style="font-size:12px;color:#EF4444;margin-top:10px;display:none">Código incorreto. Tente novamente.</div>`;
       // Esconde polo-section e form-wrap
       const poloSection = document.querySelector('.polo-section');
       const formWrap    = document.querySelector('.form-wrap');
