@@ -2029,10 +2029,6 @@ function renderEventoAdmin(){
           <span style="font-family:'EB Garamond',Georgia,serif;font-size:15px;font-weight:700;color:white">Design Visual</span>
         </div>
         <div style="padding:1.25rem;display:flex;flex-direction:column;gap:14px">
-          <div class="cfg-field">
-            <label>Link do vídeo de capa</label>
-            <input type="url" id="dsg-video" value="${esc(d.video_url||'')}" placeholder="https://raw.githubusercontent.com/.../capa.mp4">
-          </div>
           <div>
             <div class="cfg-section-title" style="margin-bottom:12px">Escolha um tema</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
@@ -2426,6 +2422,15 @@ const TEMAS_DESIGN = [
   { nome:'Amanhecer', descricao:'Quente e acolhedor',
     cor_primaria:'#6B1E2E', cor_destaque:'#E8A87C', cor_fundo:'#FDF5F0', cor_texto:'#3D0E18',
     fonte_titulo:'Lora', fonte_texto:'Source Sans 3', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
+  { nome:'Água Viva', descricao:'Fresco e espiritual',
+    cor_primaria:'#1A3A4A', cor_destaque:'#4ECDC4', cor_fundo:'#F0F9F8', cor_texto:'#0A1E28',
+    fonte_titulo:'Cormorant Garamond', fonte_texto:'Lato', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
+  { nome:'Noite Estrelada', descricao:'Místico e profundo',
+    cor_primaria:'#2D1B69', cor_destaque:'#F7C59F', cor_fundo:'#FFF8F3', cor_texto:'#180E3A',
+    fonte_titulo:'Cinzel', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
+  { nome:'Chama Divina', descricao:'Fervoroso e vibrante',
+    cor_primaria:'#4A1942', cor_destaque:'#F9A825', cor_fundo:'#FFF8E6', cor_texto:'#2A0A26',
+    fonte_titulo:'Playfair Display', fonte_texto:'Nunito', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
 ];
 
 function getDesign(){ return _cfgEvento.design || TEMAS_DESIGN[0]; }
