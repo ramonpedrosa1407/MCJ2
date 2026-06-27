@@ -1692,10 +1692,60 @@ function renderPoloGrid(){
 /* ================================================================
    CONTADORES E BANNER DE INSCRIÇÕES
 ================================================================ */
+function validarCodigoAcesso(){
+  const input = document.getElementById('campo-codigo-acesso');
+  const erro  = document.getElementById('codigo-acesso-erro');
+  if(!input) return;
+  if(input.value.trim().toUpperCase() === (_cfgEvento.codigo_acesso||'').toUpperCase()){
+    // Salva na sessão para não pedir de novo
+    sessionStorage.setItem('je_codigo_'+(_cfgEvento._evento_id||'main'), '1');
+    // Recarrega a tela de inscrições
+    const banner = document.getElementById('banner-fechado');
+    if(banner) banner.classList.remove('show');
+    const formWrap = document.querySelector('.form-wrap');
+    if(formWrap) formWrap.style.display='';
+    atualizarBanner();
+    renderInscricoes();
+  } else {
+    if(erro) erro.style.display='block';
+    input.style.outline='2px solid #FECACA';
+    input.value='';
+    input.focus();
+    setTimeout(()=>{ input.style.outline='none'; if(erro) erro.style.display='none'; },2000);
+  }
+}
+
 function atualizarBanner(){
   const abertos = POLOS.filter(p=>p.inscricoes_abertas!==false);
   const banner = document.getElementById('banner-fechado');
   if(!banner) return;
+
+  // Evento privado — mostra tela de código
+  if(_cfgEvento.publico===false && _cfgEvento.codigo_acesso){
+    const codigoOk = sessionStorage.getItem('je_codigo_'+(_cfgEvento._evento_id||'main'));
+    if(!codigoOk){
+      banner.classList.add('show');
+      const txt = document.getElementById('banner-fechado-text');
+      if(txt) txt.innerHTML = `
+        <div style="font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:700;margin-bottom:8px">🔒 Evento Privado</div>
+        <div style="font-size:14px;opacity:.8;margin-bottom:16px">Digite o código de acesso para visualizar as inscrições</div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+          <input id="campo-codigo-acesso" type="text" placeholder="CÓDIGO" 
+            style="padding:10px 16px;border-radius:8px;border:none;font-size:16px;letter-spacing:3px;text-transform:uppercase;text-align:center;width:180px"
+            onkeydown="if(event.key==='Enter')validarCodigoAcesso()">
+          <button onclick="validarCodigoAcesso()" 
+            style="padding:10px 20px;background:var(--mcj-gold);color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">
+            Confirmar →
+          </button>
+        </div>
+        <div id="codigo-acesso-erro" style="font-size:12px;color:#FECACA;margin-top:8px;display:none">Código incorreto. Tente novamente.</div>`;
+      // Esconde o formulário
+      const formWrap = document.querySelector('.form-wrap');
+      if(formWrap) formWrap.style.display='none';
+      return;
+    }
+  }
+
   if(abertos.length===0){
     banner.classList.add('show');
     const txt = document.getElementById('banner-fechado-text');
@@ -2154,6 +2204,22 @@ function renderEventoAdmin(){
           <div class="cfg-row">
             <div class="cfg-field"><label>Instagram (URL)</label><input type="url" id="ev-instagram" value="${esc(e.instagram||'')}" placeholder="https://instagram.com/mcj2026"></div>
             <div class="cfg-field"><label>Facebook (URL)</label><input type="url" id="ev-facebook" value="${esc(e.facebook||'')}" placeholder="https://facebook.com/mcj2026"></div>
+            <div class="cfg-field" style="grid-column:1/-1">
+              <label>Visibilidade do evento</label>
+              <div style="display:flex;gap:8px;margin-top:4px">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 12px;border-radius:8px;border:1.5px solid var(--mcj-sand)">
+                  <input type="radio" name="ev-vis" value="publico" ${e.publico!==false?'checked':''} onchange="document.getElementById('ev-codigo-wrap').style.display='none'"> 🌐 Público
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:8px 12px;border-radius:8px;border:1.5px solid var(--mcj-sand)">
+                  <input type="radio" name="ev-vis" value="privado" ${e.publico===false?'checked':''} onchange="document.getElementById('ev-codigo-wrap').style.display='block'"> 🔒 Privado
+                </label>
+              </div>
+            </div>
+            <div class="cfg-field" id="ev-codigo-wrap" style="display:${e.publico===false?'block':'none'}">
+              <label>Código de acesso</label>
+              <input type="text" id="ev-codigo-cfg" value="${esc(e.codigo_acesso||'')}" placeholder="Ex: MCJ2026" style="text-transform:uppercase;letter-spacing:2px">
+              <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Participantes precisarão digitar este código para se inscrever</span>
+            </div>
           </div>
         </div>
         <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;justify-content:flex-end">
@@ -2783,6 +2849,10 @@ async function salvarEventoCfg(){
   _cfgEvento.descricao    = g('ev-descricao');
   _cfgEvento.instagram    = g('ev-instagram');
   _cfgEvento.facebook     = g('ev-facebook');
+  // Visibilidade e código de acesso
+  const vis = document.querySelector('input[name="ev-vis"]:checked')?.value;
+  if(vis) _cfgEvento.publico = vis === 'publico';
+  _cfgEvento.codigo_acesso = g('ev-codigo-cfg').toUpperCase();
   // Tagline — salva no design
   const tagline = g('ev-tagline');
   if(!_cfgEvento.design) _cfgEvento.design = {};
