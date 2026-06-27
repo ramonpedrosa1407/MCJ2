@@ -1591,8 +1591,18 @@ async function carregarCfgEvento(){
   try {
     const rows = await supa('GET','config?select=dados&id=eq.evento');
     if(rows && rows[0]?.dados){
+      const designAtual = _cfgEvento.design; // preserva o design já carregado (tema curado)
       _cfgEvento = { ..._cfgEvento, ...rows[0].dados };
-      if(!_cfgEvento.design) _cfgEvento.design = { ...TEMAS_DESIGN[0] };
+      // Só usa o design do registro genérico se ainda não tínhamos um design válido
+      const designGenericoValido = rows[0].dados.design
+        && (rows[0].dados.design.cor_primaria || rows[0].dados.design.cor_dark);
+      const designAtualValido = designAtual
+        && (designAtual.cor_primaria || designAtual.cor_dark);
+      if(designAtualValido){
+        _cfgEvento.design = designAtual; // mantém o tema curado já aplicado
+      } else if(!designGenericoValido){
+        _cfgEvento.design = _cfgEvento.design || { ...TEMAS_DESIGN[0] };
+      }
     }
   } catch(e){ console.error('carregarCfgEvento:',e); }
 }
@@ -1719,6 +1729,7 @@ function removeSplash(){
 }
 
 async function carregarTudo(){
+  console.log('%c[JE] build hero-fix v2 — '+new Date().toISOString(),'color:#F9A825;font-weight:bold');
   // Remove splash IMEDIATAMENTE
   removeSplash();
 
