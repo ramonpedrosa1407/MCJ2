@@ -45,6 +45,9 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);mi
 .evento-card-img{height:180px;background:linear-gradient(135deg,#3D2410,#C8873A);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .evento-card-img img{width:100%;height:100%;object-fit:cover}
 .evento-card-badge{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .badge-privado{background:rgba(0,0,0,.6);color:white;backdrop-filter:blur(4px)}
+  .badge-publico{background:rgba(16,185,129,.9);color:white}
+  .vis-tag{position:absolute;top:12px;left:12px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.5px}
 .badge-ativo{background:#10B981;color:white}
 .badge-encerrado{background:rgba(0,0,0,.4);color:rgba(255,255,255,.7)}
   .badge-em-breve{background:#1D4ED8;color:white}
@@ -185,8 +188,8 @@ async function carregarEventos(){
       headers:{ apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
     });
     const todos = await r.json();
-    // Filtra eventos privados
-    const eventos = todos.filter(e=>(e.config||{}).publico !== false);
+    // Todos os eventos aparecem — privados têm tag e pedem código
+    const eventos = todos;
     if(!eventos.length){
       grid.innerHTML = '<div class="loading-eventos" style="color:var(--gray-400)">Nenhum evento ativo no momento.</div>';
       return;
@@ -218,6 +221,10 @@ async function carregarEventos(){
         '<div class="evento-card-img" style="' + (!cfg.thumb ? 'background:linear-gradient(135deg,'+(cfg.design?.cor_primaria||cfg.cor_primaria||'#0D2B4E')+' 0%,'+(cfg.design?.cor_primaria||cfg.cor_primaria||'#0D2B4E')+'CC 60%,'+(cfg.design?.cor_destaque||'#7EB8D4')+'55 100%)' : '') + '">' +
         (cfg.thumb ? '<img src="' + cfg.thumb + '" alt="' + e.nome + '">' : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:EB Garamond,Georgia,serif;font-size:2rem;font-weight:700;color:white;text-align:center;padding:1rem">' + e.nome + '</div>') +
         '<span class="evento-card-badge ' + badgeClass + '">' + badgeText + '</span>' +
+        (()=>{
+          const pub = (cfg.publico !== false);
+          return '<span class="vis-tag ' + (pub?'badge-publico':'badge-privado') + '">' + (pub?'🌐 Público':'🔒 Privado') + '</span>';
+        })() +
         '</div>' +
         '<div class="evento-card-body">' +
         '<div class="evento-card-nome">' + e.nome + '</div>' +
