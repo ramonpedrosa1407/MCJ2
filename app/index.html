@@ -681,7 +681,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   <button class="tab-btn active" id="tab-inscricao" onclick="showView('inscricao',this)">Inscrição</button>
   <button class="tab-btn" id="tab-sobre" onclick="showView('sobre',this)">✨ Sobre o Evento</button>
   <button class="tab-btn" id="tab-expositores" onclick="showView('expositores',this)">🎤 Expositores</button>
-  <button class="tab-btn" id="tab-polos" onclick="showView('polos',this)">📍 Conheça os Polos</button>
   <button class="tab-btn" id="tab-avaliacao" onclick="showView('avaliacao',this)" style="display:none">⭐ Avaliação</button>
   <button class="tab-btn admin-tab" id="tab-admin" onclick="showView('admin',this)">⚙ Administração</button>
 </div>
@@ -889,18 +888,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 </div>
 
 <!-- VIEW: CONHEÇA OS POLOS -->
-<div class="view" id="view-polos">
-  <div class="hero" style="min-height:clamp(240px,35vw,400px)">
-    <video class="hero-video" autoplay muted loop playsinline>
-      <source src="" type="video/mp4">
-    </video>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <div class="hero-tag" id="polos-hero-tag"></div>
-      <h1 id="polos-h1" style="font-size:clamp(1.6rem,6vw,3rem)">Conheça <em>seu Polo</em></h1>
-      <p class="hero-sub" style="font-size:13px">Encontre o polo mais próximo de você e saiba tudo sobre o local, endereço e como chegar.</p>
-    </div>
-  </div>
+<div class="view" id="view-polos" style="display:none">
   <div class="polos-page-wrap" id="polos-page-content"></div>
 </div>
 
@@ -1961,18 +1949,28 @@ function renderBannerAvaliacao(){
 /* ================================================================
    NAVEGAÇÃO ENTRE VIEWS
 ================================================================ */
+function irParaPolo(nomeOuIdx){
+  // Vai para aba Sobre (que contém os polos) e abre o detalhe do polo
+  showView('sobre');
+  setTimeout(()=>{
+    const polo = typeof nomeOuIdx==='number' ? POLOS[nomeOuIdx] : POLOS.find(p=>p.nome===nomeOuIdx);
+    if(polo) abrirPoloDetalhe(polo.nome);
+  }, 200);
+}
+
 function showView(id, btn){
+  // Polos agora fica dentro de Sobre o Evento
+  if(id==='polos') id='sobre';
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   _ativarView(id);
   if(btn) btn.classList.add('active');
-  if(id==='polos')       renderPolos();
+  else { const t=document.getElementById('tab-'+id); if(t) t.classList.add('active'); }
   if(id==='sobre')       renderSobre();
   if(id==='expositores') renderExpositores();
   if(id==='avaliacao')   renderAvaliacao();
   if(id==='admin'){
     if(!SESSION.role){
-      // Não logado — abre modal de login
       abrirLogin();
       return;
     }
