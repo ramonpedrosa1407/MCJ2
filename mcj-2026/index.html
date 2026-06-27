@@ -1508,8 +1508,8 @@ async function setCfgEvento(){
     if(supaConfigurado()){
       const eventoId = window._EVENTO_OVERRIDE?.id;
       const id = eventoId || 'main';
-      // Salva config completa na tabela config (polos e dados do evento)
-      await supa('POST','config', [{ id, dados: _cfgEvento }]);
+      // Salva config completa na tabela config (upsert)
+      await supa('POST','config', [{ id, dados: _cfgEvento }], {'Prefer':'resolution=merge-duplicates'});
       // Se for evento novo, também atualiza o config na tabela eventos (cores, design, textos)
       if(eventoId){
         const d = _cfgEvento.design||{};
@@ -2698,22 +2698,27 @@ function aplicarDesign(){
 }
 
 async function salvarEventoCfg(){
-  _cfgEvento.titulo       = document.getElementById('ev-titulo')?.value.trim()||_cfgEvento.titulo;
-  _cfgEvento.subtitulo    = document.getElementById('ev-subtitulo')?.value.trim()||'';
-  _cfgEvento.inscricao_sub= document.getElementById('ev-inscricao-sub')?.value.trim()||'';
-  _cfgEvento.data       = document.getElementById('ev-data')?.value.trim()||'';
-  _cfgEvento.horario    = document.getElementById('ev-horario')?.value.trim()||'';
-  _cfgEvento.local      = document.getElementById('ev-local')?.value.trim()||'';
-  _cfgEvento.tema_manha = document.getElementById('ev-tema-manha')?.value.trim()||'';
-  _cfgEvento.tema_tarde = document.getElementById('ev-tema-tarde')?.value.trim()||'';
-  _cfgEvento.descricao  = document.getElementById('ev-descricao')?.value.trim()||'';
-  _cfgEvento.instagram  = document.getElementById('ev-instagram')?.value.trim()||'';
-  _cfgEvento.facebook   = document.getElementById('ev-facebook')?.value.trim()||'';
+  const g = id => document.getElementById(id)?.value.trim()||'';
+  _cfgEvento.titulo       = g('ev-titulo')       || _cfgEvento.titulo;
+  _cfgEvento.subtitulo    = g('ev-subtitulo');
+  _cfgEvento.inscricao_sub= g('ev-inscricao-sub');
+  _cfgEvento.data         = g('ev-data');
+  _cfgEvento.horario      = g('ev-horario');
+  _cfgEvento.local        = g('ev-local');
+  _cfgEvento.tema_manha   = g('ev-tema-manha');
+  _cfgEvento.tema_tarde   = g('ev-tema-tarde');
+  _cfgEvento.descricao    = g('ev-descricao');
+  _cfgEvento.instagram    = g('ev-instagram');
+  _cfgEvento.facebook     = g('ev-facebook');
   try {
     await setCfgEvento();
     aplicarConfigEvento();
+    aplicarDesign();
     renderHeroSocial();
     renderSobre();
+    // Atualiza título da página
+    const pageTitle = document.getElementById('page-title');
+    if(pageTitle) pageTitle.textContent = (_cfgEvento.titulo||'Jornada Espírita') + ' — Sistema de Inscrição';
     // Feedback visual no botão
     const btn = document.querySelector('[onclick="salvarEventoCfg()"]');
     if(btn){ const t=btn.textContent; btn.textContent='✓ Salvo!'; btn.style.background='#10B981'; setTimeout(()=>{ btn.textContent=t; btn.style.background=''; },2000); }
