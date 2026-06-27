@@ -706,6 +706,10 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
   </div>
 
+  <div class="inscricoes-fechadas-banner" id="banner-fechado" style="margin:1rem">
+    <div class="banner-text" id="banner-fechado-text"></div>
+  </div>
+
   <div class="polo-section">
     <div class="section-eyebrow">Escolha seu polo</div>
     <div class="polo-grid" id="polo-grid">
@@ -734,7 +738,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   </div>
 
   <div class="form-wrap">
-    <div id="banner-avaliacao" style="display:none;background:linear-gradient(135deg,#065F46,#047857);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div id="banner-avaliacao" style="display:none;background:linear-gradient(135deg,#065F46,#047857);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:24px">⭐</span>
         <div>
@@ -746,10 +750,6 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
         style="padding:9px 18px;background:white;border:none;border-radius:9px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;color:#065F46;cursor:pointer;white-space:nowrap;flex-shrink:0">
         Avaliar agora →
       </button>
-    </div>
-    <div class="inscricoes-fechadas-banner" id="banner-fechado">
-      <span style="font-size:22px">🔒</span>
-      <div class="banner-text" id="banner-fechado-text"></div>
     </div>
     <p id="inscricao-sub-txt" style="font-size:14px;color:var(--mcj-mid);margin-bottom:1.25rem;line-height:1.6;text-align:center">Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.</p>
     <div class="section-eyebrow">Dados do participante</div>
@@ -1674,11 +1674,12 @@ function validarCodigoAcesso(){
   if(input.value.trim().toUpperCase() === (_cfgEvento.codigo_acesso||'').toUpperCase()){
     sessionStorage.setItem('je_codigo_'+(_cfgEvento._evento_id||'main'), '1');
     const banner = document.getElementById('banner-fechado');
-    if(banner){ banner.classList.remove('show'); banner.style.cssText=''; }
-    // Restaura formulário
-    document.querySelectorAll('.section-eyebrow, .polo-required-msg, .form-card, #inscricao-sub-txt').forEach(el=>{
-      if(el) el.style.display='';
-    });
+    if(banner){ banner.classList.remove('show'); banner.style.cssText='margin:1rem'; }
+    // Restaura polo-section e form-wrap
+    const poloSection = document.querySelector('.polo-section');
+    const formWrap    = document.querySelector('.form-wrap');
+    if(poloSection) poloSection.style.display='';
+    if(formWrap)    formWrap.style.display='';
     atualizarBanner();
     renderInscricoes();
   } else {
@@ -1700,7 +1701,7 @@ function atualizarBanner(){
     const codigoOk = sessionStorage.getItem('je_codigo_'+(_cfgEvento._evento_id||'main'));
     if(!codigoOk){
       banner.classList.add('show');
-      banner.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:300px;background:var(--mcj-dark);border-radius:16px;padding:2rem;margin:1rem 0;color:white';
+      banner.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:280px;background:var(--mcj-dark);border-radius:16px;padding:2rem;margin:1.5rem 1rem;color:white';
       const txt = document.getElementById('banner-fechado-text');
       if(txt) txt.innerHTML = `
         <div style="font-family:'EB Garamond',Georgia,serif;font-size:24px;font-weight:700;margin-bottom:8px">🔒 Evento Privado</div>
@@ -1715,11 +1716,11 @@ function atualizarBanner(){
           </button>
         </div>
         <div id="codigo-acesso-erro" style="font-size:13px;color:#FECACA;margin-top:10px;display:none">Código incorreto. Tente novamente.</div>`;
-      // Esconde só o formulário, não o form-wrap inteiro
-      document.querySelectorAll('.section-eyebrow, .polo-required-msg, .form-card, #inscricao-sub-txt, #polo-msg').forEach(el=>{
-        if(el) el.style.display='none';
-      });
-      document.getElementById('f-polo') && (document.getElementById('f-polo').closest('.form-wrap')?.querySelectorAll('select, .polo-grid, .form-grid, .btn-submit-wrap').forEach(el=>el.style.display='none'));
+      // Esconde polo-section e form-wrap
+      const poloSection = document.querySelector('.polo-section');
+      const formWrap    = document.querySelector('.form-wrap');
+      if(poloSection) poloSection.style.display='none';
+      if(formWrap)    formWrap.style.display='none';
       return;
     }
   }
