@@ -4,71 +4,97 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Jornada Espírita — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --dark:#0D2B4E;--gold:#7EB8D4;--cream:#F0F4F8;--sand:#C8DFF0;
-  --gray-50:#F8FAFC;--gray-100:#E2EDF8;--gray-300:#94B8D4;--gray-400:#6B8FAD;
-  --gray-500:#4A6F8A;--green:#10B981;--red:#EF4444;
+  --dark:#0C2240;--darker:#071730;--gold:#A9CCE3;--accent:#7EB8D4;--mid:#163A63;
+  --cream:#F4F7FB;--sand:#D5E4F2;
+  --gray-50:#F7FAFD;--gray-100:#E4EEF7;--gray-300:#94B8D4;--gray-400:#6B8FAD;
+  --gray-500:#4E7196;--gray-600:#2C5F8A;--green:#10B981;--red:#EF4444;--ink:#0C2240;
 }
-body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
-.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);padding:1rem}
-.login-box{background:white;border-radius:20px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.login-logo{font-family:'EB Garamond',Georgia,serif;font-size:32px;font-weight:700;color:var(--dark);margin-bottom:4px}
-.login-logo span{color:var(--gold)}
-.login-sub{font-size:13px;color:var(--gray-400);margin-bottom:2rem}
-.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+*{box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* LOGIN */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(165deg,var(--darker) 0%,var(--dark) 55%,#0A2A52 100%);padding:1rem;position:relative;overflow:hidden}
+.login-screen::before{content:'';position:absolute;inset:0;opacity:.04;background-image:radial-gradient(circle,var(--accent) 1px,transparent 1px);background-size:38px 38px}
+.login-box{background:white;border-radius:24px;padding:2.75rem 2.5rem;width:100%;max-width:400px;box-shadow:0 24px 70px rgba(0,0,0,.45);position:relative;z-index:1;animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{font-family:'EB Garamond',Georgia,serif;font-size:34px;font-weight:500;color:var(--ink);margin-bottom:6px;letter-spacing:-.01em}
+.login-logo span{color:var(--accent);font-style:italic}
+.login-sub{font-size:11px;color:var(--gray-400);margin-bottom:2.25rem;text-transform:uppercase;letter-spacing:3px;font-weight:500}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .field label{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
-.field input{padding:11px 14px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;outline:none}
-.field input:focus{border-color:var(--dark)}
-.btn-login{width:100%;padding:13px;background:var(--dark);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
-.err{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px;font-size:13px;color:#991B1B;display:none;margin-bottom:8px}
-.header{background:var(--dark);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.header-logo{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;text-decoration:none;color:white}
-.header-logo span{color:var(--gold)}
-.header-right{display:flex;align-items:center;gap:12px}
-.header-user{font-size:12px;color:rgba(255,255,255,.5)}
-.header-logout{padding:6px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:white;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif}
-.main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
-.page-title{font-family:'EB Garamond',Georgia,serif;font-size:28px;font-weight:700;margin-bottom:4px}
-.page-sub{font-size:13px;color:var(--gray-400);margin-bottom:2rem}
-.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:2rem}
-.stat-card{background:white;border-radius:12px;border:1px solid var(--sand);padding:1.25rem}
-.stat-num{font-size:32px;font-weight:700}
-.stat-lbl{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-.actions-bar{display:flex;gap:10px;margin-bottom:1.25rem}
-.btn-add{padding:10px 20px;background:var(--dark);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
-.search-wrap{position:relative;margin-bottom:1.25rem}
-.search-input{width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;outline:none;background:white}
-.search-input:focus{border-color:var(--dark)}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-300)}
-.table-wrap{background:white;border-radius:14px;border:1px solid var(--sand);overflow:hidden}
-.table-header{padding:1rem 1.25rem;border-bottom:1px solid var(--sand);font-size:14px;font-weight:600}
+.field input{padding:12px 15px;border:1.5px solid var(--sand);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--accent)}
+.btn-login{width:100%;padding:14px;background:var(--dark);color:white;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;letter-spacing:.3px;transition:transform .2s,box-shadow .2s}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(12,34,64,.25)}
+.err{background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:11px;font-size:13px;color:#991B1B;display:none;margin-bottom:10px}
+
+/* HEADER */
+.header{background:rgba(7,23,48,.9);backdrop-filter:blur(12px);padding:0 clamp(1.25rem,4vw,2rem);height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(169,204,227,.12)}
+.header-logo{font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:600;text-decoration:none;color:white;letter-spacing:.3px}
+.header-logo span{color:var(--accent);font-style:italic}
+.header-right{display:flex;align-items:center;gap:14px}
+.header-user{font-size:12px;color:rgba(255,255,255,.55);letter-spacing:.3px}
+.header-logout{padding:7px 15px;background:transparent;border:1px solid rgba(169,204,227,.3);border-radius:9px;color:rgba(255,255,255,.8);font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.3px;transition:border-color .25s,color .25s}
+.header-logout:hover{border-color:var(--accent);color:white}
+
+/* MAIN */
+.main{max-width:1140px;margin:0 auto;padding:clamp(2rem,5vw,3.5rem) 1.5rem}
+.page-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:4px;color:var(--gray-500);margin-bottom:12px;position:relative;display:inline-block;padding-bottom:3px}
+.page-label::after{content:'';position:absolute;left:0;bottom:-5px;width:26px;height:1px;background:var(--accent)}
+.page-title{font-family:'EB Garamond',Georgia,serif;font-size:clamp(30px,4.5vw,44px);font-weight:500;margin-bottom:6px;letter-spacing:-.01em;color:var(--ink)}
+.page-sub{font-size:14px;color:var(--gray-400);margin-bottom:2.5rem;font-weight:300}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:2.5rem}
+.stat-card{background:white;border-radius:18px;border:1px solid var(--gray-100);padding:1.5rem 1.5rem 1.4rem;box-shadow:0 1px 3px rgba(12,34,64,.04);transition:transform .25s,box-shadow .25s;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent);opacity:.5}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(12,34,64,.1)}
+.stat-num{font-family:'EB Garamond',Georgia,serif;font-size:40px;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-.02em}
+.stat-lbl{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:1px;margin-top:8px;font-weight:500}
+
+/* ACTIONS */
+.actions-bar{display:flex;gap:10px;margin-bottom:1.5rem}
+.btn-add{padding:12px 24px;background:var(--dark);color:white;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.3px;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(12,34,64,.18)}
+.btn-add:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(12,34,64,.26)}
+.search-wrap{position:relative;margin-bottom:1.5rem}
+.search-input{width:100%;padding:12px 16px 12px 42px;border:1.5px solid var(--sand);border-radius:14px;font-family:'Inter',sans-serif;font-size:14px;outline:none;background:white;transition:border-color .2s}
+.search-input:focus{border-color:var(--accent)}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--gray-300)}
+
+/* TABLE */
+.table-wrap{background:white;border-radius:18px;border:1px solid var(--gray-100);overflow:hidden;box-shadow:0 1px 3px rgba(12,34,64,.04)}
+.table-header{padding:1.15rem 1.4rem;border-bottom:1px solid var(--gray-100);font-size:13px;font-weight:600;letter-spacing:.3px;color:var(--gray-600)}
 table{width:100%;border-collapse:collapse}
-th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);padding:10px 14px;text-align:left;border-bottom:1px solid var(--gray-100)}
-td{font-size:13px;padding:12px 14px;border-bottom:1px solid var(--gray-50);vertical-align:middle}
+th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gray-400);padding:12px 16px;text-align:left;border-bottom:1px solid var(--gray-100);background:var(--gray-50)}
+td{font-size:13.5px;padding:14px 16px;border-bottom:1px solid var(--gray-50);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-.badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--gray-50)}
+.badge{display:inline-block;padding:4px 11px;border-radius:50px;font-size:10px;font-weight:600;letter-spacing:.3px}
 .badge-green{background:#ECFDF5;color:#065F46}
 .badge-gray{background:var(--gray-100);color:var(--gray-500)}
-.btn-t{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;margin-right:4px}
+.btn-t{padding:7px 13px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;margin-right:4px;transition:opacity .2s}
+.btn-t:hover{opacity:.85}
 .btn-t-blue{background:var(--dark);color:white}
 .btn-t-gray{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
 .btn-t-red{background:#FEF2F2;color:#EF4444;border:1px solid #FECACA}
 .btn-t-green{background:#ECFDF5;color:#065F46;border:1px solid #BBF7D0}
-.fase-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif}
+.fase-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:50px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif}
 .fase-em-breve{background:#EFF6FF;color:#1D4ED8}
 .fase-abertas{background:#ECFDF5;color:#065F46}
 .fase-prorrogadas{background:#FFFBEB;color:#92400E}
 .fase-encerradas{background:#FEF2F2;color:#991B1B}
-.fase-dropdown{position:fixed;background:white;border:1.5px solid var(--sand);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:9999;min-width:200px;display:none}
+.fase-dropdown{position:fixed;background:white;border:1.5px solid var(--sand);border-radius:14px;box-shadow:0 12px 40px rgba(12,34,64,.18);z-index:9999;min-width:200px;display:none;overflow:hidden}
 .fase-dropdown.show{display:block}
-.fase-opt{padding:10px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--gray-100)}
+.fase-opt{padding:11px 15px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--gray-100)}
 .fase-opt:last-child{border-bottom:none}
 .fase-opt:hover{background:var(--gray-50)}
-.toggle-pub{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif}
+.toggle-pub{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:50px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif}
 .toggle-pub-on{background:#ECFDF5;color:#065F46;border:1px solid #BBF7D0}
 .toggle-pub-off{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem}
@@ -145,8 +171,9 @@ tr:last-child td{border-bottom:none}
     </div>
   </div>
   <div class="main">
-    <div class="page-title">Dashboard</div>
-    <div class="page-sub">Gerencie todos os eventos da plataforma</div>
+    <div class="page-label">Administração</div>
+    <div class="page-title">Painel de eventos</div>
+    <div class="page-sub">Gerencie todos os eventos da plataforma Jornada Espírita</div>
     <div class="stats">
       <div class="stat-card"><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Total de eventos</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-ativos">—</div><div class="stat-lbl">Ativos</div></div>
@@ -161,7 +188,7 @@ tr:last-child td{border-bottom:none}
       <input class="search-input" id="busca-eventos" placeholder="Buscar evento por nome, slug ou data..." oninput="filtrarEventos(this.value)">
     </div>
     <div class="table-wrap">
-      <div class="table-header">📋 Todos os eventos</div>
+      <div class="table-header">Todos os eventos</div>
       <div style="overflow-x:auto">
         <table>
           <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th>Fase</th><th>Visib.</th><th>Ações</th></tr></thead>
