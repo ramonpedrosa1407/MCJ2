@@ -6665,6 +6665,19 @@ async function enviarEmailConfirmacao(p){
         numCriancas:       numC||0,
         totalPago:         totalPagoStr,
         criancas:          p.criancas||[],
+        // Identidade visual do evento
+        design: {
+          cor_primaria: _cfgEvento.design?.cor_primaria || '#3D2410',
+          cor_dark:     _cfgEvento.design?.cor_dark     || _cfgEvento.design?.cor_primaria || '#2A1A0E',
+          cor_destaque: _cfgEvento.design?.cor_destaque || '#C8873A',
+          cor_fundo:    _cfgEvento.design?.cor_fundo    || '#F8F3EB',
+          cor_texto:    _cfgEvento.design?.cor_texto    || '#2C1A08',
+          fonte_titulo: _cfgEvento.design?.fonte_titulo || 'EB Garamond',
+          tema_nome:    _cfgEvento.design?.tema_nome    || '',
+          hero_tagline: _cfgEvento.design?.hero_tagline || '',
+        },
+        logo_url:    _cfgEvento.logo_url || '',
+        subtitulo:   _cfgEvento.subtitulo || '',
       })
     });
     if(r.ok){
