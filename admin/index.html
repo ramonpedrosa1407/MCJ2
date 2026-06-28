@@ -97,44 +97,50 @@ tbody tr:hover{background:var(--gray-50)}
 .toggle-pub{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:50px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif}
 .toggle-pub-on{background:#ECFDF5;color:#065F46;border:1px solid #BBF7D0}
 .toggle-pub-off{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem}
+.overlay{position:fixed;inset:0;background:rgba(7,23,48,.65);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem}
 .overlay.show{display:flex}
-.modal{background:white;border-radius:16px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.modal-head{background:var(--dark);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;position:sticky;top:0}
-.modal-head h3{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:700;color:white}
-.modal-head button{background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer}
-.modal-body{padding:1.5rem;display:flex;flex-direction:column;gap:12px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-field{display:flex;flex-direction:column;gap:5px}
-.form-field label{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px}
-.form-field input,.form-field select{padding:10px 12px;border:1.5px solid var(--sand);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;outline:none}
-.form-field input:focus{border-color:var(--dark)}
-.slug-preview{font-size:11px;color:var(--gold);margin-top:3px;font-weight:600}
-.slug-note{font-size:10px;color:var(--gray-300);margin-top:1px}
-.modal-foot{padding:1rem 1.25rem;border-top:1px solid var(--sand);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:white}
-.btn-cancel{padding:10px 18px;background:white;border:1px solid var(--sand);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-.btn-save{padding:10px 18px;background:var(--dark);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-.upload-area{border:2px dashed var(--sand);border-radius:12px;padding:1.25rem;text-align:center;cursor:pointer;background:var(--gray-50)}
-.upload-area:hover{border-color:var(--dark)}
-.upload-preview{width:100%;height:130px;object-fit:cover;border-radius:10px;margin-top:8px;display:none}
+.modal{background:white;border-radius:24px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 28px 80px rgba(0,0,0,.4);animation:modalUp .4s cubic-bezier(.2,.7,.2,1) both}
+@keyframes modalUp{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-head{background:linear-gradient(135deg,var(--darker),var(--dark));padding:1.3rem 1.6rem;display:flex;align-items:center;justify-content:space-between;border-radius:24px 24px 0 0;position:sticky;top:0;z-index:5}
+.modal-head h3{font-family:'EB Garamond',Georgia,serif;font-size:20px;font-weight:500;color:white;letter-spacing:.2px}
+.modal-head button{background:none;border:none;color:rgba(255,255,255,.65);font-size:24px;cursor:pointer;line-height:1;transition:color .2s}
+.modal-head button:hover{color:white}
+.modal-body{padding:1.75rem 1.6rem;display:flex;flex-direction:column;gap:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{display:flex;flex-direction:column;gap:6px}
+.form-field label{font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.6px}
+.form-field input,.form-field select{padding:12px 14px;border:1.5px solid var(--sand);border-radius:12px;font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;color:var(--ink)}
+.form-field input:focus{border-color:var(--accent)}
+.form-field input::placeholder{color:var(--gray-300)}
+.slug-preview{font-size:11px;color:var(--gray-600);margin-top:4px;font-weight:600}
+.slug-note{font-size:10px;color:var(--gray-300);margin-top:2px}
+.modal-foot{padding:1.15rem 1.6rem;border-top:1px solid var(--gray-100);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:white}
+.btn-cancel{padding:11px 22px;background:white;border:1px solid var(--sand);border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--gray-600);transition:background .2s}
+.btn-cancel:hover{background:var(--gray-50)}
+.btn-save{padding:11px 24px;background:var(--dark);color:white;border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.3px;transition:transform .2s,box-shadow .2s}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(12,34,64,.25)}
+.upload-area{border:1.5px dashed var(--sand);border-radius:14px;padding:1.5rem;text-align:center;cursor:pointer;background:var(--gray-50);transition:border-color .2s,background .2s}
+.upload-area:hover{border-color:var(--accent);background:#EEF5FB}
+.upload-preview{width:100%;height:140px;object-fit:cover;border-radius:12px;margin-top:10px;display:none}
 .upload-bar{height:4px;background:var(--sand);border-radius:2px;margin-top:8px;overflow:hidden;display:none}
-.upload-fill{height:100%;background:var(--dark);border-radius:2px;transition:width .3s;width:0}
+.upload-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s;width:0}
 .upload-status{font-size:11px;margin-top:4px;display:none;color:var(--gray-400)}
 .progress-wrap{background:var(--gray-50);border-radius:10px;padding:1rem;border:1px solid var(--sand);display:none}
 .progress-bar{height:6px;background:var(--sand);border-radius:3px;overflow:hidden;margin:8px 0}
 .progress-fill{height:100%;background:var(--dark);border-radius:3px;transition:width .3s;width:0}
 .progress-msg{font-size:12px;color:var(--gray-400)}
-.toggle-vis{display:flex;border:1.5px solid var(--sand);border-radius:10px;overflow:hidden;margin-top:4px}
-.toggle-vis-btn{flex:1;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;background:white;color:var(--gray-400)}
+.toggle-vis{display:flex;border:1.5px solid var(--sand);border-radius:12px;overflow:hidden;margin-top:4px}
+.toggle-vis-btn{flex:1;padding:11px 12px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;background:white;color:var(--gray-400);transition:background .2s,color .2s}
 .toggle-vis-btn.active-pub{background:#ECFDF5;color:#065F46}
 .toggle-vis-btn.active-priv{background:#FEF2F2;color:#991B1B}
-.tema-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
-.tema-card{border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative}
-.tema-card.selected{border-color:var(--dark);box-shadow:0 0 0 3px rgba(13,43,78,.2)}
-.tema-card:hover{transform:scale(1.03)}
-.tema-preview{height:52px;width:100%}
-.tema-label{padding:5px 6px;font-size:10px;font-weight:600;background:white;color:var(--dark);text-align:center}
-.tema-check{position:absolute;top:4px;right:4px;width:18px;height:18px;background:var(--dark);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:10px;color:white}
+.tema-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+.tema-card{border-radius:14px;overflow:hidden;cursor:pointer;border:2px solid var(--gray-100);transition:transform .2s,border-color .2s,box-shadow .2s;position:relative;background:white}
+.tema-card.selected{border-color:var(--accent);box-shadow:0 4px 16px rgba(126,184,212,.3)}
+.tema-card:hover{transform:translateY(-3px)}
+.tema-preview{height:62px;width:100%;display:flex;align-items:center;justify-content:center}
+.tema-preview span{font-family:'EB Garamond',Georgia,serif;font-size:18px;font-weight:500;color:#fff;opacity:.9}
+.tema-label{padding:7px 6px;font-size:10px;font-weight:600;background:white;color:var(--ink);text-align:center;letter-spacing:.2px}
+.tema-check{position:absolute;top:6px;right:6px;width:20px;height:20px;background:var(--accent);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:11px;color:white;box-shadow:0 2px 6px rgba(0,0,0,.2)}
 .tema-card.selected .tema-check{display:flex}
 .fases-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem}
 .fases-modal-overlay.show{display:flex}
@@ -242,51 +248,53 @@ tbody tr:hover{background:var(--gray-50)}
       <div class="form-field" style="grid-column:1/-1">
         <label>Design visual do evento</label>
         <div class="tema-grid" id="tema-grid">
-          <div class="tema-card selected" onclick="selecionarTema(this,'#3D2410','#C8873A','#F2EDE4','#2C1A08','Terra Santa')" data-tema="Terra Santa">
-            <div class="tema-preview" style="background:linear-gradient(135deg,#3D2410 0%,#6B4C2A 60%,#C8873A88 100%)"></div>
-            <div class="tema-label">Terra Santa</div>
-            <div class="tema-check">✓</div>
+          <div class="tema-card selected" onclick="selecionarTema(this,'#5A3B22','#C99A5B','#F8F3EB','#2E1F12','Terra Santa','#2A1A0E','#74502F')" data-tema="Terra Santa">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#2A1A0E 0%,#2A1A0E 25%,#74502F 70%,#5A3B22 100%)"><span>Aa</span></div>
+            <div class="tema-label">Terra Santa</div><div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#0D2B4E','#7EB8D4','#F0F4F8','#0A1E35','Céu Profundo')" data-tema="Céu Profundo">
-            <div class="tema-preview" style="background:linear-gradient(135deg,#0D2B4E 0%,#1a3a5c 60%,#7EB8D455 100%)"></div>
-            <div class="tema-label">Céu Profundo</div>
-            <div class="tema-check">✓</div>
+          <div class="tema-card" onclick="selecionarTema(this,'#1B3A5B','#8FB8D6','#F2F6FA','#13283D','Céu Profundo','#0C1E30','#2A4E73')" data-tema="Céu Profundo">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#0C1E30 0%,#0C1E30 25%,#2A4E73 70%,#1B3A5B 100%)"><span>Aa</span></div>
+            <div class="tema-label">Céu Profundo</div><div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#1B4332','#D4A843','#F0FAF4','#0D2B1E','Verde Esperança')" data-tema="Verde Esperança">
-            <div class="tema-preview" style="background:linear-gradient(135deg,#1B4332 0%,#2d6a4f 60%,#D4A84355 100%)"></div>
-            <div class="tema-label">Verde Esperança</div>
-            <div class="tema-check">✓</div>
+          <div class="tema-card" onclick="selecionarTema(this,'#24523E','#C2A862','#F2F8F4','#153024','Verde Esperança','#102A1F','#346B52')" data-tema="Verde Esperança">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#102A1F 0%,#102A1F 25%,#346B52 70%,#24523E 100%)"><span>Aa</span></div>
+            <div class="tema-label">Verde Esperança</div><div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#3B1F5E','#C4A8E8','#F5F0FF','#1E0E33','Púrpura Real')" data-tema="Púrpura Real">
-            <div class="tema-preview" style="background:linear-gradient(135deg,#3B1F5E 0%,#5c3a8a 60%,#C4A8E855 100%)"></div>
-            <div class="tema-label">Púrpura Real</div>
-            <div class="tema-check">✓</div>
+          <div class="tema-card" onclick="selecionarTema(this,'#43285F','#B9A0D8','#F6F2FB','#221335','Púrpura Real','#231338','#573A78')" data-tema="Púrpura Real">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#231338 0%,#231338 25%,#573A78 70%,#43285F 100%)"><span>Aa</span></div>
+            <div class="tema-label">Púrpura Real</div><div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#6B1E2E','#E8A87C','#FDF5F0','#3D0E18','Amanhecer')" data-tema="Amanhecer">
-            <div class="tema-preview" style="background:linear-gradient(135deg,#6B1E2E 0%,#8B2E40 60%,#E8A87C55 100%)"></div>
-            <div class="tema-label">Amanhecer</div>
-            <div class="tema-check">✓</div>
+          <div class="tema-card" onclick="selecionarTema(this,'#7E2E3A','#E0A07E','#FBF4F1','#3A151B','Amanhecer','#401219','#9C434F')" data-tema="Amanhecer">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#401219 0%,#401219 25%,#9C434F 70%,#7E2E3A 100%)"><span>Aa</span></div>
+            <div class="tema-label">Amanhecer</div><div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#1A3A4A','#4ECDC4','#F0F9F8','#0A1E28','Água Viva')" data-tema="Água Viva">
-            <div class="tema-preview" style="background:linear-gradient(135deg,#1A3A4A 0%,#2a5a6a 60%,#4ECDC455 100%)"></div>
-            <div class="tema-label">Água Viva</div>
-            <div class="tema-check">✓</div>
+          <div class="tema-card" onclick="selecionarTema(this,'#1A4E55','#6FC2BC','#F1F8F7','#0F2B2E','Água Viva','#0B2A2E','#27666E')" data-tema="Água Viva">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#0B2A2E 0%,#0B2A2E 25%,#27666E 70%,#1A4E55 100%)"><span>Aa</span></div>
+            <div class="tema-label">Água Viva</div><div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#2D1B69','#F7C59F','#FFF8F3','#180E3A','Noite Estrelada')" data-tema="Noite Estrelada">
-            <div class="tema-preview" style="background:linear-gradient(135deg,#2D1B69 0%,#4a2e8a 60%,#F7C59F55 100%)"></div>
-            <div class="tema-label">Noite Estrelada</div>
-            <div class="tema-check">✓</div>
+          <div class="tema-card" onclick="selecionarTema(this,'#2F2960','#E8C49C','#F7F5FB','#1B1640','Noite Estrelada','#171238','#413A7C')" data-tema="Noite Estrelada">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#171238 0%,#171238 25%,#413A7C 70%,#2F2960 100%)"><span>Aa</span></div>
+            <div class="tema-label">Noite Estrelada</div><div class="tema-check">✓</div>
           </div>
-          <div class="tema-card" onclick="selecionarTema(this,'#4A1942','#F9A825','#FFF8E6','#2A0A26','Chama Divina')" data-tema="Chama Divina">
-            <div class="tema-preview" style="background:linear-gradient(135deg,#4A1942 0%,#6B2460 60%,#F9A82555 100%)"></div>
-            <div class="tema-label">Chama Divina</div>
-            <div class="tema-check">✓</div>
+          <div class="tema-card" onclick="selecionarTema(this,'#4A1942','#E0A93D','#FBF6EC','#2A0A26','Chama Divina','#160714','#3B1234')" data-tema="Chama Divina">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#160714 0%,#160714 25%,#3B1234 70%,#4A1942 100%)"><span>Aa</span></div>
+            <div class="tema-label">Chama Divina</div><div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#76374F','#D9A2B4','#FBF4F6','#341622','Rosé Sereno','#3C1A28','#914A66')" data-tema="Rosé Sereno">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#3C1A28 0%,#3C1A28 25%,#914A66 70%,#76374F 100%)"><span>Aa</span></div>
+            <div class="tema-label">Rosé Sereno</div><div class="tema-check">✓</div>
+          </div>
+          <div class="tema-card" onclick="selecionarTema(this,'#2E3D4C','#C2A878','#F5F6F8','#1B252F','Grafite Moderno','#18222C','#405264')" data-tema="Grafite Moderno">
+            <div class="tema-preview" style="background:linear-gradient(165deg,#18222C 0%,#18222C 25%,#405264 70%,#2E3D4C 100%)"><span>Aa</span></div>
+            <div class="tema-label">Grafite Moderno</div><div class="tema-check">✓</div>
           </div>
         </div>
-        <input type="hidden" id="ev-cor" value="#3D2410">
-        <input type="hidden" id="ev-cor-destaque" value="#C8873A">
-        <input type="hidden" id="ev-cor-fundo" value="#F2EDE4">
-        <input type="hidden" id="ev-cor-texto" value="#2C1A08">
+        <input type="hidden" id="ev-cor" value="#5A3B22">
+        <input type="hidden" id="ev-cor-destaque" value="#C99A5B">
+        <input type="hidden" id="ev-cor-fundo" value="#F8F3EB">
+        <input type="hidden" id="ev-cor-texto" value="#2E1F12">
+        <input type="hidden" id="ev-cor-dark" value="#2A1A0E">
+        <input type="hidden" id="ev-cor-mid" value="#74502F">
         <input type="hidden" id="ev-tema-nome" value="Terra Santa">
       </div>
 
@@ -545,7 +553,13 @@ function fecharModal(){
   setVisibilidade('publico');
   document.getElementById('ev-codigo').value='';
   document.querySelectorAll('.tema-card').forEach((c,i)=>c.classList.toggle('selected',i===0));
-  document.getElementById('ev-cor').value='#3D2410';
+  document.getElementById('ev-cor').value='#5A3B22';
+  document.getElementById('ev-cor-destaque').value='#C99A5B';
+  document.getElementById('ev-cor-fundo').value='#F8F3EB';
+  document.getElementById('ev-cor-texto').value='#2E1F12';
+  if(document.getElementById('ev-cor-dark')) document.getElementById('ev-cor-dark').value='#2A1A0E';
+  if(document.getElementById('ev-cor-mid'))  document.getElementById('ev-cor-mid').value='#74502F';
+  document.getElementById('ev-tema-nome').value='Terra Santa';
 }
 
 // SLUG
@@ -570,7 +584,7 @@ function gerarSlug(){
 }
 
 // TEMA
-function selecionarTema(card,cor,destaque,fundo,texto,nome){
+function selecionarTema(card,cor,destaque,fundo,texto,nome,dark,mid){
   document.querySelectorAll('.tema-card').forEach(c=>c.classList.remove('selected'));
   card.classList.add('selected');
   document.getElementById('ev-cor').value=cor;
@@ -578,6 +592,8 @@ function selecionarTema(card,cor,destaque,fundo,texto,nome){
   document.getElementById('ev-cor-fundo').value=fundo;
   document.getElementById('ev-cor-texto').value=texto;
   document.getElementById('ev-tema-nome').value=nome||'';
+  const dEl=document.getElementById('ev-cor-dark'); if(dEl) dEl.value=dark||cor;
+  const mEl=document.getElementById('ev-cor-mid');  if(mEl) mEl.value=mid||cor;
 }
 
 // VISIBILIDADE
@@ -706,6 +722,8 @@ async function criarEvento(){
   const corDest=document.getElementById('ev-cor-destaque').value||'';
   const corFundo=document.getElementById('ev-cor-fundo').value||'';
   const corTexto=document.getElementById('ev-cor-texto').value||'';
+  const corDark=document.getElementById('ev-cor-dark')?.value||cor;
+  const corMid=document.getElementById('ev-cor-mid')?.value||cor;
   const temaNome=document.getElementById('ev-tema-nome').value||'';
   if(!nome||!slug){alert('Preencha o nome e a data do evento.');return;}
   document.getElementById('progress-wrap').style.display='block';
@@ -713,7 +731,7 @@ async function criarEvento(){
   document.getElementById('btn-criar').textContent='Criando...';
   try{
     setProgress(20,'Criando evento no banco de dados...');
-    const design={cor_primaria:cor,cor_destaque:corDest,cor_fundo:corFundo,cor_texto:corTexto,tema_nome:temaNome};
+    const design={cor_primaria:cor,cor_dark:corDark,cor_mid:corMid,cor_destaque:corDest,cor_fundo:corFundo,cor_texto:corTexto,tema_nome:temaNome};
     const config={titulo:nome,subtitulo:sub,data,horario:hora,local,cor_primaria:cor,design,inscricoes_abertas:true,thumb,video_abertura:video,publico};
     const rows=await supa('POST','eventos',[{slug,nome,config,ativo:true}]);
     const eventoId=rows[0]?.id;
