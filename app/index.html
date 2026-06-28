@@ -1480,6 +1480,9 @@ async function setCfgEvento(){
         materiais:    _cfgEvento.materiais,
         design:       _cfgEvento.design,
         recursos:     _cfgEvento.recursos,
+        expositores_lista: _cfgEvento.expositores_lista,
+        aval_criterios:    _cfgEvento.aval_criterios,
+        aval_aberta:       _cfgEvento.aval_aberta,
       };
       await supa('POST','config', [{ id, dados: configParaSalvar }]);
 
@@ -1511,7 +1514,7 @@ async function carregarConfig(){
         // Aplica TODOS os campos
         const campos = ['titulo','subtitulo','data','horario','local','tema_manha','tema_tarde',
                         'thumb','logo_url','instagram','facebook','inscricao_sub','descricao',
-                        'campos_extras','materiais'];
+                        'campos_extras','materiais','expositores_lista','aval_criterios','aval_aberta'];
         campos.forEach(k=>{ if(cfg[k]!==undefined) _cfgEvento[k]=cfg[k]; });
         if(cfg.video_abertura) _cfgEvento.video_url = cfg.video_abertura;
         if(cfg.video_url)      _cfgEvento.video_url = cfg.video_url;
@@ -1552,7 +1555,7 @@ async function carregarConfig(){
         if(cfg && typeof cfg === 'object' && !Array.isArray(cfg)){
           const campos = ['titulo','subtitulo','data','horario','local','tema_manha','tema_tarde',
                           'thumb','logo_url','instagram','facebook','inscricao_sub','descricao',
-                          'campos_extras','materiais'];
+                          'campos_extras','materiais','expositores_lista','aval_criterios','aval_aberta'];
           campos.forEach(k=>{ if(cfg[k]!==undefined) _cfgEvento[k]=cfg[k]; });
           if(cfg.video_url) _cfgEvento.video_url = cfg.video_url;
           if(cfg.recursos && typeof cfg.recursos === 'object'){
