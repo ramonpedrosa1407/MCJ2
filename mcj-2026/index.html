@@ -1476,6 +1476,7 @@ async function setCfgEvento(){
         campos_extras:_cfgEvento.campos_extras,
         materiais:    _cfgEvento.materiais,
         design:       _cfgEvento.design,
+        recursos:     _cfgEvento.recursos,
       };
       await supa('POST','config', [{ id, dados: configParaSalvar }]);
 
@@ -1511,6 +1512,10 @@ async function carregarConfig(){
         campos.forEach(k=>{ if(cfg[k]!==undefined) _cfgEvento[k]=cfg[k]; });
         if(cfg.video_abertura) _cfgEvento.video_url = cfg.video_abertura;
         if(cfg.video_url)      _cfgEvento.video_url = cfg.video_url;
+        // Recursos do evento (liga/desliga de abas)
+        if(cfg.recursos && typeof cfg.recursos === 'object'){
+          _cfgEvento.recursos = { ...(_cfgEvento.recursos||{}), ...cfg.recursos };
+        }
         // Público/privado e código
         if(cfg.publico !== undefined) _cfgEvento.publico = cfg.publico;
         if(cfg.codigo_acesso)         _cfgEvento.codigo_acesso = cfg.codigo_acesso;
@@ -1547,6 +1552,9 @@ async function carregarConfig(){
                           'campos_extras','materiais'];
           campos.forEach(k=>{ if(cfg[k]!==undefined) _cfgEvento[k]=cfg[k]; });
           if(cfg.video_url) _cfgEvento.video_url = cfg.video_url;
+          if(cfg.recursos && typeof cfg.recursos === 'object'){
+            _cfgEvento.recursos = { ...(_cfgEvento.recursos||{}), ...cfg.recursos };
+          }
           if(cfg.publico !== undefined) _cfgEvento.publico = cfg.publico;
           if(cfg.codigo_acesso)         _cfgEvento.codigo_acesso = cfg.codigo_acesso;
           if(cfg.design && Object.keys(cfg.design).length > 0){
@@ -1740,7 +1748,7 @@ async function carregarTudo(){
   aplicarDesign();
   aplicarConfigEvento();
   renderHeroSocial();
-  renderBannerAvaliacao();
+  aplicarRecursos();
   renderPoloGrid();
   // Só mostra banner se já souber que é privado (via _EVENTO_OVERRIDE ou localStorage)
   if(_cfgEvento.publico !== false) atualizarBanner();
@@ -1785,7 +1793,7 @@ async function carregarTudo(){
     // Re-renderiza com dados reais do servidor
     aplicarDesign();
     renderHeroSocial();
-    renderBannerAvaliacao();
+    aplicarRecursos();
     renderPoloGrid();
     atualizarBanner();
     renderSobre();
@@ -1911,11 +1919,33 @@ function aplicarConfigEvento(){
 }
 
 function renderBannerAvaliacao(){
-  const aberta = _cfgEvento.aval_aberta===true;
+  const recAval = _cfgEvento.recursos?.avaliacao !== false;
+  const aberta  = recAval && _cfgEvento.aval_aberta===true;
   const banner = document.getElementById('banner-avaliacao');
   const tabBtn = document.getElementById('tab-avaliacao');
   if(banner) banner.style.display = aberta?'flex':'none';
   if(tabBtn) tabBtn.style.display = aberta?'':'none';
+}
+
+/* Mostra/esconde abas do site público conforme os recursos do evento.
+   Recurso desligado = aba some do menu (nada é apagado, só ocultado). */
+function aplicarRecursos(){
+  const rec = _cfgEvento.recursos || {};
+  const setTab = (id, ativo) => {
+    const btn = document.getElementById(id);
+    if(btn) btn.style.display = ativo ? '' : 'none';
+  };
+  setTab('tab-sobre',       rec.sobre       !== false);
+  setTab('tab-expositores', rec.expositores !== false);
+  // Avaliação tem dupla condição (recurso + aberta) — delega a renderBannerAvaliacao
+  renderBannerAvaliacao();
+
+  // Se a aba ativa no momento foi desligada, volta para Inscrição
+  const ativa = document.querySelector('.tab-btn.active');
+  if(ativa && ativa.style.display === 'none'){
+    const tabInsc = document.getElementById('tab-inscricao');
+    if(tabInsc) showView('inscricao', tabInsc);
+  }
 }
 
 /* ================================================================
@@ -2197,6 +2227,33 @@ function renderEventoAdmin(){
               <input type="text" id="ev-codigo-cfg" value="${esc(e.codigo_acesso||'')}" placeholder="Ex: MCJ2026" style="text-transform:uppercase;letter-spacing:2px">
               <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Participantes precisarão digitar este código para se inscrever</span>
             </div>
+            <div class="cfg-field" style="grid-column:1/-1;margin-top:8px">
+              <label>Recursos do evento</label>
+              <span style="font-size:11px;color:var(--gray-400);margin-bottom:8px;display:block">Ative apenas as seções que este evento usa. O que estiver desligado some do menu público.</span>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div class="toggle-wrap">
+                  <div>
+                    <div class="toggle-lbl-main">✨ Aba "Sobre o Evento"</div>
+                    <div class="toggle-lbl-sub">Página com descrição, programação e polos</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="ev-rec-sobre" ${e.recursos?.sobre!==false?'checked':''}><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-wrap">
+                  <div>
+                    <div class="toggle-lbl-main">🎤 Aba "Expositores"</div>
+                    <div class="toggle-lbl-sub">Página com os palestrantes/expositores do evento</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="ev-rec-expositores" ${e.recursos?.expositores!==false?'checked':''}><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-wrap">
+                  <div>
+                    <div class="toggle-lbl-main">⭐ Aba "Avaliação"</div>
+                    <div class="toggle-lbl-sub">Permite habilitar a avaliação pós-evento</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="ev-rec-avaliacao" ${e.recursos?.avaliacao!==false?'checked':''}><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div style="padding:.875rem 1.25rem;border-top:1px solid var(--mcj-sand);display:flex;justify-content:flex-end">
@@ -2477,6 +2534,13 @@ let _cfgEvento = {
     fonte_texto:  'Raleway',
     titulo_size:  'clamp(3rem,11vw,6.5rem)',
     hero_tagline: '',
+  },
+  // Recursos do evento — controla quais abas/seções aparecem.
+  // Padrão: tudo ligado (mantém eventos atuais como estão).
+  recursos: {
+    sobre:       true,
+    expositores: true,
+    avaliacao:   true,
   }
 };
 
@@ -2865,6 +2929,12 @@ async function salvarEventoCfg(){
   if(_visibilidadeCfg !== null) _cfgEvento.publico = (_visibilidadeCfg === 'publico');
   _cfgEvento.codigo_acesso = g('ev-codigo-cfg').toUpperCase();
   _visibilidadeCfg = null; // reset
+  // Recursos do evento (liga/desliga de abas)
+  const chk = id => !!document.getElementById(id)?.checked;
+  if(!_cfgEvento.recursos) _cfgEvento.recursos = {};
+  if(document.getElementById('ev-rec-sobre'))       _cfgEvento.recursos.sobre       = chk('ev-rec-sobre');
+  if(document.getElementById('ev-rec-expositores')) _cfgEvento.recursos.expositores = chk('ev-rec-expositores');
+  if(document.getElementById('ev-rec-avaliacao'))   _cfgEvento.recursos.avaliacao   = chk('ev-rec-avaliacao');
   // Tagline — salva no design
   const tagline = g('ev-tagline');
   if(!_cfgEvento.design) _cfgEvento.design = {};
@@ -2877,6 +2947,7 @@ async function salvarEventoCfg(){
     aplicarConfigEvento();
     aplicarDesign();
     renderHeroSocial();
+    aplicarRecursos();
     renderSobre();
     // Atualiza título da página
     const pageTitle = document.getElementById('page-title');
