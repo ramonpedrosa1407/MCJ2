@@ -1940,6 +1940,21 @@ function aplicarRecursos(){
   // Avaliação tem dupla condição (recurso + aberta) — delega a renderBannerAvaliacao
   renderBannerAvaliacao();
 
+  // ── Seções do formulário de inscrição ──────────────────────
+  // Polos: esconde a seleção de polos quando desligado (usa polo "Geral")
+  const usaPolos = rec.polos !== false;
+  const poloSection = document.querySelector('.polo-section');
+  if(poloSection) poloSection.style.display = usaPolos ? '' : 'none';
+  const poloMsg = document.getElementById('polo-msg');
+  if(poloMsg && !usaPolos) poloMsg.style.display = 'none';
+
+  // Almoço: esconde o campo de almoço quando desligado
+  const usaAlmoco = rec.almoco !== false;
+  const almocoField = document.getElementById('almoco-field');
+  if(almocoField && !usaAlmoco) almocoField.style.display = 'none';
+
+  // Turmas é tratado em selecionarPolo (depende também de tem_mocidade do polo)
+
   // Se a aba ativa no momento foi desligada, volta para Inscrição
   const ativa = document.querySelector('.tab-btn.active');
   if(ativa && ativa.style.display === 'none'){
@@ -2252,6 +2267,27 @@ function renderEventoAdmin(){
                   </div>
                   <label class="toggle-switch"><input type="checkbox" id="ev-rec-avaliacao" ${e.recursos?.avaliacao!==false?'checked':''}><span class="toggle-slider"></span></label>
                 </div>
+                <div class="toggle-wrap">
+                  <div>
+                    <div class="toggle-lbl-main">📍 Polos</div>
+                    <div class="toggle-lbl-sub">Seleção de polos no formulário. Desligado: inscrição direta</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="ev-rec-polos" ${e.recursos?.polos!==false?'checked':''}><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-wrap">
+                  <div>
+                    <div class="toggle-lbl-main">👥 Turmas</div>
+                    <div class="toggle-lbl-sub">Seleção Adulto/Mocidade. Desligado: todos como "Adulto"</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="ev-rec-turmas" ${e.recursos?.turmas!==false?'checked':''}><span class="toggle-slider"></span></label>
+                </div>
+                <div class="toggle-wrap">
+                  <div>
+                    <div class="toggle-lbl-main">🍽 Almoço</div>
+                    <div class="toggle-lbl-sub">Opção de almoço no formulário de inscrição</div>
+                  </div>
+                  <label class="toggle-switch"><input type="checkbox" id="ev-rec-almoco" ${e.recursos?.almoco!==false?'checked':''}><span class="toggle-slider"></span></label>
+                </div>
               </div>
             </div>
           </div>
@@ -2541,6 +2577,9 @@ let _cfgEvento = {
     sobre:       true,
     expositores: true,
     avaliacao:   true,
+    polos:       true,
+    turmas:      true,
+    almoco:      true,
   }
 };
 
@@ -2935,6 +2974,9 @@ async function salvarEventoCfg(){
   if(document.getElementById('ev-rec-sobre'))       _cfgEvento.recursos.sobre       = chk('ev-rec-sobre');
   if(document.getElementById('ev-rec-expositores')) _cfgEvento.recursos.expositores = chk('ev-rec-expositores');
   if(document.getElementById('ev-rec-avaliacao'))   _cfgEvento.recursos.avaliacao   = chk('ev-rec-avaliacao');
+  if(document.getElementById('ev-rec-polos'))       _cfgEvento.recursos.polos       = chk('ev-rec-polos');
+  if(document.getElementById('ev-rec-turmas'))      _cfgEvento.recursos.turmas      = chk('ev-rec-turmas');
+  if(document.getElementById('ev-rec-almoco'))      _cfgEvento.recursos.almoco      = chk('ev-rec-almoco');
   // Tagline — salva no design
   const tagline = g('ev-tagline');
   if(!_cfgEvento.design) _cfgEvento.design = {};
@@ -3364,9 +3406,10 @@ function selecionarPolo(nome){
   // Busca config do polo
   const polo = POLOS.find(p=>p.nome===nome);
 
-  // Turma — só aparece o seletor se o polo tiver Mocidade ativa.
-  // Sem Mocidade: oculta o campo inteiro e grava 'Adulto' como padrão implícito.
-  const temMocidade = !!(polo && polo.tem_mocidade === true);
+  // Turma — só aparece o seletor se o recurso 'turmas' estiver ligado E o polo tiver Mocidade.
+  // Caso contrário: oculta o campo inteiro e grava 'Adulto' como padrão implícito.
+  const usaTurmas   = _cfgEvento.recursos?.turmas !== false;
+  const temMocidade = usaTurmas && !!(polo && polo.tem_mocidade === true);
   const turmaField  = document.getElementById('turma-field');
   const lblMocidade = document.getElementById('lbl-mocidade');
   const radAdulto   = document.querySelector('input[name="turma"][value="Adulto"]');
@@ -3383,17 +3426,18 @@ function selecionarPolo(nome){
     lblMocidade?.classList.remove('sel');
   }
 
-  // Almoço — mostra/oculta
+  // Almoço — mostra/oculta (respeita recurso 'almoco' do evento)
+  const usaAlmoco = _cfgEvento.recursos?.almoco !== false;
   const almocoField = document.getElementById('almoco-field');
   if(almocoField){
-    const temAlmoco = polo?.almoco_ativo === true;
+    const temAlmoco = usaAlmoco && polo?.almoco_ativo === true;
     almocoField.style.display = temAlmoco ? '' : 'none';
     const tag = document.getElementById('almoco-valor-tag');
     if(tag && polo?.almoco_valor) tag.textContent = polo.almoco_valor;
     // Almoço criança
     const almocoCriancaWrap = document.getElementById('almoco-crianca-wrap');
     if(almocoCriancaWrap){
-      const temCriancaAtiva = polo?.aceita_crianca && polo?.almoco_crianca_ativo;
+      const temCriancaAtiva = usaAlmoco && polo?.aceita_crianca && polo?.almoco_crianca_ativo;
       almocoCriancaWrap.style.display = temCriancaAtiva ? '' : 'none';
       const tagC = document.getElementById('almoco-crianca-valor-tag');
       if(tagC) tagC.textContent = polo?.almoco_crianca_valor||polo?.almoco_valor||'';
@@ -3677,7 +3721,10 @@ function alerta(tipo,msg){
 }
 
 async function inscrever(){
-  const poloSel    = document.getElementById('f-polo')?.value||'';
+  const usaPolos   = _cfgEvento.recursos?.polos !== false;
+  const poloSel    = usaPolos
+    ? (document.getElementById('f-polo')?.value||'')
+    : 'Geral';
   const poloSelCfg = POLOS.find(p=>p.nome===poloSel)||null;
   const nome       = document.getElementById('f-nome')?.value.trim()||'';
   const nascimento = document.getElementById('f-nascimento')?.value||'';
