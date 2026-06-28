@@ -2170,16 +2170,22 @@ function renderEventoAdmin(){
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
               ${TEMAS_DESIGN.map((t,i)=>`
                 <div onclick="aplicarTema(${i})" id="tema-card-${i}"
-                  style="border-radius:12px;border:2.5px solid ${(d.tema_ativo||0)===i?'var(--mcj-gold)':'var(--gray-100)'};padding:12px;cursor:pointer;background:${(d.tema_ativo||0)===i?'#FFFBF0':'white'};transition:all .15s">
-                  <div style="display:flex;gap:4px;margin-bottom:8px">
-                    <div style="width:20px;height:20px;border-radius:4px;background:${t.cor_primaria}"></div>
-                    <div style="width:20px;height:20px;border-radius:4px;background:${t.cor_destaque}"></div>
-                    <div style="width:20px;height:20px;border-radius:4px;background:${t.cor_fundo};border:1px solid var(--gray-100)"></div>
-                    <div style="width:20px;height:20px;border-radius:4px;background:${t.cor_texto}"></div>
+                  style="border-radius:12px;border:2.5px solid ${(d.tema_ativo||0)===i?'var(--mcj-gold)':'var(--gray-100)'};padding:0;cursor:pointer;background:${(d.tema_ativo||0)===i?'#FFFBF0':'white'};transition:all .15s;overflow:hidden">
+                  <div style="height:54px;background:linear-gradient(135deg,${t.cor_dark} 0%,${t.cor_dark} 35%,${t.cor_primaria} 100%);display:flex;align-items:center;justify-content:center;position:relative">
+                    <span style="font-family:'${t.fonte_titulo}',Georgia,serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:.5px">Aa</span>
+                    <span style="position:absolute;bottom:6px;right:8px;width:14px;height:14px;border-radius:50%;background:${t.cor_destaque};box-shadow:0 0 0 2px rgba(255,255,255,.25)"></span>
                   </div>
-                  <div style="font-size:13px;font-weight:700;color:var(--mcj-dark)">${t.nome}</div>
-                  <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${t.descricao}</div>
-                  ${(d.tema_ativo||0)===i?'<div style="font-size:10px;font-weight:700;color:var(--mcj-gold);margin-top:4px;text-transform:uppercase;letter-spacing:.5px">✓ Ativo</div>':''}
+                  <div style="padding:10px 12px 12px">
+                    <div style="display:flex;gap:4px;margin-bottom:8px">
+                      <div style="width:18px;height:18px;border-radius:4px;background:${t.cor_primaria}" title="Primária"></div>
+                      <div style="width:18px;height:18px;border-radius:4px;background:${t.cor_destaque}" title="Destaque"></div>
+                      <div style="width:18px;height:18px;border-radius:4px;background:${t.cor_fundo};border:1px solid var(--gray-100)" title="Fundo"></div>
+                      <div style="width:18px;height:18px;border-radius:4px;background:${t.cor_texto}" title="Texto"></div>
+                    </div>
+                    <div style="font-size:13px;font-weight:700;color:var(--mcj-dark)">${t.nome}</div>
+                    <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${t.descricao}</div>
+                    ${(d.tema_ativo||0)===i?'<div style="font-size:10px;font-weight:700;color:var(--mcj-gold);margin-top:6px;text-transform:uppercase;letter-spacing:.5px">✓ Ativo</div>':''}
+                  </div>
                 </div>`).join('')}
             </div>
           </div>
@@ -2343,6 +2349,7 @@ function renderEventoAdmin(){
     w.querySelectorAll('[data-action="remover-campo"]').forEach(b=>{ b.onclick=()=>removerCampoExtra(parseInt(b.dataset.idx)); });
     w.querySelectorAll('[data-action="vis-publico"]').forEach(b=>{ b.onclick=()=>setVisibilidadeCfg('publico'); });
     w.querySelectorAll('[data-action="vis-privado"]').forEach(b=>{ b.onclick=()=>setVisibilidadeCfg('privado'); });
+    preloadFontesTemas();
   }, 50);
 }
 // Fila de escritas para config/users — evita chamadas paralelas
@@ -2641,32 +2648,60 @@ if(window._EVENTO_OVERRIDE){
 
 const TEMAS_DESIGN = [
   { nome:'Terra Santa', descricao:'Clássico e espiritual',
-    cor_primaria:'#3D2410', cor_destaque:'#C8873A', cor_fundo:'#F2EDE4', cor_texto:'#2C1A08',
+    cor_primaria:'#5C3A1E', cor_dark:'#2E1A0C', cor_mid:'#7A4E2A', cor_destaque:'#D9A441', cor_fundo:'#F7F1E7', cor_texto:'#2C1A08',
     fonte_titulo:'EB Garamond', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Céu Profundo', descricao:'Sereno e contemplativo',
-    cor_primaria:'#0D2B4E', cor_destaque:'#7EB8D4', cor_fundo:'#F0F4F8', cor_texto:'#0A1E35',
+    cor_primaria:'#16406E', cor_dark:'#0A1E35', cor_mid:'#1E5288', cor_destaque:'#6FB7E0', cor_fundo:'#F0F5FA', cor_texto:'#0A1E35',
     fonte_titulo:'Cormorant Garamond', fonte_texto:'Lato', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Verde Esperança', descricao:'Renovação e vida',
-    cor_primaria:'#1B4332', cor_destaque:'#D4A843', cor_fundo:'#F0FAF4', cor_texto:'#0D2B1E',
+    cor_primaria:'#1E5E43', cor_dark:'#0D2B1E', cor_mid:'#2A7B58', cor_destaque:'#E0B84C', cor_fundo:'#F1FAF4', cor_texto:'#0D2B1E',
     fonte_titulo:'Playfair Display', fonte_texto:'Nunito', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Púrpura Real', descricao:'Majestoso e sagrado',
-    cor_primaria:'#3B1F5E', cor_destaque:'#C4A8E8', cor_fundo:'#F5F0FF', cor_texto:'#1E0E33',
+    cor_primaria:'#4A2A73', cor_dark:'#231040', cor_mid:'#5E3A8C', cor_destaque:'#C9A8EE', cor_fundo:'#F6F1FC', cor_texto:'#1E0E33',
     fonte_titulo:'Cinzel', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Amanhecer', descricao:'Quente e acolhedor',
-    cor_primaria:'#6B1E2E', cor_destaque:'#E8A87C', cor_fundo:'#FDF5F0', cor_texto:'#3D0E18',
+    cor_primaria:'#8A2A3A', cor_dark:'#46101C', cor_mid:'#A83B4E', cor_destaque:'#F0B088', cor_fundo:'#FDF5F0', cor_texto:'#3D0E18',
     fonte_titulo:'Lora', fonte_texto:'Source Sans 3', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Água Viva', descricao:'Fresco e espiritual',
-    cor_primaria:'#1A3A4A', cor_destaque:'#4ECDC4', cor_fundo:'#F0F9F8', cor_texto:'#0A1E28',
+    cor_primaria:'#16545E', cor_dark:'#0A2A30', cor_mid:'#1E6E78', cor_destaque:'#4ECDC4', cor_fundo:'#F0F9F8', cor_texto:'#0A2228',
     fonte_titulo:'Cormorant Garamond', fonte_texto:'Lato', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Noite Estrelada', descricao:'Místico e profundo',
-    cor_primaria:'#2D1B69', cor_destaque:'#F7C59F', cor_fundo:'#FFF8F3', cor_texto:'#180E3A',
+    cor_primaria:'#33256E', cor_dark:'#180E3A', cor_mid:'#43338A', cor_destaque:'#F7C59F', cor_fundo:'#FAF8FF', cor_texto:'#180E3A',
     fonte_titulo:'Cinzel', fonte_texto:'Raleway', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
   { nome:'Chama Divina', descricao:'Fervoroso e vibrante',
-    cor_primaria:'#4A1942', cor_destaque:'#F9A825', cor_fundo:'#FFF8E6', cor_texto:'#2A0A26',
+    cor_primaria:'#4A1942', cor_dark:'#140512', cor_mid:'#3b1234', cor_destaque:'#F9A825', cor_fundo:'#FFF8E6', cor_texto:'#2A0A26',
     fonte_titulo:'Playfair Display', fonte_texto:'Nunito', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
+  { nome:'Rosé Sereno', descricao:'Delicado e moderno',
+    cor_primaria:'#7D3450', cor_dark:'#3D1628', cor_mid:'#9C4567', cor_destaque:'#E8A0B8', cor_fundo:'#FDF3F6', cor_texto:'#33121F',
+    fonte_titulo:'Cormorant Garamond', fonte_texto:'Nunito', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
+  { nome:'Grafite Moderno', descricao:'Sóbrio e elegante',
+    cor_primaria:'#2C3E50', cor_dark:'#16212C', cor_mid:'#3D5266', cor_destaque:'#D4AF7A', cor_fundo:'#F4F6F8', cor_texto:'#1A2530',
+    fonte_titulo:'Lora', fonte_texto:'Inter', titulo_size:'clamp(3rem,11vw,6.5rem)', hero_tagline:'' },
 ];
 
 function getDesign(){ return _cfgEvento.design || TEMAS_DESIGN[0]; }
+
+// Pré-carrega as fontes de todos os temas (para as prévias dos cards ficarem fiéis)
+function preloadFontesTemas(){
+  const fontMapPreload={
+    'EB Garamond':'https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700;800&display=swap',
+    'Cormorant Garamond':'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap',
+    'Playfair Display':'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&display=swap',
+    'Cinzel':'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+    'Lora':'https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap',
+  };
+  const vistas = new Set();
+  TEMAS_DESIGN.forEach(t=>{
+    if(t.fonte_titulo && fontMapPreload[t.fonte_titulo] && !vistas.has(t.fonte_titulo)){
+      vistas.add(t.fonte_titulo);
+      const id='gfprev-'+t.fonte_titulo.replace(/\s+/g,'');
+      if(!document.getElementById(id)){
+        const l=document.createElement('link'); l.rel='stylesheet'; l.href=fontMapPreload[t.fonte_titulo]; l.id=id;
+        document.head.appendChild(l);
+      }
+    }
+  });
+}
 
 // Gera tema completo a partir de uma cor primária
 function hexToHsl(hex){
@@ -2872,10 +2907,12 @@ function setVisibilidadeCfg(tipo){
 function aplicarTema(idx){
   if(!_cfgEvento.design) _cfgEvento.design={};
   _cfgEvento.design.tema_ativo = idx;
+  _cfgEvento.design.tema_nome  = TEMAS_DESIGN[idx].nome;
   const t = TEMAS_DESIGN[idx];
   Object.assign(_cfgEvento.design, {
-    cor_primaria:t.cor_primaria, cor_destaque:t.cor_destaque, cor_fundo:t.cor_fundo, cor_texto:t.cor_texto,
-    fonte_titulo:t.fonte_titulo, fonte_texto:t.fonte_texto, titulo_size:t.titulo_size, hero_tagline:t.hero_tagline,
+    cor_primaria:t.cor_primaria, cor_dark:t.cor_dark, cor_mid:t.cor_mid,
+    cor_destaque:t.cor_destaque, cor_fundo:t.cor_fundo, cor_texto:t.cor_texto,
+    fonte_titulo:t.fonte_titulo, fonte_texto:t.fonte_texto, titulo_size:t.titulo_size,
   });
   document.querySelectorAll('[id^="tema-card-"]').forEach((el,i)=>{
     const ativo=i===idx;
