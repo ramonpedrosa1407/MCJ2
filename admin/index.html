@@ -78,8 +78,10 @@ tbody tr:hover{background:var(--gray-50)}
 .badge{display:inline-block;padding:4px 11px;border-radius:50px;font-size:10px;font-weight:600;letter-spacing:.3px}
 .badge-green{background:#ECFDF5;color:#065F46}
 .badge-gray{background:var(--gray-100);color:var(--gray-500)}
-.btn-t{padding:7px 13px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;margin-right:4px;transition:opacity .2s}
-.btn-t:hover{opacity:.85}
+.btn-t{padding:7px 12px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:opacity .2s,transform .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;line-height:1}
+.btn-t:hover{opacity:.85;transform:translateY(-1px)}
+.acoes-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end}
+.btn-t-icon{padding:7px 10px}
 .btn-t-blue{background:var(--dark);color:white}
 .btn-t-gray{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
 .btn-t-red{background:#FEF2F2;color:#EF4444;border:1px solid #FECACA}
@@ -487,12 +489,14 @@ function renderTabela(){
       '<td style="font-size:12px">'+(cfg.data||'—')+'</td>'+
       '<td><button type="button" class="fase-badge '+fb.cls+'" data-action="fase">'+fb.label+' ▾</button></td>'+
       '<td><button type="button" class="toggle-pub '+(pub?'toggle-pub-on':'toggle-pub-off')+'" data-action="publico">'+(pub?'🌐 Público':'🔒 Privado')+'</button></td>'+
-      '<td>'+
-        '<button type="button" class="btn-t btn-t-blue" data-action="acessar">Acessar</button>'+
-        '<button type="button" class="btn-t btn-t-gray" data-action="toggle">'+(e.ativo?'Desativar':'Ativar')+'</button>'+
-        '<button type="button" class="btn-t" data-action="qr" style="background:#F5F3FF;color:#7C3AED;border:1px solid #DDD6FE">📱 QR</button>'+
-        '<button type="button" class="btn-t btn-t-green" data-action="config">⚙ Config</button>'+
-        '<button type="button" class="btn-t btn-t-red" data-action="excluir">🗑</button>'+
+      '<td style="min-width:300px">'+
+        '<div class="acoes-group">'+
+          '<button type="button" class="btn-t btn-t-blue" data-action="acessar">Acessar</button>'+
+          '<button type="button" class="btn-t btn-t-gray" data-action="toggle">'+(e.ativo?'Desativar':'Ativar')+'</button>'+
+          '<button type="button" class="btn-t btn-t-icon" data-action="qr" style="background:#F5F3FF;color:#7C3AED;border:1px solid #DDD6FE" title="QR Code">📱 QR</button>'+
+          '<button type="button" class="btn-t btn-t-green" data-action="config">⚙ Config</button>'+
+          '<button type="button" class="btn-t btn-t-red btn-t-icon" data-action="excluir" title="Excluir">🗑</button>'+
+        '</div>'+
       '</td>'+
       '</tr>';
   }).join('');
