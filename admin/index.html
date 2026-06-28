@@ -81,6 +81,7 @@ tbody tr:hover{background:var(--gray-50)}
 .btn-t{padding:7px 12px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:opacity .2s,transform .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;line-height:1}
 .btn-t:hover{opacity:.85;transform:translateY(-1px)}
 .acoes-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end}
+.acoes-sep{width:1px;height:20px;background:var(--gray-100);margin:0 2px}
 .btn-t-icon{padding:7px 10px}
 .btn-t-blue{background:var(--dark);color:white}
 .btn-t-gray{background:var(--gray-50);color:var(--gray-500);border:1px solid var(--sand)}
@@ -199,8 +200,8 @@ tbody tr:hover{background:var(--gray-50)}
       <div class="table-header">Todos os eventos</div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th>Fase</th><th>Visib.</th><th>Ações</th></tr></thead>
-          <tbody id="tbody-eventos"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
+          <thead><tr><th>Evento</th><th>URL</th><th>Data</th><th style="text-align:right">Ações</th></tr></thead>
+          <tbody id="tbody-eventos"><tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--gray-300)">Carregando...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -475,7 +476,7 @@ async function carregarDados(){
 function renderTabela(){
   const tb=document.getElementById('tbody-eventos');
   if(!_eventos.length){
-    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado.</td></tr>';
+    tb.innerHTML='<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--gray-300)">Nenhum evento criado.</td></tr>';
     return;
   }
   tb.innerHTML=_eventos.map(e=>{
@@ -485,12 +486,13 @@ function renderTabela(){
     const nomeEsc=e.nome.replace(/"/g,'&quot;');
     return '<tr data-id="'+e.id+'" data-slug="'+e.slug+'" data-nome="'+nomeEsc+'" data-ativo="'+e.ativo+'">'+
       '<td><strong>'+e.nome+'</strong><br><span style="font-size:11px;color:var(--gray-400)">'+(cfg.subtitulo||'')+'</span></td>'+
-      '<td><a href="/'+e.slug+'/" target="_blank" style="color:var(--gold);font-size:12px">jornadaespirita.com.br/'+e.slug+'/</a></td>'+
+      '<td><a href="/'+e.slug+'/" target="_blank" style="color:var(--gray-600);font-size:12px">jornadaespirita.com.br/'+e.slug+'/</a></td>'+
       '<td style="font-size:12px">'+(cfg.data||'—')+'</td>'+
-      '<td><button type="button" class="fase-badge '+fb.cls+'" data-action="fase">'+fb.label+' ▾</button></td>'+
-      '<td><button type="button" class="toggle-pub '+(pub?'toggle-pub-on':'toggle-pub-off')+'" data-action="publico">'+(pub?'🌐 Público':'🔒 Privado')+'</button></td>'+
-      '<td style="min-width:300px">'+
+      '<td style="min-width:380px">'+
         '<div class="acoes-group">'+
+          '<button type="button" class="fase-badge '+fb.cls+'" data-action="fase">'+fb.label+' ▾</button>'+
+          '<button type="button" class="toggle-pub '+(pub?'toggle-pub-on':'toggle-pub-off')+'" data-action="publico">'+(pub?'🌐 Público':'🔒 Privado')+'</button>'+
+          '<span class="acoes-sep"></span>'+
           '<button type="button" class="btn-t btn-t-blue" data-action="acessar">Acessar</button>'+
           '<button type="button" class="btn-t btn-t-gray" data-action="toggle">'+(e.ativo?'Desativar':'Ativar')+'</button>'+
           '<button type="button" class="btn-t btn-t-icon" data-action="qr" style="background:#F5F3FF;color:#7C3AED;border:1px solid #DDD6FE" title="QR Code">📱 QR</button>'+
