@@ -3663,7 +3663,7 @@ function selecionarPolo(nome){
 
   // Limpa msg de polo obrigatório
   const msg = document.getElementById('polo-msg');
-  if(msg) msg.style.display = 'none';
+  if(msg){ msg.style.display = 'none'; msg.classList.remove('show'); }
 
   // Busca config do polo
   const polo = POLOS.find(p=>p.nome===nome);
@@ -4002,6 +4002,19 @@ async function inscrever(){
   const almoco           = almocoChk?.checked || false;
   const almocoCriancaChk = document.getElementById('f-almoco-crianca');
   const almocoCrianca    = almocoCriancaChk?.checked || false;
+
+  // Polo é a primeira validação: sem polo, nada mais faz sentido.
+  if(usaPolos && !poloSel){
+    alerta('err','Selecione o polo onde deseja se inscrever.');
+    const msg = document.getElementById('polo-msg');
+    if(msg){
+      msg.style.display='';
+      msg.classList.add('show');
+      msg.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    return;
+  }
+  if(usaPolos && !poloSelCfg){ alerta('err','Não foi possível carregar os dados deste polo. Recarregue a página e tente novamente.'); return; }
 
   // Dados de crianças para Evangelização
   const temCrianca = document.getElementById('f-tem-crianca')?.checked || false;
