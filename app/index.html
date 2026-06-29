@@ -184,6 +184,10 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .cfg-subtab-btn{padding:9px 18px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-100);background:white;color:var(--gray-500);font-family:'Inter',sans-serif;transition:all .15s;min-height:40px}
 .cfg-subtab-btn:hover{border-color:var(--gray-300);color:var(--gray-700)}
 .cfg-subtab-btn.active{background:var(--mcj-dark);color:white;border-color:var(--mcj-dark)}
+.hero-modo-toggle{display:flex;gap:6px;margin-top:4px}
+.hmodo-btn{flex:1;padding:10px 8px;border-radius:10px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1.5px solid var(--gray-100);background:white;color:var(--gray-500);transition:all .15s;min-height:42px}
+.hmodo-btn:hover{border-color:var(--gray-300);color:var(--gray-700)}
+.hmodo-btn.active{background:var(--mcj-dark);color:white;border-color:var(--mcj-dark)}
 .atab-btn{background:none;border:none;border-bottom:3px solid transparent;padding:10px 14px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:500;color:var(--mcj-mid);cursor:pointer;white-space:nowrap;margin-bottom:-2px;min-height:44px;-webkit-appearance:none;transition:all .15s;letter-spacing:.2px}
 .atab-btn:hover{color:var(--mcj-dark)}
 .atab-btn.active{color:var(--mcj-dark);border-bottom-color:var(--mcj-gold);font-weight:700}
@@ -2249,6 +2253,15 @@ function renderEventoAdmin(){
             <span style="font-size:11px;color:var(--gray-400);margin-top:3px;display:block">Aparece em destaque acima do título no hero</span>
           </div>
           <div class="cfg-field">
+            <label>Texto do hero (contraste com a capa)</label>
+            <div class="hero-modo-toggle" id="ev-hero-modo">
+              <button type="button" class="hmodo-btn ${(d.hero_modo||'auto')==='auto'?'active':''}" data-modo="auto">Automático</button>
+              <button type="button" class="hmodo-btn ${(d.hero_modo||'auto')==='claro'?'active':''}" data-modo="claro">Hero claro</button>
+              <button type="button" class="hmodo-btn ${(d.hero_modo||'auto')==='escuro'?'active':''}" data-modo="escuro">Hero escuro</button>
+            </div>
+            <span style="font-size:11px;color:var(--gray-400);margin-top:4px;display:block">No <strong>Automático</strong>, detectamos o brilho da sua capa e ajustamos o texto. Use <strong>Hero claro</strong> (texto escuro) para capas claras, ou <strong>Hero escuro</strong> (texto branco) para capas escuras.</span>
+          </div>
+          <div class="cfg-field">
             <label>Tag da página de inscrição</label>
             <input type="text" id="ev-inscricao-sub" value="${esc(e.inscricao_sub||'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.')}" placeholder="Texto abaixo do título na página de inscrição">
           </div>
@@ -2386,6 +2399,7 @@ function renderEventoAdmin(){
     w.querySelectorAll('[data-action="remover-campo"]').forEach(b=>{ b.onclick=()=>removerCampoExtra(parseInt(b.dataset.idx)); });
     w.querySelectorAll('[data-action="vis-publico"]').forEach(b=>{ b.onclick=()=>setVisibilidadeCfg('publico'); });
     w.querySelectorAll('[data-action="vis-privado"]').forEach(b=>{ b.onclick=()=>setVisibilidadeCfg('privado'); });
+    w.querySelectorAll('#ev-hero-modo .hmodo-btn').forEach(b=>{ b.onclick=()=>setHeroModo(b.dataset.modo); });
     preloadFontesTemas();
   }, 50);
 }
@@ -3063,35 +3077,101 @@ function aplicarDesign(){
   if(d.titulo_size){document.querySelectorAll('.hero h1').forEach(el=>el.style.fontSize=d.titulo_size);}
   if(d.hero_tagline){document.querySelectorAll('.hero-tag').forEach(el=>el.textContent=d.hero_tagline);}
 
-  // Tema claro: hero com texto escuro (em vez de branco) para contraste.
-  // Nav/tabs/botões já ficam escuros via --mcj-dark = cor_ui (definido acima).
-  const claro = !!d.hero_claro;
-  const corTextoHero = d.cor_texto || '#2A2A2A';
-  // Limpa qualquer override inline antigo de nav/tabs (caso tenha vindo de versão anterior)
+  // ─── CONTRASTE DO HERO ───
+  // Limpa overrides antigos de nav/tabs (deixa o CSS por variável resolver)
   document.querySelectorAll('nav, .tabs-bar').forEach(el=>{ el.style.background = ''; });
-  // O hero em tema claro: overlay fica invisível para não escurecer o fundo claro
-  document.querySelectorAll('.hero-overlay').forEach(el=>{ el.style.opacity = claro ? '0' : ''; });
+  // Decide o texto do hero: modo manual (claro/escuro) ou automático (detecta a capa)
+  ajustarContrasteHero(d);
+}
 
+// Aplica a cor do texto do hero. heroClaro=true → hero claro, texto escuro.
+function aplicarHeroTexto(heroClaro, d){
+  d = d || getDesign();
+  const corTextoHero = d.cor_texto || '#2A2A2A';
+  document.querySelectorAll('.hero-overlay').forEach(el=>{ el.style.opacity = heroClaro ? '0' : ''; });
   document.querySelectorAll('.hero h1').forEach(el=>{
-    el.style.color = claro ? corTextoHero : '';
-    el.style.textShadow = claro ? 'none' : '';
+    el.style.color = heroClaro ? corTextoHero : '';
+    el.style.textShadow = heroClaro ? 'none' : '';
   });
   document.querySelectorAll('.hero-sub').forEach(el=>{
-    el.style.color = claro ? corTextoHero : '';
-    el.style.opacity = claro ? '.8' : '';
+    el.style.color = heroClaro ? corTextoHero : '';
+    el.style.opacity = heroClaro ? '.8' : '';
   });
   document.querySelectorAll('.hero-tag').forEach(el=>{
-    el.style.color = claro ? corTextoHero : '';
-    el.style.opacity = claro ? '.7' : '';
+    el.style.color = heroClaro ? corTextoHero : '';
+    el.style.opacity = heroClaro ? '.7' : '';
   });
   document.querySelectorAll('.hero-pill').forEach(el=>{
-    el.style.color = claro ? corTextoHero : '';
-    el.style.opacity = claro ? '.72' : '';
+    el.style.color = heroClaro ? corTextoHero : '';
+    el.style.opacity = heroClaro ? '.72' : '';
   });
-  // Em tema claro, a marca itálica do h1 (em) usa o destaque saturado
   document.querySelectorAll('.hero h1 em').forEach(el=>{
-    el.style.color = claro ? (d.cor_destaque||corTextoHero) : '';
+    el.style.color = heroClaro ? (d.cor_destaque||corTextoHero) : (d.cor_destaque||'');
   });
+}
+
+// Decide o modo do texto do hero. 'auto' detecta o brilho da capa; senão respeita a escolha manual.
+async function ajustarContrasteHero(d){
+  d = d || getDesign();
+  const modo = d.hero_modo || 'auto';
+  if(modo === 'claro'){ aplicarHeroTexto(true, d);  return; }
+  if(modo === 'escuro'){ aplicarHeroTexto(false, d); return; }
+  // AUTO: aplica já o padrão do tema, depois refina pela capa
+  aplicarHeroTexto(!!d.hero_claro, d);
+  const capa = _cfgEvento.thumb || '';
+  if(!capa) return; // sem capa → mantém o padrão do tema
+  try{
+    const brilho = await detectarBrilhoCapa(capa);
+    if(brilho != null){
+      // capa clara (brilho alto) → texto escuro; capa escura → texto claro
+      aplicarHeroTexto(brilho > 0.58, d);
+    }
+  }catch(e){ /* falhou a detecção: mantém o palpite do tema */ }
+}
+
+// Mede o brilho médio de uma imagem ou vídeo de capa. Retorna 0..1 ou null se falhar.
+function detectarBrilhoCapa(url){
+  return new Promise(resolve=>{
+    if(!url){ resolve(null); return; }
+    const isVideo = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);
+    let resolvido = false;
+    const done = (v)=>{ if(resolvido) return; resolvido=true; clearTimeout(timer); resolve(v); };
+    const timer = setTimeout(()=>done(null), 4500);
+    function brilhoCanvas(src,w,h){
+      try{
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        const ctx=c.getContext('2d'); ctx.drawImage(src,0,0,w,h);
+        const data=ctx.getImageData(0,0,w,h).data;
+        let sum=0,n=0;
+        for(let i=0;i<data.length;i+=4){
+          sum += (0.299*data[i]+0.587*data[i+1]+0.114*data[i+2])/255; n++;
+        }
+        return n ? sum/n : null;
+      }catch(e){ return null; }
+    }
+    if(isVideo){
+      const v=document.createElement('video');
+      v.crossOrigin='anonymous'; v.muted=true; v.playsInline=true; v.preload='auto'; v.src=url;
+      v.addEventListener('loadeddata', ()=>{ try{ v.currentTime=Math.min(0.2,(v.duration||1)*0.1); }catch(e){ done(null); } });
+      v.addEventListener('seeked', ()=>done(brilhoCanvas(v,64,36)));
+      v.addEventListener('error', ()=>done(null));
+    } else {
+      const img=new Image(); img.crossOrigin='anonymous';
+      img.onload=()=>done(brilhoCanvas(img,64,64));
+      img.onerror=()=>done(null);
+      img.src=url;
+    }
+  });
+}
+
+// Chamado quando o usuário troca o modo do hero no painel de Design
+function setHeroModo(modo){
+  if(!_cfgEvento.design) _cfgEvento.design = {};
+  _cfgEvento.design.hero_modo = modo;
+  document.querySelectorAll('#ev-hero-modo .hmodo-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.modo === modo);
+  });
+  ajustarContrasteHero(_cfgEvento.design);
 }
 
 async function salvarEventoCfg(){
