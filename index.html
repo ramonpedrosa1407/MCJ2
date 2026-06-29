@@ -65,12 +65,16 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);min
 .evento-card-img-title{position:relative;z-index:2;font-family:'EB Garamond',Georgia,serif;font-size:1.9rem;font-weight:500;color:white;text-align:center;padding:1.25rem;width:100%;line-height:1.1;text-shadow:0 2px 16px rgba(0,0,0,.4)}
 /* MINI-HERO — espelho proporcional do hero do evento */
 .mini-hero{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:1.25rem 1rem;overflow:hidden}
-.mini-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 90% at 50% 8%, transparent 35%, rgba(0,0,0,.18) 100%);pointer-events:none}
-.mini-hero-content{position:relative;z-index:1;width:100%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.mini-hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.evento-card:hover .mini-hero-bg{transform:scale(1.06)}
+.mini-hero-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(to top, rgba(7,23,48,.72) 0%, rgba(7,23,48,.3) 45%, rgba(7,23,48,.08) 75%, transparent 100%);transition:opacity .3s}
+.mini-hero:not(.has-cover)::after{content:'';position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 120% 90% at 50% 8%, transparent 35%, rgba(0,0,0,.18) 100%);pointer-events:none}
+.mini-hero-content{position:relative;z-index:2;width:100%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
 .evento-card:hover .mini-hero-content{transform:scale(1.04)}
 .mini-hero-tag{font-size:8.5px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:9px;position:relative;display:inline-block;padding-bottom:5px;opacity:.85}
 .mini-hero-tag::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:18px;height:1px;background:currentColor;opacity:.6}
-.mini-hero-title{font-size:1.95rem;font-weight:500;line-height:1.04;letter-spacing:-.01em}
+.mini-hero-title{font-size:1.95rem;font-weight:500;line-height:1.04;letter-spacing:-.01em;text-shadow:0 2px 14px rgba(0,0,0,.28)}
+.mini-hero.text-dark .mini-hero-title{text-shadow:none}
 .mini-hero-title em{font-style:italic;font-weight:500}
 .mini-hero-sub{font-size:10.5px;font-weight:300;margin-top:8px;line-height:1.4;letter-spacing:.2px;max-width:88%;margin-left:auto;margin-right:auto}
 .evento-card-badge{position:absolute;top:14px;right:14px;z-index:3;padding:5px 12px;border-radius:50px;font-size:10px;font-weight:600;letter-spacing:.5px;backdrop-filter:blur(8px)}
@@ -280,12 +284,24 @@ async function carregarEventos(){
       const icoClock = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
 
       // Miniatura do hero: espelho proporcional do hero real do evento
+      const temCapa = !!cfg.thumb;
+      const isVideo = temCapa && /\.(mp4|webm|ogg|mov)(\?|$)/i.test(cfg.thumb);
+      const capaBg = !temCapa ? '' : (isVideo
+        ? `<video class="mini-hero-bg" autoplay muted loop playsinline preload="metadata" src="${cfg.thumb}"></video>`
+        : `<img class="mini-hero-bg" src="${cfg.thumb}" alt="" loading="lazy">`);
+      // Com capa: texto branco por padrão + véu escuro garantem legibilidade.
+      // O modo 'auto' é refinado depois pela detecção de brilho da capa.
+      const txtComCapa = temCapa ? (dsg.hero_modo==='claro' ? corTxt : '#FFFFFF') : txtHero;
+      const tagComCapa = temCapa ? (dsg.hero_modo==='claro' ? corTxt : 'rgba(255,255,255,.8)') : txtTag;
+      const veilOff = temCapa && dsg.hero_modo==='claro';
       const miniHero = `
-        <div class="mini-hero" style="background:${phGrad}">
+        <div class="mini-hero ${temCapa?'has-cover':''} ${(temCapa?dsg.hero_modo==='claro':heroClaro)?'text-dark':''}" id="mh-${e.slug}" data-capa="${temCapa?'1':''}" data-modo="${dsg.hero_modo||'auto'}" data-txt="${corTxt}" data-dest="${corDest}" ${temCapa?'':'style="background:'+phGrad+'"'}>
+          ${capaBg}
+          ${temCapa?`<div class="mini-hero-veil" style="${veilOff?'opacity:0':''}"></div>`:''}
           <div class="mini-hero-content">
-            ${tagline?`<div class="mini-hero-tag" style="color:${txtTag}">${tagline}</div>`:''}
-            <div class="mini-hero-title" style="font-family:'${fonteTit}',Georgia,serif;color:${txtHero}">${tituloHtml}</div>
-            ${cfg.subtitulo?`<div class="mini-hero-sub" style="color:${txtHero};opacity:.78">${cfg.subtitulo}</div>`:''}
+            ${tagline?`<div class="mini-hero-tag" style="color:${tagComCapa}">${tagline}</div>`:''}
+            <div class="mini-hero-title" style="font-family:'${fonteTit}',Georgia,serif;color:${txtComCapa}">${tituloHtml}</div>
+            ${cfg.subtitulo?`<div class="mini-hero-sub" style="color:${txtComCapa};opacity:.82">${cfg.subtitulo}</div>`:''}
           </div>
         </div>`;
 
@@ -309,9 +325,69 @@ async function carregarEventos(){
         </div>
       </a>`;
     }).join('');
+    refinarContrasteCapas();
   } catch(e){
     grid.innerHTML = '<div class="loading-eventos">Erro ao carregar eventos.</div>';
   }
+}
+
+// Refina o contraste do texto dos cards que têm capa e estão em modo automático,
+// detectando o brilho da capa — espelhando a lógica do hero real do evento.
+function refinarContrasteCapas(){
+  document.querySelectorAll('.mini-hero.has-cover[data-modo="auto"]').forEach(el=>{
+    const img = el.querySelector('.mini-hero-bg');
+    if(!img) return;
+    const src = img.getAttribute('src');
+    detectarBrilhoCapaPortal(src).then(brilho=>{
+      if(brilho == null) return; // falhou: mantém branco + véu (sempre legível)
+      const claro = brilho > 0.58; // capa clara → texto escuro
+      aplicarContrasteCard(el, claro);
+    });
+  });
+}
+
+function aplicarContrasteCard(el, heroClaro){
+  const corTxt = el.dataset.txt || '#0C2240';
+  const corDest = el.dataset.dest || '#7EB8D4';
+  const txt = heroClaro ? corTxt : '#FFFFFF';
+  el.classList.toggle('text-dark', heroClaro);
+  const veil = el.querySelector('.mini-hero-veil');
+  if(veil) veil.style.opacity = heroClaro ? '0' : '';
+  const title = el.querySelector('.mini-hero-title'); if(title) title.style.color = txt;
+  const sub = el.querySelector('.mini-hero-sub'); if(sub) sub.style.color = txt;
+  const tag = el.querySelector('.mini-hero-tag'); if(tag) tag.style.color = heroClaro ? corTxt : 'rgba(255,255,255,.8)';
+  const em = el.querySelector('.mini-hero-title em'); if(em) em.style.color = corDest;
+}
+
+// Mede o brilho médio de uma imagem ou vídeo de capa. Retorna 0..1 ou null.
+function detectarBrilhoCapaPortal(url){
+  return new Promise(resolve=>{
+    if(!url){ resolve(null); return; }
+    const isVideo = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);
+    let feito=false;
+    const done=(v)=>{ if(feito)return; feito=true; clearTimeout(timer); resolve(v); };
+    const timer=setTimeout(()=>done(null),4500);
+    function brilho(src,w,h){
+      try{
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        const ctx=c.getContext('2d'); ctx.drawImage(src,0,0,w,h);
+        const data=ctx.getImageData(0,0,w,h).data; let s=0,n=0;
+        for(let i=0;i<data.length;i+=4){ s+=(0.299*data[i]+0.587*data[i+1]+0.114*data[i+2])/255; n++; }
+        return n? s/n : null;
+      }catch(e){ return null; }
+    }
+    if(isVideo){
+      const v=document.createElement('video'); v.crossOrigin='anonymous'; v.muted=true; v.playsInline=true; v.src=url;
+      v.addEventListener('loadeddata',()=>{ try{ v.currentTime=Math.min(0.2,(v.duration||1)*0.1); }catch(e){ done(null); } });
+      v.addEventListener('seeked',()=>done(brilho(v,64,36)));
+      v.addEventListener('error',()=>done(null));
+    } else {
+      const img=new Image(); img.crossOrigin='anonymous';
+      img.onload=()=>done(brilho(img,64,64));
+      img.onerror=()=>done(null);
+      img.src=url;
+    }
+  });
 }
 
 // Login admin
