@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Jornada Espirita — Portal de Eventos</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -63,6 +63,16 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);min
 .evento-card:hover .evento-card-img img{transform:scale(1.06)}
 .evento-card-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,23,48,.55) 0%,transparent 55%);z-index:1}
 .evento-card-img-title{position:relative;z-index:2;font-family:'EB Garamond',Georgia,serif;font-size:1.9rem;font-weight:500;color:white;text-align:center;padding:1.25rem;width:100%;line-height:1.1;text-shadow:0 2px 16px rgba(0,0,0,.4)}
+/* MINI-HERO — espelho proporcional do hero do evento */
+.mini-hero{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:1.25rem 1rem;overflow:hidden}
+.mini-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 90% at 50% 8%, transparent 35%, rgba(0,0,0,.18) 100%);pointer-events:none}
+.mini-hero-content{position:relative;z-index:1;width:100%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.evento-card:hover .mini-hero-content{transform:scale(1.04)}
+.mini-hero-tag{font-size:8.5px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:9px;position:relative;display:inline-block;padding-bottom:5px;opacity:.85}
+.mini-hero-tag::after{content:'';position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:18px;height:1px;background:currentColor;opacity:.6}
+.mini-hero-title{font-size:1.95rem;font-weight:500;line-height:1.04;letter-spacing:-.01em}
+.mini-hero-title em{font-style:italic;font-weight:500}
+.mini-hero-sub{font-size:10.5px;font-weight:300;margin-top:8px;line-height:1.4;letter-spacing:.2px;max-width:88%;margin-left:auto;margin-right:auto}
 .evento-card-badge{position:absolute;top:14px;right:14px;z-index:3;padding:5px 12px;border-radius:50px;font-size:10px;font-weight:600;letter-spacing:.5px;backdrop-filter:blur(8px)}
 .badge-ativo{background:rgba(16,185,129,.92);color:white}
 .badge-encerrado{background:rgba(7,23,48,.55);color:rgba(255,255,255,.85)}
@@ -242,22 +252,46 @@ async function carregarEventos(){
       };
       const {cls:badgeClass, txt:badgeText} = faseMap[fase]||faseMap.em_breve;
       const pub = (cfg.publico !== false);
-      const corP = cfg.design?.cor_primaria||cfg.cor_primaria||'#0C2240';
-      const corD = cfg.design?.cor_dark||corP;
-      const corM = cfg.design?.cor_mid||corP;
+      const dsg = cfg.design || {};
+      const corP = dsg.cor_primaria||cfg.cor_primaria||'#0C2240';
+      const corD = dsg.cor_dark||corP;
+      const corM = dsg.cor_mid||corP;
+      const corDest = dsg.cor_destaque||'#7EB8D4';
+      const corTxt = dsg.cor_texto||'#0C2240';
+      const fonteTit = dsg.fonte_titulo||'EB Garamond';
+      const tagline = dsg.hero_tagline||'';
       const phGrad = `linear-gradient(165deg,${corD} 0%,${corD} 25%,${corM} 70%,${corP} 100%)`;
+      // Texto do hero: claro (escuro) ou escuro (branco), espelhando a lógica do evento
+      const heroClaro = dsg.hero_modo==='claro' ? true : dsg.hero_modo==='escuro' ? false : !!dsg.hero_claro;
+      const txtHero = heroClaro ? corTxt : '#FFFFFF';
+      const txtTag = heroClaro ? corTxt : 'rgba(255,255,255,.72)';
+      // Divide o nome: última palavra em itálico no destaque (espelha o "em" do hero)
+      const palavras = (e.nome||'').trim().split(/\s+/);
+      let tituloHtml;
+      if(palavras.length > 1){
+        const ult = palavras.pop();
+        tituloHtml = `${palavras.join(' ')} <em style="font-style:italic;color:${corDest}">${ult}</em>`;
+      } else {
+        tituloHtml = e.nome||'';
+      }
       // Ícones SVG
       const icoCal = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
       const icoPin = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
       const icoClock = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
 
-      const imgInner = cfg.thumb
-        ? `<img src="${cfg.thumb}" alt="${e.nome}"><div class="evento-card-img-overlay"></div>`
-        : `<div class="evento-card-img-overlay" style="background:linear-gradient(to top,rgba(7,23,48,.4),transparent 60%)"></div><div class="evento-card-img-title">${e.nome}</div>`;
+      // Miniatura do hero: espelho proporcional do hero real do evento
+      const miniHero = `
+        <div class="mini-hero" style="background:${phGrad}">
+          <div class="mini-hero-content">
+            ${tagline?`<div class="mini-hero-tag" style="color:${txtTag}">${tagline}</div>`:''}
+            <div class="mini-hero-title" style="font-family:'${fonteTit}',Georgia,serif;color:${txtHero}">${tituloHtml}</div>
+            ${cfg.subtitulo?`<div class="mini-hero-sub" style="color:${txtHero};opacity:.78">${cfg.subtitulo}</div>`:''}
+          </div>
+        </div>`;
 
       return `<a href="/${e.slug}/" class="evento-card">
-        <div class="evento-card-img" style="${cfg.thumb?'':'background:'+phGrad}">
-          ${imgInner}
+        <div class="evento-card-img">
+          ${miniHero}
           <span class="vis-tag ${pub?'badge-publico':'badge-privado'}">${pub?'Público':'🔒 Privado'}</span>
           <span class="evento-card-badge ${badgeClass}">${badgeText}</span>
         </div>
