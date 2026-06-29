@@ -1580,6 +1580,12 @@ async function carregarConfig(){
       const polosId = eventoId+'-polos';
       const cfgRows = await supa('GET','config?select=dados&id=eq.'+polosId);
       POLOS = cfgRows?.[0]?.dados && Array.isArray(cfgRows[0].dados) ? cfgRows[0].dados : [];
+      // Fallback: se o evento não tem polos próprios (ex: MCJ, que usa 'main-polos'),
+      // busca os polos da config principal para não deixar o formulário sem dados (PIX/valor).
+      if(!POLOS.length){
+        const mainPolos = await supa('GET','config?select=dados&id=eq.main-polos');
+        if(mainPolos?.[0]?.dados && Array.isArray(mainPolos[0].dados)) POLOS = mainPolos[0].dados;
+      }
     } else {
       // MCJ padrão
       const rows = await supa('GET','config?select=dados&id=eq.main');
