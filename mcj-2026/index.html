@@ -2262,6 +2262,16 @@ function renderEventoAdmin(){
             <span style="font-size:11px;color:var(--gray-400);margin-top:4px;display:block">No <strong>Automático</strong>, detectamos o brilho da sua capa e ajustamos o texto. Use <strong>Hero claro</strong> (texto escuro) para capas claras, ou <strong>Hero escuro</strong> (texto branco) para capas escuras.</span>
           </div>
           <div class="cfg-field">
+            <label>Tamanho do título</label>
+            <div class="hero-modo-toggle" id="ev-titulo-size">
+              <button type="button" class="hmodo-btn ${tamanhoAtualKey(d)==='pequeno'?'active':''}" data-size="pequeno">Pequeno</button>
+              <button type="button" class="hmodo-btn ${tamanhoAtualKey(d)==='medio'?'active':''}" data-size="medio">Médio</button>
+              <button type="button" class="hmodo-btn ${tamanhoAtualKey(d)==='grande'?'active':''}" data-size="grande">Grande</button>
+              <button type="button" class="hmodo-btn ${tamanhoAtualKey(d)==='gigante'?'active':''}" data-size="gigante">Gigante</button>
+            </div>
+            <span style="font-size:11px;color:var(--gray-400);margin-top:4px;display:block">Ajusta o tamanho do título no hero. Os valores se adaptam ao tamanho da tela automaticamente.</span>
+          </div>
+          <div class="cfg-field">
             <label>Tag da página de inscrição</label>
             <input type="text" id="ev-inscricao-sub" value="${esc(e.inscricao_sub||'Realize sua inscrição abaixo. Escolha o polo mais próximo e preencha seus dados.')}" placeholder="Texto abaixo do título na página de inscrição">
           </div>
@@ -2400,6 +2410,7 @@ function renderEventoAdmin(){
     w.querySelectorAll('[data-action="vis-publico"]').forEach(b=>{ b.onclick=()=>setVisibilidadeCfg('publico'); });
     w.querySelectorAll('[data-action="vis-privado"]').forEach(b=>{ b.onclick=()=>setVisibilidadeCfg('privado'); });
     w.querySelectorAll('#ev-hero-modo .hmodo-btn').forEach(b=>{ b.onclick=()=>setHeroModo(b.dataset.modo); });
+    w.querySelectorAll('#ev-titulo-size .hmodo-btn').forEach(b=>{ b.onclick=()=>setTituloSize(b.dataset.size); });
     preloadFontesTemas();
   }, 50);
 }
@@ -2989,7 +3000,7 @@ function aplicarTema(idx){
   Object.assign(_cfgEvento.design, {
     cor_primaria:t.cor_primaria, cor_dark:t.cor_dark, cor_mid:t.cor_mid,
     cor_destaque:t.cor_destaque, cor_fundo:t.cor_fundo, cor_texto:t.cor_texto,
-    fonte_titulo:t.fonte_titulo, fonte_texto:t.fonte_texto, titulo_size:t.titulo_size,
+    fonte_titulo:t.fonte_titulo, fonte_texto:t.fonte_texto,
     hero_claro: !!t.hero_claro, cor_ui: t.cor_ui || '',
   });
   document.querySelectorAll('[id^="tema-card-"]').forEach((el,i)=>{
@@ -3172,6 +3183,28 @@ function setHeroModo(modo){
     b.classList.toggle('active', b.dataset.modo === modo);
   });
   ajustarContrasteHero(_cfgEvento.design);
+}
+
+// Tamanhos predefinidos do título do hero (responsivos via clamp)
+const TITULO_SIZES = {
+  pequeno: 'clamp(2.3rem,7.5vw,4.3rem)',
+  medio:   'clamp(3rem,11vw,6.5rem)',
+  grande:  'clamp(3.6rem,13vw,8rem)',
+  gigante: 'clamp(4.2rem,15.5vw,9.8rem)',
+};
+function tamanhoAtualKey(d){
+  const v = (d && d.titulo_size) || TITULO_SIZES.medio;
+  for(const k in TITULO_SIZES){ if(TITULO_SIZES[k] === v) return k; }
+  return 'medio';
+}
+function setTituloSize(key){
+  if(!_cfgEvento.design) _cfgEvento.design = {};
+  const val = TITULO_SIZES[key] || TITULO_SIZES.medio;
+  _cfgEvento.design.titulo_size = val;
+  document.querySelectorAll('#ev-titulo-size .hmodo-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.size === key);
+  });
+  document.querySelectorAll('.hero h1').forEach(el=>el.style.fontSize = val);
 }
 
 async function salvarEventoCfg(){
