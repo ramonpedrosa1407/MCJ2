@@ -284,11 +284,13 @@ async function carregarEventos(){
       const icoClock = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
 
       // Miniatura do hero: espelho proporcional do hero real do evento
-      const temCapa = !!cfg.thumb;
-      const isVideo = temCapa && /\.(mp4|webm|ogg|mov)(\?|$)/i.test(cfg.thumb);
+      // O hero usa video_url (MP4) se houver; senão a imagem thumb.
+      const midiaCapa = dsg.video_url || cfg.video_url || cfg.thumb || '';
+      const temCapa = !!midiaCapa;
+      const isVideo = temCapa && /\.(mp4|webm|ogg|mov)(\?|$)/i.test(midiaCapa);
       const capaBg = !temCapa ? '' : (isVideo
-        ? `<video class="mini-hero-bg" autoplay muted loop playsinline preload="metadata" src="${cfg.thumb}"></video>`
-        : `<img class="mini-hero-bg" src="${cfg.thumb}" alt="" loading="lazy">`);
+        ? `<video class="mini-hero-bg" autoplay muted loop playsinline preload="metadata" src="${midiaCapa}"></video>`
+        : `<img class="mini-hero-bg" src="${midiaCapa}" alt="" loading="lazy">`);
       // Com capa: texto branco por padrão + véu escuro garantem legibilidade.
       // O modo 'auto' é refinado depois pela detecção de brilho da capa.
       const txtComCapa = temCapa ? (dsg.hero_modo==='claro' ? corTxt : '#FFFFFF') : txtHero;
