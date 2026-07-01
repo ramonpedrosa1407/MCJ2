@@ -71,6 +71,12 @@ nav{background:var(--mcj-dark);display:flex;align-items:center;justify-content:s
 .hero-sub{font-size:clamp(15px,2.2vw,18px);color:rgba(255,255,255,.8);margin:0 auto 2.4rem;max-width:470px;line-height:1.8;font-weight:300;letter-spacing:.3px}
 .hero-pills{display:flex;justify-content:center;gap:0;flex-wrap:wrap;align-items:center}
 .hero-pill{background:none;border:none;color:rgba(255,255,255,.68);font-size:12px;font-weight:400;padding:2px 18px;letter-spacing:.4px;position:relative}
+/* Meta row — usado em áreas de fundo claro (ex: Sobre o Evento), estilo linha de crédito editorial */
+.sobre-meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:0;row-gap:8px}
+.sobre-meta-item{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--gray-600);font-weight:500;padding:0 16px;position:relative}
+.sobre-meta-item svg{color:var(--mcj-gold);flex-shrink:0}
+.sobre-meta-item:first-child{padding-left:0}
+.sobre-meta-item:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:1px;height:14px;background:var(--mcj-sand)}
 .hero-pill:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:1px;height:12px;background:rgba(255,255,255,.2)}
 .hero-social{display:flex;justify-content:center;gap:14px;margin-top:2rem}
 .hero-social-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:transparent;border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.82);text-decoration:none;transition:border-color .25s,color .25s,transform .25s}
@@ -2069,10 +2075,10 @@ function renderSobre(){
     <div class="polo-section" style="max-width:860px;margin:0 auto;padding:1.5rem 1rem 3rem">
       <div style="display:flex;flex-direction:column;gap:1.5rem">
         ${e.descricao?`<div style="font-size:16px;line-height:1.8;color:var(--gray-700)">${e.descricao}</div>`:''}
-        <div style="display:flex;flex-wrap:wrap;gap:10px">
-          ${e.data?`<span class="hero-pill" style="background:var(--mcj-dark);color:var(--mcj-gold)">📅 ${e.data}</span>`:''}
-          ${e.horario?`<span class="hero-pill" style="background:var(--mcj-dark);color:rgba(255,255,255,.8)">⏰ ${e.horario}</span>`:''}
-          ${e.local?`<span class="hero-pill" style="background:var(--mcj-dark);color:rgba(255,255,255,.8)">📍 ${e.local}</span>`:''}
+        <div class="sobre-meta-row">
+          ${e.data?`<span class="sobre-meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>${e.data}</span>`:''}
+          ${e.horario?`<span class="sobre-meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>${e.horario}</span>`:''}
+          ${e.local?`<span class="sobre-meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${e.local}</span>`:''}
         </div>
         ${(e.tema_manha||e.tema_tarde)?`
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
