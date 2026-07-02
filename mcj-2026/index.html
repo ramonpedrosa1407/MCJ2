@@ -418,6 +418,14 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .almoco-check-label.crianca .almoco-valor-tag{color:#2563EB}
 .almoco-check-label.crianca.sel{border-color:#2563EB;background:#DBEAFE;color:#1E3A8A}
 .almoco-check-label.crianca.sel .almoco-valor-tag{color:#1D4ED8}
+.cardapio-wrap{display:none;flex-direction:column;gap:8px;margin:2px 0 2px 4px}
+.cardapio-wrap.show{display:flex}
+.cardapio-opt{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:10px;border:1.5px solid var(--gray-100);background:white;cursor:pointer;transition:border-color .15s,background .15s;-webkit-user-select:none;user-select:none}
+.cardapio-opt:hover{border-color:#FFD09B}
+.cardapio-opt.sel{border-color:#E08020;background:#FFF8EF}
+.cardapio-opt input[type="radio"]{margin-top:3px;width:17px;height:17px;flex-shrink:0;accent-color:#E08020}
+.cardapio-opt-nome{font-size:13.5px;font-weight:600;color:var(--gray-800)}
+.cardapio-opt-desc{font-size:12px;color:var(--gray-400);margin-top:2px;line-height:1.4}
 
 footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc(1.5rem + var(--safe-bot));font-size:12px;color:var(--gray-200);border-top:1px solid var(--gray-100)}
 
@@ -866,12 +874,14 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
               <span>🍽 Desejo incluir o almoço na minha inscrição</span>
               <span class="almoco-valor-tag" id="almoco-valor-tag"></span>
             </label>
+            <div class="cardapio-wrap" id="almoco-cardapio-wrap"></div>
             <div id="almoco-crianca-wrap" style="display:none">
               <label class="almoco-check-label crianca" id="lbl-almoco-crianca">
                 <input type="checkbox" id="f-almoco-crianca">
                 <span>👶 Incluir almoço para as crianças</span>
                 <span class="almoco-valor-tag" id="almoco-crianca-valor-tag"></span>
               </label>
+              <div class="cardapio-wrap" id="almoco-crianca-cardapio-wrap"></div>
             </div>
           </div>
         </div>
@@ -1450,6 +1460,7 @@ let SESSION = { role: null, login: null, nome: null, polos: [] };
    POLOS — dados globais carregados do Supabase
 ================================================================ */
 let POLOS = [];
+let _polosSourceId = null; // registra de qual config id os polos foram carregados, para salvar no mesmo lugar
 
 const POLOS_DEFAULT = [];
 
@@ -1477,7 +1488,9 @@ async function setCfg(){
   try {
     if(supaConfigurado()){
       const eventoId = window._EVENTO_OVERRIDE?.id;
-      const polosId = eventoId ? eventoId+'-polos' : 'main-polos';
+      // Salva sempre no MESMO id de onde os polos foram carregados (evita duplicar/bifurcar
+      // dados quando o evento usa fallback para 'main-polos', como o MCJ).
+      const polosId = _polosSourceId || (eventoId ? eventoId+'-polos' : 'main-polos');
       await supa('POST','config', [{ id: polosId, dados: POLOS }]);
     }
   } catch(e){ console.error('setCfg error:', e); }
@@ -1588,11 +1601,13 @@ async function carregarConfig(){
       const polosId = eventoId+'-polos';
       const cfgRows = await supa('GET','config?select=dados&id=eq.'+polosId);
       POLOS = cfgRows?.[0]?.dados && Array.isArray(cfgRows[0].dados) ? cfgRows[0].dados : [];
+      _polosSourceId = polosId;
       // Fallback: se o evento não tem polos próprios (ex: MCJ, que usa 'main-polos'),
       // busca os polos da config principal para não deixar o formulário sem dados (PIX/valor).
+      // Registra a origem real em _polosSourceId para que qualquer edição salve no lugar certo.
       if(!POLOS.length){
         const mainPolos = await supa('GET','config?select=dados&id=eq.main-polos');
-        if(mainPolos?.[0]?.dados && Array.isArray(mainPolos[0].dados)) POLOS = mainPolos[0].dados;
+        if(mainPolos?.[0]?.dados && Array.isArray(mainPolos[0].dados)){ POLOS = mainPolos[0].dados; _polosSourceId = 'main-polos'; }
       }
     } else {
       // MCJ padrão
@@ -1622,6 +1637,7 @@ async function carregarConfig(){
       POLOS = polosRows?.[0]?.dados && Array.isArray(polosRows[0].dados)
         ? polosRows[0].dados
         : JSON.parse(JSON.stringify(POLOS_DEFAULT));
+      _polosSourceId = 'main-polos';
     }
   } catch(e){ POLOS = window._EVENTO_OVERRIDE ? [] : JSON.parse(JSON.stringify(POLOS_DEFAULT)); console.error('carregarConfig:',e); }
   _cache.config = POLOS;
@@ -3710,6 +3726,7 @@ function selecionarPolo(nome){
     almocoField.style.display = temAlmoco ? '' : 'none';
     const tag = document.getElementById('almoco-valor-tag');
     if(tag && polo?.almoco_valor) tag.textContent = polo.almoco_valor;
+    renderCardapioOpcoes('almoco-cardapio-wrap', 'almoco-cardapio', polo?.cardapios, 'f-almoco');
     // Almoço criança
     const almocoCriancaWrap = document.getElementById('almoco-crianca-wrap');
     if(almocoCriancaWrap){
@@ -3717,6 +3734,7 @@ function selecionarPolo(nome){
       almocoCriancaWrap.style.display = temCriancaAtiva ? '' : 'none';
       const tagC = document.getElementById('almoco-crianca-valor-tag');
       if(tagC) tagC.textContent = polo?.almoco_crianca_valor||polo?.almoco_valor||'';
+      renderCardapioOpcoes('almoco-crianca-cardapio-wrap', 'almoco-crianca-cardapio', polo?.cardapios, 'f-almoco-crianca');
     }
   }
 
@@ -3732,6 +3750,34 @@ function selecionarPolo(nome){
       if(wrap) wrap.style.display = 'none';
     }
   }
+}
+
+// Monta as opções de cardápio (radio) do polo selecionado, dentro do wrap indicado.
+// Se o polo não tiver cardápios cadastrados, o wrap fica vazio e oculto —
+// o participante simplesmente não vê escolha de cardápio, como antes.
+function renderCardapioOpcoes(wrapId, groupName, cardapios, checkboxId){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  const lista = Array.isArray(cardapios) ? cardapios.filter(c=>c && c.nome) : [];
+  if(!lista.length){
+    wrap.innerHTML = '';
+    wrap.classList.remove('show');
+    wrap.dataset.temOpcoes = '0';
+    return;
+  }
+  wrap.dataset.temOpcoes = '1';
+  wrap.innerHTML = lista.map((c,j)=>`
+    <label class="cardapio-opt" id="${wrapId}-opt-${j}">
+      <input type="radio" name="${groupName}" value="${esc(c.nome)}"
+        onchange="document.querySelectorAll('#${wrapId} .cardapio-opt').forEach(el=>el.classList.remove('sel'));document.getElementById('${wrapId}-opt-${j}').classList.add('sel')">
+      <span>
+        <div class="cardapio-opt-nome">${esc(c.nome)}</div>
+        ${c.descricao?`<div class="cardapio-opt-desc">${esc(c.descricao)}</div>`:''}
+      </span>
+    </label>`).join('');
+  // Sincroniza visibilidade com o checkbox de almoço correspondente
+  const chk = document.getElementById(checkboxId);
+  wrap.classList.toggle('show', !!chk?.checked);
 }
 
 function toggleCriancaFields(){
@@ -3982,11 +4028,15 @@ async function excluirUsuario(id){
   const alm = document.getElementById('f-almoco');
   if(alm) alm.addEventListener('change', function(){
     document.getElementById('lbl-almoco')?.classList.toggle('sel', this.checked);
+    const w = document.getElementById('almoco-cardapio-wrap');
+    if(w) w.classList.toggle('show', this.checked && w.dataset.temOpcoes==='1');
   });
 
   const almC = document.getElementById('f-almoco-crianca');
   if(almC) almC.addEventListener('change', function(){
     document.getElementById('lbl-almoco-crianca')?.classList.toggle('sel', this.checked);
+    const w = document.getElementById('almoco-crianca-cardapio-wrap');
+    if(w) w.classList.toggle('show', this.checked && w.dataset.temOpcoes==='1');
   });
 })();
 
@@ -4016,6 +4066,9 @@ async function inscrever(){
   const almoco           = almocoChk?.checked || false;
   const almocoCriancaChk = document.getElementById('f-almoco-crianca');
   const almocoCrianca    = almocoCriancaChk?.checked || false;
+  const temCardapios     = Array.isArray(poloSelCfg?.cardapios) && poloSelCfg.cardapios.filter(c=>c?.nome).length>0;
+  const almocoCardapio         = almoco ? (document.querySelector('input[name="almoco-cardapio"]:checked')?.value||'') : '';
+  const almocoCriancaCardapio  = almocoCrianca ? (document.querySelector('input[name="almoco-crianca-cardapio"]:checked')?.value||'') : '';
 
   // Polo é a primeira validação: sem polo, nada mais faz sentido.
   if(usaPolos && !poloSel){
@@ -4055,6 +4108,8 @@ async function inscrever(){
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ alerta('err','Informe um e-mail válido.'); return; }
   if(!tel||tel.replace(/\D/g,'').length<10){ alerta('err','Informe um telefone válido com DDD.'); return; }
   if(_temMoc && !turma){ alerta('err','Selecione uma turma: Adulto ou Mocidade.'); return; }
+  if(almoco && temCardapios && !almocoCardapio){ alerta('err','Escolha uma opção de cardápio para o seu almoço.'); return; }
+  if(almocoCrianca && temCardapios && !almocoCriancaCardapio){ alerta('err','Escolha uma opção de cardápio para o almoço das crianças.'); return; }
 
   // Valida campos extras obrigatórios
   if(!validarCamposExtras()) return;
@@ -4070,8 +4125,10 @@ async function inscrever(){
     instituicao:inst||'—', cracha: cracha||'', turma, polo:poloSel,
     almoco: almoco ? 'Sim' : 'Não',
     almoco_valor: almoco ? (poloSelCfg?.almoco_valor||'') : '',
+    almoco_cardapio: almoco ? almocoCardapio : '',
     almoco_crianca: almocoCrianca || false,
     almoco_crianca_valor: almocoCrianca ? (poloSelCfg?.almoco_crianca_valor||poloSelCfg?.almoco_valor||'') : '',
+    almoco_crianca_cardapio: almocoCrianca ? almocoCriancaCardapio : '',
     crianca: temCrianca || false,
     criancas: criancas,
     campos_extras: camposExtras,
@@ -4104,6 +4161,11 @@ async function inscrever(){
   document.getElementById('lbl-adulto').classList.remove('sel');
   document.getElementById('lbl-mocidade').classList.remove('sel');
   if(almocoChk){ almocoChk.checked=false; document.getElementById('lbl-almoco').classList.remove('sel'); }
+  if(almocoCriancaChk){ almocoCriancaChk.checked=false; document.getElementById('lbl-almoco-crianca')?.classList.remove('sel'); }
+  document.querySelectorAll('.cardapio-opt').forEach(el=>el.classList.remove('sel'));
+  document.querySelectorAll('input[name="almoco-cardapio"], input[name="almoco-crianca-cardapio"]').forEach(r=>r.checked=false);
+  document.getElementById('almoco-cardapio-wrap')?.classList.remove('show');
+  document.getElementById('almoco-crianca-cardapio-wrap')?.classList.remove('show');
   document.getElementById('almoco-field').style.display='none';
 
   abrirPix(nome, almoco);
@@ -7041,6 +7103,16 @@ function renderConfig(){
               <label>Valor do almoço (adulto)</label>
               <input type="text" id="cfg-almoco-valor-${i}" value="${esc(p.almoco_valor||'')}" placeholder="Ex: R$ 35,00">
             </div>
+            <div class="cfg-field">
+              <label>Cardápios do almoço (opcional)</label>
+              <span style="font-size:11px;color:var(--gray-400);margin-bottom:2px;display:block">Adicione opções (ex: normal, vegetariano) para o participante escolher na inscrição. Sem opções, ninguém escolhe cardápio.</span>
+              <div id="cfg-cardapios-list-${i}" style="display:flex;flex-direction:column;gap:8px;margin-top:6px"></div>
+              <button type="button" onclick="adicionarCardapio(${i})"
+                style="display:flex;align-items:center;gap:5px;padding:8px 12px;border-radius:8px;border:1.5px dashed #FFD09B;background:transparent;color:#B45309;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:8px;width:100%;justify-content:center"
+                onmouseover="this.style.borderColor='#E08020'" onmouseout="this.style.borderColor='#FFD09B'">
+                + Adicionar cardápio
+              </button>
+            </div>
             <div class="toggle-wrap" style="border-color:#FFD09B;margin:0">
               <div>
                 <div class="toggle-lbl-main">👶 Cobrar almoço das crianças?</div>
@@ -7262,6 +7334,7 @@ function renderConfig(){
     </div>`;
     }).join('');
     inicializarPrevias();
+    polosVisiveis.forEach(p=>{ const i=POLOS.indexOf(p); if(i>=0) renderCardapiosList(i); });
   } catch(err){
     console.error('renderConfig error:', err);
     c.innerHTML=`<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:1rem;color:#991B1B;font-size:13px">
@@ -7289,6 +7362,58 @@ function toggleAlmocoCrianca(i){
   const chk  = document.getElementById('cfg-almoco-crianca-'+i);
   const wrap = document.getElementById('cfg-almoco-crianca-valor-wrap-'+i);
   if(wrap) wrap.style.display = chk?.checked ? 'flex' : 'none';
+}
+
+/* ── Cardápios de almoço (por polo) ─────────────────────────── */
+// Lê os valores atualmente digitados nos campos de cardápio e os grava
+// de volta no array em memória (POLOS[i].cardapios), sem afetar mais nada.
+function sincronizarCardapiosDoDOM(i){
+  const p = POLOS[i]; if(!p || !Array.isArray(p.cardapios)) return;
+  p.cardapios.forEach((c,j)=>{
+    const n = document.getElementById(`cfg-cardapio-nome-${i}-${j}`);
+    const d = document.getElementById(`cfg-cardapio-desc-${i}-${j}`);
+    if(n) c.nome = n.value;
+    if(d) c.descricao = d.value;
+  });
+}
+
+// Redesenha apenas a lista de cardápios do polo i (não mexe no resto do card,
+// então nenhum outro campo em edição é perdido).
+function renderCardapiosList(i){
+  const p = POLOS[i]; if(!p) return;
+  const wrap = document.getElementById('cfg-cardapios-list-'+i);
+  if(!wrap) return;
+  const itens = p.cardapios||[];
+  wrap.innerHTML = itens.length ? itens.map((cd,j)=>`
+    <div style="background:white;border:1px solid #FFD09B;border-radius:8px;padding:10px" id="cfg-cardapio-item-${i}-${j}">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <input type="text" id="cfg-cardapio-nome-${i}-${j}" value="${esc(cd.nome||'')}" placeholder="Ex: Almoço normal"
+          style="flex:1;font-size:13px;padding:7px 10px;border-radius:7px;border:1px solid var(--gray-100);font-family:'Inter',sans-serif;font-weight:600;color:var(--mcj-dark)">
+        <button type="button" onclick="removerCardapio(${i},${j})"
+          style="background:none;border:none;color:var(--gray-300);font-size:18px;cursor:pointer;line-height:1;flex-shrink:0"
+          onmouseover="this.style.color='var(--red-400)'" onmouseout="this.style.color='var(--gray-300)'">×</button>
+      </div>
+      <input type="text" id="cfg-cardapio-desc-${i}-${j}" value="${esc(cd.descricao||'')}" placeholder="Descrição (ex: arroz, feijão, carne, salada)"
+        style="width:100%;font-size:12px;padding:6px 9px;border-radius:6px;border:1px solid var(--gray-100);font-family:'Inter',sans-serif;color:var(--gray-600)">
+    </div>`).join('')
+    : `<div style="font-size:12px;color:var(--gray-400);font-style:italic;padding:4px 2px">Nenhum cardápio adicionado — o participante não verá opções de escolha.</div>`;
+}
+
+function adicionarCardapio(i){
+  const p = POLOS[i]; if(!p) return;
+  sincronizarCardapiosDoDOM(i);
+  if(!Array.isArray(p.cardapios)) p.cardapios = [];
+  p.cardapios.push({nome:'', descricao:''});
+  renderCardapiosList(i);
+  const novoIdx = p.cardapios.length-1;
+  setTimeout(()=>{ document.getElementById(`cfg-cardapio-nome-${i}-${novoIdx}`)?.focus(); },50);
+}
+
+function removerCardapio(i,j){
+  const p = POLOS[i]; if(!p || !Array.isArray(p.cardapios)) return;
+  sincronizarCardapiosDoDOM(i);
+  p.cardapios.splice(j,1);
+  renderCardapiosList(i);
 }
 
 function toggleMocidade(i){
@@ -7489,6 +7614,8 @@ function salvarPolo(i){
     p.inscricoes_abertas= document.getElementById('cfg-toggle-'+i)?.checked ?? true;
     p.almoco_ativo           = document.getElementById('cfg-almoco-'+i)?.checked || false;
     p.almoco_valor           = document.getElementById('cfg-almoco-valor-'+i)?.value.trim()||'';
+    sincronizarCardapiosDoDOM(i);
+    p.cardapios               = (p.cardapios||[]).map(c=>({nome:(c.nome||'').trim(), descricao:(c.descricao||'').trim()})).filter(c=>c.nome);
     p.almoco_crianca_ativo   = document.getElementById('cfg-almoco-crianca-'+i)?.checked || false;
     p.almoco_crianca_valor   = document.getElementById('cfg-almoco-crianca-valor-'+i)?.value.trim()||'';
     p.tem_mocidade      = document.getElementById('cfg-mocidade-'+i)?.checked || false;
@@ -7612,7 +7739,7 @@ function confirmarAddPolo(){
     valorExibir:document.getElementById('addpolo-valor').value.trim()||'R$ —,—',
     pixChave:'', pixNome:(_cfgEvento.titulo||'')+' — '+nome,
     responsavel:'', telefone_polo:'', email_polo:'', capacidade:'', obs:'',
-    inscricoes_abertas:true, almoco_ativo:false, almoco_valor:'', msg_pagamento:'', salas_adulto:[], salas_mocidade:[], setores:[], expositores:[], expositores_salas:{}, apresentacao:'', fotos:[], maps_link:''
+    inscricoes_abertas:true, almoco_ativo:false, almoco_valor:'', cardapios:[], msg_pagamento:'', salas_adulto:[], salas_mocidade:[], setores:[], expositores:[], expositores_salas:{}, apresentacao:'', fotos:[], maps_link:''
   });
   setCfg();
   fecharAddPolo();
