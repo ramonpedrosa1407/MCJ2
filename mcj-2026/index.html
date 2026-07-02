@@ -925,6 +925,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <div class="aval-success-icon">🙏</div>
       <div class="aval-success-title">Obrigado pela avaliação!</div>
       <div class="aval-success-sub">Sua opinião é muito importante para continuarmos melhorando o MCJ.</div>
+      <button class="aval-submit" id="aval-outra-btn" onclick="avaliarOutraPessoa()" style="display:none;max-width:320px;margin:1.75rem auto 0">+ Avaliar outra pessoa</button>
     </div>
   </div>
 </div>
@@ -1522,6 +1523,7 @@ async function setCfgEvento(){
         expositores_lista: _cfgEvento.expositores_lista,
         aval_criterios:    _cfgEvento.aval_criterios,
         aval_aberta:       _cfgEvento.aval_aberta,
+        aval_modo_massa:   _cfgEvento.aval_modo_massa,
       };
       await supa('POST','config', [{ id, dados: configParaSalvar }]);
 
@@ -1553,7 +1555,7 @@ async function carregarConfig(){
         // Aplica TODOS os campos
         const campos = ['titulo','subtitulo','data','horario','local','tema_manha','tema_tarde',
                         'thumb','logo_url','instagram','facebook','inscricao_sub','descricao',
-                        'campos_extras','materiais','expositores_lista','aval_criterios','aval_aberta'];
+                        'campos_extras','materiais','expositores_lista','aval_criterios','aval_aberta','aval_modo_massa'];
         campos.forEach(k=>{ if(cfg[k]!==undefined) _cfgEvento[k]=cfg[k]; });
         if(cfg.video_abertura) _cfgEvento.video_url = cfg.video_abertura;
         if(cfg.video_url)      _cfgEvento.video_url = cfg.video_url;
@@ -1600,7 +1602,7 @@ async function carregarConfig(){
         if(cfg && typeof cfg === 'object' && !Array.isArray(cfg)){
           const campos = ['titulo','subtitulo','data','horario','local','tema_manha','tema_tarde',
                           'thumb','logo_url','instagram','facebook','inscricao_sub','descricao',
-                          'campos_extras','materiais','expositores_lista','aval_criterios','aval_aberta'];
+                          'campos_extras','materiais','expositores_lista','aval_criterios','aval_aberta','aval_modo_massa'];
           campos.forEach(k=>{ if(cfg[k]!==undefined) _cfgEvento[k]=cfg[k]; });
           if(cfg.video_url) _cfgEvento.video_url = cfg.video_url;
           if(cfg.recursos && typeof cfg.recursos === 'object'){
@@ -2643,6 +2645,7 @@ let _cfgEvento = {
   // Avaliação
   aval_criterios: null,
   aval_aberta: false,
+  aval_modo_massa: false,
   // Expositores
   expositores_lista: [],
   // Design visual
@@ -7888,11 +7891,29 @@ async function enviarAvaliacao(){
     if(supaConfigurado()) await supa('POST','avaliacoes',[payload]);
     document.getElementById('aval-form-wrap').style.display='none';
     document.getElementById('aval-success').style.display='block';
+    const outraBtn = document.getElementById('aval-outra-btn');
+    if(outraBtn) outraBtn.style.display = (_cfgEvento.aval_modo_massa===true) ? 'block' : 'none';
   } catch(e){
     console.error(e);
     alert('Erro ao enviar avaliação. Tente novamente.');
     if(btn){ btn.disabled=false; btn.textContent='Enviar avaliação ✓'; }
   }
+}
+
+// Modo em massa: reinicia o formulário para receber a avaliação seguinte
+// no mesmo aparelho, sem precisar recarregar a página. Mantém polo/turma
+// selecionados (útil quando o dispositivo fica fixo numa sala), zera notas
+// e comentários.
+function avaliarOutraPessoa(){
+  _avalNotas = {};
+  _avalComentario = '';
+  _avalComentarios = {};
+  const outraBtn = document.getElementById('aval-outra-btn');
+  if(outraBtn) outraBtn.style.display = 'none';
+  document.getElementById('aval-success').style.display = 'none';
+  document.getElementById('aval-form-wrap').style.display = '';
+  renderAvaliacao();
+  document.getElementById('view-avaliacao')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 /* ── Admin: resultados ──────────────────────────────────────── */
@@ -8223,6 +8244,7 @@ ${comentarios.length?`
 function renderAvalConfig(){
   const c      = getAvalCriterios();
   const aberta = _cfgEvento.aval_aberta === true;
+  const massa  = _cfgEvento.aval_modo_massa === true;
 
   function secaoConfigHtml(chave, titulo, criterios){
     return `
@@ -8270,6 +8292,25 @@ function renderAvalConfig(){
           style="padding:9px 20px;border:none;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;background:${aberta?'#EF4444':'#10B981'};color:white;white-space:nowrap;transition:opacity .15s"
           onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
           ${aberta?'🔒 Fechar avaliação':'🔓 Abrir avaliação'}
+        </button>
+      </div>
+
+      <!-- Modo de avaliação em massa (quiosque) -->
+      <div style="background:${massa?'#EFF6FF':'var(--gray-50)'};border:1.5px solid ${massa?'#BFDBFE':'var(--gray-100)'};border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:${massa?'#1E40AF':'var(--mcj-dark)'}">
+            📋 Modo de avaliação em massa ${massa?'ATIVADO':'desativado'}
+          </div>
+          <div style="font-size:12px;color:${massa?'#2563EB':'var(--gray-400)'};margin-top:3px;max-width:480px;line-height:1.5">
+            ${massa
+              ? 'Ao enviar, a pessoa vê um botão para avaliar novamente na mesma tela — ideal para um tablet/celular coletando várias avaliações seguidas.'
+              : 'Cada pessoa avalia uma vez e a tela mostra apenas o agradecimento. Ative para coletar várias avaliações seguidas no mesmo aparelho.'}
+          </div>
+        </div>
+        <button onclick="toggleAvalModoMassa()"
+          style="padding:9px 20px;border:none;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;background:${massa?'#EF4444':'#2563EB'};color:white;white-space:nowrap;transition:opacity .15s"
+          onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          ${massa?'Desativar modo em massa':'Ativar modo em massa'}
         </button>
       </div>
 
@@ -8363,6 +8404,12 @@ function toggleAvaliacaoAberta(){
   _cfgEvento.aval_aberta = !(_cfgEvento.aval_aberta===true);
   setCfgEvento();
   renderBannerAvaliacao();
+  renderAvaliacaoAdmin();
+}
+
+function toggleAvalModoMassa(){
+  _cfgEvento.aval_modo_massa = !(_cfgEvento.aval_modo_massa===true);
+  setCfgEvento();
   renderAvaliacaoAdmin();
 }
 
