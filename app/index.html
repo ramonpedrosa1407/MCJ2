@@ -1295,6 +1295,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           </select>
         </div>
         <div class="cfg-field"><label>Valor almoço</label><input type="text" id="ei-almoco-valor" placeholder="R$ 35,00"></div>
+        <div class="cfg-field" style="grid-column:1/-1"><label>Cardápio escolhido</label><input type="text" id="ei-almoco-cardapio" placeholder="Ex: Almoço normal"></div>
         <div class="cfg-field" style="grid-column:1/-1"><label>Observação (aparece no crachá)</label><textarea id="ei-observacao" rows="3" placeholder="Observações que aparecerão impressas no crachá..." style="resize:vertical"></textarea></div>
       </div>
       <div id="ei-erro" style="display:none;background:var(--red-50);border:1px solid var(--red-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red-800)"></div>
@@ -2556,7 +2557,7 @@ async function carregarInscricoes(){
 /* INSERT de uma nova inscrição */
 /* Campos que existem na tabela inscricoes do Supabase */
 const SUPA_INS_COLS = ['nome','nascimento','email','telefone','instituicao','cracha','turma','polo',
-  'almoco','almoco_valor','almoco_crianca','almoco_crianca_valor',
+  'almoco','almoco_valor','almoco_cardapio','almoco_crianca','almoco_crianca_valor','almoco_crianca_cardapio',
   'sala','setores','pagamento','pagamento_em','trabalhador','data_inscricao',
   'crianca','criancas','campos_extras','observacao','evento_id'];
 
@@ -5256,6 +5257,16 @@ function gerarRelatorio(tipo){
     const trab=d.filter(x=>x.trabalhador===true||x.trabalhador==='true').length;
     const alm=d.filter(x=>x.almoco==='Sim').length;
     const cri=d.reduce((a,x)=>a+(x.criancas?.length||0),0);
+    // Contagem de cardápios escolhidos — para conferência com a cozinha
+    const cardapioCount = {};
+    d.forEach(x=>{
+      if(x.almoco==='Sim' && x.almoco_cardapio) cardapioCount[x.almoco_cardapio] = (cardapioCount[x.almoco_cardapio]||0)+1;
+      if(x.almoco_crianca && x.almoco_crianca_cardapio){
+        const n = (x.criancas?.length||1);
+        cardapioCount[x.almoco_crianca_cardapio] = (cardapioCount[x.almoco_crianca_cardapio]||0)+n;
+      }
+    });
+    const cardapioRows = Object.entries(cardapioCount);
     conteudo=`<h2>Resumo Geral</h2>
     <div class="grid">
       <div class="stat"><div class="stat-num">${d.length}</div><div class="stat-lbl">Total inscritos</div></div>
@@ -5267,7 +5278,11 @@ function gerarRelatorio(tipo){
     <h2>Por Polo</h2>
     <table><thead><tr><th>Polo</th><th>Inscritos</th><th>Confirmados</th><th>Pendentes</th><th>Trabalhadores</th><th>Almoços</th><th>Crianças</th></tr></thead><tbody>
     ${POLOS.map(p=>{const i=d.filter(x=>x.polo===p.nome);const pg=i.filter(x=>x.pagamento==='Confirmado').length;const tr=i.filter(x=>x.trabalhador===true||x.trabalhador==='true').length;const al=i.filter(x=>x.almoco==='Sim').length;const cr=i.reduce((a,x)=>a+(x.criancas?.length||0),0);return `<tr><td><strong>${p.nome}</strong></td><td>${i.length}</td><td>${pg}</td><td>${i.length-pg}</td><td>${tr}</td><td>${al}</td><td>${cr||'—'}</td></tr>`;}).join('')}
-    </tbody></table>`;
+    </tbody></table>
+    ${cardapioRows.length?`<h2>Cardápios (para a cozinha)</h2>
+    <table><thead><tr><th>Cardápio</th><th>Quantidade</th></tr></thead><tbody>
+    ${cardapioRows.map(([nome,qtd])=>`<tr><td><strong>${nome}</strong></td><td>${qtd}</td></tr>`).join('')}
+    </tbody></table>`:''}`;
 
   } else if(tipo==='evento'){
     const exps=e.expositores_lista||[];
@@ -5654,7 +5669,7 @@ function recAtualizarLista(){
         <div style="font-size:11px;color:var(--gray-400);margin-top:1px;display:flex;gap:8px;flex-wrap:wrap">
           ${p.nome!==nomeExibir?`<span>${p.nome}</span>`:''}
           <span>${p.turma||'—'}${p.sala?' · Sala '+p.sala:''}</span>
-          ${p.almoco==='Sim'?'<span style="color:#B45309">🍽 Almoço</span>':''}
+          ${p.almoco==='Sim'?`<span style="color:#B45309">🍽 Almoço${p.almoco_cardapio?' — '+p.almoco_cardapio:''}</span>`:''}
           ${trab?'<span style="color:#5B21B6">🔧 Trab.</span>':''}
         </div>
       </div>
@@ -6852,6 +6867,7 @@ function editarInscricao(email, poloNome, id){
   document.getElementById('ei-polo').value       = p.polo||poloNome;
   document.getElementById('ei-almoco').value       = p.almoco||'Não';
   document.getElementById('ei-almoco-valor').value = p.almoco_valor||'';
+  document.getElementById('ei-almoco-cardapio').value = p.almoco_cardapio||'';
   document.getElementById('ei-observacao').value   = p.observacao||'';
 
   const ov = document.getElementById('edit-ins-overlay');
@@ -6881,6 +6897,7 @@ async function salvarEdicaoInscricao(){
     turma:        document.getElementById('ei-turma')?.value||'Adulto',
     almoco:       document.getElementById('ei-almoco')?.value||'Não',
     almoco_valor: document.getElementById('ei-almoco-valor')?.value.trim()||'',
+    almoco_cardapio: document.getElementById('ei-almoco-cardapio')?.value.trim()||'',
     observacao:   document.getElementById('ei-observacao')?.value.trim()||'',
   };
 
@@ -7760,7 +7777,7 @@ function removerPolo(i){
 function exportarPolo(polo){
   const d=getIns().filter(x=>x.polo===polo);
   if(!d.length){ alert('Nenhuma inscrição neste polo.'); return; }
-  const rows=d.map((p,i)=>({'#':i+1,'Nome':p.nome,'Crachá':p.cracha||p.nome,'Nascimento':p.nascimento||'—','Idade':calcularIdade(p.nascimento),'E-mail':p.email,'Telefone':p.telefone,'Turma':p.turma||'—','Função':(p.trabalhador===true||p.trabalhador==='true')?'Trabalhador':'Participante','Setores':(Array.isArray(p.setores)&&p.setores.length)?p.setores.join(', '):'—','Sala':p.sala?'Sala '+p.sala:'—','Almoço':p.almoco||'Não','Valor Almoço':p.almoco==='Sim'?(p.almoco_valor||'—'):'—','Instituição':p.instituicao,'Polo':p.polo,'Pagamento':p.pagamento||'Pendente','Confirmado em':p.pagamento_em||'—','Data inscrição':p.data_inscricao}));
+  const rows=d.map((p,i)=>({'#':i+1,'Nome':p.nome,'Crachá':p.cracha||p.nome,'Nascimento':p.nascimento||'—','Idade':calcularIdade(p.nascimento),'E-mail':p.email,'Telefone':p.telefone,'Turma':p.turma||'—','Função':(p.trabalhador===true||p.trabalhador==='true')?'Trabalhador':'Participante','Setores':(Array.isArray(p.setores)&&p.setores.length)?p.setores.join(', '):'—','Sala':p.sala?'Sala '+p.sala:'—','Almoço':p.almoco||'Não','Cardápio':p.almoco==='Sim'?(p.almoco_cardapio||'—'):'—','Valor Almoço':p.almoco==='Sim'?(p.almoco_valor||'—'):'—','Instituição':p.instituicao,'Polo':p.polo,'Pagamento':p.pagamento||'Pendente','Confirmado em':p.pagamento_em||'—','Data inscrição':p.data_inscricao}));
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.json_to_sheet(rows);
   ws['!cols']=[{wch:4},{wch:32},{wch:14},{wch:30},{wch:16},{wch:12},{wch:10},{wch:8},{wch:14},{wch:28},{wch:14},{wch:14},{wch:20},{wch:20}];
@@ -7771,7 +7788,7 @@ function exportarTodos(){
   const d=getIns();
   if(!d.length){ alert('Nenhuma inscrição cadastrada.'); return; }
   const wb=XLSX.utils.book_new();
-  const mkRow=(p,i)=>({'#':i+1,'Nome':p.nome,'Crachá':p.cracha||p.nome,'Nascimento':p.nascimento||'—','Idade':calcularIdade(p.nascimento),'E-mail':p.email,'Telefone':p.telefone,'Turma':p.turma||'—','Função':(p.trabalhador===true||p.trabalhador==='true')?'Trabalhador':'Participante','Setores':(Array.isArray(p.setores)&&p.setores.length)?p.setores.join(', '):'—','Sala':p.sala?'Sala '+p.sala:'—','Almoço':p.almoco||'Não','Valor Almoço':p.almoco==='Sim'?(p.almoco_valor||'—'):'—','Instituição':p.instituicao,'Polo':p.polo,'Pagamento':p.pagamento||'Pendente','Confirmado em':p.pagamento_em||'—','Data inscrição':p.data_inscricao});
+  const mkRow=(p,i)=>({'#':i+1,'Nome':p.nome,'Crachá':p.cracha||p.nome,'Nascimento':p.nascimento||'—','Idade':calcularIdade(p.nascimento),'E-mail':p.email,'Telefone':p.telefone,'Turma':p.turma||'—','Função':(p.trabalhador===true||p.trabalhador==='true')?'Trabalhador':'Participante','Setores':(Array.isArray(p.setores)&&p.setores.length)?p.setores.join(', '):'—','Sala':p.sala?'Sala '+p.sala:'—','Almoço':p.almoco||'Não','Cardápio':p.almoco==='Sim'?(p.almoco_cardapio||'—'):'—','Valor Almoço':p.almoco==='Sim'?(p.almoco_valor||'—'):'—','Instituição':p.instituicao,'Polo':p.polo,'Pagamento':p.pagamento||'Pendente','Confirmado em':p.pagamento_em||'—','Data inscrição':p.data_inscricao});
   const cols=[{wch:4},{wch:32},{wch:14},{wch:30},{wch:16},{wch:12},{wch:10},{wch:8},{wch:14},{wch:28},{wch:14},{wch:14},{wch:20},{wch:20}];
   const wsG=XLSX.utils.json_to_sheet(d.map(mkRow));
   wsG['!cols']=cols;
