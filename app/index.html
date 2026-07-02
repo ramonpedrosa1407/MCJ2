@@ -4120,12 +4120,20 @@ async function inscrever(){
 
   const d = getIns();
 
+  // Valor do almoço efetivo — considera o modo de cobrança da Mocidade
+  const isMocidadeIns = turma === 'Mocidade';
+  const almocoValorEfetivo = almoco
+    ? (isMocidadeIns
+        ? valorComModoMocidade(poloSelCfg?.mocidade_almoco_valor_modo, poloSelCfg?.mocidade_almoco_valor, poloSelCfg?.almoco_valor).label
+        : (poloSelCfg?.almoco_valor||''))
+    : '';
+
   const [ano,mes,dia]=nascimento.split('-');
   const novaIns = {
     nome, nascimento:`${dia}/${mes}/${ano}`, email, telefone:tel,
     instituicao:inst||'—', cracha: cracha||'', turma, polo:poloSel,
     almoco: almoco ? 'Sim' : 'Não',
-    almoco_valor: almoco ? (poloSelCfg?.almoco_valor||'') : '',
+    almoco_valor: almocoValorEfetivo,
     almoco_cardapio: almoco ? almocoCardapio : '',
     almoco_crianca: almocoCrianca || false,
     almoco_crianca_valor: almocoCrianca ? (poloSelCfg?.almoco_crianca_valor||poloSelCfg?.almoco_valor||'') : '',
@@ -4184,17 +4192,46 @@ function formatBRL(n){
   return 'R$ '+n.toFixed(2).replace('.',',');
 }
 
+// Calcula o valor efetivo de um item (inscrição ou almoço) considerando o modo
+// de cobrança da Mocidade: 'mesmo' usa o valor padrão (adulto), 'diferente' usa
+// um valor próprio, 'gratuito' zera o valor e mostra "Gratuito".
+function valorComModoMocidade(modo, valorProprio, valorPadrao){
+  modo = modo || 'mesmo';
+  if(modo === 'gratuito') return { num: 0, label: 'Gratuito' };
+  if(modo === 'diferente') return { num: parseBRL(valorProprio), label: valorProprio || '—' };
+  return { num: parseBRL(valorPadrao), label: valorPadrao || '—' };
+}
+
 function abrirPix(nomeInscrito, almoco){
   const poloNome      = document.getElementById('f-polo')?.value||'';
   const cfg           = POLOS.find(p=>p.nome===poloNome)||{};
   const almocoCrianca = document.getElementById('f-almoco-crianca')?.checked||false;
   const criancas      = getCriancasDoForm();
   const numCriancas   = criancas.length;
+  const turmaSel      = document.querySelector('input[name="turma"]:checked')?.value || 'Adulto';
+  const isMocidade    = turmaSel === 'Mocidade';
 
   document.getElementById('pix-subtitulo').textContent = cfg.nome+' · Conclua o pagamento via PIX para garantir sua vaga.';
 
-  const vInscricao       = parseBRL(cfg.valorExibir);
-  const vAlmoco          = almoco ? parseBRL(cfg.almoco_valor) : null;
+  // Inscrição — considera o modo de cobrança da Mocidade (mesmo valor / diferente / gratuito)
+  let vInscricao, labelInscricao;
+  if(isMocidade){
+    const r = valorComModoMocidade(cfg.mocidade_valor_modo, cfg.mocidade_valor, cfg.valorExibir);
+    vInscricao = r.num; labelInscricao = r.label;
+  } else {
+    vInscricao = parseBRL(cfg.valorExibir); labelInscricao = cfg.valorExibir||'—';
+  }
+
+  // Almoço adulto — mesma lógica de modo, quando aplicável
+  let vAlmoco = null, labelAlmoco = '—';
+  if(almoco){
+    if(isMocidade){
+      const r = valorComModoMocidade(cfg.mocidade_almoco_valor_modo, cfg.mocidade_almoco_valor, cfg.almoco_valor);
+      vAlmoco = r.num; labelAlmoco = r.label;
+    } else {
+      vAlmoco = parseBRL(cfg.almoco_valor); labelAlmoco = cfg.almoco_valor||'—';
+    }
+  }
   const vAlmocoCrianca   = almocoCrianca ? parseBRL(cfg.almoco_crianca_valor||cfg.almoco_valor) : null;
 
   let totalNum = 0;
@@ -4202,17 +4239,16 @@ function abrirPix(nomeInscrito, almoco){
 
   // Inscrição
   if(vInscricao !== null){
-    html += `<div class="pix-line"><span class="pix-line-label">🎫 Inscrição</span><span>${cfg.valorExibir}</span></div>`;
+    html += `<div class="pix-line"><span class="pix-line-label">🎫 Inscrição</span><span>${labelInscricao}</span></div>`;
     totalNum += vInscricao;
   } else {
-    html += `<div class="pix-line"><span class="pix-line-label">🎫 Inscrição</span><span>${cfg.valorExibir||'—'}</span></div>`;
+    html += `<div class="pix-line"><span class="pix-line-label">🎫 Inscrição</span><span>${labelInscricao}</span></div>`;
     totalNum = null;
   }
 
   // Almoço adulto
   if(almoco){
-    const label = cfg.almoco_valor||'—';
-    html += `<div class="pix-line pix-almoco-line"><span class="pix-line-label">🍽 Almoço</span><span>${label}</span></div>`;
+    html += `<div class="pix-line pix-almoco-line"><span class="pix-line-label">🍽 Almoço</span><span>${labelAlmoco}</span></div>`;
     if(totalNum !== null && vAlmoco !== null) totalNum += vAlmoco;
     else totalNum = null;
   }
@@ -4449,12 +4485,18 @@ function renderPanels(){
           <td style="text-align:center">${(p.almoco_crianca&&p.criancas?.length)?p.criancas.length:'—'}</td>
           <td style="font-weight:600;color:var(--mcj-dark)">${(()=>{
             const cfg = POLOS.find(x=>x.nome===polo.nome)||{};
+            const isMoc = p.turma==='Mocidade';
             let total = 0;
-            const vIns = parseBRL(cfg.valorExibir);
-            if(vIns) total += vIns;
-            if(p.almoco==='Sim'){ const v=parseBRL(cfg.almoco_valor); if(v) total+=v; }
+            const rIns = isMoc ? valorComModoMocidade(cfg.mocidade_valor_modo, cfg.mocidade_valor, cfg.valorExibir)
+                                : { num: parseBRL(cfg.valorExibir), label: cfg.valorExibir||'—' };
+            if(rIns.num) total += rIns.num;
+            if(p.almoco==='Sim'){
+              const rAlm = isMoc ? valorComModoMocidade(cfg.mocidade_almoco_valor_modo, cfg.mocidade_almoco_valor, cfg.almoco_valor)
+                                  : { num: parseBRL(cfg.almoco_valor) };
+              if(rAlm.num) total += rAlm.num;
+            }
             if(p.almoco_crianca&&p.criancas?.length){ const v=parseBRL(cfg.almoco_crianca_valor||cfg.almoco_valor); if(v) total+=v*p.criancas.length; }
-            return total>0 ? formatBRL(total) : (cfg.valorExibir||'—');
+            return total>0 ? formatBRL(total) : (rIns.label||'—');
           })()}</td>
           <td>${p.instituicao}</td>
           ${(p.campos_extras&&Object.keys(p.campos_extras).length)
@@ -6932,18 +6974,26 @@ async function excluirInscricao(email, poloNome, id){
 async function enviarEmailConfirmacao(p){
   if(!p.email || !p.email.includes('@')) return;
   const polo = POLOS.find(x=>x.nome===p.polo)||{};
+  const isMoc = p.turma === 'Mocidade';
 
-  // Mesmo cálculo da coluna Total na aba Inscrições
+  // Mesmo cálculo da coluna Total na aba Inscrições — considera o modo de cobrança da Mocidade
+  const rIns = isMoc ? valorComModoMocidade(polo.mocidade_valor_modo, polo.mocidade_valor, polo.valorExibir)
+                      : { num: parseBRL(polo.valorExibir), label: polo.valorExibir||'—' };
+  const rAlm = (p.almoco==='Sim')
+    ? (isMoc ? valorComModoMocidade(polo.mocidade_almoco_valor_modo, polo.mocidade_almoco_valor, polo.almoco_valor)
+             : { num: parseBRL(polo.almoco_valor), label: polo.almoco_valor||'—' })
+    : { num: null, label: '' };
+
   let total = 0;
-  const vIns  = parseBRL(polo.valorExibir);
-  const vAlm  = p.almoco==='Sim' ? parseBRL(polo.almoco_valor) : null;
+  const vIns  = rIns.num;
+  const vAlm  = rAlm.num;
   const vAlmC = (p.almoco_crianca && p.criancas?.length) ? parseBRL(polo.almoco_crianca_valor||polo.almoco_valor) : null;
   const numC  = p.criancas?.length||0;
   if(vIns)          total += vIns;
   if(vAlm)          total += vAlm;
   if(vAlmC && numC) total += vAlmC * numC;
 
-  const totalPagoStr = total > 0 ? formatBRL(total) : (polo.valorExibir||'—');
+  const totalPagoStr = total > 0 ? formatBRL(total) : (rIns.label||'—');
 
   try {
     const r = await fetch(`${SUPA_URL}/functions/v1/enviar-email`, {
@@ -6960,8 +7010,8 @@ async function enviarEmailConfirmacao(p){
         horario:           _cfgEvento.horario||'',
         local:             _cfgEvento.local||'',
         emailPolo:         polo.email_polo||'',
-        valorInscricao:    polo.valorExibir||'',
-        valorAlmoco:       p.almoco==='Sim' ? (polo.almoco_valor||'') : '',
+        valorInscricao:    rIns.label||'',
+        valorAlmoco:       p.almoco==='Sim' ? (rAlm.label||'') : '',
         valorAlmocoCrianca: vAlmC ? (polo.almoco_crianca_valor||polo.almoco_valor||'') : '',
         numCriancas:       numC||0,
         totalPago:         totalPagoStr,
@@ -7240,6 +7290,33 @@ function renderConfig(){
                     <input type="text" id="cfg-sala-mocidade-${i}-${j}" value="${esc(nome)}" placeholder="Nome da sala" style="flex:1;font-size:13px;padding:6px 9px;border-radius:6px;border-color:#BFDBFE">
                   </div>`).join('')}
               </div>
+
+              <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #BFDBFE">
+                <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">💰 Valor da inscrição (Mocidade)</div>
+                <input type="hidden" id="cfg-mocidade-valor-modo-${i}" value="${p.mocidade_valor_modo||'mesmo'}">
+                <div class="hero-modo-toggle" id="cfg-mocval-modo-${i}">
+                  <button type="button" class="hmodo-btn ${(p.mocidade_valor_modo||'mesmo')==='mesmo'?'active':''}" data-modo="mesmo" onclick="setMocidadeValorModo(${i},'mesmo')">Mesmo valor</button>
+                  <button type="button" class="hmodo-btn ${(p.mocidade_valor_modo||'mesmo')==='diferente'?'active':''}" data-modo="diferente" onclick="setMocidadeValorModo(${i},'diferente')">Valor diferente</button>
+                  <button type="button" class="hmodo-btn ${(p.mocidade_valor_modo||'mesmo')==='gratuito'?'active':''}" data-modo="gratuito" onclick="setMocidadeValorModo(${i},'gratuito')">Gratuito</button>
+                </div>
+                <div id="cfg-mocval-input-wrap-${i}" style="display:${p.mocidade_valor_modo==='diferente'?'block':'none'};margin-top:8px">
+                  <input type="text" id="cfg-mocidade-valor-${i}" value="${esc(p.mocidade_valor||'')}" placeholder="Ex: R$ 10,00" style="width:100%;font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid #BFDBFE">
+                </div>
+              </div>
+
+              <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #BFDBFE">
+                <div style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🍽 Valor do almoço (Mocidade)</div>
+                <input type="hidden" id="cfg-mocidade-almoco-modo-${i}" value="${p.mocidade_almoco_valor_modo||'mesmo'}">
+                <div class="hero-modo-toggle" id="cfg-mocalm-modo-${i}">
+                  <button type="button" class="hmodo-btn ${(p.mocidade_almoco_valor_modo||'mesmo')==='mesmo'?'active':''}" data-modo="mesmo" onclick="setMocidadeAlmocoModo(${i},'mesmo')">Mesmo valor</button>
+                  <button type="button" class="hmodo-btn ${(p.mocidade_almoco_valor_modo||'mesmo')==='diferente'?'active':''}" data-modo="diferente" onclick="setMocidadeAlmocoModo(${i},'diferente')">Valor diferente</button>
+                  <button type="button" class="hmodo-btn ${(p.mocidade_almoco_valor_modo||'mesmo')==='gratuito'?'active':''}" data-modo="gratuito" onclick="setMocidadeAlmocoModo(${i},'gratuito')">Gratuito</button>
+                </div>
+                <div id="cfg-mocalm-input-wrap-${i}" style="display:${p.mocidade_almoco_valor_modo==='diferente'?'block':'none'};margin-top:8px">
+                  <input type="text" id="cfg-mocidade-almoco-valor-${i}" value="${esc(p.mocidade_almoco_valor||'')}" placeholder="Ex: R$ 15,00" style="width:100%;font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid #BFDBFE">
+                </div>
+                <span style="font-size:11px;color:#60A5FA;margin-top:6px;display:block">Só é usado se o almoço estiver ativo neste polo.</span>
+              </div>
             </div>
 
             <!-- EVANGELIZAÇÃO — só se aceita_crianca ativo -->
@@ -7442,6 +7519,24 @@ function toggleMocidade(i){
   if(aviso) aviso.style.display = ligado ? 'none' : 'block';
 }
 
+// Modo de cobrança da inscrição de Mocidade: 'mesmo' (igual ao adulto), 'diferente' (valor próprio), 'gratuito'
+function setMocidadeValorModo(i, modo){
+  const hid = document.getElementById('cfg-mocidade-valor-modo-'+i);
+  if(hid) hid.value = modo;
+  document.querySelectorAll('#cfg-mocval-modo-'+i+' .hmodo-btn').forEach(b=>b.classList.toggle('active', b.dataset.modo===modo));
+  const wrap = document.getElementById('cfg-mocval-input-wrap-'+i);
+  if(wrap) wrap.style.display = modo==='diferente' ? 'block' : 'none';
+}
+
+// Mesma lógica, para o valor do almoço da Mocidade
+function setMocidadeAlmocoModo(i, modo){
+  const hid = document.getElementById('cfg-mocidade-almoco-modo-'+i);
+  if(hid) hid.value = modo;
+  document.querySelectorAll('#cfg-mocalm-modo-'+i+' .hmodo-btn').forEach(b=>b.classList.toggle('active', b.dataset.modo===modo));
+  const wrap = document.getElementById('cfg-mocalm-input-wrap-'+i);
+  if(wrap) wrap.style.display = modo==='diferente' ? 'block' : 'none';
+}
+
 /* Lê os campos de nome das salas do formulário */
 function lerSalas(i, tipo){
   const qtd = parseInt(document.getElementById('cfg-qtd-'+tipo+'-'+i)?.value||'0');
@@ -7636,6 +7731,10 @@ function salvarPolo(i){
     p.almoco_crianca_ativo   = document.getElementById('cfg-almoco-crianca-'+i)?.checked || false;
     p.almoco_crianca_valor   = document.getElementById('cfg-almoco-crianca-valor-'+i)?.value.trim()||'';
     p.tem_mocidade      = document.getElementById('cfg-mocidade-'+i)?.checked || false;
+    p.mocidade_valor_modo        = document.getElementById('cfg-mocidade-valor-modo-'+i)?.value || 'mesmo';
+    p.mocidade_valor             = document.getElementById('cfg-mocidade-valor-'+i)?.value.trim() || '';
+    p.mocidade_almoco_valor_modo = document.getElementById('cfg-mocidade-almoco-modo-'+i)?.value || 'mesmo';
+    p.mocidade_almoco_valor      = document.getElementById('cfg-mocidade-almoco-valor-'+i)?.value.trim() || '';
     p.aceita_crianca    = document.getElementById('cfg-crianca-'+i)?.checked || false;
     p.idade_minima_evang= parseInt(document.getElementById('cfg-idade-min-'+i)?.value||'0')||0;
     p.msg_pagamento     = document.getElementById('cfg-msg-pag-'+i)?.value.trim()||'';
@@ -7756,7 +7855,9 @@ function confirmarAddPolo(){
     valorExibir:document.getElementById('addpolo-valor').value.trim()||'R$ —,—',
     pixChave:'', pixNome:(_cfgEvento.titulo||'')+' — '+nome,
     responsavel:'', telefone_polo:'', email_polo:'', capacidade:'', obs:'',
-    inscricoes_abertas:true, almoco_ativo:false, almoco_valor:'', cardapios:[], msg_pagamento:'', salas_adulto:[], salas_mocidade:[], setores:[], expositores:[], expositores_salas:{}, apresentacao:'', fotos:[], maps_link:''
+    inscricoes_abertas:true, almoco_ativo:false, almoco_valor:'', cardapios:[],
+    mocidade_valor_modo:'mesmo', mocidade_valor:'', mocidade_almoco_valor_modo:'mesmo', mocidade_almoco_valor:'',
+    msg_pagamento:'', salas_adulto:[], salas_mocidade:[], setores:[], expositores:[], expositores_salas:{}, apresentacao:'', fotos:[], maps_link:''
   });
   setCfg();
   fecharAddPolo();
