@@ -154,26 +154,28 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .modal-body{padding:1.25rem}
 .modal-footer{padding:.75rem 1.25rem;padding-bottom:calc(.75rem + var(--safe-bot));border-top:1px solid var(--gray-100);display:flex;gap:10px;position:sticky;bottom:0;background:white}
 
-/* PIX */
-.pix-step{display:flex;gap:12px;margin-bottom:1.25rem;align-items:flex-start}
-.pix-step-num{width:28px;height:28px;border-radius:50%;background:var(--blue-50);color:var(--blue-800);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.pix-step-content{flex:1}
-.pix-step-title{font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px}
-.pix-step-text{font-size:13px;color:var(--gray-600);line-height:1.5}
-.pix-chave-box{background:var(--gray-50);border:1px solid var(--gray-100);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.pix-chave-val{font-size:14px;font-weight:600;color:var(--gray-900);word-break:break-all}
-.pix-copy-btn{background:var(--blue-600);color:white;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:40px;-webkit-appearance:none}
+/* PIX — passo a passo grande e amigável (público mais velho) */
+.pix-step{display:flex;gap:14px;margin-bottom:1.5rem;align-items:flex-start}
+.pix-step-num{width:38px;height:38px;border-radius:50%;background:var(--blue-600);color:white;font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.pix-step-content{flex:1;min-width:0}
+.pix-step-title{font-size:17px;font-weight:700;color:var(--gray-900);margin-bottom:5px;line-height:1.3}
+.pix-step-text{font-size:15px;color:var(--gray-600);line-height:1.55}
+.pix-chave-box{background:var(--gray-50);border:2px solid var(--gray-100);border-radius:12px;padding:14px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pix-chave-val{font-size:17px;font-weight:700;color:var(--gray-900);word-break:break-all;flex:1;min-width:140px}
+.pix-copy-btn{background:var(--blue-600);color:white;border:none;border-radius:10px;padding:13px 20px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:48px;-webkit-appearance:none}
 .pix-copy-btn.copied{background:var(--teal-600)}
-.pix-valor-box{background:var(--green-50);border:1px solid var(--green-100);border-radius:10px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;justify-content:space-between}
-.pix-valor-num{font-family:'EB Garamond',Georgia,serif;font-size:22px;font-weight:800;color:var(--green-800)}
-.pix-nome-box{background:var(--blue-50);border:1px solid var(--blue-100);border-radius:10px;padding:8px 14px;margin-top:8px;font-size:13px;color:var(--blue-800);font-weight:500}
-.pix-whats-info{display:flex;align-items:center;gap:9px;background:#E7F9EE;border:1px solid #B7E4C7;border-radius:10px;padding:10px 14px;margin-top:8px;font-size:13.5px;color:#1B7A43}
-.pix-whats-info b{color:#12673A;font-weight:700}
-.pix-whats-copy{background:#25D366;color:white;border:none;border-radius:8px;padding:7px 13px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:34px;-webkit-appearance:none;transition:background .15s}
+.pix-valor-box{background:var(--green-50);border:2px solid var(--green-100);border-radius:12px;padding:14px 16px;margin-top:10px;display:flex;align-items:center;justify-content:space-between}
+.pix-valor-num{font-family:'EB Garamond',Georgia,serif;font-size:28px;font-weight:800;color:var(--green-800)}
+.pix-nome-box{background:var(--blue-50);border:1px solid var(--blue-100);border-radius:10px;padding:11px 14px;margin-top:8px;font-size:14px;color:var(--blue-800);font-weight:500}
+.pix-whats-info{display:flex;align-items:center;gap:10px;background:#E7F9EE;border:1px solid #B7E4C7;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;color:#1B7A43;flex-wrap:wrap}
+.pix-whats-info b{color:#12673A;font-weight:700;font-size:16px}
+.pix-whats-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:white;border:none;border-radius:12px;padding:16px;margin-top:10px;font-family:inherit;font-size:17px;font-weight:800;cursor:pointer;text-decoration:none;transition:background .15s;-webkit-appearance:none;min-height:54px}
+.pix-whats-btn:active{background:#1AA34A}
+.pix-whats-copy{background:#25D366;color:white;border:none;border-radius:10px;padding:11px 18px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:44px;-webkit-appearance:none;transition:background .15s}
 .pix-whats-copy:active{background:#1AA34A}
 .pix-whats-copy.copied{background:#12673A}
 .pix-divider{height:1px;background:var(--gray-100);margin:1.25rem 0}
-.pix-obs{font-size:12px;color:var(--gray-400);line-height:1.6;background:var(--amber-50);border:1px solid var(--amber-100);border-radius:8px;padding:10px 14px}
+.pix-obs{font-size:14px;color:var(--gray-600);line-height:1.55;background:var(--amber-50);border:1px solid var(--amber-100);border-radius:10px;padding:13px 15px}
 .pix-breakdown{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .pix-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--gray-600);padding:4px 0;border-bottom:1px solid var(--gray-100)}
 .pix-line:last-child{border-bottom:none;font-weight:700;color:var(--gray-900);font-size:15px;padding-top:8px}
@@ -1150,20 +1152,22 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
       <div class="pix-step">
         <div class="pix-step-num">1</div>
         <div class="pix-step-content">
-          <div class="pix-step-title">Valor a pagar</div>
+          <div class="pix-step-title">Veja o valor a pagar</div>
           <div class="pix-breakdown" id="pix-breakdown">
             <!-- preenchido por JS -->
           </div>
           <div class="pix-valor-box" style="margin-top:8px">
-            <span style="font-size:12px;color:var(--green-800);font-weight:500">Total</span>
+            <span style="font-size:14px;color:var(--green-800);font-weight:600">Total</span>
             <span class="pix-valor-num" id="pix-valor">R$ —,—</span>
           </div>
         </div>
       </div>
+
       <div class="pix-step">
         <div class="pix-step-num">2</div>
         <div class="pix-step-content">
-          <div class="pix-step-title">Chave PIX do destinatário</div>
+          <div class="pix-step-title">Copie a chave PIX</div>
+          <div class="pix-step-text">Toque no botão <strong>Copiar</strong> abaixo.</div>
           <div class="pix-chave-box">
             <span class="pix-chave-val" id="pix-chave">—</span>
             <button class="pix-copy-btn" id="btn-copiar" onclick="copiarChave()">Copiar</button>
@@ -1171,27 +1175,41 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
           <div class="pix-nome-box" id="pix-nome">Beneficiário: —</div>
         </div>
       </div>
+
       <div class="pix-step">
         <div class="pix-step-num">3</div>
         <div class="pix-step-content">
-          <div class="pix-step-title">Identificação no comprovante</div>
-          <div class="pix-step-text">Use seu <strong>nome completo</strong> como descrição/mensagem do PIX.</div>
+          <div class="pix-step-title">Pague pelo seu banco</div>
+          <div class="pix-step-text">Abra o aplicativo do seu banco, escolha <strong>PIX</strong>, cole a chave que você copiou e faça o pagamento. Coloque o seu <strong>nome completo</strong> na mensagem.</div>
         </div>
       </div>
-      <div class="pix-step" id="pix-step-whats" style="display:none">
+
+      <div class="pix-step">
         <div class="pix-step-num">4</div>
         <div class="pix-step-content">
-          <div class="pix-step-title">Envie o comprovante</div>
-          <div class="pix-step-text">Após pagar, envie o comprovante pelo WhatsApp para confirmarmos sua vaga:</div>
+          <div class="pix-step-title">Tire uma foto (print) do comprovante</div>
+          <div class="pix-step-text">Depois de pagar, salve ou tire um print da tela que mostra que o pagamento foi feito.</div>
+        </div>
+      </div>
+
+      <div class="pix-step" id="pix-step-whats" style="display:none">
+        <div class="pix-step-num">5</div>
+        <div class="pix-step-content">
+          <div class="pix-step-title">Envie o comprovante pelo WhatsApp</div>
+          <div class="pix-step-text">Toque no botão verde abaixo. O WhatsApp vai abrir na conversa certa — é só anexar o print e enviar.</div>
+          <a id="pix-whats-btn" href="#" target="_blank" rel="noopener" class="pix-whats-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652a12.062 12.062 0 005.71 1.447h.006c6.585 0 11.946-5.335 11.949-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
+            <span>Abrir WhatsApp e enviar</span>
+          </a>
           <div class="pix-whats-info">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652a12.062 12.062 0 005.71 1.447h.006c6.585 0 11.946-5.335 11.949-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
-            <span style="flex:1">WhatsApp: <b id="pix-whats-num">—</b></span>
+            <span style="flex:1;min-width:130px">ou anote o número: <b id="pix-whats-num">—</b></span>
             <button class="pix-whats-copy" id="btn-copiar-whats" onclick="copiarWhats()">Copiar</button>
           </div>
         </div>
       </div>
+
       <div class="pix-divider"></div>
-      <div class="pix-obs">⚠ Guarde o comprovante. A confirmação da vaga será enviada por e-mail em até 2 dias úteis.</div>
+      <div class="pix-obs">⚠ Guarde o comprovante. Assim que recebermos, sua vaga será confirmada por e-mail em até 2 dias úteis.</div>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="fecharPix()">Fechar</button>
@@ -4260,7 +4278,7 @@ function abrirPix(nomeInscrito, almoco){
   const turmaSel      = document.querySelector('input[name="turma"]:checked')?.value || 'Adulto';
   const isMocidade    = turmaSel === 'Mocidade';
 
-  document.getElementById('pix-subtitulo').textContent = cfg.nome+' · Conclua o pagamento via PIX para garantir sua vaga.';
+  document.getElementById('pix-subtitulo').textContent = 'Agora falta pagar. Siga os passos abaixo, um de cada vez.';
 
   // Inscrição — considera o modo de cobrança da Mocidade (mesmo valor / diferente / gratuito)
   let vInscricao, labelInscricao;
@@ -4330,12 +4348,19 @@ function abrirPix(nomeInscrito, almoco){
   document.getElementById('pix-chave').textContent = cfg.pixChave||'—';
   document.getElementById('pix-nome').textContent  = 'Beneficiário: '+(cfg.pixNome||'—');
 
-  // Passo 4 — para qual WhatsApp enviar o comprovante (coordenador do polo)
+  // Passo 5 — enviar comprovante pelo WhatsApp do coordenador do polo
   const whatsStep = document.getElementById('pix-step-whats');
   const whatsNum  = document.getElementById('pix-whats-num');
+  const whatsBtn  = document.getElementById('pix-whats-btn');
   const telBruto  = (cfg.telefone_polo || '').trim();
-  if(telBruto && whatsStep && whatsNum){
+  const soDigitos = telBruto.replace(/\D/g,'');
+  // Adiciona DDI 55 (Brasil) se não vier com ele
+  const telWhats  = soDigitos ? (soDigitos.startsWith('55') ? soDigitos : '55'+soDigitos) : '';
+  if(telWhats && whatsStep && whatsNum && whatsBtn){
     whatsNum.textContent = telBruto;
+    const valorTxt = totalNum !== null ? formatBRL(totalNum) : (cfg.valorExibir||'');
+    const msg = `Olá! Sou *${nomeInscrito}* e acabei de me inscrever no ${cfg.nome} (${valorTxt}). Segue o comprovante do meu pagamento por PIX.`;
+    whatsBtn.href = `https://wa.me/${telWhats}?text=${encodeURIComponent(msg)}`;
     whatsStep.style.display = '';
   } else if(whatsStep){
     whatsStep.style.display = 'none';
