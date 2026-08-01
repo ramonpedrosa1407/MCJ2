@@ -774,27 +774,7 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
   <div class="polo-section">
     <div class="section-eyebrow">Escolha seu polo</div>
     <div class="polo-grid" id="polo-grid">
-      <!-- Polos padrão — substituídos pelo JS após carregar -->
-      <div class="polo-card" onclick="selecionarPolo('Campo Grande')">
-        <span class="polo-check">✓</span>
-        <div class="polo-dot" style="background:#4F7CAC"></div>
-        <div class="polo-name">Campo Grande</div>
-      </div>
-      <div class="polo-card" onclick="selecionarPolo('Jacarepaguá')">
-        <span class="polo-check">✓</span>
-        <div class="polo-dot" style="background:#6B9E5E"></div>
-        <div class="polo-name">Jacarepaguá</div>
-      </div>
-      <div class="polo-card" onclick="selecionarPolo('Vila Isabel')">
-        <span class="polo-check">✓</span>
-        <div class="polo-dot" style="background:#C8873A"></div>
-        <div class="polo-name">Vila Isabel</div>
-      </div>
-      <div class="polo-card" onclick="selecionarPolo('Teresópolis')">
-        <span class="polo-check">✓</span>
-        <div class="polo-dot" style="background:#8B5E8B"></div>
-        <div class="polo-name">Teresópolis</div>
-      </div>
+      <!-- Polos carregados dinamicamente do banco pelo JS (renderPoloGrid) -->
     </div>
   </div>
 
@@ -1729,6 +1709,14 @@ function renderPoloGrid(){
       ${p.cidade?`<div class="polo-cidade">${p.cidade}</div>`:''}
     </div>`;
   }).join('') || '<div style="color:var(--gray-400);font-size:13px;padding:.5rem">Nenhum polo disponível no momento.</div>';
+
+  // Se há apenas um polo aberto, seleciona automaticamente (evita passo desnecessário e erro de "escolha o polo")
+  if(abertos.length === 1){
+    const f = document.getElementById('f-polo');
+    if(f && f.value !== abertos[0].nome){
+      selecionarPolo(abertos[0].nome);
+    }
+  }
 }
 
 /* ================================================================
