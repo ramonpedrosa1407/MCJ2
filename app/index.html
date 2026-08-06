@@ -4652,6 +4652,7 @@ let _turmaPoloAtivo = null;
 let _turmaTurmaAtiva = 'Adulto'; // Adulto | Mocidade | Evangelizacao
 let _dragEmail = null;
 let _dragPolo  = null;
+let _dragId    = null;
 
 function renderTurmas(){
   const d   = getIns();
@@ -4710,10 +4711,12 @@ function renderTurmas(){
       ? `<button class="btn-remover-atrib" title="Remover da sala"
            onclick="removerAtribuicao('${p.email.replace(/'/g,"\\'")}','${poloAttr.replace(/'/g,"\\'")}',event,'${(p.id||'').replace(/'/g,"\\'")}')">×</button>`
       : '';
+    const idAttr = (p.id||'').replace(/"/g,'&quot;');
     return `<div class="pessoa-card"
       draggable="true"
       data-email="${emailAttr}"
       data-polo="${poloAttr}"
+      data-id="${idAttr}"
       ontouchstart="touchStart(event,this)"
       ontouchmove="touchMove(event)"
       ontouchend="touchEnd(event)"
@@ -4834,8 +4837,10 @@ function renderTurmas(){
     card.addEventListener('dragstart', e=>{
       _dragEmail = card.dataset.email;
       _dragPolo  = card.dataset.polo;
+      _dragId    = card.dataset.id || null;
       card.classList.add('dragging');
       e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain', _dragEmail||'');
     });
     card.addEventListener('dragend', ()=>card.classList.remove('dragging'));
   });
@@ -6858,9 +6863,10 @@ function drop(e, sala, el){
   if(!_dragEmail) return;
   const email = _dragEmail;
   const polo  = _dragPolo;
-  _dragEmail = null; _dragPolo = null;
+  const id    = _dragId;
+  _dragEmail = null; _dragPolo = null; _dragId = null;
   if(!poloNoEscopo(polo)){ alert('Sem permissão para este polo.'); return; }
-  atualizarInscricao(email, polo, {sala: sala||''});
+  atualizarInscricao(email, polo, {sala: sala||''}, id);
   renderTurmas();
 }
 
@@ -6869,11 +6875,13 @@ let _touchCard = null;
 let _touchClone = null;
 let _touchEmailM = null;
 let _touchPoloM  = null;
+let _touchIdM    = null;
 
 function touchStart(e, card){
   _touchCard = card;
   _touchEmailM = card.dataset.email;
   _touchPoloM  = card.dataset.polo;
+  _touchIdM    = card.dataset.id || null;
   const rect = card.getBoundingClientRect();
   _touchClone = card.cloneNode(true);
   _touchClone.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;opacity:.85;z-index:9999;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.2);transform:scale(1.03)`;
@@ -6907,11 +6915,11 @@ function touchEnd(e){
   const zone = el?.closest('[data-sala]');
   if(zone && _touchEmailM){
     const sala = zone.dataset.sala||'';
-    if(!poloNoEscopo(_touchPoloM)){ alert('Sem permissão.'); _touchEmailM=null; return; }
-    atualizarInscricao(_touchEmailM, _touchPoloM, {sala});
+    if(!poloNoEscopo(_touchPoloM)){ alert('Sem permissão.'); _touchEmailM=null; _touchIdM=null; return; }
+    atualizarInscricao(_touchEmailM, _touchPoloM, {sala}, _touchIdM);
     renderTurmas();
   }
-  _touchEmailM=null; _touchPoloM=null; _touchCard=null;
+  _touchEmailM=null; _touchPoloM=null; _touchIdM=null; _touchCard=null;
 }
 
 /* fake mousedown for desktop fallback */
