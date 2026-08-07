@@ -4556,7 +4556,7 @@ function renderPanels(){
         const pago       = p.pagamento==='Confirmado';
         const trab       = p.trabalhador===true || p.trabalhador==='true';
         const tel        = (p.telefone||'').replace(/\D/g,'');
-        const waLink     = (pago && tel.length>=10)
+        const waLink     = (tel.length>=10)
           ? `<a class="btn-whatsapp" href="${montarLinkWA(tel, p.nome, polo.nome)}" target="_blank" rel="noopener" title="Enviar WhatsApp">💬</a>`
           : '';
         return `<tr style="${trab?'background:#FAF5FF':''}">
