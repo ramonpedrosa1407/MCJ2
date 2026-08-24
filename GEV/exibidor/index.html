@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grupo Evoluir · Exibidor</title>
+<link rel="stylesheet" href="../assets/gev-style.css">
+<style>
+  body { background: #0D0820; }
+  .card { max-width: 600px; }
+  .disco {
+    width: 160px; height: 160px;
+    margin: 0 auto 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #3a2a6b, #150c30 70%);
+    border: 4px solid #C9A227;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px;
+  }
+  .disco.tocando { animation: girar 4s linear infinite; }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  h1 { font-size: clamp(22px, 6vw, 34px); }
+  .nome { font-size: clamp(18px, 5vw, 26px); margin-top: 4px; min-height: 32px; }
+  .estado { opacity: .55; font-size: 14px; margin-top: 6px; font-family: -apple-system, sans-serif; }
+  .iniciar {
+    margin-top: 28px;
+    padding: 16px 28px;
+    background: #C9A227;
+    color: #1A1033;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: bold;
+  }
+  .voltar { display: block; margin-top: 24px; color: rgba(244,240,255,.35); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="gev-nav">
+    <a href="../disparador/">📲 Disparador</a>
+    <a href="../mural/">🗓️ Mural</a>
+    <a href="../exibidor/" class="ativo">🔊 Exibidor</a>
+  </div>
+  <div class="disco" id="disco">🎶</div>
+  <h1>Grupo Evoluir</h1>
+  <div class="nome" id="nome">aguardando...</div>
+  <div class="estado" id="estadoTexto">toque em "iniciar exibição" para ativar o som</div>
+  <button class="iniciar" id="iniciar">▶ Iniciar exibição</button>
+  <a class="voltar" href="../">voltar ao menu</a>
+</div>
+
+<audio id="player"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/gev-config.js"></script>
+<script src="../assets/gev-common.js"></script>
+<script>
+var sb = GEV.sb;
+var player = document.getElementById('player');
+var disco = document.getElementById('disco');
+var nomeEl = document.getElementById('nome');
+var estadoEl = document.getElementById('estadoTexto');
+var faixaCarregadaId = null; // qual música está carregada no player agora
+var faixaPausadaId = null;   // se pausada, qual música ficou pausada (pra retomar do ponto certo)
+var ativo = false;
+
+function aplicarEstado(row) {
+  if (!row) return;
+  nomeEl.textContent = row.musica_nome || 'aguardando...';
+  player.volume = (row.volume === null || row.volume === undefined) ? 1 : Number(row.volume);
+  player.loop = !!row.repetir;
+
+  if (row.acao === 'play' && row.musica_path) {
+    if (row.musica_id === faixaCarregadaId && row.musica_id === faixaPausadaId) {
+      // mesma música que estava pausada -> retoma do ponto onde parou
+      faixaPausadaId = null;
+      player.play().catch(function () {});
+    } else {
+      // música nova (ou reiniciando) -> toca do começo
+      player.src = GEV.publicUrlAudio(row.musica_path);
+      player.currentTime = 0;
+      player.play().catch(function () {});
+      faixaCarregadaId = row.musica_id;
+      faixaPausadaId = null;
+    }
+    disco.classList.add('tocando');
+    estadoEl.textContent = row.repetir ? 'tocando agora · 🔁 repetindo' : 'tocando agora';
+  } else if (row.acao === 'pause') {
+    player.pause();
+    faixaPausadaId = faixaCarregadaId;
+    disco.classList.remove('tocando');
+    estadoEl.textContent = 'pausado';
+  } else {
+    player.pause();
+    player.currentTime = 0;
+    faixaCarregadaId = null;
+    faixaPausadaId = null;
+    disco.classList.remove('tocando');
+    estadoEl.textContent = 'parado';
+  }
+}
+
+document.getElementById('iniciar').onclick = async function () {
+  if (ativo) return;
+  ativo = true;
+  // gesto do usuário libera o áudio no navegador — necessário só uma vez
+  player.muted = true;
+  await player.play().catch(function () {});
+  player.pause();
+  player.muted = false;
+  this.style.display = 'none';
+  estadoEl.textContent = 'conectado — aguardando disparo remoto';
+
+  var estadoR = await sb.from('gev_estado').select('*').eq('id', 'atual').maybeSingle();
+  if (estadoR.data) aplicarEstado(estadoR.data);
+
+  sb.channel('gev_estado_mudou')
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'gev_estado' }, function (payload) {
+      aplicarEstado(payload.new);
+    })
+    .subscribe();
+};
+
+GEV.exigirAcesso(['master', 'coordenador', 'usuario']);
+</script>
+</body>
+</html>
