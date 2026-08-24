@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grupo Evoluir</title>
+<link rel="stylesheet" href="assets/gev-style.css">
+</head>
+<body>
+<div class="card" id="tela-login">
+  <h1>Grupo Evoluir</h1>
+  <p class="sub">Música ao vivo para as reuniões</p>
+  <input type="email" id="email" placeholder="Seu e-mail" autocomplete="username">
+  <div style="height:10px"></div>
+  <input type="password" id="senha" placeholder="Sua senha" autocomplete="current-password">
+  <button class="btn-primary" id="entrar">Entrar</button>
+  <p class="erro" id="erro"></p>
+</div>
+
+<div class="card" id="tela-menu" style="display:none">
+  <h1>Grupo Evoluir</h1>
+  <p class="sub" id="saudacao">Escolha o que vai usar agora</p>
+  <div class="menu" id="menuLista"></div>
+  <p class="erro" id="sair" style="cursor:pointer;opacity:.5;margin-top:18px">sair da conta</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/gev-config.js"></script>
+<script src="assets/gev-common.js"></script>
+<script>
+var loginEl = document.getElementById('tela-login');
+var menuEl = document.getElementById('tela-menu');
+var erroEl = document.getElementById('erro');
+
+var TODOS_ITENS = [
+  { rota: 'disparador/', icone: '📲', titulo: 'Disparador', desc: 'tocar uma música remotamente', papeis: ['master', 'coordenador', 'usuario'] },
+  { rota: 'mural/', icone: '🗓️', titulo: 'Mural da reunião', desc: 'data, link de acesso e materiais', papeis: ['master', 'coordenador', 'usuario'] },
+  { rota: 'exibidor/', icone: '🔊', titulo: 'Exibidor', desc: 'abrir na tela que será compartilhada', papeis: ['master', 'coordenador', 'usuario'] },
+  { rota: 'biblioteca/', icone: '🎵', titulo: 'Biblioteca de músicas', desc: 'subir e renomear arquivos', papeis: ['master', 'coordenador'] },
+  { rota: 'usuarios/', icone: '👥', titulo: 'Gerenciar usuários', desc: 'cadastrar coordenadores e usuários', papeis: ['master', 'coordenador'] }
+];
+
+async function mostrarMenuSeLogado() {
+  var perfil = await GEV.getPerfil();
+  if (!perfil) return;
+  loginEl.style.display = 'none';
+  menuEl.style.display = 'block';
+  document.getElementById('saudacao').textContent = 'Olá, ' + perfil.nome + (perfil.papel === 'master' ? ' (master)' : perfil.papel === 'coordenador' ? ' (coordenador)' : '');
+  var lista = document.getElementById('menuLista');
+  lista.innerHTML = '';
+  TODOS_ITENS.filter(function (i) { return i.papeis.indexOf(perfil.papel) !== -1; }).forEach(function (i) {
+    var a = document.createElement('a');
+    a.href = i.rota;
+    a.innerHTML = i.icone + ' ' + i.titulo + '<small>' + i.desc + '</small>';
+    lista.appendChild(a);
+  });
+}
+
+async function tentarEntrar() {
+  erroEl.textContent = '';
+  var email = document.getElementById('email').value.trim();
+  var senha = document.getElementById('senha').value;
+  if (!email || !senha) {
+    erroEl.textContent = 'Preencha e-mail e senha.';
+    return;
+  }
+  var r = await GEV.sb.auth.signInWithPassword({ email: email, password: senha });
+  if (r.error) {
+    erroEl.textContent = 'E-mail ou senha incorretos.';
+    return;
+  }
+  await mostrarMenuSeLogado();
+}
+
+document.getElementById('entrar').onclick = tentarEntrar;
+document.getElementById('senha').addEventListener('keydown', function (e) { if (e.key === 'Enter') tentarEntrar(); });
+document.getElementById('sair').onclick = function () { GEV.logout(); };
+
+mostrarMenuSeLogado();
+</script>
+</body>
+</html>
