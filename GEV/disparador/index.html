@@ -92,6 +92,25 @@
   li.faixa button.b-pause:not(:disabled) { background: #C9A227; color: #1A1033; }
   li.faixa button.b-stop:not(:disabled) { background: #7A2E2E; color: #FFD9D9; }
   .vazio { opacity: .5; font-size: 14px; font-family: -apple-system, sans-serif; text-align: center; padding: 20px 0; }
+
+  .tocando-agora {
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #2E5A3E;
+    border: 1px solid #4CAF7D;
+    margin-bottom: 18px;
+    font-family: -apple-system, sans-serif;
+  }
+  .ta-nome { font-size: 15px; font-weight: bold; margin-bottom: 8px; }
+  .ta-barra {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,.15);
+    overflow: hidden;
+  }
+  .ta-progresso { height: 100%; width: 0%; background: #C9A227; border-radius: 4px; transition: width .3s linear; }
+  .ta-tempo { display: flex; justify-content: space-between; font-size: 12px; opacity: .75; margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -104,6 +123,12 @@
   </div>
   <h1>Disparador</h1>
   <p class="sub">▶ toca · ⏸ pausa · ⏹ para</p>
+
+  <div class="tocando-agora" id="tocandoAgora" style="display:none">
+    <div class="ta-nome" id="taNome"></div>
+    <div class="ta-barra"><div class="ta-progresso" id="taProgresso"></div></div>
+    <div class="ta-tempo"><span id="taAtual">0:00</span><span id="taTotal">0:00</span></div>
+  </div>
 
   <button class="parar-tudo" id="pararTudo">⏹ PARAR TUDO</button>
 
@@ -138,12 +163,52 @@ var repetirEl = document.getElementById('repetir');
 var repetirCaixaEl = document.getElementById('repetirCaixa');
 var arrastandoVolume = false;
 var mexendoRepetir = false;
+var estadoAtual = null;
+var estadoBuscadoEm = 0;
+
+var tocandoAgoraEl = document.getElementById('tocandoAgora');
+var taNomeEl = document.getElementById('taNome');
+var taProgressoEl = document.getElementById('taProgresso');
+var taAtualEl = document.getElementById('taAtual');
+var taTotalEl = document.getElementById('taTotal');
+
+function formatarTempo(segundos) {
+  segundos = Math.max(0, Math.floor(segundos || 0));
+  var m = Math.floor(segundos / 60);
+  var s = segundos % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function renderTocandoAgora() {
+  if (!estadoAtual || estadoAtual.acao === 'stop') {
+    tocandoAgoraEl.style.display = 'none';
+    return;
+  }
+  tocandoAgoraEl.style.display = 'block';
+  taNomeEl.textContent = (estadoAtual.acao === 'pause' ? '⏸ ' : '▶ ') + (estadoAtual.musica_nome || '');
+
+  var total = Number(estadoAtual.duracao_segundos) || 0;
+  var atual = Number(estadoAtual.posicao_segundos) || 0;
+  if (estadoAtual.acao === 'play') {
+    atual += (Date.now() - estadoBuscadoEm) / 1000;
+  }
+  if (total > 0) atual = Math.min(atual, total);
+
+  taProgressoEl.style.width = (total > 0 ? (atual / total * 100) : 0) + '%';
+  taAtualEl.textContent = formatarTempo(atual);
+  taTotalEl.textContent = formatarTempo(total);
+}
+
+setInterval(renderTocandoAgora, 500);
 
 async function carregar() {
   var musicasR = await sb.from('gev_musicas').select('*').order('ordem', { ascending: true });
   var musicas = musicasR.data || [];
   var estadoR = await sb.from('gev_estado').select('*').eq('id', 'atual').maybeSingle();
   var estado = estadoR.data || {};
+  estadoAtual = estadoR.data || null;
+  estadoBuscadoEm = Date.now();
+  renderTocandoAgora();
 
   if (!arrastandoVolume) {
     var pct = Math.round((estado.volume === null || estado.volume === undefined ? 1 : estado.volume) * 100);
@@ -212,18 +277,20 @@ async function tocar(m) {
     musica_path: m.storage_path,
     musica_nome: m.nome_exibicao,
     acao: 'play',
+    posicao_segundos: 0,
+    duracao_segundos: 0,
     disparado_em: new Date().toISOString()
   }).eq('id', 'atual');
   carregar();
 }
 
 async function pausar(m) {
-  await sb.from('gev_estado').update({ acao: 'pause' }).eq('id', 'atual');
+  await sb.from('gev_estado').update({ acao: 'pause', disparado_em: new Date().toISOString() }).eq('id', 'atual');
   carregar();
 }
 
 async function parar(m) {
-  await sb.from('gev_estado').update({ acao: 'stop' }).eq('id', 'atual');
+  await sb.from('gev_estado').update({ acao: 'stop', posicao_segundos: 0, disparado_em: new Date().toISOString() }).eq('id', 'atual');
   carregar();
 }
 
@@ -247,7 +314,7 @@ repetirEl.addEventListener('change', async function () {
 });
 
 document.getElementById('pararTudo').onclick = async function () {
-  await sb.from('gev_estado').update({ acao: 'stop' }).eq('id', 'atual');
+  await sb.from('gev_estado').update({ acao: 'stop', posicao_segundos: 0, disparado_em: new Date().toISOString() }).eq('id', 'atual');
   carregar();
 };
 
@@ -255,6 +322,20 @@ GEV.exigirAcesso(['master', 'coordenador', 'usuario']).then(function (perfil) {
   if (perfil) {
     carregar();
     setInterval(carregar, 4000); // rede instável no celular -> reforça o estado periodicamente
+
+    sb.channel('gev_estado_disparador')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'gev_estado' }, function (payload) {
+        var novo = payload.new;
+        var comandoMudou = !estadoAtual || novo.disparado_em !== estadoAtual.disparado_em || novo.musica_id !== estadoAtual.musica_id;
+        estadoAtual = novo;
+        estadoBuscadoEm = Date.now();
+        if (comandoMudou) {
+          carregar();
+        } else {
+          renderTocandoAgora();
+        }
+      })
+      .subscribe();
   }
 });
 </script>
