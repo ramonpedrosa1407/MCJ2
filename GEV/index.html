@@ -10,7 +10,7 @@
 <div class="card" id="tela-login">
   <h1>Grupo Evoluir</h1>
   <p class="sub">Música ao vivo para as reuniões</p>
-  <input type="email" id="email" placeholder="Seu e-mail" autocomplete="username">
+  <input type="text" id="usuario" placeholder="Seu usuário" autocomplete="username" autocapitalize="none">
   <div style="height:10px"></div>
   <input type="password" id="senha" placeholder="Sua senha" autocomplete="current-password">
   <button class="btn-primary" id="entrar">Entrar</button>
@@ -58,15 +58,15 @@ async function mostrarMenuSeLogado() {
 
 async function tentarEntrar() {
   erroEl.textContent = '';
-  var email = document.getElementById('email').value.trim();
+  var usuario = document.getElementById('usuario').value.trim();
   var senha = document.getElementById('senha').value;
-  if (!email || !senha) {
-    erroEl.textContent = 'Preencha e-mail e senha.';
+  if (!usuario || !senha) {
+    erroEl.textContent = 'Preencha usuário e senha.';
     return;
   }
-  var r = await GEV.sb.auth.signInWithPassword({ email: email, password: senha });
+  var r = await GEV.sb.auth.signInWithPassword({ email: GEV.emailDoUsuario(usuario), password: senha });
   if (r.error) {
-    erroEl.textContent = 'E-mail ou senha incorretos.';
+    erroEl.textContent = 'Usuário ou senha incorretos.';
     return;
   }
   await mostrarMenuSeLogado();
