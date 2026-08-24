@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grupo Evoluir · Mural</title>
+<link rel="stylesheet" href="../assets/gev-style.css">
+<style>
+  body { align-items: flex-start; }
+  .card { max-width: 640px; text-align: left; margin-top: 24px; }
+  h1 { text-align: center; }
+  .sub { text-align: center; }
+  .voltar { display: inline-block; margin-bottom: 18px; color: rgba(244,240,255,.6); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; }
+
+  .bloco {
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.15);
+    margin-bottom: 20px;
+  }
+  .bloco h2 { font-size: 18px; margin-bottom: 12px; }
+  .reuniao-titulo { font-size: 20px; margin-bottom: 6px; }
+  .reuniao-linha { display: flex; gap: 8px; align-items: center; font-family: -apple-system, sans-serif; font-size: 15px; margin-bottom: 6px; opacity: .9; }
+  .reuniao-linha .icone { width: 20px; text-align: center; }
+  .recados { white-space: pre-wrap; font-family: -apple-system, sans-serif; font-size: 14px; opacity: .85; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.1); }
+  .entrar-sala {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 12px 20px;
+    background: #4CAF7D;
+    color: #06210F;
+    border-radius: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    font-family: -apple-system, sans-serif;
+  }
+
+  .campo { margin-bottom: 12px; }
+  .campo label { display: block; font-size: 12px; opacity: .6; margin-bottom: 4px; font-family: -apple-system, sans-serif; }
+  .campo input, .campo textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.06);
+    color: #F4F0FF;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+  }
+  .campo textarea { min-height: 70px; resize: vertical; }
+  .salvar-mural {
+    padding: 10px 18px;
+    background: #C9A227;
+    color: #1A1033;
+    font-weight: bold;
+    border-radius: 10px;
+  }
+  .status { font-size: 13px; opacity: .7; margin-top: 8px; min-height: 18px; font-family: -apple-system, sans-serif; }
+
+  .caixa-upload {
+    border: 2px dashed rgba(255,255,255,.25);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .caixa-upload input[type=file] { display: none; }
+  .caixa-upload label {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #C9A227;
+    color: #1A1033;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+  }
+
+  ul.materiais { list-style: none; }
+  li.material {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.05);
+    margin-bottom: 8px;
+    font-family: -apple-system, sans-serif;
+  }
+  li.material a.baixar { flex: 1; color: #E8C86A; text-decoration: none; font-size: 14px; }
+  li.material input[type=text] {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.06);
+    color: #F4F0FF;
+    font-family: -apple-system, sans-serif;
+  }
+  li.material button {
+    padding: 8px 10px;
+    background: rgba(255,255,255,.1);
+    color: #F4F0FF;
+    font-size: 13px;
+  }
+  li.material button.salvar { background: #4CAF7D; color: #06210F; }
+  li.material button.excluir { background: #7A2E2E; color: #FFD9D9; }
+  .vazio { opacity: .5; font-size: 14px; font-family: -apple-system, sans-serif; text-align: center; padding: 14px 0; }
+</style>
+</head>
+<body>
+<div class="card">
+  <a class="voltar" href="../">&larr; voltar ao menu</a>
+  <div class="gev-nav" id="nav"></div>
+  <h1>Mural da reunião</h1>
+
+  <div class="bloco" id="blocoReuniaoView">
+    <div class="reuniao-titulo" id="vTitulo">—</div>
+    <div class="reuniao-linha"><span class="icone">📅</span><span id="vData">—</span></div>
+    <div class="reuniao-linha"><span class="icone">🕐</span><span id="vHorario">—</span></div>
+    <a class="entrar-sala" id="vLink" href="#" target="_blank" style="display:none">🔗 Entrar na sala</a>
+    <div class="recados" id="vRecados"></div>
+  </div>
+
+  <div class="bloco" id="blocoReuniaoEdit" style="display:none">
+    <h2>Editar reunião</h2>
+    <div class="campo"><label>Título</label><input type="text" id="eTitulo"></div>
+    <div class="campo"><label>Data</label><input type="date" id="eData"></div>
+    <div class="campo"><label>Horário</label><input type="text" id="eHorario" placeholder="ex: 20h"></div>
+    <div class="campo"><label>Link de acesso (Zoom, Meet...)</label><input type="text" id="eLink" placeholder="https://..."></div>
+    <div class="campo"><label>Recados</label><textarea id="eRecados" placeholder="Avisos para o grupo..."></textarea></div>
+    <button class="salvar-mural" id="salvarReuniao">Salvar</button>
+    <div class="status" id="statusReuniao"></div>
+  </div>
+
+  <div class="bloco" id="blocoUpload" style="display:none">
+    <h2>Materiais</h2>
+    <div class="caixa-upload">
+      <label for="arquivo">Adicionar material (PDF, imagem, doc...)</label>
+      <input type="file" id="arquivo" multiple>
+      <div class="status" id="statusUpload"></div>
+    </div>
+  </div>
+  <div class="bloco" id="blocoMateriais" style="display:none">
+    <h2 style="margin-bottom:0" id="tituloMateriais">Materiais</h2>
+  </div>
+  <ul class="materiais" id="listaMateriais"></ul>
+  <p class="vazio" id="vazioMateriais" style="display:none">Nenhum material ainda.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/gev-config.js"></script>
+<script src="../assets/gev-common.js"></script>
+<script>
+var sb = GEV.sb;
+var souAdmin = false;
+
+function montarNav() {
+  var itens = [
+    { rota: '../disparador/', icone: '📲', titulo: 'Disparador' },
+    { rota: '../mural/', icone: '🗓️', titulo: 'Mural', ativo: true },
+    { rota: '../exibidor/', icone: '🔊', titulo: 'Exibidor' }
+  ];
+  if (souAdmin) {
+    itens.splice(1, 0, { rota: '../biblioteca/', icone: '🎵', titulo: 'Biblioteca' });
+  }
+  var nav = document.getElementById('nav');
+  nav.innerHTML = '';
+  itens.forEach(function (i) {
+    var a = document.createElement('a');
+    a.href = i.rota;
+    a.textContent = i.icone + ' ' + i.titulo;
+    if (i.ativo) a.className = 'ativo';
+    nav.appendChild(a);
+  });
+}
+
+function formatarData(iso) {
+  if (!iso) return '—';
+  var partes = iso.split('-');
+  return partes[2] + '/' + partes[1] + '/' + partes[0];
+}
+
+async function carregarReuniao() {
+  var r = await sb.from('gev_reuniao_atual').select('*').eq('id', 'atual').maybeSingle();
+  var d = r.data || {};
+  document.getElementById('vTitulo').textContent = d.titulo || 'Reunião do Grupo Evoluir';
+  document.getElementById('vData').textContent = formatarData(d.data);
+  document.getElementById('vHorario').textContent = d.horario || '—';
+  document.getElementById('vRecados').textContent = d.recados || '';
+  var linkEl = document.getElementById('vLink');
+  if (d.link_acesso) {
+    linkEl.href = d.link_acesso;
+    linkEl.style.display = 'inline-block';
+  } else {
+    linkEl.style.display = 'none';
+  }
+  if (souAdmin) {
+    document.getElementById('eTitulo').value = d.titulo || '';
+    document.getElementById('eData').value = d.data || '';
+    document.getElementById('eHorario').value = d.horario || '';
+    document.getElementById('eLink').value = d.link_acesso || '';
+    document.getElementById('eRecados').value = d.recados || '';
+  }
+}
+
+document.getElementById('salvarReuniao').addEventListener('click', async function () {
+  var statusEl = document.getElementById('statusReuniao');
+  var r = await sb.from('gev_reuniao_atual').update({
+    titulo: document.getElementById('eTitulo').value.trim() || 'Reunião do Grupo Evoluir',
+    data: document.getElementById('eData').value || null,
+    horario: document.getElementById('eHorario').value.trim(),
+    link_acesso: document.getElementById('eLink').value.trim(),
+    recados: document.getElementById('eRecados').value,
+    atualizado_em: new Date().toISOString()
+  }).eq('id', 'atual');
+  statusEl.textContent = r.error ? 'Erro: ' + r.error.message : 'Salvo!';
+  setTimeout(function () { statusEl.textContent = ''; }, 2000);
+  carregarReuniao();
+});
+
+async function carregarMateriais() {
+  var r = await sb.from('gev_materiais').select('*').order('ordem', { ascending: true });
+  var materiais = r.data || [];
+  var lista = document.getElementById('listaMateriais');
+  lista.innerHTML = '';
+  document.getElementById('vazioMateriais').style.display = materiais.length ? 'none' : 'block';
+  materiais.forEach(function (m) {
+    var li = document.createElement('li');
+    li.className = 'material';
+    if (souAdmin) {
+      li.innerHTML =
+        '<input type="text" value="' + m.nome_exibicao.replace(/"/g, '&quot;') + '">' +
+        '<button class="salvar">Salvar</button>' +
+        '<button class="excluir">Excluir</button>';
+      var input = li.querySelector('input');
+      li.querySelector('.salvar').onclick = async function () {
+        await sb.from('gev_materiais').update({ nome_exibicao: input.value.trim() || m.nome_arquivo }).eq('id', m.id);
+      };
+      li.querySelector('.excluir').onclick = async function () {
+        if (!confirm('Excluir "' + m.nome_exibicao + '"?')) return;
+        await sb.from('gev_materiais').delete().eq('id', m.id);
+        await sb.storage.from(GEV_CONFIG.bucketMateriais).remove([m.storage_path]);
+        carregarMateriais();
+      };
+    } else {
+      var a = document.createElement('a');
+      a.className = 'baixar';
+      a.href = GEV.publicUrlMaterial(m.storage_path);
+      a.target = '_blank';
+      a.textContent = '📄 ' + m.nome_exibicao;
+      li.appendChild(a);
+    }
+    lista.appendChild(li);
+  });
+}
+
+document.getElementById('arquivo').addEventListener('change', async function (e) {
+  var arquivos = Array.from(e.target.files || []);
+  if (!arquivos.length) return;
+  var statusEl = document.getElementById('statusUpload');
+  var existentesR = await sb.from('gev_materiais').select('ordem').order('ordem', { ascending: false }).limit(1);
+  var existentes = existentesR.data || [];
+  var proximaOrdem = existentes.length ? existentes[0].ordem + 1 : 0;
+
+  for (var i = 0; i < arquivos.length; i++) {
+    var f = arquivos[i];
+    statusEl.textContent = 'Enviando "' + f.name + '"... (' + (i + 1) + '/' + arquivos.length + ')';
+    var path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '-' + f.name;
+    var up = await sb.storage.from(GEV_CONFIG.bucketMateriais).upload(path, f);
+    if (up.error) {
+      statusEl.textContent = 'Erro ao enviar "' + f.name + '": ' + up.error.message;
+      return;
+    }
+    var nomeSemExtensao = f.name.replace(/\.[^/.]+$/, '');
+    await sb.from('gev_materiais').insert({
+      storage_path: path,
+      nome_arquivo: f.name,
+      nome_exibicao: nomeSemExtensao,
+      ordem: proximaOrdem++
+    });
+  }
+  statusEl.textContent = 'Pronto!';
+  e.target.value = '';
+  carregarMateriais();
+});
+
+GEV.exigirAcesso(['master', 'coordenador', 'usuario']).then(function (perfil) {
+  if (!perfil) return;
+  souAdmin = perfil.papel === 'master' || perfil.papel === 'coordenador';
+  montarNav();
+  document.getElementById('blocoReuniaoEdit').style.display = souAdmin ? 'block' : 'none';
+  document.getElementById('blocoUpload').style.display = souAdmin ? 'block' : 'none';
+  carregarReuniao();
+  carregarMateriais();
+});
+</script>
+</body>
+</html>
