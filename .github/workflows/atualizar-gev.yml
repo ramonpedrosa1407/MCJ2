@@ -1,0 +1,60 @@
+name: Atualizar GEV
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload_url:
+        description: 'URL da página com o pacote mais recente (deixe em branco pra usar o padrão)'
+        required: false
+        default: 'https://claude.ai/code/artifact/167b74cd-c28a-4995-bbac-9825a5032014'
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Baixar e aplicar o pacote mais recente do GEV
+        run: |
+          python3 - "$PAYLOAD_URL" <<'PYEOF'
+          import sys, re, json, base64, os
+
+          url = sys.argv[1]
+          import urllib.request
+          req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+          with urllib.request.urlopen(req) as resp:
+              html = resp.read().decode('utf-8')
+
+          m = re.search(r'<script type="application/json" id="gev-payload">(.*?)</script>', html, re.S)
+          if not m:
+              print("Não encontrei o pacote de arquivos nessa página. Confirme se o link foi compartilhado publicamente.")
+              sys.exit(1)
+
+          payload = json.loads(m.group(1))
+          print(f"{len(payload)} arquivo(s) no pacote.")
+
+          for rel_path, b64content in payload.items():
+              rel_path = rel_path.lstrip('/')
+              os.makedirs(os.path.dirname(rel_path) or '.', exist_ok=True)
+              with open(rel_path, 'wb') as f:
+                  f.write(base64.b64decode(b64content))
+              print("escrito:", rel_path)
+          PYEOF
+        env:
+          PAYLOAD_URL: ${{ github.event.inputs.payload_url }}
+
+      - name: Commit e push
+        run: |
+          git config user.name "GEV Bot"
+          git config user.email "gev-bot@users.noreply.github.com"
+          git add GEV
+          if git diff --cached --quiet; then
+            echo "Nada novo para publicar."
+          else
+            git commit -m "Atualiza GEV (via GitHub Actions)"
+            git push
+          fi
