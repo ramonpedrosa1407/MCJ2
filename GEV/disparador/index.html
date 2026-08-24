@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grupo Evoluir · Disparador</title>
+<link rel="stylesheet" href="../assets/gev-style.css">
+<style>
+  body { align-items: flex-start; }
+  .card { max-width: 480px; text-align: left; margin-top: 20px; }
+  h1 { text-align: center; }
+  .sub { text-align: center; }
+  .voltar { display: inline-block; margin-bottom: 14px; color: rgba(244,240,255,.6); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; }
+  .parar-tudo {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 18px;
+    background: #7A2E2E;
+    color: #FFD9D9;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: bold;
+  }
+  .controles {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .volume, .repetir {
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.15);
+    font-family: -apple-system, sans-serif;
+  }
+  .volume { flex: 1; }
+  .volume .linha { display: flex; align-items: center; gap: 10px; }
+  .volume label { font-size: 13px; opacity: .7; white-space: nowrap; }
+  .volume input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 4px;
+    background: rgba(255,255,255,.2);
+  }
+  .volume input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #C9A227;
+    cursor: pointer;
+  }
+  .volume input[type=range]::-moz-range-thumb {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #C9A227;
+    border: none;
+    cursor: pointer;
+  }
+  .volume .valor { font-size: 14px; width: 42px; text-align: right; }
+  .repetir { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+  .repetir input { width: 20px; height: 20px; }
+  .repetir span { font-size: 13px; opacity: .8; }
+  .repetir.ativo { background: rgba(201,162,39,.18); border-color: #C9A227; }
+  .repetir.ativo span { opacity: 1; color: #E8C86A; }
+
+  ul.lista { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  li.faixa {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.15);
+  }
+  li.faixa.tocando { background: #2E5A3E; border-color: #4CAF7D; }
+  li.faixa.pausada { background: #4A3C1A; border-color: #C9A227; }
+  li.faixa .nome { flex: 1; font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  li.faixa .estadinho { font-size: 11px; opacity: .7; font-family: -apple-system, sans-serif; display: block; margin-top: 2px; }
+  li.faixa .botoes { display: flex; gap: 6px; }
+  li.faixa button {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+    color: #F4F0FF;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  li.faixa button:disabled { opacity: .25; }
+  li.faixa button.b-play:not(:disabled) { background: #4CAF7D; color: #06210F; }
+  li.faixa button.b-pause:not(:disabled) { background: #C9A227; color: #1A1033; }
+  li.faixa button.b-stop:not(:disabled) { background: #7A2E2E; color: #FFD9D9; }
+  .vazio { opacity: .5; font-size: 14px; font-family: -apple-system, sans-serif; text-align: center; padding: 20px 0; }
+</style>
+</head>
+<body>
+<div class="card">
+  <a class="voltar" href="../">&larr; voltar ao menu</a>
+  <div class="gev-nav">
+    <a href="../disparador/" class="ativo">📲 Disparador</a>
+    <a href="../mural/">🗓️ Mural</a>
+    <a href="../exibidor/">🔊 Exibidor</a>
+  </div>
+  <h1>Disparador</h1>
+  <p class="sub">▶ toca · ⏸ pausa · ⏹ para</p>
+
+  <button class="parar-tudo" id="pararTudo">⏹ PARAR TUDO</button>
+
+  <div class="controles">
+    <div class="volume">
+      <div class="linha">
+        <label>🔉 Volume</label>
+        <input type="range" id="volume" min="0" max="100" value="100">
+        <span class="valor" id="volumeValor">100%</span>
+      </div>
+    </div>
+    <label class="repetir" id="repetirCaixa">
+      <input type="checkbox" id="repetir">
+      <span>🔁 Repetir</span>
+    </label>
+  </div>
+
+  <ul class="lista" id="lista"></ul>
+  <p class="vazio" id="vazio" style="display:none">Nenhuma música na biblioteca ainda.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/gev-config.js"></script>
+<script src="../assets/gev-common.js"></script>
+<script>
+var sb = GEV.sb;
+var listaEl = document.getElementById('lista');
+var vazioEl = document.getElementById('vazio');
+var volumeEl = document.getElementById('volume');
+var volumeValorEl = document.getElementById('volumeValor');
+var repetirEl = document.getElementById('repetir');
+var repetirCaixaEl = document.getElementById('repetirCaixa');
+var arrastandoVolume = false;
+var mexendoRepetir = false;
+
+async function carregar() {
+  var musicasR = await sb.from('gev_musicas').select('*').order('ordem', { ascending: true });
+  var musicas = musicasR.data || [];
+  var estadoR = await sb.from('gev_estado').select('*').eq('id', 'atual').maybeSingle();
+  var estado = estadoR.data || {};
+
+  if (!arrastandoVolume) {
+    var pct = Math.round((estado.volume === null || estado.volume === undefined ? 1 : estado.volume) * 100);
+    volumeEl.value = pct;
+    volumeValorEl.textContent = pct + '%';
+  }
+  if (!mexendoRepetir) {
+    repetirEl.checked = !!estado.repetir;
+    repetirCaixaEl.classList.toggle('ativo', !!estado.repetir);
+  }
+
+  listaEl.innerHTML = '';
+  vazioEl.style.display = musicas.length ? 'none' : 'block';
+  musicas.forEach(function (m) {
+    var ativa = estado.musica_id === m.id;
+    var tocando = ativa && estado.acao === 'play';
+    var pausada = ativa && estado.acao === 'pause';
+
+    var li = document.createElement('li');
+    li.className = 'faixa' + (tocando ? ' tocando' : '') + (pausada ? ' pausada' : '');
+
+    var nomeDiv = document.createElement('div');
+    nomeDiv.className = 'nome';
+    nomeDiv.textContent = m.nome_exibicao;
+    var estadinho = document.createElement('span');
+    estadinho.className = 'estadinho';
+    estadinho.textContent = tocando ? '▶ tocando' : pausada ? '⏸ pausada' : '';
+    nomeDiv.appendChild(estadinho);
+
+    var botoes = document.createElement('div');
+    botoes.className = 'botoes';
+
+    var bPlay = document.createElement('button');
+    bPlay.className = 'b-play';
+    bPlay.textContent = '▶';
+    bPlay.title = 'Tocar';
+    bPlay.onclick = function () { tocar(m); };
+
+    var bPause = document.createElement('button');
+    bPause.className = 'b-pause';
+    bPause.textContent = '⏸';
+    bPause.title = 'Pausar';
+    bPause.disabled = !tocando;
+    bPause.onclick = function () { pausar(m); };
+
+    var bStop = document.createElement('button');
+    bStop.className = 'b-stop';
+    bStop.textContent = '⏹';
+    bStop.title = 'Parar';
+    bStop.disabled = !ativa;
+    bStop.onclick = function () { parar(m); };
+
+    botoes.appendChild(bPlay);
+    botoes.appendChild(bPause);
+    botoes.appendChild(bStop);
+
+    li.appendChild(nomeDiv);
+    li.appendChild(botoes);
+    listaEl.appendChild(li);
+  });
+}
+
+async function tocar(m) {
+  await sb.from('gev_estado').update({
+    musica_id: m.id,
+    musica_path: m.storage_path,
+    musica_nome: m.nome_exibicao,
+    acao: 'play',
+    disparado_em: new Date().toISOString()
+  }).eq('id', 'atual');
+  carregar();
+}
+
+async function pausar(m) {
+  await sb.from('gev_estado').update({ acao: 'pause' }).eq('id', 'atual');
+  carregar();
+}
+
+async function parar(m) {
+  await sb.from('gev_estado').update({ acao: 'stop' }).eq('id', 'atual');
+  carregar();
+}
+
+var volumeTimeout = null;
+volumeEl.addEventListener('input', function () {
+  arrastandoVolume = true;
+  volumeValorEl.textContent = volumeEl.value + '%';
+  clearTimeout(volumeTimeout);
+  volumeTimeout = setTimeout(async function () {
+    await sb.from('gev_estado').update({ volume: Number(volumeEl.value) / 100 }).eq('id', 'atual');
+    arrastandoVolume = false;
+  }, 150);
+});
+
+repetirEl.addEventListener('change', async function () {
+  mexendoRepetir = true;
+  repetirCaixaEl.classList.toggle('ativo', repetirEl.checked);
+  await sb.from('gev_estado').update({ repetir: repetirEl.checked }).eq('id', 'atual');
+  mexendoRepetir = false;
+  carregar();
+});
+
+document.getElementById('pararTudo').onclick = async function () {
+  await sb.from('gev_estado').update({ acao: 'stop' }).eq('id', 'atual');
+  carregar();
+};
+
+GEV.exigirAcesso(['master', 'coordenador', 'usuario']).then(function (perfil) {
+  if (perfil) {
+    carregar();
+    setInterval(carregar, 4000); // rede instável no celular -> reforça o estado periodicamente
+  }
+});
+</script>
+</body>
+</html>
