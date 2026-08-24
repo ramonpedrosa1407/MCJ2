@@ -53,6 +53,19 @@
     window.location.href = raizRelativa() + 'index.html';
   }
 
+  function normalizarUsuario(bruto) {
+    return (bruto || '')
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(new RegExp('[̀-ͯ]', 'g'), '')
+      .replace(/[^a-z0-9]/g, '');
+  }
+
+  function emailDoUsuario(usuario) {
+    return normalizarUsuario(usuario) + '@gev.local';
+  }
+
   function publicUrlAudio(path) {
     return sb.storage.from(C.bucketAudio).getPublicUrl(path).data.publicUrl;
   }
@@ -66,6 +79,8 @@
     getPerfil: getPerfil,
     exigirAcesso: exigirAcesso,
     logout: logout,
+    normalizarUsuario: normalizarUsuario,
+    emailDoUsuario: emailDoUsuario,
     publicUrlAudio: publicUrlAudio,
     publicUrlMaterial: publicUrlMaterial
   };
