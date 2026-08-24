@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grupo Evoluir · Usuários</title>
+<link rel="stylesheet" href="../assets/gev-style.css">
+<style>
+  body { align-items: flex-start; }
+  .card { max-width: 560px; text-align: left; margin-top: 24px; }
+  h1 { text-align: center; }
+  .voltar { display: inline-block; margin-bottom: 18px; color: rgba(244,240,255,.6); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; }
+
+  .bloco {
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.15);
+    margin-bottom: 20px;
+  }
+  .bloco h2 { font-size: 18px; margin-bottom: 12px; }
+  .campo { margin-bottom: 12px; }
+  .campo label { display: block; font-size: 12px; opacity: .6; margin-bottom: 4px; font-family: -apple-system, sans-serif; }
+  .campo input, .campo select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.06);
+    color: #F4F0FF;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+  }
+  .criar-btn {
+    padding: 12px 20px;
+    background: #C9A227;
+    color: #1A1033;
+    font-weight: bold;
+    border-radius: 10px;
+    width: 100%;
+  }
+  .status { font-size: 13px; margin-top: 10px; min-height: 18px; font-family: -apple-system, sans-serif; }
+  .status.ok { color: #7FE0A8; }
+  .status.erro { color: #FF8A8A; }
+
+  ul.usuarios { list-style: none; font-family: -apple-system, sans-serif; }
+  li.usuario {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.05);
+    margin-bottom: 8px;
+  }
+  li.usuario .nome { flex: 1; font-size: 14px; }
+  .tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.1);
+  }
+  .tag.master { background: #C9A227; color: #1A1033; font-weight: bold; }
+  .tag.coordenador { background: #4CAF7D; color: #06210F; }
+</style>
+</head>
+<body>
+<div class="card">
+  <a class="voltar" href="../">&larr; voltar ao menu</a>
+  <h1>Gerenciar usuários</h1>
+
+  <div class="bloco">
+    <h2>Cadastrar novo acesso</h2>
+    <div class="campo"><label>Nome</label><input type="text" id="nome" placeholder="Nome da pessoa"></div>
+    <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="email@exemplo.com"></div>
+    <div class="campo"><label>Senha (mínimo 6 caracteres)</label><input type="text" id="senha" placeholder="senha de acesso"></div>
+    <div class="campo" id="campoPapel" style="display:none">
+      <label>Papel</label>
+      <select id="papel">
+        <option value="usuario">Usuário (só usa: disparador, mural, exibidor)</option>
+        <option value="coordenador">Coordenador (administra tudo)</option>
+      </select>
+    </div>
+    <button class="criar-btn" id="criar">Cadastrar</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="bloco">
+    <h2>Já cadastrados</h2>
+    <ul class="usuarios" id="listaUsuarios"></ul>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/gev-config.js"></script>
+<script src="../assets/gev-common.js"></script>
+<script>
+var sb = GEV.sb;
+
+async function carregarUsuarios() {
+  var r = await sb.from('gev_perfis').select('*').order('criado_em', { ascending: true });
+  var lista = document.getElementById('listaUsuarios');
+  lista.innerHTML = '';
+  (r.data || []).forEach(function (u) {
+    var li = document.createElement('li');
+    li.className = 'usuario';
+    li.innerHTML = '<span class="nome">' + u.nome + '</span><span class="tag ' + u.papel + '">' + u.papel + '</span>';
+    lista.appendChild(li);
+  });
+}
+
+document.getElementById('criar').addEventListener('click', async function () {
+  var statusEl = document.getElementById('status');
+  statusEl.className = 'status';
+  statusEl.textContent = 'Cadastrando...';
+
+  var campoPapelVisivel = document.getElementById('campoPapel').style.display !== 'none';
+  var body = {
+    nome: document.getElementById('nome').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    senha: document.getElementById('senha').value.trim(),
+    papel: campoPapelVisivel ? document.getElementById('papel').value : 'usuario'
+  };
+
+  var r = await sb.functions.invoke('gev-criar-usuario', { body: body });
+  if (r.error || (r.data && r.data.erro)) {
+    statusEl.className = 'status erro';
+    statusEl.textContent = (r.data && r.data.erro) || 'Não foi possível cadastrar.';
+    return;
+  }
+  statusEl.className = 'status ok';
+  statusEl.textContent = 'Cadastrado com sucesso!';
+  document.getElementById('nome').value = '';
+  document.getElementById('email').value = '';
+  document.getElementById('senha').value = '';
+  carregarUsuarios();
+});
+
+GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
+  if (!perfil) return;
+  var campoPapelDiv = document.getElementById('campoPapel');
+  if (perfil.papel === 'master') {
+    campoPapelDiv.style.display = 'block';
+  }
+  carregarUsuarios();
+});
+</script>
+</body>
+</html>
