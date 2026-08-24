@@ -72,7 +72,7 @@
   <div class="bloco">
     <h2>Cadastrar novo acesso</h2>
     <div class="campo"><label>Nome</label><input type="text" id="nome" placeholder="Nome da pessoa"></div>
-    <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="email@exemplo.com"></div>
+    <div class="campo"><label>Usuário (login)</label><input type="text" id="usuario" placeholder="ex: maria, joao2" autocapitalize="none"></div>
     <div class="campo"><label>Senha (mínimo 6 caracteres)</label><input type="text" id="senha" placeholder="senha de acesso"></div>
     <div class="campo" id="campoPapel" style="display:none">
       <label>Papel</label>
@@ -104,7 +104,7 @@ async function carregarUsuarios() {
   (r.data || []).forEach(function (u) {
     var li = document.createElement('li');
     li.className = 'usuario';
-    li.innerHTML = '<span class="nome">' + u.nome + '</span><span class="tag ' + u.papel + '">' + u.papel + '</span>';
+    li.innerHTML = '<span class="nome">' + u.nome + ' <small style="opacity:.5">(' + (u.usuario || '—') + ')</small></span><span class="tag ' + u.papel + '">' + u.papel + '</span>';
     lista.appendChild(li);
   });
 }
@@ -117,7 +117,7 @@ document.getElementById('criar').addEventListener('click', async function () {
   var campoPapelVisivel = document.getElementById('campoPapel').style.display !== 'none';
   var body = {
     nome: document.getElementById('nome').value.trim(),
-    email: document.getElementById('email').value.trim(),
+    usuario: document.getElementById('usuario').value.trim(),
     senha: document.getElementById('senha').value.trim(),
     papel: campoPapelVisivel ? document.getElementById('papel').value : 'usuario'
   };
@@ -129,9 +129,9 @@ document.getElementById('criar').addEventListener('click', async function () {
     return;
   }
   statusEl.className = 'status ok';
-  statusEl.textContent = 'Cadastrado com sucesso!';
+  statusEl.textContent = 'Cadastrado com sucesso! Login: ' + GEV.normalizarUsuario(body.usuario);
   document.getElementById('nome').value = '';
-  document.getElementById('email').value = '';
+  document.getElementById('usuario').value = '';
   document.getElementById('senha').value = '';
   carregarUsuarios();
 });
