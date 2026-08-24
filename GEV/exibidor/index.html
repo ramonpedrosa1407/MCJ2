@@ -63,6 +63,7 @@ var estadoEl = document.getElementById('estadoTexto');
 var faixaCarregadaId = null; // qual música está carregada no player agora
 var faixaPausadaId = null;   // se pausada, qual música ficou pausada (pra retomar do ponto certo)
 var ativo = false;
+var ultimoComando = null; // disparado_em do último comando já aplicado — evita reiniciar a música à toa
 
 function aplicarEstado(row) {
   if (!row) return;
@@ -70,13 +71,17 @@ function aplicarEstado(row) {
   player.volume = (row.volume === null || row.volume === undefined) ? 1 : Number(row.volume);
   player.loop = !!row.repetir;
 
+  var comandoNovo = row.disparado_em !== ultimoComando;
+
   if (row.acao === 'play' && row.musica_path) {
-    if (row.musica_id === faixaCarregadaId && row.musica_id === faixaPausadaId) {
+    if (!comandoNovo && row.musica_id === faixaCarregadaId && faixaPausadaId === null) {
+      // já está tocando essa mesma música — foi só um update de volume/repetir, não mexe no player
+    } else if (row.musica_id === faixaCarregadaId && faixaPausadaId === row.musica_id) {
       // mesma música que estava pausada -> retoma do ponto onde parou
       faixaPausadaId = null;
       player.play().catch(function () {});
     } else {
-      // música nova (ou reiniciando) -> toca do começo
+      // música nova (ou reiniciando de propósito) -> toca do começo
       player.src = GEV.publicUrlAudio(row.musica_path);
       player.currentTime = 0;
       player.play().catch(function () {});
@@ -86,19 +91,38 @@ function aplicarEstado(row) {
     disco.classList.add('tocando');
     estadoEl.textContent = row.repetir ? 'tocando agora · 🔁 repetindo' : 'tocando agora';
   } else if (row.acao === 'pause') {
-    player.pause();
-    faixaPausadaId = faixaCarregadaId;
+    if (comandoNovo || faixaPausadaId !== faixaCarregadaId) {
+      player.pause();
+      faixaPausadaId = faixaCarregadaId;
+    }
     disco.classList.remove('tocando');
     estadoEl.textContent = 'pausado';
   } else {
-    player.pause();
-    player.currentTime = 0;
-    faixaCarregadaId = null;
-    faixaPausadaId = null;
+    if (comandoNovo || faixaCarregadaId !== null) {
+      player.pause();
+      player.currentTime = 0;
+      faixaCarregadaId = null;
+      faixaPausadaId = null;
+    }
     disco.classList.remove('tocando');
     estadoEl.textContent = 'parado';
   }
+
+  ultimoComando = row.disparado_em;
 }
+
+// envia a posição atual pro Disparador poder mostrar a barrinha de progresso
+var ultimoEnvioPosicao = 0;
+player.addEventListener('timeupdate', function () {
+  var agora = Date.now();
+  if (agora - ultimoEnvioPosicao < 1000) return; // no máx 1x por segundo
+  ultimoEnvioPosicao = agora;
+  if (!faixaCarregadaId) return;
+  sb.from('gev_estado').update({
+    posicao_segundos: player.currentTime || 0,
+    duracao_segundos: isFinite(player.duration) ? player.duration : 0
+  }).eq('id', 'atual').then(function () {});
+});
 
 document.getElementById('iniciar').onclick = async function () {
   if (ativo) return;
@@ -118,7 +142,17 @@ document.getElementById('iniciar').onclick = async function () {
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'gev_estado' }, function (payload) {
       aplicarEstado(payload.new);
     })
-    .subscribe();
+    .subscribe(function (status) {
+      if (status === 'SUBSCRIBED') {
+        estadoEl.textContent = faixaCarregadaId ? estadoEl.textContent : 'conectado — aguardando disparo remoto';
+      }
+    });
+
+  // rede de segurança: mesmo que o tempo real falhe, confere o estado periodicamente
+  setInterval(async function () {
+    var r = await sb.from('gev_estado').select('*').eq('id', 'atual').maybeSingle();
+    if (r.data) aplicarEstado(r.data);
+  }, 3000);
 };
 
 GEV.exigirAcesso(['master', 'coordenador', 'usuario']);
