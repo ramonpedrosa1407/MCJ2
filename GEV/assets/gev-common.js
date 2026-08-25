@@ -71,13 +71,14 @@
   //   midia-controle   -> acesso a midia 'controle' ou 'completo'
   //   midia-completo   -> acesso a midia 'completo'
   //   coordenacao      -> coordenador ou master
+  // A ordem aqui e a ordem que aparece na tela, em todas as paginas.
   var ITENS_MENU = [
     { rota: 'mural/',       icone: '🗓️', titulo: 'Mural',           exige: 'todos' },
-    { rota: 'conta/',       icone: '👤', titulo: 'Minha conta',     exige: 'todos' },
+    { rota: 'usuarios/',    icone: '👥', titulo: 'Participantes',   exige: 'coordenacao' },
+    { rota: 'biblioteca/',  icone: '🎵', titulo: 'Biblioteca',      exige: 'midia-completo' },
     { rota: 'disparador/',  icone: '📲', titulo: 'Controle remoto', exige: 'midia-controle' },
     { rota: 'exibidor/',    icone: '🔊', titulo: 'Exibidor',        exige: 'midia-completo' },
-    { rota: 'biblioteca/',  icone: '🎵', titulo: 'Biblioteca',      exige: 'midia-completo' },
-    { rota: 'usuarios/',    icone: '👥', titulo: 'Participantes',   exige: 'coordenacao' }
+    { rota: 'conta/',       icone: '👤', titulo: 'Minha conta',     exige: 'todos' }
   ];
 
   function ehCoordenacao(perfil) {

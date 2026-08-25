@@ -230,6 +230,56 @@
     font-size: 14px;
     font-family: -apple-system, sans-serif;
   }
+  /* ----- enviar por e-mail ----- */
+  .envio {
+    margin-top: 14px;
+    padding: 15px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(201,162,39,.4);
+  }
+  .envio h4 {
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .55;
+    margin-bottom: 10px;
+    font-weight: normal;
+  }
+  .envio-opcoes { display: flex; flex-direction: column; gap: 7px; }
+  .envio-opcoes label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .envio-opcoes label:hover { background: rgba(255,255,255,.09); }
+  .envio-opcoes label.escolhida { border-color: #C9A227; background: rgba(201,162,39,.14); }
+  .envio-opcoes input { width: 17px; height: 17px; accent-color: #C9A227; flex: none; }
+  .envio-opcoes .quantos { margin-left: auto; font-size: 12px; opacity: .55; font-variant-numeric: tabular-nums; }
+  .envio-opcoes label.sem-ninguem { opacity: .4; cursor: not-allowed; }
+  .envio-acoes { display: flex; gap: 8px; justify-content: flex-end; align-items: center; margin-top: 12px; }
+  .envio-acoes .status { flex: 1; margin: 0; font-size: 12.5px; }
+  .envio-acoes .status.ok { color: #7FE0A8; opacity: 1; }
+  .envio-acoes .status.erro { color: #FF8A8A; opacity: 1; }
+  .envio-acoes button { padding: 10px 16px; border-radius: 9px; font-size: 13.5px; font-family: -apple-system, sans-serif; }
+  .envio-acoes .btn-enviar { background: #C9A227; color: #1A1033; font-weight: bold; }
+  .envio-acoes .btn-enviar:disabled { opacity: .45; }
+  .envio-acoes .btn-fechar { background: rgba(255,255,255,.1); color: #F4F0FF; }
+  .ja-enviado {
+    font-size: 12px;
+    opacity: .5;
+    margin-top: 10px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
   .editor-inline textarea {
     width: 100%;
     min-height: 60px;
@@ -595,6 +645,133 @@ function montarComentario(c) {
   return div;
 }
 
+/* ---------- enviar publicação por e-mail ---------- */
+
+// quantas pessoas de cada núcleo têm e-mail cadastrado
+var quantosPorDestino = null;
+
+async function contarDestinatarios() {
+  if (quantosPorDestino) return quantosPorDestino;
+  var r = await sb.from('gev_perfis').select('grupo, email').not('email', 'is', null);
+  var contagem = { todos: 0, GEV: 0, GEVRJ: 0, GEVSP: 0, GEVSSA: 0 };
+  var vistos = {};
+  (r.data || []).forEach(function (p) {
+    var e = String(p.email || '').trim().toLowerCase();
+    if (!e || vistos[e]) return;
+    vistos[e] = true;
+    contagem.todos++;
+    if (contagem[p.grupo] !== undefined) contagem[p.grupo]++;
+  });
+  quantosPorDestino = contagem;
+  return contagem;
+}
+
+function descreverEnvio(e) {
+  var quando = new Date(e.enviado_em).toLocaleDateString('pt-BR');
+  var onde = e.destino === 'todos' ? 'todo o GEV'
+           : e.destino === 'teste' ? 'só para teste'
+           : e.destino;
+  return '✉️ enviado para ' + onde + ' · ' + e.quantidade +
+         (e.quantidade === 1 ? ' pessoa' : ' pessoas') + ' · ' + quando +
+         (e.enviado_por_nome ? ' por ' + e.enviado_por_nome : '');
+}
+
+function montarEnvio(p, cartao, botao) {
+  var box = document.createElement('div');
+  box.className = 'envio';
+
+  var titulo = document.createElement('h4');
+  titulo.textContent = 'Enviar esta publicação por e-mail';
+  box.appendChild(titulo);
+
+  var opcoes = document.createElement('div');
+  opcoes.className = 'envio-opcoes';
+  box.appendChild(opcoes);
+
+  var acoes = document.createElement('div');
+  acoes.className = 'envio-acoes';
+  var status = document.createElement('span');
+  status.className = 'status';
+  var bFechar = document.createElement('button');
+  bFechar.className = 'btn-fechar';
+  bFechar.textContent = 'Fechar';
+  bFechar.onclick = function () { box.remove(); botao.disabled = false; };
+  var bEnviar = document.createElement('button');
+  bEnviar.className = 'btn-enviar';
+  bEnviar.textContent = 'Enviar';
+  bEnviar.disabled = true;
+  acoes.appendChild(status);
+  acoes.appendChild(bFechar);
+  acoes.appendChild(bEnviar);
+  box.appendChild(acoes);
+
+  cartao.appendChild(box);
+
+  contarDestinatarios().then(function (quantos) {
+    var LISTA = [
+      ['teste', 'Só para mim, como teste', 1],
+      ['todos', 'Todo o GEV', quantos.todos],
+      ['GEV', 'GEV — geral', quantos.GEV],
+      ['GEVRJ', 'GEVRJ — Rio de Janeiro', quantos.GEVRJ],
+      ['GEVSP', 'GEVSP — São Paulo', quantos.GEVSP],
+      ['GEVSSA', 'GEVSSA — Salvador', quantos.GEVSSA]
+    ];
+    var escolhido = null;
+    opcoes.innerHTML = '';
+    LISTA.forEach(function (item) {
+      var valor = item[0], rotulo = item[1], n = item[2];
+      var label = document.createElement('label');
+      var radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'destino-' + p.id;
+      radio.value = valor;
+      radio.disabled = !n;
+      var texto = document.createElement('span');
+      texto.textContent = rotulo;
+      var quantosEl = document.createElement('span');
+      quantosEl.className = 'quantos';
+      quantosEl.textContent = n ? n + (n === 1 ? ' pessoa' : ' pessoas') : 'ninguém com e-mail';
+      if (!n) label.className = 'sem-ninguem';
+      radio.onchange = function () {
+        escolhido = valor;
+        bEnviar.disabled = false;
+        [].forEach.call(opcoes.querySelectorAll('label'), function (l) { l.classList.remove('escolhida'); });
+        label.classList.add('escolhida');
+      };
+      label.appendChild(radio);
+      label.appendChild(texto);
+      label.appendChild(quantosEl);
+      opcoes.appendChild(label);
+    });
+
+    bEnviar.onclick = async function () {
+      if (!escolhido) return;
+      var n = LISTA.filter(function (i) { return i[0] === escolhido; })[0][2];
+      if (escolhido !== 'teste' &&
+          !confirm('Enviar "' + p.titulo + '" por e-mail para ' + n +
+                   (n === 1 ? ' pessoa' : ' pessoas') + '?\n\nNão dá para cancelar depois de enviado.')) {
+        return;
+      }
+      bEnviar.disabled = true;
+      status.className = 'status';
+      status.textContent = 'Enviando...';
+      var r = await sb.functions.invoke('gev-enviar-publicacao', {
+        body: { post_id: p.id, destino: escolhido }
+      });
+      bEnviar.disabled = false;
+      if (r.error || (r.data && r.data.erro)) {
+        status.className = 'status erro';
+        status.textContent = (r.data && r.data.erro) || 'Não consegui enviar.';
+        return;
+      }
+      status.className = 'status ok';
+      status.textContent = 'Enviado para ' + r.data.enviados +
+        (r.data.enviados === 1 ? ' pessoa!' : ' pessoas!');
+      setTimeout(function () { carregarFeed(); }, 1200);
+    };
+  });
+}
+
 /* ---------- publicação ---------- */
 
 function montarPublicacao(p, destaque) {
@@ -646,6 +823,15 @@ function montarPublicacao(p, destaque) {
       if (caminhos.length) await sb.storage.from(GEV_CONFIG.bucketMateriais).remove(caminhos);
       carregarFeed();
     };
+    var bEmail = document.createElement('button');
+    bEmail.textContent = '✉️ e-mail';
+    bEmail.title = 'Enviar esta publicação por e-mail';
+    bEmail.onclick = function () {
+      if (art.querySelector('.envio')) return;
+      bEmail.disabled = true;
+      montarEnvio(p, art, bEmail);
+    };
+    menu.appendChild(bEmail);
     menu.appendChild(bEditar);
     menu.appendChild(bExcluir);
     topo.appendChild(menu);
@@ -698,6 +884,17 @@ function montarPublicacao(p, destaque) {
   if (anexos) art.appendChild(anexos);
   var links = montarLinks(p);
   if (links) art.appendChild(links);
+
+  // histórico de envios por e-mail (o grupo inteiro vê que foi avisado)
+  var envios = (p.gev_post_envios || [])
+    .filter(function (e) { return e.destino !== 'teste' && e.quantidade > 0; })
+    .sort(function (a, b) { return new Date(b.enviado_em) - new Date(a.enviado_em); });
+  envios.forEach(function (e) {
+    var linha = document.createElement('div');
+    linha.className = 'ja-enviado';
+    linha.textContent = descreverEnvio(e);
+    art.appendChild(linha);
+  });
 
   // curtidas e respostas
   var placar = document.createElement('div');
@@ -776,7 +973,7 @@ function montarPublicacao(p, destaque) {
 async function carregarFeed() {
   var r = await sb
     .from('gev_posts')
-    .select('*, gev_post_comentarios(*), gev_post_curtidas(perfil_id), gev_post_anexos(*), gev_post_links(*)')
+    .select('*, gev_post_comentarios(*), gev_post_curtidas(perfil_id), gev_post_anexos(*), gev_post_links(*), gev_post_envios(*)')
     .order('criado_em', { ascending: false });
 
   var destaqueEl = document.getElementById('areaDestaque');
