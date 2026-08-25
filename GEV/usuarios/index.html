@@ -77,6 +77,22 @@
   .btn-ok { padding: 11px 20px; background: #C9A227; color: #1A1033; font-weight: bold; border-radius: 10px; font-family: -apple-system, sans-serif; }
   .btn-ok:disabled { opacity: .45; }
   .btn-cancelar { padding: 11px 18px; background: rgba(255,255,255,.1); color: #F4F0FF; border-radius: 10px; font-family: -apple-system, sans-serif; }
+  .avisar-email {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 13px 15px;
+    border-radius: 10px;
+    background: rgba(76,175,125,.1);
+    border: 1px solid rgba(76,175,125,.35);
+    margin-bottom: 14px;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+  }
+  .avisar-email input { width: 18px; height: 18px; accent-color: #4CAF7D; flex: none; margin-top: 1px; }
+  .avisar-email b { font-size: 13.5px; display: block; }
+  .avisar-email small { font-size: 12px; opacity: .6; display: block; margin-top: 2px; line-height: 1.45; }
+  .avisar-email.desligada { opacity: .45; background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.12); }
   .status { font-size: 13px; min-height: 18px; font-family: -apple-system, sans-serif; opacity: .8; }
   .status.ok { color: #7FE0A8; opacity: 1; }
   .status.erro { color: #FF8A8A; opacity: 1; }
@@ -210,6 +226,14 @@
         <option value="completo">Completo — controle, exibidor e biblioteca</option>
       </select>
     </div>
+    <label class="avisar-email" id="caixaAvisar">
+      <input type="checkbox" id="nAvisar" checked>
+      <span>
+        <b>Enviar as instruções de acesso por e-mail</b>
+        <small>A pessoa recebe o login, a senha provisória e um resumo de uso. Precisa ter e-mail preenchido acima.</small>
+      </span>
+    </label>
+
     <div class="form-acoes">
       <span class="status" id="nStatus"></span>
       <button class="btn-cancelar" id="nCancelar">Cancelar</button>
@@ -268,7 +292,21 @@ document.getElementById('btnNovo').addEventListener('click', function () {
   document.getElementById('formNovo').style.display = 'block';
   this.style.display = 'none';
   document.getElementById('nNome').focus();
+  ajustarCaixaAvisar();
 });
+
+function ajustarCaixaAvisar() {
+  var temEmail = !!document.getElementById('nEmail').value.trim();
+  var caixa = document.getElementById('caixaAvisar');
+  var marca = document.getElementById('nAvisar');
+  marca.disabled = !temEmail;
+  if (!temEmail) marca.checked = false;
+  caixa.classList.toggle('desligada', !temEmail);
+  caixa.querySelector('small').textContent = temEmail
+    ? 'A pessoa recebe o login, a senha provisória e um resumo de uso.'
+    : 'Preencha o e-mail acima para poder enviar as instruções.';
+}
+document.getElementById('nEmail').addEventListener('input', ajustarCaixaAvisar);
 
 document.getElementById('nCancelar').addEventListener('click', function () {
   document.getElementById('formNovo').style.display = 'none';
@@ -291,7 +329,8 @@ document.getElementById('nSalvar').addEventListener('click', async function () {
     grupo: document.getElementById('nGrupo').value,
     funcao: document.getElementById('nFuncao').value,
     papel: souMaster ? document.getElementById('nPapel').value : 'usuario',
-    acesso_midia: souMaster ? document.getElementById('nMidia').value : 'nenhum'
+    acesso_midia: souMaster ? document.getElementById('nMidia').value : 'nenhum',
+    enviar_email: document.getElementById('nAvisar').checked
   };
 
   var r = await sb.functions.invoke('gev-criar-usuario', { body: corpo });
@@ -303,7 +342,9 @@ document.getElementById('nSalvar').addEventListener('click', async function () {
     return;
   }
   statusEl.className = 'status ok';
-  statusEl.textContent = 'Cadastrado! Login: ' + r.data.login;
+  statusEl.textContent = 'Cadastrado! Login: ' + r.data.login +
+    (r.data.email_enviado ? ' · instruções enviadas por e-mail'
+     : r.data.aviso_email ? ' · e-mail NÃO enviado (' + r.data.aviso_email + ')' : '');
   ['nNome', 'nLogin', 'nSenha', 'nEmail', 'nTelefone'].forEach(function (id) {
     document.getElementById(id).value = '';
   });
