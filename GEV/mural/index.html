@@ -7,35 +7,42 @@
 <link rel="stylesheet" href="../assets/gev-style.css">
 <style>
   body { align-items: flex-start; }
-  .card { max-width: 640px; text-align: left; margin-top: 24px; }
+  .card { max-width: 660px; text-align: left; margin-top: 24px; }
   h1 { text-align: center; }
   .sub { text-align: center; }
-  .voltar { display: inline-block; margin-bottom: 18px; color: rgba(244,240,255,.6); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; }
+  .sair { display: inline-block; margin-bottom: 18px; color: rgba(244,240,255,.5); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; cursor: pointer; }
+  .secao {
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .45;
+    margin: 26px 0 10px;
+  }
+  .vazio { opacity: .5; font-size: 14px; font-family: -apple-system, sans-serif; text-align: center; padding: 18px 0; }
+  .status { font-size: 13px; opacity: .7; min-height: 18px; font-family: -apple-system, sans-serif; }
 
-  .bloco {
+  .btn-nova {
+    width: 100%;
+    padding: 14px;
+    background: #C9A227;
+    color: #1A1033;
+    font-weight: bold;
+    border-radius: 12px;
+    font-family: -apple-system, sans-serif;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  /* ----- formulário de publicação ----- */
+  .formulario {
     padding: 18px;
     border-radius: 14px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.15);
-    margin-bottom: 20px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(201,162,39,.5);
+    margin: 14px 0 20px;
   }
-  .bloco h2 { font-size: 18px; margin-bottom: 12px; }
-  .reuniao-titulo { font-size: 20px; margin-bottom: 6px; }
-  .reuniao-linha { display: flex; gap: 8px; align-items: center; font-family: -apple-system, sans-serif; font-size: 15px; margin-bottom: 6px; opacity: .9; }
-  .reuniao-linha .icone { width: 20px; text-align: center; }
-  .recados { white-space: pre-wrap; font-family: -apple-system, sans-serif; font-size: 14px; opacity: .85; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.1); }
-  .entrar-sala {
-    display: inline-block;
-    margin-top: 14px;
-    padding: 12px 20px;
-    background: #4CAF7D;
-    color: #06210F;
-    border-radius: 10px;
-    font-weight: bold;
-    text-decoration: none;
-    font-family: -apple-system, sans-serif;
-  }
-
+  .formulario h2 { font-size: 17px; margin-bottom: 14px; }
   .campo { margin-bottom: 12px; }
   .campo label { display: block; font-size: 12px; opacity: .6; margin-bottom: 4px; font-family: -apple-system, sans-serif; }
   .campo input, .campo textarea {
@@ -48,107 +55,227 @@
     font-family: -apple-system, sans-serif;
     font-size: 14px;
   }
-  .campo textarea { min-height: 70px; resize: vertical; }
-  .salvar-mural {
-    padding: 10px 18px;
-    background: #C9A227;
-    color: #1A1033;
-    font-weight: bold;
-    border-radius: 10px;
-  }
-  .status { font-size: 13px; opacity: .7; margin-top: 8px; min-height: 18px; font-family: -apple-system, sans-serif; }
+  .campo textarea { min-height: 90px; resize: vertical; }
+  .dupla { display: flex; gap: 10px; }
+  .dupla .campo { flex: 1; }
+  .form-acoes { display: flex; gap: 10px; justify-content: flex-end; align-items: center; margin-top: 6px; }
+  .form-acoes .status { flex: 1; margin: 0; }
+  .btn-ok { padding: 11px 20px; background: #C9A227; color: #1A1033; font-weight: bold; border-radius: 10px; font-family: -apple-system, sans-serif; }
+  .btn-ok:disabled { opacity: .45; }
+  .btn-cancelar { padding: 11px 18px; background: rgba(255,255,255,.1); color: #F4F0FF; border-radius: 10px; font-family: -apple-system, sans-serif; }
 
-  .caixa-upload {
-    border: 2px dashed rgba(255,255,255,.25);
-    border-radius: 12px;
+  /* ----- publicação ----- */
+  .post {
     padding: 18px;
-    text-align: center;
+    border-radius: 14px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
     margin-bottom: 16px;
+    font-family: -apple-system, sans-serif;
   }
-  .caixa-upload input[type=file] { display: none; }
-  .caixa-upload label {
-    display: inline-block;
-    padding: 10px 18px;
+  .post.destaque { border-color: rgba(201,162,39,.55); background: rgba(201,162,39,.07); }
+  .post-topo { display: flex; align-items: flex-start; gap: 10px; }
+  .avatar {
+    width: 38px; height: 38px;
+    flex: none;
+    border-radius: 50%;
     background: #C9A227;
     color: #1A1033;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+    font-size: 15px;
+  }
+  .post-quem { flex: 1; min-width: 0; }
+  .post-autor { font-weight: bold; font-size: 14px; }
+  .post-quando { font-size: 12px; opacity: .55; margin-top: 1px; }
+  .post-menu { display: flex; gap: 6px; }
+  .post-menu button {
+    padding: 4px 8px;
+    background: transparent;
+    color: rgba(244,240,255,.45);
+    font-size: 12px;
+    border-radius: 6px;
+    font-family: -apple-system, sans-serif;
+  }
+  .post-menu button:hover { background: rgba(255,255,255,.08); color: #F4F0FF; }
+
+  .post-tema { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; line-height: 1.2; margin-top: 14px; }
+  .post-linha { display: flex; gap: 8px; align-items: center; font-size: 14px; margin-top: 8px; opacity: .9; }
+  .post-linha .icone { width: 20px; text-align: center; }
+  .entrar-sala {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 12px 20px;
+    background: #4CAF7D;
+    color: #06210F;
     border-radius: 10px;
     font-weight: bold;
-    cursor: pointer;
-    font-family: -apple-system, sans-serif;
-    font-size: 14px;
+    text-decoration: none;
   }
+  .post-texto { white-space: pre-wrap; font-size: 15px; line-height: 1.5; margin-top: 14px; }
 
-  ul.materiais { list-style: none; }
-  li.material {
+  .anexos { margin-top: 16px; }
+  .anexos h3, .links h3 {
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    opacity: .5;
+    margin-bottom: 8px;
+  }
+  .links { margin-top: 16px; }
+  .item {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 10px 12px;
     border-radius: 10px;
     background: rgba(255,255,255,.05);
-    margin-bottom: 8px;
+    margin-bottom: 7px;
+  }
+  .item a { flex: 1; color: #E8C86A; text-decoration: none; font-size: 14px; word-break: break-word; }
+  .item a:hover { text-decoration: underline; }
+  .item button.remover {
+    padding: 5px 9px;
+    background: rgba(122,46,46,.55);
+    color: #FFD9D9;
+    font-size: 12px;
+    border-radius: 7px;
     font-family: -apple-system, sans-serif;
   }
-  li.material a.baixar { flex: 1; color: #E8C86A; text-decoration: none; font-size: 14px; }
-  li.material input[type=text] {
+  .add-linha { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .add-linha input {
     flex: 1;
-    padding: 8px 10px;
-    font-size: 14px;
+    min-width: 120px;
+    padding: 9px 11px;
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,.2);
     background: rgba(255,255,255,.06);
     color: #F4F0FF;
     font-family: -apple-system, sans-serif;
-  }
-  li.material button {
-    padding: 8px 10px;
-    background: rgba(255,255,255,.1);
-    color: #F4F0FF;
     font-size: 13px;
   }
-  li.material button.salvar { background: #4CAF7D; color: #06210F; }
-  li.material button.excluir { background: #7A2E2E; color: #FFD9D9; }
-  .vazio { opacity: .5; font-size: 14px; font-family: -apple-system, sans-serif; text-align: center; padding: 14px 0; }
+  .add-linha button {
+    padding: 9px 14px;
+    background: rgba(255,255,255,.12);
+    color: #F4F0FF;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: -apple-system, sans-serif;
+  }
+  .rotulo-upload {
+    display: inline-block;
+    padding: 9px 16px;
+    background: rgba(255,255,255,.12);
+    color: #F4F0FF;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .rotulo-upload input[type=file] { display: none; }
+
+  /* ----- curtidas e respostas ----- */
+  .post-placar { display: flex; gap: 14px; font-size: 13px; opacity: .6; margin-top: 16px; }
+  .post-acoes {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,.1);
+  }
+  .post-acoes button {
+    flex: 1;
+    padding: 9px;
+    background: transparent;
+    color: rgba(244,240,255,.7);
+    font-size: 14px;
+    border-radius: 8px;
+    font-family: -apple-system, sans-serif;
+  }
+  .post-acoes button:hover { background: rgba(255,255,255,.07); }
+  .post-acoes button.curtido { color: #E8C86A; font-weight: bold; }
+
+  .comentarios { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.1); }
+  .comentario { display: flex; gap: 8px; margin-bottom: 10px; }
+  .comentario .avatar { width: 30px; height: 30px; font-size: 13px; background: rgba(255,255,255,.15); color: #F4F0FF; }
+  .comentario-corpo {
+    flex: 1;
+    min-width: 0;
+    background: rgba(255,255,255,.06);
+    border-radius: 12px;
+    padding: 9px 12px;
+  }
+  .comentario-autor { font-weight: bold; font-size: 13px; }
+  .comentario-texto { white-space: pre-wrap; font-size: 14px; line-height: 1.4; margin-top: 2px; }
+  .comentario-rodape { font-size: 11px; opacity: .5; margin-top: 4px; display: flex; gap: 10px; }
+  .comentario-rodape button { background: transparent; color: inherit; font-size: 11px; padding: 0; font-family: -apple-system, sans-serif; }
+  .comentario-rodape button:hover { color: #F4F0FF; text-decoration: underline; }
+
+  .responder { display: flex; gap: 8px; margin-top: 10px; }
+  .responder input {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.06);
+    color: #F4F0FF;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+  }
+  .responder button {
+    padding: 9px 16px;
+    background: rgba(255,255,255,.12);
+    color: #F4F0FF;
+    border-radius: 20px;
+    font-size: 14px;
+    font-family: -apple-system, sans-serif;
+  }
+  .editor-inline textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.06);
+    color: #F4F0FF;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+    resize: vertical;
+  }
+  .editor-inline .linha { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+  .editor-inline button { padding: 7px 14px; font-size: 13px; border-radius: 8px; font-family: -apple-system, sans-serif; }
+  .editor-inline button.ok { background: #4CAF7D; color: #06210F; font-weight: bold; }
+  .editor-inline button.cancelar { background: rgba(255,255,255,.1); color: #F4F0FF; }
 </style>
 </head>
 <body>
 <div class="card">
-  <a class="voltar" href="../">&larr; voltar ao menu</a>
+  <span class="sair" id="sair">sair da conta</span>
   <div class="gev-nav" id="nav"></div>
-  <h1>Mural da reunião</h1>
+  <h1>Grupo Evoluir</h1>
+  <p class="sub" id="saudacao"></p>
 
-  <div class="bloco" id="blocoReuniaoView">
-    <div class="reuniao-titulo" id="vTitulo">—</div>
-    <div class="reuniao-linha"><span class="icone">📅</span><span id="vData">—</span></div>
-    <div class="reuniao-linha"><span class="icone">🕐</span><span id="vHorario">—</span></div>
-    <a class="entrar-sala" id="vLink" href="#" target="_blank" style="display:none">🔗 Entrar na sala</a>
-    <div class="recados" id="vRecados"></div>
-  </div>
+  <button class="btn-nova" id="btnNova" style="display:none">➕ Nova publicação</button>
 
-  <div class="bloco" id="blocoReuniaoEdit" style="display:none">
-    <h2>Editar reunião</h2>
-    <div class="campo"><label>Título</label><input type="text" id="eTitulo"></div>
-    <div class="campo"><label>Data</label><input type="date" id="eData"></div>
-    <div class="campo"><label>Horário</label><input type="text" id="eHorario" placeholder="ex: 20h"></div>
-    <div class="campo"><label>Link de acesso (Zoom, Meet...)</label><input type="text" id="eLink" placeholder="https://..."></div>
-    <div class="campo"><label>Recados</label><textarea id="eRecados" placeholder="Avisos para o grupo..."></textarea></div>
-    <button class="salvar-mural" id="salvarReuniao">Salvar</button>
-    <div class="status" id="statusReuniao"></div>
-  </div>
-
-  <div class="bloco" id="blocoUpload" style="display:none">
-    <h2>Materiais</h2>
-    <div class="caixa-upload">
-      <label for="arquivo">Adicionar material (PDF, imagem, doc...)</label>
-      <input type="file" id="arquivo" multiple>
-      <div class="status" id="statusUpload"></div>
+  <div class="formulario" id="formulario" style="display:none">
+    <h2 id="formTitulo">Nova publicação</h2>
+    <div class="campo"><label>Tema da reunião</label><input type="text" id="fTitulo" placeholder="ex: O Livro dos Espíritos — cap. 3"></div>
+    <div class="dupla">
+      <div class="campo"><label>Data</label><input type="date" id="fData"></div>
+      <div class="campo"><label>Horário</label><input type="text" id="fHorario" placeholder="ex: 20h"></div>
+    </div>
+    <div class="campo"><label>Link da reunião (Zoom, Meet...)</label><input type="text" id="fLink" placeholder="https://..."></div>
+    <div class="campo"><label>Recados / texto da publicação</label><textarea id="fTexto" placeholder="Avisos, orientações e o que mais o grupo precisa saber..."></textarea></div>
+    <div class="form-acoes">
+      <span class="status" id="formStatus"></span>
+      <button class="btn-cancelar" id="fCancelar">Cancelar</button>
+      <button class="btn-ok" id="fSalvar">Publicar</button>
     </div>
   </div>
-  <div class="bloco" id="blocoMateriais" style="display:none">
-    <h2 style="margin-bottom:0" id="tituloMateriais">Materiais</h2>
-  </div>
-  <ul class="materiais" id="listaMateriais"></ul>
-  <p class="vazio" id="vazioMateriais" style="display:none">Nenhum material ainda.</p>
+
+  <div id="areaDestaque"></div>
+  <div id="areaAnteriores"></div>
+  <p class="vazio" id="vazioFeed" style="display:none">Nenhuma publicação ainda.</p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -157,15 +284,18 @@
 <script>
 var sb = GEV.sb;
 var souAdmin = false;
+var meuId = null;
+var editandoId = null;
 
 function montarNav() {
   var itens = [
-    { rota: '../disparador/', icone: '📲', titulo: 'Disparador' },
     { rota: '../mural/', icone: '🗓️', titulo: 'Mural', ativo: true },
+    { rota: '../disparador/', icone: '📲', titulo: 'Disparador' },
     { rota: '../exibidor/', icone: '🔊', titulo: 'Exibidor' }
   ];
   if (souAdmin) {
-    itens.splice(1, 0, { rota: '../biblioteca/', icone: '🎵', titulo: 'Biblioteca' });
+    itens.push({ rota: '../biblioteca/', icone: '🎵', titulo: 'Biblioteca' });
+    itens.push({ rota: '../usuarios/', icone: '👥', titulo: 'Usuários' });
   }
   var nav = document.getElementById('nav');
   nav.innerHTML = '';
@@ -179,123 +309,546 @@ function montarNav() {
 }
 
 function formatarData(iso) {
-  if (!iso) return '—';
-  var partes = iso.split('-');
-  return partes[2] + '/' + partes[1] + '/' + partes[0];
+  if (!iso) return null;
+  var p = iso.split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
 }
 
-async function carregarReuniao() {
-  var r = await sb.from('gev_reuniao_atual').select('*').eq('id', 'atual').maybeSingle();
-  var d = r.data || {};
-  document.getElementById('vTitulo').textContent = d.titulo || 'Reunião do Grupo Evoluir';
-  document.getElementById('vData').textContent = formatarData(d.data);
-  document.getElementById('vHorario').textContent = d.horario || '—';
-  document.getElementById('vRecados').textContent = d.recados || '';
-  var linkEl = document.getElementById('vLink');
-  if (d.link_acesso) {
-    linkEl.href = d.link_acesso;
-    linkEl.style.display = 'inline-block';
-  } else {
-    linkEl.style.display = 'none';
-  }
-  if (souAdmin) {
-    document.getElementById('eTitulo').value = d.titulo || '';
-    document.getElementById('eData').value = d.data || '';
-    document.getElementById('eHorario').value = d.horario || '';
-    document.getElementById('eLink').value = d.link_acesso || '';
-    document.getElementById('eRecados').value = d.recados || '';
-  }
+function tempoRelativo(iso) {
+  var seg = Math.floor((new Date() - new Date(iso)) / 1000);
+  if (seg < 60) return 'agora';
+  if (seg < 3600) return 'há ' + Math.floor(seg / 60) + ' min';
+  if (seg < 86400) return 'há ' + Math.floor(seg / 3600) + ' h';
+  if (seg < 172800) return 'ontem';
+  if (seg < 604800) return 'há ' + Math.floor(seg / 86400) + ' dias';
+  return new Date(iso).toLocaleDateString('pt-BR');
 }
 
-document.getElementById('salvarReuniao').addEventListener('click', async function () {
-  var statusEl = document.getElementById('statusReuniao');
-  var r = await sb.from('gev_reuniao_atual').update({
-    titulo: document.getElementById('eTitulo').value.trim() || 'Reunião do Grupo Evoluir',
-    data: document.getElementById('eData').value || null,
-    horario: document.getElementById('eHorario').value.trim(),
-    link_acesso: document.getElementById('eLink').value.trim(),
-    recados: document.getElementById('eRecados').value,
-    atualizado_em: new Date().toISOString()
-  }).eq('id', 'atual');
-  statusEl.textContent = r.error ? 'Erro: ' + r.error.message : 'Salvo!';
-  setTimeout(function () { statusEl.textContent = ''; }, 2000);
-  carregarReuniao();
+function iniciais(nome) {
+  var p = (nome || '?').trim().split(/\s+/);
+  var t = p[0].charAt(0);
+  if (p.length > 1) t += p[p.length - 1].charAt(0);
+  return t.toUpperCase();
+}
+
+function urlValida(u) {
+  return /^https?:\/\//i.test(u);
+}
+
+/* ---------- formulário da publicação ---------- */
+
+function abrirFormulario(post) {
+  editandoId = post ? post.id : null;
+  document.getElementById('formTitulo').textContent = post ? 'Editar publicação' : 'Nova publicação';
+  document.getElementById('fSalvar').textContent = post ? 'Salvar' : 'Publicar';
+  document.getElementById('fTitulo').value = post ? post.titulo : '';
+  document.getElementById('fData').value = post && post.data_reuniao ? post.data_reuniao : '';
+  document.getElementById('fHorario').value = post && post.horario ? post.horario : '';
+  document.getElementById('fLink').value = post && post.link_reuniao ? post.link_reuniao : '';
+  document.getElementById('fTexto').value = post ? post.texto : '';
+  document.getElementById('formStatus').textContent = '';
+  document.getElementById('formulario').style.display = 'block';
+  document.getElementById('btnNova').style.display = 'none';
+  document.getElementById('fTitulo').focus();
+}
+
+function fecharFormulario() {
+  editandoId = null;
+  document.getElementById('formulario').style.display = 'none';
+  document.getElementById('btnNova').style.display = souAdmin ? 'block' : 'none';
+}
+
+document.getElementById('btnNova').addEventListener('click', function () { abrirFormulario(null); });
+document.getElementById('fCancelar').addEventListener('click', fecharFormulario);
+
+document.getElementById('fSalvar').addEventListener('click', async function () {
+  var botao = this;
+  var statusEl = document.getElementById('formStatus');
+  var titulo = document.getElementById('fTitulo').value.trim();
+  if (!titulo) {
+    statusEl.textContent = 'Coloque o tema da reunião.';
+    return;
+  }
+  var dados = {
+    titulo: titulo,
+    data_reuniao: document.getElementById('fData').value || null,
+    horario: document.getElementById('fHorario').value.trim() || null,
+    link_reuniao: document.getElementById('fLink').value.trim() || null,
+    texto: document.getElementById('fTexto').value
+  };
+  botao.disabled = true;
+  statusEl.textContent = 'Salvando...';
+  var r = editandoId
+    ? await sb.from('gev_posts').update(dados).eq('id', editandoId)
+    : await sb.from('gev_posts').insert(Object.assign({ autor_id: meuId, autor_nome: '-' }, dados));
+  botao.disabled = false;
+  if (r.error) {
+    statusEl.textContent = 'Erro: ' + r.error.message;
+    return;
+  }
+  fecharFormulario();
+  carregarFeed();
 });
 
-async function carregarMateriais() {
-  var r = await sb.from('gev_materiais').select('*').order('ordem', { ascending: true });
-  var materiais = r.data || [];
-  var lista = document.getElementById('listaMateriais');
-  lista.innerHTML = '';
-  document.getElementById('vazioMateriais').style.display = materiais.length ? 'none' : 'block';
-  materiais.forEach(function (m) {
-    var li = document.createElement('li');
-    li.className = 'material';
+/* ---------- anexos e links ---------- */
+
+function montarAnexos(p) {
+  var box = document.createElement('div');
+  box.className = 'anexos';
+  var anexos = (p.gev_post_anexos || []).slice().sort(function (a, b) { return a.ordem - b.ordem; });
+  if (!anexos.length && !souAdmin) return null;
+
+  var h = document.createElement('h3');
+  h.textContent = '📎 Materiais para download';
+  box.appendChild(h);
+
+  anexos.forEach(function (a) {
+    var linha = document.createElement('div');
+    linha.className = 'item';
+    var link = document.createElement('a');
+    link.href = GEV.publicUrlMaterial(a.storage_path);
+    link.target = '_blank';
+    link.textContent = '📄 ' + a.nome_exibicao;
+    linha.appendChild(link);
     if (souAdmin) {
-      li.innerHTML =
-        '<input type="text" value="' + m.nome_exibicao.replace(/"/g, '&quot;') + '">' +
-        '<button class="salvar">Salvar</button>' +
-        '<button class="excluir">Excluir</button>';
-      var input = li.querySelector('input');
-      li.querySelector('.salvar').onclick = async function () {
-        await sb.from('gev_materiais').update({ nome_exibicao: input.value.trim() || m.nome_arquivo }).eq('id', m.id);
+      var bRemover = document.createElement('button');
+      bRemover.className = 'remover';
+      bRemover.textContent = 'remover';
+      bRemover.onclick = async function () {
+        if (!confirm('Remover "' + a.nome_exibicao + '"?')) return;
+        var r = await sb.from('gev_post_anexos').delete().eq('id', a.id);
+        if (r.error) { alert('Não consegui remover: ' + r.error.message); return; }
+        await sb.storage.from(GEV_CONFIG.bucketMateriais).remove([a.storage_path]);
+        carregarFeed();
       };
-      li.querySelector('.excluir').onclick = async function () {
-        if (!confirm('Excluir "' + m.nome_exibicao + '"?')) return;
-        await sb.from('gev_materiais').delete().eq('id', m.id);
-        await sb.storage.from(GEV_CONFIG.bucketMateriais).remove([m.storage_path]);
-        carregarMateriais();
-      };
-    } else {
-      var a = document.createElement('a');
-      a.className = 'baixar';
-      a.href = GEV.publicUrlMaterial(m.storage_path);
-      a.target = '_blank';
-      a.textContent = '📄 ' + m.nome_exibicao;
-      li.appendChild(a);
+      linha.appendChild(bRemover);
     }
-    lista.appendChild(li);
+    box.appendChild(linha);
   });
+
+  if (souAdmin) {
+    var rotulo = document.createElement('label');
+    rotulo.className = 'rotulo-upload';
+    rotulo.textContent = '＋ Adicionar PDF ou arquivo';
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    var status = document.createElement('div');
+    status.className = 'status';
+    input.addEventListener('change', async function (e) {
+      var arquivos = Array.from(e.target.files || []);
+      if (!arquivos.length) return;
+      var proxima = anexos.length ? anexos[anexos.length - 1].ordem + 1 : 0;
+      for (var i = 0; i < arquivos.length; i++) {
+        var f = arquivos[i];
+        status.textContent = 'Enviando "' + f.name + '" (' + (i + 1) + '/' + arquivos.length + ')...';
+        var caminho = 'posts/' + p.id + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '-' + f.name;
+        var up = await sb.storage.from(GEV_CONFIG.bucketMateriais).upload(caminho, f);
+        if (up.error) { status.textContent = 'Erro ao enviar "' + f.name + '": ' + up.error.message; return; }
+        var ins = await sb.from('gev_post_anexos').insert({
+          post_id: p.id,
+          storage_path: caminho,
+          nome_arquivo: f.name,
+          nome_exibicao: f.name.replace(/\.[^/.]+$/, ''),
+          ordem: proxima++
+        });
+        if (ins.error) { status.textContent = 'Erro ao registrar "' + f.name + '": ' + ins.error.message; return; }
+      }
+      carregarFeed();
+    });
+    rotulo.appendChild(input);
+    box.appendChild(rotulo);
+    box.appendChild(status);
+  }
+  return box;
 }
 
-document.getElementById('arquivo').addEventListener('change', async function (e) {
-  var arquivos = Array.from(e.target.files || []);
-  if (!arquivos.length) return;
-  var statusEl = document.getElementById('statusUpload');
-  var existentesR = await sb.from('gev_materiais').select('ordem').order('ordem', { ascending: false }).limit(1);
-  var existentes = existentesR.data || [];
-  var proximaOrdem = existentes.length ? existentes[0].ordem + 1 : 0;
+function montarLinks(p) {
+  var box = document.createElement('div');
+  box.className = 'links';
+  var links = (p.gev_post_links || []).slice().sort(function (a, b) { return a.ordem - b.ordem; });
+  if (!links.length && !souAdmin) return null;
 
-  for (var i = 0; i < arquivos.length; i++) {
-    var f = arquivos[i];
-    statusEl.textContent = 'Enviando "' + f.name + '"... (' + (i + 1) + '/' + arquivos.length + ')';
-    var path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '-' + f.name;
-    var up = await sb.storage.from(GEV_CONFIG.bucketMateriais).upload(path, f);
-    if (up.error) {
-      statusEl.textContent = 'Erro ao enviar "' + f.name + '": ' + up.error.message;
-      return;
+  var h = document.createElement('h3');
+  h.textContent = '🔗 Links para consulta';
+  box.appendChild(h);
+
+  links.forEach(function (l) {
+    var linha = document.createElement('div');
+    linha.className = 'item';
+    var a = document.createElement('a');
+    a.href = l.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = l.titulo;
+    linha.appendChild(a);
+    if (souAdmin) {
+      var bRemover = document.createElement('button');
+      bRemover.className = 'remover';
+      bRemover.textContent = 'remover';
+      bRemover.onclick = async function () {
+        if (!confirm('Remover o link "' + l.titulo + '"?')) return;
+        var r = await sb.from('gev_post_links').delete().eq('id', l.id);
+        if (r.error) { alert('Não consegui remover: ' + r.error.message); return; }
+        carregarFeed();
+      };
+      linha.appendChild(bRemover);
     }
-    var nomeSemExtensao = f.name.replace(/\.[^/.]+$/, '');
-    await sb.from('gev_materiais').insert({
-      storage_path: path,
-      nome_arquivo: f.name,
-      nome_exibicao: nomeSemExtensao,
-      ordem: proximaOrdem++
+    box.appendChild(linha);
+  });
+
+  if (souAdmin) {
+    var add = document.createElement('div');
+    add.className = 'add-linha';
+    var cTitulo = document.createElement('input');
+    cTitulo.type = 'text';
+    cTitulo.placeholder = 'Nome do link';
+    var cUrl = document.createElement('input');
+    cUrl.type = 'text';
+    cUrl.placeholder = 'https://...';
+    var bAdd = document.createElement('button');
+    bAdd.textContent = '＋ Adicionar';
+    bAdd.onclick = async function () {
+      var t = cTitulo.value.trim();
+      var u = cUrl.value.trim();
+      if (!t || !u) { alert('Preencha o nome e o endereço do link.'); return; }
+      if (!urlValida(u)) { alert('O endereço precisa começar com http:// ou https://'); return; }
+      var r = await sb.from('gev_post_links').insert({
+        post_id: p.id,
+        titulo: t,
+        url: u,
+        ordem: links.length ? links[links.length - 1].ordem + 1 : 0
+      });
+      if (r.error) { alert('Não consegui adicionar: ' + r.error.message); return; }
+      carregarFeed();
+    };
+    add.appendChild(cTitulo);
+    add.appendChild(cUrl);
+    add.appendChild(bAdd);
+    box.appendChild(add);
+  }
+  return box;
+}
+
+/* ---------- respostas ---------- */
+
+function montarEditorInline(textoAtual, aoSalvar, aoCancelar) {
+  var box = document.createElement('div');
+  box.className = 'editor-inline';
+  var ta = document.createElement('textarea');
+  ta.value = textoAtual;
+  var linha = document.createElement('div');
+  linha.className = 'linha';
+  var bCancelar = document.createElement('button');
+  bCancelar.className = 'cancelar';
+  bCancelar.textContent = 'Cancelar';
+  bCancelar.onclick = aoCancelar;
+  var bOk = document.createElement('button');
+  bOk.className = 'ok';
+  bOk.textContent = 'Salvar';
+  bOk.onclick = function () {
+    var novo = ta.value.trim();
+    if (novo) aoSalvar(novo);
+  };
+  linha.appendChild(bCancelar);
+  linha.appendChild(bOk);
+  box.appendChild(ta);
+  box.appendChild(linha);
+  setTimeout(function () { ta.focus(); }, 0);
+  return box;
+}
+
+function montarComentario(c) {
+  var div = document.createElement('div');
+  div.className = 'comentario';
+
+  var av = document.createElement('div');
+  av.className = 'avatar';
+  av.textContent = iniciais(c.autor_nome);
+
+  var corpo = document.createElement('div');
+  corpo.className = 'comentario-corpo';
+
+  var autor = document.createElement('div');
+  autor.className = 'comentario-autor';
+  autor.textContent = c.autor_nome;
+
+  var texto = document.createElement('div');
+  texto.className = 'comentario-texto';
+  texto.textContent = c.texto;
+
+  corpo.appendChild(autor);
+  corpo.appendChild(texto);
+
+  var rodape = document.createElement('div');
+  rodape.className = 'comentario-rodape';
+  var quando = document.createElement('span');
+  quando.textContent = tempoRelativo(c.criado_em) + (c.editado_em ? ' · editado' : '');
+  rodape.appendChild(quando);
+
+  if (c.autor_id === meuId || souAdmin) {
+    var bEditar = document.createElement('button');
+    bEditar.textContent = 'editar';
+    bEditar.onclick = function () {
+      var editor = montarEditorInline(c.texto, async function (novo) {
+        var r = await sb.from('gev_post_comentarios').update({ texto: novo }).eq('id', c.id);
+        if (r.error) { alert('Não consegui salvar: ' + r.error.message); return; }
+        carregarFeed();
+      }, carregarFeed);
+      corpo.innerHTML = '';
+      corpo.appendChild(editor);
+    };
+    var bExcluir = document.createElement('button');
+    bExcluir.textContent = 'excluir';
+    bExcluir.onclick = async function () {
+      if (!confirm('Excluir esta resposta?')) return;
+      var r = await sb.from('gev_post_comentarios').delete().eq('id', c.id);
+      if (r.error) { alert('Não consegui excluir: ' + r.error.message); return; }
+      carregarFeed();
+    };
+    rodape.appendChild(bEditar);
+    rodape.appendChild(bExcluir);
+  }
+
+  corpo.appendChild(rodape);
+  div.appendChild(av);
+  div.appendChild(corpo);
+  return div;
+}
+
+/* ---------- publicação ---------- */
+
+function montarPublicacao(p, destaque) {
+  var curtidas = p.gev_post_curtidas || [];
+  var comentarios = (p.gev_post_comentarios || []).slice().sort(function (a, b) {
+    return new Date(a.criado_em) - new Date(b.criado_em);
+  });
+  var euCurti = curtidas.some(function (c) { return c.perfil_id === meuId; });
+  var totalCurtidas = curtidas.length;
+
+  var art = document.createElement('div');
+  art.className = destaque ? 'post destaque' : 'post';
+
+  // cabeçalho
+  var topo = document.createElement('div');
+  topo.className = 'post-topo';
+  var av = document.createElement('div');
+  av.className = 'avatar';
+  av.textContent = iniciais(p.autor_nome);
+  var quem = document.createElement('div');
+  quem.className = 'post-quem';
+  var autor = document.createElement('div');
+  autor.className = 'post-autor';
+  autor.textContent = p.autor_nome;
+  var quando = document.createElement('div');
+  quando.className = 'post-quando';
+  quando.textContent = 'publicado ' + tempoRelativo(p.criado_em) + (p.editado_em ? ' · editado' : '');
+  quem.appendChild(autor);
+  quem.appendChild(quando);
+  topo.appendChild(av);
+  topo.appendChild(quem);
+
+  if (souAdmin) {
+    var menu = document.createElement('div');
+    menu.className = 'post-menu';
+    var bEditar = document.createElement('button');
+    bEditar.textContent = 'editar';
+    bEditar.onclick = function () {
+      abrirFormulario(p);
+      document.getElementById('formulario').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    var bExcluir = document.createElement('button');
+    bExcluir.textContent = 'excluir';
+    bExcluir.onclick = async function () {
+      if (!confirm('Excluir a publicação "' + p.titulo + '"? Respostas, materiais e links também serão apagados.')) return;
+      var caminhos = (p.gev_post_anexos || []).map(function (a) { return a.storage_path; });
+      var r = await sb.from('gev_posts').delete().eq('id', p.id);
+      if (r.error) { alert('Não consegui excluir: ' + r.error.message); return; }
+      if (caminhos.length) await sb.storage.from(GEV_CONFIG.bucketMateriais).remove(caminhos);
+      carregarFeed();
+    };
+    menu.appendChild(bEditar);
+    menu.appendChild(bExcluir);
+    topo.appendChild(menu);
+  }
+  art.appendChild(topo);
+
+  // tema e dados da reunião
+  var tema = document.createElement('div');
+  tema.className = 'post-tema';
+  tema.textContent = p.titulo;
+  art.appendChild(tema);
+
+  var dataFormatada = formatarData(p.data_reuniao);
+  if (dataFormatada) {
+    var lData = document.createElement('div');
+    lData.className = 'post-linha';
+    lData.innerHTML = '<span class="icone">📅</span>';
+    var sData = document.createElement('span');
+    sData.textContent = dataFormatada;
+    lData.appendChild(sData);
+    art.appendChild(lData);
+  }
+  if (p.horario) {
+    var lHora = document.createElement('div');
+    lHora.className = 'post-linha';
+    lHora.innerHTML = '<span class="icone">🕐</span>';
+    var sHora = document.createElement('span');
+    sHora.textContent = p.horario;
+    lHora.appendChild(sHora);
+    art.appendChild(lHora);
+  }
+  if (p.link_reuniao) {
+    var aSala = document.createElement('a');
+    aSala.className = 'entrar-sala';
+    aSala.href = p.link_reuniao;
+    aSala.target = '_blank';
+    aSala.rel = 'noopener noreferrer';
+    aSala.textContent = '🔗 Entrar na sala';
+    art.appendChild(aSala);
+  }
+
+  if (p.texto && p.texto.trim()) {
+    var texto = document.createElement('div');
+    texto.className = 'post-texto';
+    texto.textContent = p.texto;
+    art.appendChild(texto);
+  }
+
+  var anexos = montarAnexos(p);
+  if (anexos) art.appendChild(anexos);
+  var links = montarLinks(p);
+  if (links) art.appendChild(links);
+
+  // curtidas e respostas
+  var placar = document.createElement('div');
+  placar.className = 'post-placar';
+  var placarCurtidas = document.createElement('span');
+  var placarRespostas = document.createElement('span');
+  placarRespostas.textContent = comentarios.length
+    ? comentarios.length + (comentarios.length === 1 ? ' resposta' : ' respostas')
+    : '';
+  placar.appendChild(placarCurtidas);
+  placar.appendChild(placarRespostas);
+  art.appendChild(placar);
+
+  var acoes = document.createElement('div');
+  acoes.className = 'post-acoes';
+  var bCurtir = document.createElement('button');
+  function pintarCurtir() {
+    bCurtir.textContent = euCurti ? '👍 Curtido' : '👍 Curtir';
+    bCurtir.className = euCurti ? 'curtido' : '';
+    placarCurtidas.textContent = totalCurtidas ? '👍 ' + totalCurtidas : '';
+  }
+  pintarCurtir();
+  bCurtir.onclick = async function () {
+    bCurtir.disabled = true;
+    var r = euCurti
+      ? await sb.from('gev_post_curtidas').delete().eq('post_id', p.id).eq('perfil_id', meuId)
+      : await sb.from('gev_post_curtidas').insert({ post_id: p.id, perfil_id: meuId });
+    bCurtir.disabled = false;
+    if (r.error) { alert('Não consegui registrar a curtida: ' + r.error.message); return; }
+    euCurti = !euCurti;
+    totalCurtidas += euCurti ? 1 : -1;
+    pintarCurtir();
+  };
+  var bResponder = document.createElement('button');
+  bResponder.textContent = '💬 Responder';
+  bResponder.onclick = function () { campoResposta.focus(); };
+  acoes.appendChild(bCurtir);
+  acoes.appendChild(bResponder);
+  art.appendChild(acoes);
+
+  if (comentarios.length) {
+    var lista = document.createElement('div');
+    lista.className = 'comentarios';
+    comentarios.forEach(function (c) { lista.appendChild(montarComentario(c)); });
+    art.appendChild(lista);
+  }
+
+  var responder = document.createElement('div');
+  responder.className = 'responder';
+  var campoResposta = document.createElement('input');
+  campoResposta.type = 'text';
+  campoResposta.placeholder = 'Escreva uma resposta...';
+  var bEnviar = document.createElement('button');
+  bEnviar.textContent = 'Enviar';
+  async function enviarResposta() {
+    var t = campoResposta.value.trim();
+    if (!t) return;
+    bEnviar.disabled = true;
+    var r = await sb.from('gev_post_comentarios').insert({
+      post_id: p.id, texto: t, autor_id: meuId, autor_nome: '-'
+    });
+    bEnviar.disabled = false;
+    if (r.error) { alert('Não consegui responder: ' + r.error.message); return; }
+    campoResposta.value = '';
+    carregarFeed();
+  }
+  bEnviar.onclick = enviarResposta;
+  campoResposta.addEventListener('keydown', function (e) { if (e.key === 'Enter') enviarResposta(); });
+  responder.appendChild(campoResposta);
+  responder.appendChild(bEnviar);
+  art.appendChild(responder);
+
+  return art;
+}
+
+async function carregarFeed() {
+  var r = await sb
+    .from('gev_posts')
+    .select('*, gev_post_comentarios(*), gev_post_curtidas(perfil_id), gev_post_anexos(*), gev_post_links(*)')
+    .order('criado_em', { ascending: false });
+
+  var destaqueEl = document.getElementById('areaDestaque');
+  var anterioresEl = document.getElementById('areaAnteriores');
+  var vazioEl = document.getElementById('vazioFeed');
+  destaqueEl.innerHTML = '';
+  anterioresEl.innerHTML = '';
+
+  if (r.error) {
+    vazioEl.textContent = 'Não consegui carregar o mural: ' + r.error.message;
+    vazioEl.style.display = 'block';
+    return;
+  }
+
+  var posts = r.data || [];
+  vazioEl.style.display = posts.length ? 'none' : 'block';
+  vazioEl.textContent = souAdmin
+    ? 'Nenhuma publicação ainda. Crie a primeira em "Nova publicação".'
+    : 'Nenhuma publicação ainda.';
+
+  if (!posts.length) return;
+
+  var tituloDestaque = document.createElement('div');
+  tituloDestaque.className = 'secao';
+  tituloDestaque.textContent = 'Última publicação';
+  destaqueEl.appendChild(tituloDestaque);
+  destaqueEl.appendChild(montarPublicacao(posts[0], true));
+
+  if (posts.length > 1) {
+    var tituloAnteriores = document.createElement('div');
+    tituloAnteriores.className = 'secao';
+    tituloAnteriores.textContent = 'Publicações anteriores';
+    anterioresEl.appendChild(tituloAnteriores);
+    posts.slice(1).forEach(function (p) {
+      anterioresEl.appendChild(montarPublicacao(p, false));
     });
   }
-  statusEl.textContent = 'Pronto!';
-  e.target.value = '';
-  carregarMateriais();
-});
+}
+
+document.getElementById('sair').addEventListener('click', function () { GEV.logout(); });
+
+/* ---------- início ---------- */
 
 GEV.exigirAcesso(['master', 'coordenador', 'usuario']).then(function (perfil) {
   if (!perfil) return;
+  meuId = perfil.id;
   souAdmin = perfil.papel === 'master' || perfil.papel === 'coordenador';
+  document.getElementById('saudacao').textContent = 'Olá, ' + perfil.nome;
   montarNav();
-  document.getElementById('blocoReuniaoEdit').style.display = souAdmin ? 'block' : 'none';
-  document.getElementById('blocoUpload').style.display = souAdmin ? 'block' : 'none';
-  carregarReuniao();
-  carregarMateriais();
+  document.getElementById('btnNova').style.display = souAdmin ? 'block' : 'none';
+  carregarFeed();
 });
 </script>
 </body>
