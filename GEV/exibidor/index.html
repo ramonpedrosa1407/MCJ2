@@ -226,7 +226,14 @@ player.addEventListener('error', function () {
 
 /* ---------- sinal de vida ---------- */
 
+// Duas telas de Exibidor abertas = som dobrado. E uma aba antiga que perdeu a
+// conexão continua tocando a música velha, no volume velho. Por isso só a tela
+// aberta mais recentemente fica no comando; as outras se calam.
+var MEU_ID = 'exib-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+var souODono = true;
+
 function avisarQueEstouVivo(extras) {
+  if (!souODono) return Promise.resolve({});
   var dados = {
     exibidor_visto_em: new Date().toISOString(),
     // "aberto" e "tocando" são coisas diferentes: o som pode não ter começado
@@ -234,6 +241,38 @@ function avisarQueEstouVivo(extras) {
   };
   if (extras) for (var k in extras) dados[k] = extras[k];
   return sb.from('gev_estado').update(dados).eq('id', 'atual');
+}
+
+function assumirOComando() {
+  souODono = true;
+  return sb.from('gev_estado').update({
+    exibidor_id: MEU_ID,
+    exibidor_visto_em: new Date().toISOString(),
+    exibidor_tocando: false
+  }).eq('id', 'atual');
+}
+
+// devolve true se esta tela continua no comando
+function conferirSeAindaSouODono(row) {
+  if (!row.exibidor_id || row.exibidor_id === MEU_ID) {
+    souODono = true;
+    return true;
+  }
+  // outra tela assumiu: esta se cala na hora
+  if (souODono) {
+    souODono = false;
+    player.pause();
+    player.removeAttribute('src');
+    player.load();
+    faixaCarregadaId = null;
+    faixaPausadaId = null;
+    comandoPendente = null;
+    disco.classList.remove('tocando');
+    esconderBotaoIniciar();
+    nomeEl.textContent = 'em silêncio';
+    dizer('outra tela assumiu a exibição — o som está saindo lá. Recarregue esta página para trazer o som de volta para cá.', true);
+  }
+  return false;
 }
 
 ['play', 'pause', 'ended', 'stalled', 'waiting'].forEach(function (evento) {
@@ -257,6 +296,7 @@ player.addEventListener('timeupdate', function () {
 
 function aplicarEstado(row) {
   if (!row) return;
+  if (!conferirSeAindaSouODono(row)) return;
   nomeEl.textContent = row.musica_nome || 'aguardando...';
   player.volume = (row.volume === null || row.volume === undefined) ? 1 : Number(row.volume);
   player.loop = !!row.repetir;
@@ -309,7 +349,8 @@ function aplicarEstado(row) {
 /* ---------- conexão (sozinha, sem depender de ninguém) ---------- */
 
 async function conectar() {
-  await avisarQueEstouVivo();
+  // ao abrir, esta tela assume o comando — qualquer outra que esteja aberta se cala
+  await assumirOComando();
 
   // tenta liberar o som sozinho; se o navegador não deixar, aí sim pede o toque
   var jaLiberado = await destravarSom();

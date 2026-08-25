@@ -10,6 +10,25 @@
   .card { max-width: 480px; text-align: left; margin-top: 20px; }
   h1 { text-align: center; }
   .sub { text-align: center; }
+
+  /* Dois blocos separados: em cima o que está tocando e os controles,
+     embaixo a escolha da faixa. */
+  .bloco {
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.12);
+    margin-bottom: 16px;
+  }
+  .bloco:last-of-type { margin-bottom: 0; }
+  .titulo-bloco {
+    font-family: -apple-system, sans-serif;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    opacity: .45;
+    margin-bottom: 12px;
+  }
   .voltar { display: inline-block; margin-bottom: 14px; color: rgba(244,240,255,.6); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; }
 
   .exibidor-estado {
@@ -45,7 +64,6 @@
   .controles {
     display: flex;
     gap: 10px;
-    margin-bottom: 18px;
   }
   .volume, .repetir {
     padding: 14px 16px;
@@ -112,14 +130,14 @@
   li.faixa button.b-play:not(:disabled) { background: #4CAF7D; color: #06210F; }
   li.faixa button.b-pause:not(:disabled) { background: #C9A227; color: #1A1033; }
   li.faixa button.b-stop:not(:disabled) { background: #7A2E2E; color: #FFD9D9; }
-  .vazio { opacity: .5; font-size: 14px; font-family: -apple-system, sans-serif; text-align: center; padding: 20px 0; }
+  .vazio { opacity: .5; font-size: 14px; font-family: -apple-system, sans-serif; text-align: center; padding: 12px 0; }
 
   .tocando-agora {
     padding: 14px 16px;
     border-radius: 12px;
     background: #2E5A3E;
     border: 1px solid #4CAF7D;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     font-family: -apple-system, sans-serif;
   }
   .ta-nome { font-size: 15px; font-weight: bold; margin-bottom: 8px; }
@@ -143,30 +161,37 @@
 
   <div class="exibidor-estado" id="exibidorEstado"></div>
 
-  <div class="tocando-agora" id="tocandoAgora" style="display:none">
-    <div class="ta-nome" id="taNome"></div>
-    <div class="ta-barra"><div class="ta-progresso" id="taProgresso"></div></div>
-    <div class="ta-tempo"><span id="taAtual">0:00</span><span id="taTotal">0:00</span></div>
-  </div>
+  <div class="bloco">
+    <div class="titulo-bloco">Controles</div>
 
-  <button class="parar-tudo" id="pararTudo">⏹ PARAR TUDO</button>
-
-  <div class="controles">
-    <div class="volume">
-      <div class="linha">
-        <label>🔉 Volume</label>
-        <input type="range" id="volume" min="0" max="100" value="100">
-        <span class="valor" id="volumeValor">100%</span>
-      </div>
+    <div class="tocando-agora" id="tocandoAgora" style="display:none">
+      <div class="ta-nome" id="taNome"></div>
+      <div class="ta-barra"><div class="ta-progresso" id="taProgresso"></div></div>
+      <div class="ta-tempo"><span id="taAtual">0:00</span><span id="taTotal">0:00</span></div>
     </div>
-    <label class="repetir" id="repetirCaixa">
-      <input type="checkbox" id="repetir">
-      <span>🔁 Repetir</span>
-    </label>
+
+    <button class="parar-tudo" id="pararTudo">⏹ PARAR TUDO</button>
+
+    <div class="controles">
+      <div class="volume">
+        <div class="linha">
+          <label>🔉 Volume</label>
+          <input type="range" id="volume" min="0" max="100" value="100">
+          <span class="valor" id="volumeValor">100%</span>
+        </div>
+      </div>
+      <label class="repetir" id="repetirCaixa">
+        <input type="checkbox" id="repetir">
+        <span>🔁 Repetir</span>
+      </label>
+    </div>
   </div>
 
-  <ul class="lista" id="lista"></ul>
-  <p class="vazio" id="vazio" style="display:none">Nenhuma música na biblioteca ainda.</p>
+  <div class="bloco">
+    <div class="titulo-bloco">Escolha a faixa</div>
+    <ul class="lista" id="lista"></ul>
+    <p class="vazio" id="vazio" style="display:none">Nenhuma música na biblioteca ainda.</p>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
