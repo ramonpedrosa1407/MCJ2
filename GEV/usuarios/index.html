@@ -162,6 +162,9 @@
   }
   .pessoa-acoes button:hover { background: rgba(255,255,255,.16); }
   .pessoa-acoes button.excluir { background: rgba(122,46,46,.5); color: #FFD9D9; }
+  .pessoa-acoes button.enviar-acesso { background: rgba(76,175,125,.22); color: #8FE3B4; }
+  .pessoa-acoes button.enviar-acesso:disabled { opacity: .35; cursor: not-allowed; }
+  .pessoa-acoes button.enviar-acesso.enviado { background: #4CAF7D; color: #06210F; font-weight: bold; }
   .vazio { opacity: .5; font-size: 14px; text-align: center; padding: 20px 0; font-family: -apple-system, sans-serif; }
   .aviso {
     font-size: 12px;
@@ -547,6 +550,41 @@ function montarPessoa(p) {
       montarEdicao(p, div);
     };
     acoes.appendChild(bEditar);
+
+    // gera uma senha nova e manda por e-mail — serve para o primeiro envio
+    // e para quem esqueceu a senha
+    if (souAdmin) {
+      var bAcesso = document.createElement('button');
+      bAcesso.className = 'enviar-acesso';
+      bAcesso.textContent = '✉️ Enviar acesso';
+      bAcesso.title = p.email
+        ? 'Gera uma senha nova e envia para ' + p.email
+        : 'Precisa de e-mail cadastrado';
+      bAcesso.disabled = !p.email;
+      bAcesso.onclick = async function () {
+        if (!confirm('Gerar uma senha nova para ' + p.nome + ' e enviar para ' + p.email + '?\n\n' +
+                     'A senha atual dessa pessoa deixa de valer na hora.')) return;
+        bAcesso.disabled = true;
+        var textoAntes = bAcesso.textContent;
+        bAcesso.textContent = 'enviando...';
+        var r = await sb.functions.invoke('gev-reenviar-acesso', {
+          body: { perfil_id: p.id, primeira_vez: true }
+        });
+        var resposta = r.data || {};
+        if (r.error || resposta.erro) {
+          bAcesso.disabled = false;
+          bAcesso.textContent = textoAntes;
+          alert(resposta.erro || 'Não consegui enviar.' +
+                (resposta.senha_para_entregar
+                  ? '\n\nA senha nova é: ' + resposta.senha_para_entregar + ' — entregue por outro meio.'
+                  : ''));
+          return;
+        }
+        bAcesso.textContent = '✓ enviado';
+        bAcesso.classList.add('enviado');
+      };
+      acoes.appendChild(bAcesso);
+    }
 
     if (souMaster && p.id !== meuId) {
       var bExcluir = document.createElement('button');
