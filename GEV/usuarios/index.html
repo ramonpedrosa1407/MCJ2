@@ -120,6 +120,7 @@
   .tag.coordenador { background: #4CAF7D; color: #06210F; font-weight: bold; }
   .tag.CG { background: rgba(201,162,39,.28); color: #E8C86A; }
   .tag.CL { background: rgba(76,175,125,.25); color: #7FE0A8; }
+  .tag.midia { background: rgba(122,92,200,.3); color: #C7B4FF; }
 
   .contato { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.08); }
   .contato a, .contato span {
@@ -202,6 +203,13 @@
         <option value="coordenador">Coordenador (administra tudo)</option>
       </select>
     </div>
+    <div class="campo" id="campoMidiaNovo" style="display:none"><label>Acesso à mídia</label>
+      <select id="nMidia">
+        <option value="nenhum">Sem acesso à mídia</option>
+        <option value="controle">Só o Controle remoto</option>
+        <option value="completo">Completo — controle, exibidor e biblioteca</option>
+      </select>
+    </div>
     <div class="form-acoes">
       <span class="status" id="nStatus"></span>
       <button class="btn-cancelar" id="nCancelar">Cancelar</button>
@@ -229,6 +237,14 @@ var GRUPOS = ['GEV', 'GEVRJ', 'GEVSP', 'GEVSSA'];
 var NOME_GRUPO = { GEV: 'GEV — geral', GEVRJ: 'GEVRJ — Rio de Janeiro', GEVSP: 'GEVSP — São Paulo', GEVSSA: 'GEVSSA — Salvador' };
 var NOME_FUNCAO = { CG: 'Coordenação Geral', CL: 'Coordenação Local', membro: 'Participante' };
 var NOME_PAPEL = { master: 'master', coordenador: 'coordenador', usuario: 'participante' };
+
+// Acesso à mídia é concedido pessoa a pessoa, separado do papel.
+var OPCOES_MIDIA = [
+  ['nenhum', 'Sem acesso à mídia'],
+  ['controle', 'Só o Controle remoto'],
+  ['completo', 'Completo — controle, exibidor e biblioteca']
+];
+var NOME_MIDIA = { nenhum: '', controle: '📲 controle remoto', completo: '🎬 mídia completa' };
 
 function iniciais(nome) {
   var p = (nome || '?').trim().split(/\s+/);
@@ -274,7 +290,8 @@ document.getElementById('nSalvar').addEventListener('click', async function () {
     telefone: document.getElementById('nTelefone').value.trim(),
     grupo: document.getElementById('nGrupo').value,
     funcao: document.getElementById('nFuncao').value,
-    papel: souMaster ? document.getElementById('nPapel').value : 'usuario'
+    papel: souMaster ? document.getElementById('nPapel').value : 'usuario',
+    acesso_midia: souMaster ? document.getElementById('nMidia').value : 'nenhum'
   };
 
   var r = await sb.functions.invoke('gev-criar-usuario', { body: corpo });
@@ -337,7 +354,7 @@ function montarEdicao(p, cartao) {
   var cEmail = campo('E-mail', p.email);
   var cTelefone = campo('Telefone', p.telefone);
 
-  var cGrupo = null, cFuncao = null, cPapel = null;
+  var cGrupo = null, cFuncao = null, cPapel = null, cMidia = null;
   if (souMaster) {
     cGrupo = selecao('Núcleo', GRUPOS.map(function (g) { return [g, NOME_GRUPO[g]]; }), p.grupo);
     cFuncao = selecao('Função', [['membro', 'Participante'], ['CL', 'CL — Coordenação Local'], ['CG', 'CG — Coordenação Geral']], p.funcao);
@@ -346,6 +363,7 @@ function montarEdicao(p, cartao) {
       ['coordenador', 'Coordenador — administra tudo'],
       ['master', 'Master — controle total, muda papéis']
     ], p.papel);
+    cMidia = selecao('Acesso à mídia', OPCOES_MIDIA, p.acesso_midia || 'nenhum');
   }
 
   var acoes = document.createElement('div');
@@ -369,6 +387,7 @@ function montarEdicao(p, cartao) {
       mudancas.grupo = cGrupo.value;
       mudancas.funcao = cFuncao.value;
       mudancas.papel = cPapel.value;
+      mudancas.acesso_midia = cMidia.value;
       if (mudancas.papel === 'master' && p.papel !== 'master' &&
           !confirm('Tornar ' + p.nome + ' MASTER? Essa pessoa passa a poder mudar o papel de qualquer um, inclusive o seu.')) {
         return;
@@ -438,6 +457,13 @@ function montarPessoa(p) {
     tFuncao.title = NOME_FUNCAO[p.funcao];
     tags.appendChild(tFuncao);
   }
+  var nivelMidia = p.acesso_midia || 'nenhum';
+  if (nivelMidia !== 'nenhum') {
+    var tMidia = document.createElement('span');
+    tMidia.className = 'tag midia';
+    tMidia.textContent = NOME_MIDIA[nivelMidia];
+    tags.appendChild(tMidia);
+  }
 
   topo.appendChild(av);
   topo.appendChild(quem);
@@ -504,7 +530,8 @@ function desenhar() {
   var filtrados = todos.filter(function (p) {
     if (!termo) return true;
     return [p.nome, p.usuario, p.email, p.telefone, p.grupo, p.funcao,
-            NOME_GRUPO[p.grupo], NOME_FUNCAO[p.funcao], NOME_PAPEL[p.papel]]
+            NOME_GRUPO[p.grupo], NOME_FUNCAO[p.funcao], NOME_PAPEL[p.papel],
+            NOME_MIDIA[p.acesso_midia || 'nenhum']]
       .filter(Boolean).join(' ').toLowerCase().indexOf(termo) !== -1;
   });
 
@@ -556,7 +583,7 @@ function desenhar() {
 
 async function carregar() {
   var r = await sb.from('gev_perfis')
-    .select('id, nome, usuario, papel, email, telefone, grupo, funcao')
+    .select('id, nome, usuario, papel, email, telefone, grupo, funcao, acesso_midia')
     .order('funcao', { ascending: true })
     .order('nome', { ascending: true });
   if (r.error) {
@@ -590,6 +617,7 @@ GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
   GEV.montarNav('nav', 'usuarios/', perfil);
   document.getElementById('btnNovo').style.display = 'block';
   document.getElementById('campoPapelNovo').style.display = souMaster ? 'block' : 'none';
+  document.getElementById('campoMidiaNovo').style.display = souMaster ? 'block' : 'none';
   carregar();
 });
 </script>

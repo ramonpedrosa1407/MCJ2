@@ -381,7 +381,7 @@ async function conectar() {
   }, 5000);
 }
 
-GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
+GEV.exigirMidia('completo').then(function (perfil) {
   if (!perfil) return;
   GEV.montarNav('nav', 'exibidor/', perfil);
   conectar().catch(function (e) {

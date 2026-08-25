@@ -148,7 +148,7 @@ document.getElementById('arquivo').addEventListener('change', async function (e)
   carregar();
 });
 
-GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
+GEV.exigirMidia('completo').then(function (perfil) {
   if (perfil) { GEV.montarNav('nav', 'biblioteca/', perfil); carregar(); }
 });
 </script>

@@ -419,7 +419,7 @@ document.getElementById('pararTudo').onclick = async function () {
   carregar();
 };
 
-GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
+GEV.exigirMidia('controle').then(function (perfil) {
   if (perfil) {
     GEV.montarNav('nav', 'disparador/', perfil);
     carregar();

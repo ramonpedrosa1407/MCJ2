@@ -66,29 +66,64 @@
     return normalizarUsuario(usuario) + '@gev.local';
   }
 
-  // Menu unico do GEV. O participante comum so enxerga o mural e a propria conta;
-  // as ferramentas de reuniao ficam com a coordenacao.
+  // Menu unico do GEV. O que cada aba exige:
+  //   todos            -> qualquer pessoa logada
+  //   midia-controle   -> acesso a midia 'controle' ou 'completo'
+  //   midia-completo   -> acesso a midia 'completo'
+  //   coordenacao      -> coordenador ou master
   var ITENS_MENU = [
-    { rota: 'mural/',       icone: '🗓️', titulo: 'Mural',         soCoordenacao: false },
-    { rota: 'conta/',       icone: '👤', titulo: 'Minha conta',   soCoordenacao: false },
-    { rota: 'disparador/',  icone: '📲', titulo: 'Controle remoto', soCoordenacao: true },
-    { rota: 'exibidor/',    icone: '🔊', titulo: 'Exibidor',      soCoordenacao: true },
-    { rota: 'biblioteca/',  icone: '🎵', titulo: 'Biblioteca',    soCoordenacao: true },
-    { rota: 'usuarios/',    icone: '👥', titulo: 'Participantes', soCoordenacao: true }
+    { rota: 'mural/',       icone: '🗓️', titulo: 'Mural',           exige: 'todos' },
+    { rota: 'conta/',       icone: '👤', titulo: 'Minha conta',     exige: 'todos' },
+    { rota: 'disparador/',  icone: '📲', titulo: 'Controle remoto', exige: 'midia-controle' },
+    { rota: 'exibidor/',    icone: '🔊', titulo: 'Exibidor',        exige: 'midia-completo' },
+    { rota: 'biblioteca/',  icone: '🎵', titulo: 'Biblioteca',      exige: 'midia-completo' },
+    { rota: 'usuarios/',    icone: '👥', titulo: 'Participantes',   exige: 'coordenacao' }
   ];
 
   function ehCoordenacao(perfil) {
     return !!perfil && (perfil.papel === 'master' || perfil.papel === 'coordenador');
   }
 
+  // Acesso a midia e concedido pessoa a pessoa, em niveis.
+  // O master tem sempre completo, para nunca ficar trancado para fora.
+  function nivelMidia(perfil) {
+    if (!perfil) return 'nenhum';
+    if (perfil.papel === 'master') return 'completo';
+    return perfil.acesso_midia || 'nenhum';
+  }
+
+  function podeMidia(perfil, nivelPedido) {
+    var nivel = nivelMidia(perfil);
+    if (nivel === 'completo') return true;
+    return nivel === 'controle' && nivelPedido === 'controle';
+  }
+
+  function podeVer(item, perfil) {
+    if (item.exige === 'coordenacao') return ehCoordenacao(perfil);
+    if (item.exige === 'midia-controle') return podeMidia(perfil, 'controle');
+    if (item.exige === 'midia-completo') return podeMidia(perfil, 'completo');
+    return true;
+  }
+
+  // usar nas paginas de midia no lugar do exigirAcesso por papel
+  async function exigirMidia(nivelPedido) {
+    var perfil = await exigirAcesso();
+    if (!perfil) return null;
+    if (!podeMidia(perfil, nivelPedido || 'completo')) {
+      alert('Seu acesso não inclui esta área. Fale com a coordenação.');
+      window.location.href = raizRelativa() + 'mural/';
+      return null;
+    }
+    return perfil;
+  }
+
   // destino: elemento ou id. rotaAtiva: ex 'mural/'
   function montarNav(destino, rotaAtiva, perfil) {
     var nav = typeof destino === 'string' ? document.getElementById(destino) : destino;
     if (!nav) return;
-    var coordenacao = ehCoordenacao(perfil);
     nav.innerHTML = '';
     ITENS_MENU.forEach(function (i) {
-      if (i.soCoordenacao && !coordenacao) return;
+      if (!podeVer(i, perfil)) return;
       var a = document.createElement('a');
       a.href = raizRelativa() + i.rota;
       a.textContent = i.icone + ' ' + i.titulo;
@@ -109,7 +144,10 @@
     getSessao: getSessao,
     getPerfil: getPerfil,
     exigirAcesso: exigirAcesso,
+    exigirMidia: exigirMidia,
     ehCoordenacao: ehCoordenacao,
+    podeMidia: podeMidia,
+    nivelMidia: nivelMidia,
     montarNav: montarNav,
     logout: logout,
     normalizarUsuario: normalizarUsuario,
