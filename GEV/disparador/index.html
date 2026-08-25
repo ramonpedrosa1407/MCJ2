@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Grupo Evoluir · Disparador</title>
+<title>Grupo Evoluir · Controle remoto</title>
 <link rel="stylesheet" href="../assets/gev-style.css">
 <style>
   body { align-items: flex-start; }
@@ -116,12 +116,8 @@
 <body>
 <div class="card">
   <a class="voltar" href="../mural/">&larr; voltar ao mural</a>
-  <div class="gev-nav">
-    <a href="../disparador/" class="ativo">📲 Disparador</a>
-    <a href="../mural/">🗓️ Mural</a>
-    <a href="../exibidor/">🔊 Exibidor</a>
-  </div>
-  <h1>Disparador</h1>
+  <div class="gev-nav" id="nav"></div>
+  <h1>Controle remoto</h1>
   <p class="sub">▶ toca · ⏸ pausa · ⏹ para</p>
 
   <div class="tocando-agora" id="tocandoAgora" style="display:none">
@@ -318,8 +314,9 @@ document.getElementById('pararTudo').onclick = async function () {
   carregar();
 };
 
-GEV.exigirAcesso(['master', 'coordenador', 'usuario']).then(function (perfil) {
+GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
   if (perfil) {
+    GEV.montarNav('nav', 'disparador/', perfil);
     carregar();
     setInterval(carregar, 4000); // rede instável no celular -> reforça o estado periodicamente
 

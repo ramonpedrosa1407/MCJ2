@@ -36,11 +36,7 @@
 </head>
 <body>
 <div class="card">
-  <div class="gev-nav">
-    <a href="../disparador/">📲 Disparador</a>
-    <a href="../mural/">🗓️ Mural</a>
-    <a href="../exibidor/" class="ativo">🔊 Exibidor</a>
-  </div>
+  <div class="gev-nav" id="nav"></div>
   <div class="disco" id="disco">🎶</div>
   <h1>Grupo Evoluir</h1>
   <div class="nome" id="nome">aguardando...</div>
@@ -111,7 +107,7 @@ function aplicarEstado(row) {
   ultimoComando = row.disparado_em;
 }
 
-// envia a posição atual pro Disparador poder mostrar a barrinha de progresso
+// envia a posição atual pro Controle remoto poder mostrar a barrinha de progresso
 var ultimoEnvioPosicao = 0;
 player.addEventListener('timeupdate', function () {
   var agora = Date.now();
@@ -155,7 +151,9 @@ document.getElementById('iniciar').onclick = async function () {
   }, 3000);
 };
 
-GEV.exigirAcesso(['master', 'coordenador', 'usuario']);
+GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
+  if (perfil) GEV.montarNav('nav', 'exibidor/', perfil);
+});
 </script>
 </body>
 </html>

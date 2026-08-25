@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grupo Evoluir · Minha conta</title>
+<link rel="stylesheet" href="../assets/gev-style.css">
+<style>
+  body { align-items: flex-start; }
+  .card { max-width: 560px; text-align: left; margin-top: 24px; }
+  h1 { text-align: center; }
+  .sub { text-align: center; }
+  .sair { display: inline-block; margin-bottom: 18px; color: rgba(244,240,255,.5); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; cursor: pointer; }
+
+  .bloco {
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.15);
+    margin-bottom: 20px;
+  }
+  .bloco h2 { font-size: 17px; margin-bottom: 6px; }
+  .bloco .explica { font-size: 13px; opacity: .55; margin-bottom: 14px; font-family: -apple-system, sans-serif; line-height: 1.45; }
+
+  .identidade { display: flex; align-items: center; gap: 13px; margin-bottom: 16px; }
+  .avatar {
+    width: 52px; height: 52px;
+    flex: none;
+    border-radius: 50%;
+    background: #C9A227;
+    color: #1A1033;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 19px;
+  }
+  .identidade .quem { flex: 1; min-width: 0; font-family: -apple-system, sans-serif; }
+  .identidade .nome { font-size: 17px; font-weight: bold; }
+  .identidade .detalhe { font-size: 12px; opacity: .55; margin-top: 2px; }
+  .tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+  .tag { font-size: 10px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.12); font-family: -apple-system, sans-serif; }
+  .tag.master { background: #C9A227; color: #1A1033; font-weight: bold; }
+  .tag.coordenador { background: #4CAF7D; color: #06210F; font-weight: bold; }
+
+  .campo { margin-bottom: 12px; }
+  .campo label { display: block; font-size: 12px; opacity: .6; margin-bottom: 4px; font-family: -apple-system, sans-serif; }
+  .campo input {
+    width: 100%;
+    padding: 11px 13px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.06);
+    color: #F4F0FF;
+    font-family: -apple-system, sans-serif;
+    font-size: 15px;
+  }
+  .campo input:disabled { opacity: .45; cursor: not-allowed; }
+  .campo .dica { font-size: 11px; opacity: .45; margin-top: 4px; font-family: -apple-system, sans-serif; }
+
+  .btn {
+    width: 100%;
+    padding: 13px;
+    background: #C9A227;
+    color: #1A1033;
+    font-weight: bold;
+    border-radius: 10px;
+    font-family: -apple-system, sans-serif;
+    font-size: 15px;
+    margin-top: 4px;
+  }
+  .btn:disabled { opacity: .45; }
+  .status { font-size: 13px; margin-top: 10px; min-height: 18px; font-family: -apple-system, sans-serif; opacity: .8; text-align: center; }
+  .status.ok { color: #7FE0A8; opacity: 1; }
+  .status.erro { color: #FF8A8A; opacity: 1; }
+</style>
+</head>
+<body>
+<div class="card">
+  <span class="sair" id="sair">sair da conta</span>
+  <div class="gev-nav" id="nav"></div>
+  <h1>Minha conta</h1>
+
+  <div class="bloco">
+    <div class="identidade">
+      <div class="avatar" id="avatar">—</div>
+      <div class="quem">
+        <div class="nome" id="meuNome">—</div>
+        <div class="detalhe" id="meuLogin">—</div>
+        <div class="tags" id="minhasTags"></div>
+      </div>
+    </div>
+    <p class="explica" id="explicaGrupo"></p>
+  </div>
+
+  <div class="bloco">
+    <h2>Meus dados</h2>
+    <p class="explica">Mantenha seu contato atualizado para o grupo conseguir falar com você.</p>
+    <div class="campo">
+      <label>Nome</label>
+      <input type="text" id="cNome" placeholder="Seu nome">
+    </div>
+    <div class="campo">
+      <label>E-mail</label>
+      <input type="text" id="cEmail" placeholder="seu@email.com">
+    </div>
+    <div class="campo">
+      <label>Telefone</label>
+      <input type="text" id="cTelefone" placeholder="(21) 99999-0000">
+    </div>
+    <div class="campo">
+      <label>Login (não muda)</label>
+      <input type="text" id="cLogin" disabled>
+      <div class="dica">É com esse login que você entra — não com o e-mail.</div>
+    </div>
+    <button class="btn" id="salvarDados">Salvar meus dados</button>
+    <div class="status" id="statusDados"></div>
+  </div>
+
+  <div class="bloco">
+    <h2>Trocar minha senha</h2>
+    <p class="explica">Escolha uma senha que você lembre com facilidade. Mínimo de 6 caracteres.</p>
+    <div class="campo">
+      <label>Nova senha</label>
+      <input type="password" id="cSenha1" placeholder="nova senha" autocomplete="new-password">
+    </div>
+    <div class="campo">
+      <label>Repita a nova senha</label>
+      <input type="password" id="cSenha2" placeholder="repita para conferir" autocomplete="new-password">
+    </div>
+    <div class="campo">
+      <label><input type="checkbox" id="verSenha" style="width:auto;margin-right:6px"> mostrar o que estou digitando</label>
+    </div>
+    <button class="btn" id="salvarSenha">Trocar senha</button>
+    <div class="status" id="statusSenha"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/gev-config.js"></script>
+<script src="../assets/gev-common.js"></script>
+<script>
+var sb = GEV.sb;
+var meu = null;
+
+var NOME_GRUPO = {
+  GEV: 'GEV — geral',
+  GEVRJ: 'GEVRJ — Rio de Janeiro',
+  GEVSP: 'GEVSP — São Paulo',
+  GEVSSA: 'GEVSSA — Salvador'
+};
+var NOME_FUNCAO = { CG: 'Coordenação Geral', CL: 'Coordenação Local', membro: 'Participante' };
+var NOME_PAPEL = { master: 'master', coordenador: 'coordenador', usuario: 'participante' };
+
+function iniciais(nome) {
+  var p = (nome || '?').trim().split(/\s+/);
+  var t = p[0].charAt(0);
+  if (p.length > 1) t += p[p.length - 1].charAt(0);
+  return t.toUpperCase();
+}
+
+function pintar() {
+  document.getElementById('avatar').textContent = iniciais(meu.nome);
+  document.getElementById('meuNome').textContent = meu.nome;
+  document.getElementById('meuLogin').textContent = 'login: ' + meu.usuario;
+
+  var tags = document.getElementById('minhasTags');
+  tags.innerHTML = '';
+  var tGrupo = document.createElement('span');
+  tGrupo.className = 'tag';
+  tGrupo.textContent = meu.grupo;
+  tags.appendChild(tGrupo);
+  if (meu.funcao !== 'membro') {
+    var tFuncao = document.createElement('span');
+    tFuncao.className = 'tag';
+    tFuncao.textContent = meu.funcao;
+    tags.appendChild(tFuncao);
+  }
+  if (meu.papel !== 'usuario') {
+    var tPapel = document.createElement('span');
+    tPapel.className = 'tag ' + meu.papel;
+    tPapel.textContent = NOME_PAPEL[meu.papel];
+    tags.appendChild(tPapel);
+  }
+
+  document.getElementById('explicaGrupo').textContent =
+    'Você participa do ' + (NOME_GRUPO[meu.grupo] || meu.grupo) + ', como ' +
+    (NOME_FUNCAO[meu.funcao] || meu.funcao).toLowerCase() + '. ' +
+    'Para mudar de núcleo ou de função, fale com a coordenação.';
+
+  document.getElementById('cNome').value = meu.nome || '';
+  document.getElementById('cEmail').value = meu.email || '';
+  document.getElementById('cTelefone').value = meu.telefone || '';
+  document.getElementById('cLogin').value = meu.usuario || '';
+}
+
+document.getElementById('salvarDados').addEventListener('click', async function () {
+  var statusEl = document.getElementById('statusDados');
+  var nome = document.getElementById('cNome').value.trim();
+  var email = document.getElementById('cEmail').value.trim();
+  var telefone = document.getElementById('cTelefone').value.trim();
+
+  if (!nome) {
+    statusEl.className = 'status erro';
+    statusEl.textContent = 'O nome não pode ficar vazio.';
+    return;
+  }
+  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    statusEl.className = 'status erro';
+    statusEl.textContent = 'Esse e-mail não parece válido.';
+    return;
+  }
+
+  this.disabled = true;
+  statusEl.className = 'status';
+  statusEl.textContent = 'Salvando...';
+
+  var r = await sb.from('gev_perfis')
+    .update({ nome: nome, email: email || null, telefone: telefone || null })
+    .eq('id', meu.id);
+
+  this.disabled = false;
+  if (r.error) {
+    statusEl.className = 'status erro';
+    statusEl.textContent = 'Não consegui salvar: ' + r.error.message;
+    return;
+  }
+  meu.nome = nome;
+  meu.email = email || null;
+  meu.telefone = telefone || null;
+  pintar();
+  statusEl.className = 'status ok';
+  statusEl.textContent = 'Dados salvos!';
+  setTimeout(function () { statusEl.textContent = ''; }, 3000);
+});
+
+document.getElementById('verSenha').addEventListener('change', function () {
+  var tipo = this.checked ? 'text' : 'password';
+  document.getElementById('cSenha1').type = tipo;
+  document.getElementById('cSenha2').type = tipo;
+});
+
+document.getElementById('salvarSenha').addEventListener('click', async function () {
+  var statusEl = document.getElementById('statusSenha');
+  var s1 = document.getElementById('cSenha1').value;
+  var s2 = document.getElementById('cSenha2').value;
+
+  if (s1.length < 6) {
+    statusEl.className = 'status erro';
+    statusEl.textContent = 'A senha precisa ter pelo menos 6 caracteres.';
+    return;
+  }
+  if (s1 !== s2) {
+    statusEl.className = 'status erro';
+    statusEl.textContent = 'As duas senhas não são iguais.';
+    return;
+  }
+
+  this.disabled = true;
+  statusEl.className = 'status';
+  statusEl.textContent = 'Trocando...';
+
+  var r = await sb.auth.updateUser({ password: s1 });
+
+  this.disabled = false;
+  if (r.error) {
+    statusEl.className = 'status erro';
+    statusEl.textContent = 'Não consegui trocar: ' + r.error.message;
+    return;
+  }
+  document.getElementById('cSenha1').value = '';
+  document.getElementById('cSenha2').value = '';
+  statusEl.className = 'status ok';
+  statusEl.textContent = 'Senha trocada! Use a nova da próxima vez que entrar.';
+});
+
+document.getElementById('sair').addEventListener('click', function () { GEV.logout(); });
+
+GEV.exigirAcesso().then(function (perfil) {
+  if (!perfil) return;
+  meu = perfil;
+  GEV.montarNav('nav', 'conta/', perfil);
+  pintar();
+});
+</script>
+</body>
+</html>

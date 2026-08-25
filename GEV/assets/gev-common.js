@@ -66,6 +66,37 @@
     return normalizarUsuario(usuario) + '@gev.local';
   }
 
+  // Menu unico do GEV. O participante comum so enxerga o mural e a propria conta;
+  // as ferramentas de reuniao ficam com a coordenacao.
+  var ITENS_MENU = [
+    { rota: 'mural/',       icone: '🗓️', titulo: 'Mural',         soCoordenacao: false },
+    { rota: 'conta/',       icone: '👤', titulo: 'Minha conta',   soCoordenacao: false },
+    { rota: 'disparador/',  icone: '📲', titulo: 'Controle remoto', soCoordenacao: true },
+    { rota: 'exibidor/',    icone: '🔊', titulo: 'Exibidor',      soCoordenacao: true },
+    { rota: 'biblioteca/',  icone: '🎵', titulo: 'Biblioteca',    soCoordenacao: true },
+    { rota: 'usuarios/',    icone: '👥', titulo: 'Participantes', soCoordenacao: true }
+  ];
+
+  function ehCoordenacao(perfil) {
+    return !!perfil && (perfil.papel === 'master' || perfil.papel === 'coordenador');
+  }
+
+  // destino: elemento ou id. rotaAtiva: ex 'mural/'
+  function montarNav(destino, rotaAtiva, perfil) {
+    var nav = typeof destino === 'string' ? document.getElementById(destino) : destino;
+    if (!nav) return;
+    var coordenacao = ehCoordenacao(perfil);
+    nav.innerHTML = '';
+    ITENS_MENU.forEach(function (i) {
+      if (i.soCoordenacao && !coordenacao) return;
+      var a = document.createElement('a');
+      a.href = raizRelativa() + i.rota;
+      a.textContent = i.icone + ' ' + i.titulo;
+      if (i.rota === rotaAtiva) a.className = 'ativo';
+      nav.appendChild(a);
+    });
+  }
+
   function publicUrlAudio(path) {
     return sb.storage.from(C.bucketAudio).getPublicUrl(path).data.publicUrl;
   }
@@ -78,6 +109,8 @@
     getSessao: getSessao,
     getPerfil: getPerfil,
     exigirAcesso: exigirAcesso,
+    ehCoordenacao: ehCoordenacao,
+    montarNav: montarNav,
     logout: logout,
     normalizarUsuario: normalizarUsuario,
     emailDoUsuario: emailDoUsuario,

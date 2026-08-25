@@ -198,7 +198,7 @@
     </div>
     <div class="campo" id="campoPapelNovo" style="display:none"><label>Acesso no sistema</label>
       <select id="nPapel">
-        <option value="usuario">Participante (usa mural, disparador, exibidor)</option>
+        <option value="usuario">Participante (vê o mural e edita o próprio perfil)</option>
         <option value="coordenador">Coordenador (administra tudo)</option>
       </select>
     </div>
@@ -229,27 +229,6 @@ var GRUPOS = ['GEV', 'GEVRJ', 'GEVSP', 'GEVSSA'];
 var NOME_GRUPO = { GEV: 'GEV — geral', GEVRJ: 'GEVRJ — Rio de Janeiro', GEVSP: 'GEVSP — São Paulo', GEVSSA: 'GEVSSA — Salvador' };
 var NOME_FUNCAO = { CG: 'Coordenação Geral', CL: 'Coordenação Local', membro: 'Participante' };
 var NOME_PAPEL = { master: 'master', coordenador: 'coordenador', usuario: 'participante' };
-
-function montarNav() {
-  var itens = [
-    { rota: '../mural/', icone: '🗓️', titulo: 'Mural' },
-    { rota: '../disparador/', icone: '📲', titulo: 'Disparador' },
-    { rota: '../exibidor/', icone: '🔊', titulo: 'Exibidor' }
-  ];
-  if (souAdmin) {
-    itens.push({ rota: '../biblioteca/', icone: '🎵', titulo: 'Biblioteca' });
-    itens.push({ rota: '../usuarios/', icone: '👥', titulo: 'Participantes', ativo: true });
-  }
-  var nav = document.getElementById('nav');
-  nav.innerHTML = '';
-  itens.forEach(function (i) {
-    var a = document.createElement('a');
-    a.href = i.rota;
-    a.textContent = i.icone + ' ' + i.titulo;
-    if (i.ativo) a.className = 'ativo';
-    nav.appendChild(a);
-  });
-}
 
 function iniciais(nome) {
   var p = (nome || '?').trim().split(/\s+/);
@@ -363,7 +342,7 @@ function montarEdicao(p, cartao) {
     cGrupo = selecao('Núcleo', GRUPOS.map(function (g) { return [g, NOME_GRUPO[g]]; }), p.grupo);
     cFuncao = selecao('Função', [['membro', 'Participante'], ['CL', 'CL — Coordenação Local'], ['CG', 'CG — Coordenação Geral']], p.funcao);
     cPapel = selecao('Acesso no sistema', [
-      ['usuario', 'Participante — usa mural, disparador, exibidor'],
+      ['usuario', 'Participante — vê o mural e edita o próprio perfil'],
       ['coordenador', 'Coordenador — administra tudo'],
       ['master', 'Master — controle total, muda papéis']
     ], p.papel);
@@ -608,7 +587,7 @@ GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
   document.getElementById('aviso').textContent = souMaster
     ? 'Só o master muda núcleo, função e acesso. Coordenadores editam apenas os dados de contato.'
     : 'Para mudar núcleo, função ou nível de acesso de alguém, fale com o master.';
-  montarNav();
+  GEV.montarNav('nav', 'usuarios/', perfil);
   document.getElementById('btnNovo').style.display = 'block';
   document.getElementById('campoPapelNovo').style.display = souMaster ? 'block' : 'none';
   carregar();

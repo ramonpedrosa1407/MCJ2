@@ -287,27 +287,6 @@ var souAdmin = false;
 var meuId = null;
 var editandoId = null;
 
-function montarNav() {
-  var itens = [
-    { rota: '../mural/', icone: '🗓️', titulo: 'Mural', ativo: true },
-    { rota: '../disparador/', icone: '📲', titulo: 'Disparador' },
-    { rota: '../exibidor/', icone: '🔊', titulo: 'Exibidor' }
-  ];
-  if (souAdmin) {
-    itens.push({ rota: '../biblioteca/', icone: '🎵', titulo: 'Biblioteca' });
-    itens.push({ rota: '../usuarios/', icone: '👥', titulo: 'Participantes' });
-  }
-  var nav = document.getElementById('nav');
-  nav.innerHTML = '';
-  itens.forEach(function (i) {
-    var a = document.createElement('a');
-    a.href = i.rota;
-    a.textContent = i.icone + ' ' + i.titulo;
-    if (i.ativo) a.className = 'ativo';
-    nav.appendChild(a);
-  });
-}
-
 function formatarData(iso) {
   if (!iso) return null;
   var p = iso.split('-');
@@ -844,9 +823,9 @@ document.getElementById('sair').addEventListener('click', function () { GEV.logo
 GEV.exigirAcesso(['master', 'coordenador', 'usuario']).then(function (perfil) {
   if (!perfil) return;
   meuId = perfil.id;
-  souAdmin = perfil.papel === 'master' || perfil.papel === 'coordenador';
+  souAdmin = GEV.ehCoordenacao(perfil);
   document.getElementById('saudacao').textContent = 'Olá, ' + perfil.nome;
-  montarNav();
+  GEV.montarNav('nav', 'mural/', perfil);
   document.getElementById('btnNova').style.display = souAdmin ? 'block' : 'none';
   carregarFeed();
 });
