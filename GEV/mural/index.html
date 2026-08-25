@@ -652,8 +652,8 @@ var quantosPorDestino = null;
 
 async function contarDestinatarios() {
   if (quantosPorDestino) return quantosPorDestino;
-  var r = await sb.from('gev_perfis').select('grupo, email').not('email', 'is', null);
-  var contagem = { todos: 0, GEV: 0, GEVRJ: 0, GEVSP: 0, GEVSSA: 0 };
+  var r = await sb.from('gev_perfis').select('grupo, funcao, email').not('email', 'is', null);
+  var contagem = { todos: 0, coordenadores: 0, GEV: 0, GEVRJ: 0, GEVSP: 0, GEVSSA: 0 };
   var vistos = {};
   (r.data || []).forEach(function (p) {
     var e = String(p.email || '').trim().toLowerCase();
@@ -661,6 +661,8 @@ async function contarDestinatarios() {
     vistos[e] = true;
     contagem.todos++;
     if (contagem[p.grupo] !== undefined) contagem[p.grupo]++;
+    // coordenação = geral (CG) + locais (CL)
+    if (p.funcao === 'CG' || p.funcao === 'CL') contagem.coordenadores++;
   });
   quantosPorDestino = contagem;
   return contagem;
@@ -670,6 +672,8 @@ function descreverEnvio(e) {
   var quando = new Date(e.enviado_em).toLocaleDateString('pt-BR');
   var onde = e.destino === 'todos' ? 'todo o GEV'
            : e.destino === 'teste' ? 'só para teste'
+           : e.destino === 'coordenadores' ? 'os coordenadores'
+           : e.destino === 'GEV' ? 'a Coordenação Geral'
            : e.destino;
   return '✉️ enviado para ' + onde + ' · ' + e.quantidade +
          (e.quantidade === 1 ? ' pessoa' : ' pessoas') + ' · ' + quando +
@@ -705,13 +709,19 @@ function montarEnvio(p, cartao, botao) {
   acoes.appendChild(bEnviar);
   box.appendChild(acoes);
 
-  cartao.appendChild(box);
+  // Logo abaixo do cabeçalho, junto do botão que abriu. No fim do cartão ele
+  // cairia depois dos materiais, curtidas e respostas — longe da vista.
+  var cabecalho = cartao.querySelector('.post-topo');
+  if (cabecalho && cabecalho.nextSibling) cartao.insertBefore(box, cabecalho.nextSibling);
+  else cartao.appendChild(box);
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
   contarDestinatarios().then(function (quantos) {
     var LISTA = [
       ['teste', 'Só para mim, como teste', 1],
       ['todos', 'Todo o GEV', quantos.todos],
-      ['GEV', 'GEV — geral', quantos.GEV],
+      ['coordenadores', 'Coordenadores — geral e locais', quantos.coordenadores],
+      ['GEV', 'Coordenação Geral', quantos.GEV],
       ['GEVRJ', 'GEVRJ — Rio de Janeiro', quantos.GEVRJ],
       ['GEVSP', 'GEVSP — São Paulo', quantos.GEVSP],
       ['GEVSSA', 'GEVSSA — Salvador', quantos.GEVSSA]
