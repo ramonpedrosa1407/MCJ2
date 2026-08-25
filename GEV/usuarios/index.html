@@ -3,22 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Grupo Evoluir · Usuários</title>
+<title>Grupo Evoluir · Participantes</title>
 <link rel="stylesheet" href="../assets/gev-style.css">
 <style>
   body { align-items: flex-start; }
-  .card { max-width: 560px; text-align: left; margin-top: 24px; }
+  .card { max-width: 680px; text-align: left; margin-top: 24px; }
   h1 { text-align: center; }
-  .voltar { display: inline-block; margin-bottom: 18px; color: rgba(244,240,255,.6); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; }
+  .sub { text-align: center; }
+  .sair { display: inline-block; margin-bottom: 18px; color: rgba(244,240,255,.5); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; cursor: pointer; }
 
-  .bloco {
+  .resumo { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; font-family: -apple-system, sans-serif; }
+  .resumo div {
+    flex: 1;
+    min-width: 72px;
+    padding: 10px 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    text-align: center;
+  }
+  .resumo .n { font-size: 20px; font-weight: bold; }
+  .resumo .rot { font-size: 11px; opacity: .55; letter-spacing: .04em; }
+
+  .busca {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.06);
+    color: #F4F0FF;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+
+  .btn-novo {
+    width: 100%;
+    padding: 13px;
+    background: #C9A227;
+    color: #1A1033;
+    font-weight: bold;
+    border-radius: 12px;
+    font-family: -apple-system, sans-serif;
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .formulario {
     padding: 18px;
     border-radius: 14px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(201,162,39,.5);
     margin-bottom: 20px;
   }
-  .bloco h2 { font-size: 18px; margin-bottom: 12px; }
+  .formulario h2 { font-size: 17px; margin-bottom: 14px; }
   .campo { margin-bottom: 12px; }
   .campo label { display: block; font-size: 12px; opacity: .6; margin-bottom: 4px; font-family: -apple-system, sans-serif; }
   .campo input, .campo select {
@@ -31,64 +69,150 @@
     font-family: -apple-system, sans-serif;
     font-size: 14px;
   }
-  .criar-btn {
-    padding: 12px 20px;
-    background: #C9A227;
-    color: #1A1033;
-    font-weight: bold;
-    border-radius: 10px;
-    width: 100%;
-  }
-  .status { font-size: 13px; margin-top: 10px; min-height: 18px; font-family: -apple-system, sans-serif; }
-  .status.ok { color: #7FE0A8; }
-  .status.erro { color: #FF8A8A; }
+  .campo select option { background: #1A1033; color: #F4F0FF; }
+  .dupla { display: flex; gap: 10px; }
+  .dupla .campo { flex: 1; }
+  .form-acoes { display: flex; gap: 10px; justify-content: flex-end; align-items: center; margin-top: 6px; }
+  .form-acoes .status { flex: 1; margin: 0; }
+  .btn-ok { padding: 11px 20px; background: #C9A227; color: #1A1033; font-weight: bold; border-radius: 10px; font-family: -apple-system, sans-serif; }
+  .btn-ok:disabled { opacity: .45; }
+  .btn-cancelar { padding: 11px 18px; background: rgba(255,255,255,.1); color: #F4F0FF; border-radius: 10px; font-family: -apple-system, sans-serif; }
+  .status { font-size: 13px; min-height: 18px; font-family: -apple-system, sans-serif; opacity: .8; }
+  .status.ok { color: #7FE0A8; opacity: 1; }
+  .status.erro { color: #FF8A8A; opacity: 1; }
 
-  ul.usuarios { list-style: none; font-family: -apple-system, sans-serif; }
-  li.usuario {
+  .grupo-titulo {
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .45;
+    margin: 22px 0 10px;
     display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
+    justify-content: space-between;
+  }
+
+  .pessoa {
+    padding: 13px 14px;
+    border-radius: 12px;
     background: rgba(255,255,255,.05);
-    margin-bottom: 8px;
+    border: 1px solid rgba(255,255,255,.1);
+    margin-bottom: 9px;
+    font-family: -apple-system, sans-serif;
   }
-  li.usuario .nome { flex: 1; font-size: 14px; }
-  .tag {
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.1);
+  .pessoa-topo { display: flex; align-items: center; gap: 11px; }
+  .avatar {
+    width: 38px; height: 38px;
+    flex: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,.14);
+    color: #F4F0FF;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 14px;
   }
+  .avatar.chefia { background: #C9A227; color: #1A1033; }
+  .pessoa-quem { flex: 1; min-width: 0; }
+  .pessoa-nome { font-size: 15px; font-weight: bold; }
+  .pessoa-login { font-size: 12px; opacity: .5; margin-top: 1px; }
+  .tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .tag { font-size: 10px; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.12); letter-spacing: .03em; }
   .tag.master { background: #C9A227; color: #1A1033; font-weight: bold; }
-  .tag.coordenador { background: #4CAF7D; color: #06210F; }
+  .tag.coordenador { background: #4CAF7D; color: #06210F; font-weight: bold; }
+  .tag.CG { background: rgba(201,162,39,.28); color: #E8C86A; }
+  .tag.CL { background: rgba(76,175,125,.25); color: #7FE0A8; }
+
+  .contato { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.08); }
+  .contato a, .contato span {
+    font-size: 13px;
+    color: #E8C86A;
+    text-decoration: none;
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    word-break: break-all;
+  }
+  .contato a:hover { text-decoration: underline; }
+  .contato .vazio-contato { color: rgba(244,240,255,.35); }
+
+  .pessoa-acoes { display: flex; gap: 6px; margin-top: 10px; }
+  .pessoa-acoes button {
+    padding: 6px 11px;
+    background: rgba(255,255,255,.1);
+    color: rgba(244,240,255,.85);
+    font-size: 12px;
+    border-radius: 7px;
+    font-family: -apple-system, sans-serif;
+  }
+  .pessoa-acoes button:hover { background: rgba(255,255,255,.16); }
+  .pessoa-acoes button.excluir { background: rgba(122,46,46,.5); color: #FFD9D9; }
+  .vazio { opacity: .5; font-size: 14px; text-align: center; padding: 20px 0; font-family: -apple-system, sans-serif; }
+  .aviso {
+    font-size: 12px;
+    opacity: .5;
+    font-family: -apple-system, sans-serif;
+    text-align: center;
+    margin-top: 24px;
+    line-height: 1.5;
+  }
 </style>
 </head>
 <body>
 <div class="card">
-  <a class="voltar" href="../mural/">&larr; voltar ao mural</a>
-  <h1>Gerenciar usuários</h1>
+  <span class="sair" id="sair">sair da conta</span>
+  <div class="gev-nav" id="nav"></div>
+  <h1>Participantes</h1>
+  <p class="sub" id="saudacao"></p>
 
-  <div class="bloco">
-    <h2>Cadastrar novo acesso</h2>
-    <div class="campo"><label>Nome</label><input type="text" id="nome" placeholder="Nome da pessoa"></div>
-    <div class="campo"><label>Usuário (login)</label><input type="text" id="usuario" placeholder="ex: maria, joao2" autocapitalize="none"></div>
-    <div class="campo"><label>Senha (mínimo 6 caracteres)</label><input type="text" id="senha" placeholder="senha de acesso"></div>
-    <div class="campo" id="campoPapel" style="display:none">
-      <label>Papel</label>
-      <select id="papel">
-        <option value="usuario">Usuário (só usa: disparador, mural, exibidor)</option>
+  <div class="resumo" id="resumo"></div>
+  <input type="text" class="busca" id="busca" placeholder="Buscar por nome, login, e-mail ou telefone...">
+
+  <button class="btn-novo" id="btnNovo" style="display:none">➕ Cadastrar participante</button>
+
+  <div class="formulario" id="formNovo" style="display:none">
+    <h2>Novo participante</h2>
+    <div class="campo"><label>Nome completo</label><input type="text" id="nNome" placeholder="ex: Maria Silva"></div>
+    <div class="dupla">
+      <div class="campo"><label>Login (só letras e números)</label><input type="text" id="nLogin" placeholder="ex: maria" autocapitalize="none"></div>
+      <div class="campo"><label>Senha provisória (mín. 6)</label><input type="text" id="nSenha" placeholder="senha de acesso"></div>
+    </div>
+    <div class="dupla">
+      <div class="campo"><label>E-mail</label><input type="text" id="nEmail" placeholder="maria@exemplo.com"></div>
+      <div class="campo"><label>Telefone</label><input type="text" id="nTelefone" placeholder="(21) 99999-0000"></div>
+    </div>
+    <div class="dupla">
+      <div class="campo"><label>Núcleo</label>
+        <select id="nGrupo">
+          <option value="GEV">GEV (geral)</option>
+          <option value="GEVRJ">GEVRJ</option>
+          <option value="GEVSP">GEVSP</option>
+          <option value="GEVSSA">GEVSSA</option>
+        </select>
+      </div>
+      <div class="campo"><label>Função</label>
+        <select id="nFuncao">
+          <option value="membro">Participante</option>
+          <option value="CL">CL — Coordenação Local</option>
+          <option value="CG">CG — Coordenação Geral</option>
+        </select>
+      </div>
+    </div>
+    <div class="campo" id="campoPapelNovo" style="display:none"><label>Acesso no sistema</label>
+      <select id="nPapel">
+        <option value="usuario">Participante (usa mural, disparador, exibidor)</option>
         <option value="coordenador">Coordenador (administra tudo)</option>
       </select>
     </div>
-    <button class="criar-btn" id="criar">Cadastrar</button>
-    <div class="status" id="status"></div>
+    <div class="form-acoes">
+      <span class="status" id="nStatus"></span>
+      <button class="btn-cancelar" id="nCancelar">Cancelar</button>
+      <button class="btn-ok" id="nSalvar">Cadastrar</button>
+    </div>
   </div>
 
-  <div class="bloco">
-    <h2>Já cadastrados</h2>
-    <ul class="usuarios" id="listaUsuarios"></ul>
-  </div>
+  <div id="lista"></div>
+  <p class="vazio" id="vazio" style="display:none">Ninguém encontrado.</p>
+
+  <p class="aviso" id="aviso"></p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -96,53 +220,398 @@
 <script src="../assets/gev-common.js"></script>
 <script>
 var sb = GEV.sb;
+var souAdmin = false;
+var souMaster = false;
+var meuId = null;
+var todos = [];
 
-async function carregarUsuarios() {
-  var r = await sb.from('gev_perfis').select('*').order('criado_em', { ascending: true });
-  var lista = document.getElementById('listaUsuarios');
-  lista.innerHTML = '';
-  (r.data || []).forEach(function (u) {
-    var li = document.createElement('li');
-    li.className = 'usuario';
-    li.innerHTML = '<span class="nome">' + u.nome + ' <small style="opacity:.5">(' + (u.usuario || '—') + ')</small></span><span class="tag ' + u.papel + '">' + u.papel + '</span>';
-    lista.appendChild(li);
+var GRUPOS = ['GEV', 'GEVRJ', 'GEVSP', 'GEVSSA'];
+var NOME_GRUPO = { GEV: 'GEV — geral', GEVRJ: 'GEVRJ — Rio de Janeiro', GEVSP: 'GEVSP — São Paulo', GEVSSA: 'GEVSSA — Salvador' };
+var NOME_FUNCAO = { CG: 'Coordenação Geral', CL: 'Coordenação Local', membro: 'Participante' };
+var NOME_PAPEL = { master: 'master', coordenador: 'coordenador', usuario: 'participante' };
+
+function montarNav() {
+  var itens = [
+    { rota: '../mural/', icone: '🗓️', titulo: 'Mural' },
+    { rota: '../disparador/', icone: '📲', titulo: 'Disparador' },
+    { rota: '../exibidor/', icone: '🔊', titulo: 'Exibidor' }
+  ];
+  if (souAdmin) {
+    itens.push({ rota: '../biblioteca/', icone: '🎵', titulo: 'Biblioteca' });
+    itens.push({ rota: '../usuarios/', icone: '👥', titulo: 'Participantes', ativo: true });
+  }
+  var nav = document.getElementById('nav');
+  nav.innerHTML = '';
+  itens.forEach(function (i) {
+    var a = document.createElement('a');
+    a.href = i.rota;
+    a.textContent = i.icone + ' ' + i.titulo;
+    if (i.ativo) a.className = 'ativo';
+    nav.appendChild(a);
   });
 }
 
-document.getElementById('criar').addEventListener('click', async function () {
-  var statusEl = document.getElementById('status');
+function iniciais(nome) {
+  var p = (nome || '?').trim().split(/\s+/);
+  var t = p[0].charAt(0);
+  if (p.length > 1) t += p[p.length - 1].charAt(0);
+  return t.toUpperCase();
+}
+
+function linkWhatsapp(telefone) {
+  if (!telefone) return null;
+  var digitos = telefone.replace(/\D/g, '');
+  if (!digitos) return null;
+  if (telefone.trim().charAt(0) === '+') return 'https://wa.me/' + digitos;
+  if (digitos.length === 10 || digitos.length === 11) return 'https://wa.me/55' + digitos;
+  return 'https://wa.me/' + digitos;
+}
+
+/* ---------- cadastro ---------- */
+
+document.getElementById('btnNovo').addEventListener('click', function () {
+  document.getElementById('formNovo').style.display = 'block';
+  this.style.display = 'none';
+  document.getElementById('nNome').focus();
+});
+
+document.getElementById('nCancelar').addEventListener('click', function () {
+  document.getElementById('formNovo').style.display = 'none';
+  document.getElementById('btnNovo').style.display = 'block';
+  document.getElementById('nStatus').textContent = '';
+});
+
+document.getElementById('nSalvar').addEventListener('click', async function () {
+  var statusEl = document.getElementById('nStatus');
   statusEl.className = 'status';
   statusEl.textContent = 'Cadastrando...';
+  this.disabled = true;
 
-  var campoPapelVisivel = document.getElementById('campoPapel').style.display !== 'none';
-  var body = {
-    nome: document.getElementById('nome').value.trim(),
-    usuario: document.getElementById('usuario').value.trim(),
-    senha: document.getElementById('senha').value.trim(),
-    papel: campoPapelVisivel ? document.getElementById('papel').value : 'usuario'
+  var corpo = {
+    nome: document.getElementById('nNome').value.trim(),
+    usuario: document.getElementById('nLogin').value.trim(),
+    senha: document.getElementById('nSenha').value.trim(),
+    email: document.getElementById('nEmail').value.trim(),
+    telefone: document.getElementById('nTelefone').value.trim(),
+    grupo: document.getElementById('nGrupo').value,
+    funcao: document.getElementById('nFuncao').value,
+    papel: souMaster ? document.getElementById('nPapel').value : 'usuario'
   };
 
-  var r = await sb.functions.invoke('gev-criar-usuario', { body: body });
+  var r = await sb.functions.invoke('gev-criar-usuario', { body: corpo });
+  this.disabled = false;
+
   if (r.error || (r.data && r.data.erro)) {
     statusEl.className = 'status erro';
     statusEl.textContent = (r.data && r.data.erro) || 'Não foi possível cadastrar.';
     return;
   }
   statusEl.className = 'status ok';
-  statusEl.textContent = 'Cadastrado com sucesso! Login: ' + GEV.normalizarUsuario(body.usuario);
-  document.getElementById('nome').value = '';
-  document.getElementById('usuario').value = '';
-  document.getElementById('senha').value = '';
-  carregarUsuarios();
+  statusEl.textContent = 'Cadastrado! Login: ' + r.data.login;
+  ['nNome', 'nLogin', 'nSenha', 'nEmail', 'nTelefone'].forEach(function (id) {
+    document.getElementById(id).value = '';
+  });
+  carregar();
 });
+
+/* ---------- edição ---------- */
+
+function montarEdicao(p, cartao) {
+  var box = document.createElement('div');
+  box.className = 'formulario';
+  box.style.marginTop = '12px';
+
+  function campo(rotulo, valor, tipo) {
+    var d = document.createElement('div');
+    d.className = 'campo';
+    var l = document.createElement('label');
+    l.textContent = rotulo;
+    var i = document.createElement('input');
+    i.type = tipo || 'text';
+    i.value = valor || '';
+    d.appendChild(l);
+    d.appendChild(i);
+    box.appendChild(d);
+    return i;
+  }
+
+  function selecao(rotulo, opcoes, valor) {
+    var d = document.createElement('div');
+    d.className = 'campo';
+    var l = document.createElement('label');
+    l.textContent = rotulo;
+    var s = document.createElement('select');
+    opcoes.forEach(function (o) {
+      var op = document.createElement('option');
+      op.value = o[0];
+      op.textContent = o[1];
+      if (o[0] === valor) op.selected = true;
+      s.appendChild(op);
+    });
+    d.appendChild(l);
+    d.appendChild(s);
+    box.appendChild(d);
+    return s;
+  }
+
+  var cNome = campo('Nome', p.nome);
+  var cEmail = campo('E-mail', p.email);
+  var cTelefone = campo('Telefone', p.telefone);
+
+  var cGrupo = null, cFuncao = null, cPapel = null;
+  if (souMaster) {
+    cGrupo = selecao('Núcleo', GRUPOS.map(function (g) { return [g, NOME_GRUPO[g]]; }), p.grupo);
+    cFuncao = selecao('Função', [['membro', 'Participante'], ['CL', 'CL — Coordenação Local'], ['CG', 'CG — Coordenação Geral']], p.funcao);
+    cPapel = selecao('Acesso no sistema', [
+      ['usuario', 'Participante — usa mural, disparador, exibidor'],
+      ['coordenador', 'Coordenador — administra tudo'],
+      ['master', 'Master — controle total, muda papéis']
+    ], p.papel);
+  }
+
+  var acoes = document.createElement('div');
+  acoes.className = 'form-acoes';
+  var status = document.createElement('span');
+  status.className = 'status';
+  var bCancelar = document.createElement('button');
+  bCancelar.className = 'btn-cancelar';
+  bCancelar.textContent = 'Cancelar';
+  bCancelar.onclick = function () { box.remove(); };
+  var bSalvar = document.createElement('button');
+  bSalvar.className = 'btn-ok';
+  bSalvar.textContent = 'Salvar';
+  bSalvar.onclick = async function () {
+    var mudancas = {
+      nome: cNome.value.trim() || p.nome,
+      email: cEmail.value.trim() || null,
+      telefone: cTelefone.value.trim() || null
+    };
+    if (souMaster) {
+      mudancas.grupo = cGrupo.value;
+      mudancas.funcao = cFuncao.value;
+      mudancas.papel = cPapel.value;
+      if (mudancas.papel === 'master' && p.papel !== 'master' &&
+          !confirm('Tornar ' + p.nome + ' MASTER? Essa pessoa passa a poder mudar o papel de qualquer um, inclusive o seu.')) {
+        return;
+      }
+      if (p.id === meuId && mudancas.papel !== 'master' &&
+          !confirm('Você está tirando o seu próprio acesso de master. Continuar?')) {
+        return;
+      }
+    }
+    bSalvar.disabled = true;
+    status.className = 'status';
+    status.textContent = 'Salvando...';
+    var r = await sb.from('gev_perfis').update(mudancas).eq('id', p.id);
+    bSalvar.disabled = false;
+    if (r.error) {
+      status.className = 'status erro';
+      status.textContent = r.error.message;
+      return;
+    }
+    box.remove();
+    carregar();
+  };
+  acoes.appendChild(status);
+  acoes.appendChild(bCancelar);
+  acoes.appendChild(bSalvar);
+  box.appendChild(acoes);
+
+  cartao.appendChild(box);
+}
+
+/* ---------- lista ---------- */
+
+function montarPessoa(p) {
+  var div = document.createElement('div');
+  div.className = 'pessoa';
+
+  var topo = document.createElement('div');
+  topo.className = 'pessoa-topo';
+
+  var av = document.createElement('div');
+  av.className = p.funcao === 'membro' ? 'avatar' : 'avatar chefia';
+  av.textContent = iniciais(p.nome);
+
+  var quem = document.createElement('div');
+  quem.className = 'pessoa-quem';
+  var nome = document.createElement('div');
+  nome.className = 'pessoa-nome';
+  nome.textContent = p.nome + (p.id === meuId ? ' (você)' : '');
+  var login = document.createElement('div');
+  login.className = 'pessoa-login';
+  login.textContent = 'login: ' + (p.usuario || '—');
+  quem.appendChild(nome);
+  quem.appendChild(login);
+
+  var tags = document.createElement('div');
+  tags.className = 'tags';
+  if (p.papel !== 'usuario') {
+    var tPapel = document.createElement('span');
+    tPapel.className = 'tag ' + p.papel;
+    tPapel.textContent = NOME_PAPEL[p.papel];
+    tags.appendChild(tPapel);
+  }
+  if (p.funcao !== 'membro') {
+    var tFuncao = document.createElement('span');
+    tFuncao.className = 'tag ' + p.funcao;
+    tFuncao.textContent = p.funcao;
+    tFuncao.title = NOME_FUNCAO[p.funcao];
+    tags.appendChild(tFuncao);
+  }
+
+  topo.appendChild(av);
+  topo.appendChild(quem);
+  topo.appendChild(tags);
+  div.appendChild(topo);
+
+  var contato = document.createElement('div');
+  contato.className = 'contato';
+
+  if (p.email) {
+    var aEmail = document.createElement('a');
+    aEmail.href = 'mailto:' + p.email;
+    aEmail.textContent = '✉️ ' + p.email;
+    contato.appendChild(aEmail);
+  }
+  if (p.telefone) {
+    var wa = linkWhatsapp(p.telefone);
+    var aTel = document.createElement('a');
+    aTel.href = wa || ('tel:' + p.telefone.replace(/\s/g, ''));
+    if (wa) { aTel.target = '_blank'; aTel.rel = 'noopener noreferrer'; }
+    aTel.textContent = '📱 ' + p.telefone;
+    contato.appendChild(aTel);
+  }
+  if (!p.email && !p.telefone) {
+    var vazio = document.createElement('span');
+    vazio.className = 'vazio-contato';
+    vazio.textContent = '— sem contato cadastrado —';
+    contato.appendChild(vazio);
+  }
+  div.appendChild(contato);
+
+  var podeEditar = souMaster || souAdmin || p.id === meuId;
+  if (podeEditar) {
+    var acoes = document.createElement('div');
+    acoes.className = 'pessoa-acoes';
+    var bEditar = document.createElement('button');
+    bEditar.textContent = souMaster ? '✏️ Editar / mudar acesso' : '✏️ Editar contato';
+    bEditar.onclick = function () {
+      if (div.querySelector('.formulario')) return;
+      montarEdicao(p, div);
+    };
+    acoes.appendChild(bEditar);
+
+    if (souMaster && p.id !== meuId) {
+      var bExcluir = document.createElement('button');
+      bExcluir.className = 'excluir';
+      bExcluir.textContent = 'Excluir';
+      bExcluir.onclick = async function () {
+        if (!confirm('Excluir ' + p.nome + ' da lista? O acesso dessa pessoa deixa de existir.')) return;
+        var r = await sb.from('gev_perfis').delete().eq('id', p.id);
+        if (r.error) { alert('Não consegui excluir: ' + r.error.message); return; }
+        carregar();
+      };
+      acoes.appendChild(bExcluir);
+    }
+    div.appendChild(acoes);
+  }
+
+  return div;
+}
+
+function desenhar() {
+  var termo = document.getElementById('busca').value.trim().toLowerCase();
+  var filtrados = todos.filter(function (p) {
+    if (!termo) return true;
+    return [p.nome, p.usuario, p.email, p.telefone, p.grupo, p.funcao,
+            NOME_GRUPO[p.grupo], NOME_FUNCAO[p.funcao], NOME_PAPEL[p.papel]]
+      .filter(Boolean).join(' ').toLowerCase().indexOf(termo) !== -1;
+  });
+
+  var lista = document.getElementById('lista');
+  lista.innerHTML = '';
+  document.getElementById('vazio').style.display = filtrados.length ? 'none' : 'block';
+
+  GRUPOS.forEach(function (g) {
+    var doGrupo = filtrados.filter(function (p) { return p.grupo === g; });
+    if (!doGrupo.length) return;
+    var titulo = document.createElement('div');
+    titulo.className = 'grupo-titulo';
+    var esq = document.createElement('span');
+    esq.textContent = NOME_GRUPO[g];
+    var dir = document.createElement('span');
+    dir.textContent = doGrupo.length + (doGrupo.length === 1 ? ' pessoa' : ' pessoas');
+    titulo.appendChild(esq);
+    titulo.appendChild(dir);
+    lista.appendChild(titulo);
+    doGrupo.forEach(function (p) { lista.appendChild(montarPessoa(p)); });
+  });
+
+  var resumo = document.getElementById('resumo');
+  resumo.innerHTML = '';
+  GRUPOS.forEach(function (g) {
+    var qtd = todos.filter(function (p) { return p.grupo === g; }).length;
+    var d = document.createElement('div');
+    var n = document.createElement('div');
+    n.className = 'n';
+    n.textContent = qtd;
+    var rot = document.createElement('div');
+    rot.className = 'rot';
+    rot.textContent = g;
+    d.appendChild(n);
+    d.appendChild(rot);
+    resumo.appendChild(d);
+  });
+  var total = document.createElement('div');
+  var nt = document.createElement('div');
+  nt.className = 'n';
+  nt.textContent = todos.length;
+  var rt = document.createElement('div');
+  rt.className = 'rot';
+  rt.textContent = 'TOTAL';
+  total.appendChild(nt);
+  total.appendChild(rt);
+  resumo.appendChild(total);
+}
+
+async function carregar() {
+  var r = await sb.from('gev_perfis')
+    .select('id, nome, usuario, papel, email, telefone, grupo, funcao')
+    .order('funcao', { ascending: true })
+    .order('nome', { ascending: true });
+  if (r.error) {
+    document.getElementById('vazio').textContent = 'Não consegui carregar: ' + r.error.message;
+    document.getElementById('vazio').style.display = 'block';
+    return;
+  }
+  // coordenação primeiro (CG, CL), depois os demais em ordem alfabética
+  var peso = { CG: 0, CL: 1, membro: 2 };
+  todos = (r.data || []).sort(function (a, b) {
+    if (peso[a.funcao] !== peso[b.funcao]) return peso[a.funcao] - peso[b.funcao];
+    return a.nome.localeCompare(b.nome, 'pt-BR');
+  });
+  desenhar();
+}
+
+document.getElementById('busca').addEventListener('input', desenhar);
+document.getElementById('sair').addEventListener('click', function () { GEV.logout(); });
 
 GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
   if (!perfil) return;
-  var campoPapelDiv = document.getElementById('campoPapel');
-  if (perfil.papel === 'master') {
-    campoPapelDiv.style.display = 'block';
-  }
-  carregarUsuarios();
+  meuId = perfil.id;
+  souMaster = perfil.papel === 'master';
+  souAdmin = souMaster || perfil.papel === 'coordenador';
+  document.getElementById('saudacao').textContent = souMaster
+    ? 'Você é master — pode mudar o acesso de qualquer participante.'
+    : 'Você é coordenador — pode cadastrar e editar contatos.';
+  document.getElementById('aviso').textContent = souMaster
+    ? 'Só o master muda núcleo, função e acesso. Coordenadores editam apenas os dados de contato.'
+    : 'Para mudar núcleo, função ou nível de acesso de alguém, fale com o master.';
+  montarNav();
+  document.getElementById('btnNovo').style.display = 'block';
+  document.getElementById('campoPapelNovo').style.display = souMaster ? 'block' : 'none';
+  carregar();
 });
 </script>
 </body>
