@@ -1,4 +1,4 @@
-// Grupo Evoluir — funções compartilhadas (login individual + papéis)
+// GEV — funções compartilhadas (login individual + papéis)
 (function () {
   const C = window.GEV_CONFIG;
   const sb = window.supabase.createClient(C.supabaseUrl, C.supabaseKey, {
