@@ -61,6 +61,30 @@ var faixaPausadaId = null;   // se pausada, qual música ficou pausada (pra reto
 var ativo = false;
 var ultimoComando = null; // disparado_em do último comando já aplicado — evita reiniciar a música à toa
 
+// Tocar pode falhar (navegador bloqueou, arquivo com problema, aparelho no mudo).
+// Antes o erro era engolido em silencio e a tela ficava parada sem explicacao.
+function tocarComAviso() {
+  player.play().then(function () {
+    if (estadoEl.dataset.erro) {
+      delete estadoEl.dataset.erro;
+      estadoEl.style.color = '';
+    }
+  }).catch(function (e) {
+    estadoEl.dataset.erro = '1';
+    estadoEl.style.color = '#FF8A8A';
+    estadoEl.textContent = 'Não consegui tocar: ' + (e && e.name === 'NotAllowedError'
+      ? 'o navegador bloqueou o som. Toque em "Iniciar exibição" de novo.'
+      : (e && e.message) || 'erro desconhecido');
+  });
+}
+
+player.addEventListener('error', function () {
+  var codigos = { 1: 'carregamento interrompido', 2: 'falha de rede', 3: 'não consegui decodificar o arquivo', 4: 'formato não suportado' };
+  estadoEl.dataset.erro = '1';
+  estadoEl.style.color = '#FF8A8A';
+  estadoEl.textContent = 'Problema com o arquivo: ' + (player.error ? (codigos[player.error.code] || 'erro ' + player.error.code) : 'erro desconhecido');
+});
+
 function aplicarEstado(row) {
   if (!row) return;
   nomeEl.textContent = row.musica_nome || 'aguardando...';
@@ -75,12 +99,12 @@ function aplicarEstado(row) {
     } else if (row.musica_id === faixaCarregadaId && faixaPausadaId === row.musica_id) {
       // mesma música que estava pausada -> retoma do ponto onde parou
       faixaPausadaId = null;
-      player.play().catch(function () {});
+      tocarComAviso();
     } else {
       // música nova (ou reiniciando de propósito) -> toca do começo
       player.src = GEV.publicUrlAudio(row.musica_path);
       player.currentTime = 0;
-      player.play().catch(function () {});
+      tocarComAviso();
       faixaCarregadaId = row.musica_id;
       faixaPausadaId = null;
     }
@@ -107,6 +131,23 @@ function aplicarEstado(row) {
   ultimoComando = row.disparado_em;
 }
 
+// Avisa o Controle remoto que esta tela está aberta e pronta para tocar.
+// Sem esse sinal, o controle não tem como saber se existe alguém do outro lado.
+function avisarQueEstouVivo(extras) {
+  var dados = {
+    exibidor_visto_em: new Date().toISOString(),
+    // "aberto" e "tocando" são coisas diferentes: o som pode não ter começado
+    exibidor_tocando: !player.paused && !player.ended
+  };
+  if (extras) for (var k in extras) dados[k] = extras[k];
+  return sb.from('gev_estado').update(dados).eq('id', 'atual');
+}
+
+// qualquer mudança real do player é avisada na hora
+['play', 'pause', 'ended', 'stalled', 'waiting'].forEach(function (evento) {
+  player.addEventListener(evento, function () { avisarQueEstouVivo().then(function () {}); });
+});
+
 // envia a posição atual pro Controle remoto poder mostrar a barrinha de progresso
 var ultimoEnvioPosicao = 0;
 player.addEventListener('timeupdate', function () {
@@ -114,10 +155,10 @@ player.addEventListener('timeupdate', function () {
   if (agora - ultimoEnvioPosicao < 1000) return; // no máx 1x por segundo
   ultimoEnvioPosicao = agora;
   if (!faixaCarregadaId) return;
-  sb.from('gev_estado').update({
+  avisarQueEstouVivo({
     posicao_segundos: player.currentTime || 0,
     duracao_segundos: isFinite(player.duration) ? player.duration : 0
-  }).eq('id', 'atual').then(function () {});
+  }).then(function () {});
 });
 
 document.getElementById('iniciar').onclick = async function () {
@@ -130,6 +171,8 @@ document.getElementById('iniciar').onclick = async function () {
   player.muted = false;
   this.style.display = 'none';
   estadoEl.textContent = 'conectado — aguardando disparo remoto';
+
+  await avisarQueEstouVivo();
 
   var estadoR = await sb.from('gev_estado').select('*').eq('id', 'atual').maybeSingle();
   if (estadoR.data) aplicarEstado(estadoR.data);
@@ -149,6 +192,14 @@ document.getElementById('iniciar').onclick = async function () {
     var r = await sb.from('gev_estado').select('*').eq('id', 'atual').maybeSingle();
     if (r.data) aplicarEstado(r.data);
   }, 3000);
+
+  // enquanto esta tela estiver aberta, avisa que está de pé (mesmo parado)
+  setInterval(function () {
+    if (player.paused) avisarQueEstouVivo().then(function () {});
+  }, 5000);
+
+  // Se esta aba for fechada, o sinal de vida simplesmente para de chegar e o
+  // Controle remoto considera o exibidor sumido depois de 15s.
 };
 
 GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {

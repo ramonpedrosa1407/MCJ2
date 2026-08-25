@@ -11,6 +11,27 @@
   h1 { text-align: center; }
   .sub { text-align: center; }
   .voltar { display: inline-block; margin-bottom: 14px; color: rgba(244,240,255,.6); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 14px; }
+
+  .exibidor-estado {
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    border-radius: 10px;
+    padding: 11px 14px;
+    margin-bottom: 16px;
+    line-height: 1.45;
+    text-align: left;
+  }
+  .exibidor-estado.ligado {
+    background: rgba(76,175,125,.14);
+    border: 1px solid rgba(76,175,125,.4);
+    color: #8FE3B4;
+  }
+  .exibidor-estado.desligado {
+    background: rgba(255,138,138,.1);
+    border: 1px solid rgba(255,138,138,.38);
+    color: #FFB3B3;
+  }
+  .exibidor-estado a { color: inherit; font-weight: bold; }
   .parar-tudo {
     width: 100%;
     padding: 14px;
@@ -120,6 +141,8 @@
   <h1>Controle remoto</h1>
   <p class="sub">▶ toca · ⏸ pausa · ⏹ para</p>
 
+  <div class="exibidor-estado" id="exibidorEstado"></div>
+
   <div class="tocando-agora" id="tocandoAgora" style="display:none">
     <div class="ta-nome" id="taNome"></div>
     <div class="ta-barra"><div class="ta-progresso" id="taProgresso"></div></div>
@@ -162,6 +185,7 @@ var mexendoRepetir = false;
 var estadoAtual = null;
 var estadoBuscadoEm = 0;
 
+var exibidorEstadoEl = document.getElementById('exibidorEstado');
 var tocandoAgoraEl = document.getElementById('tocandoAgora');
 var taNomeEl = document.getElementById('taNome');
 var taProgressoEl = document.getElementById('taProgresso');
@@ -175,7 +199,43 @@ function formatarTempo(segundos) {
   return m + ':' + (s < 10 ? '0' : '') + s;
 }
 
+// O Exibidor avisa de tempos em tempos que está aberto. Se o último aviso for
+// velho, não tem ninguém do outro lado para tocar o som.
+var SEGUNDOS_ATE_CONSIDERAR_SUMIDO = 15;
+var ultimoTempoMostrado = 0;
+var faixaDoRelogio = null;
+
+function exibidorEstaConectado() {
+  if (!estadoAtual || !estadoAtual.exibidor_visto_em) return false;
+  var idade = (Date.now() - new Date(estadoAtual.exibidor_visto_em).getTime()) / 1000;
+  return idade < SEGUNDOS_ATE_CONSIDERAR_SUMIDO;
+}
+
+function exibidorEstaTocando() {
+  return exibidorEstaConectado() && !!estadoAtual.exibidor_tocando;
+}
+
+function renderExibidorEstado() {
+  if (!exibidorEstaConectado()) {
+    exibidorEstadoEl.className = 'exibidor-estado desligado';
+    exibidorEstadoEl.textContent = '🔇 Nenhum exibidor conectado. Abra o Exibidor na tela que vai ser compartilhada e toque em "Iniciar exibição" — sem isso não sai som em lugar nenhum.';
+    return;
+  }
+  // aberto, mas mandamos tocar e o som não começou
+  if (estadoAtual.acao === 'play' && !estadoAtual.exibidor_tocando) {
+    exibidorEstadoEl.className = 'exibidor-estado desligado';
+    exibidorEstadoEl.textContent = '⚠️ O exibidor está aberto, mas o som não começou. Confira o volume do aparelho e a mensagem que aparece na tela do exibidor.';
+    return;
+  }
+  exibidorEstadoEl.className = 'exibidor-estado ligado';
+  exibidorEstadoEl.textContent = estadoAtual.exibidor_tocando
+    ? '🔊 Exibidor tocando — o som está saindo na tela dele.'
+    : '🔊 Exibidor conectado, pronto para tocar.';
+}
+
 function renderTocandoAgora() {
+  renderExibidorEstado();
+
   if (!estadoAtual || estadoAtual.acao === 'stop') {
     tocandoAgoraEl.style.display = 'none';
     return;
@@ -185,10 +245,30 @@ function renderTocandoAgora() {
 
   var total = Number(estadoAtual.duracao_segundos) || 0;
   var atual = Number(estadoAtual.posicao_segundos) || 0;
-  if (estadoAtual.acao === 'play') {
+
+  // Só dá para adiantar o relógio se existe um exibidor realmente tocando.
+  // Sem isso a posição fica sempre em zero e o contador subia e zerava sozinho.
+  if (estadoAtual.acao === 'play' && exibidorEstaTocando()) {
     atual += (Date.now() - estadoBuscadoEm) / 1000;
   }
   if (total > 0) atual = Math.min(atual, total);
+
+  if (!exibidorEstaTocando() && estadoAtual.acao === 'play') {
+    taProgressoEl.style.width = '0%';
+    taAtualEl.textContent = '--:--';
+    taTotalEl.textContent = '--:--';
+    return;
+  }
+
+  // O relógio local corre à frente e recuaria ao chegar a posição real do
+  // exibidor. Dentro da mesma faixa, o tempo mostrado nunca anda para trás.
+  var faixaAgora = String(estadoAtual.musica_id) + '|' + String(estadoAtual.disparado_em);
+  if (faixaAgora !== faixaDoRelogio) {
+    faixaDoRelogio = faixaAgora;
+    ultimoTempoMostrado = 0;
+  }
+  atual = Math.max(atual, ultimoTempoMostrado);
+  ultimoTempoMostrado = atual;
 
   taProgressoEl.style.width = (total > 0 ? (atual / total * 100) : 0) + '%';
   taAtualEl.textContent = formatarTempo(atual);
