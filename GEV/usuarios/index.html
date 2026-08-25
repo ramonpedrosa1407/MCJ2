@@ -77,6 +77,31 @@
   .btn-ok { padding: 11px 20px; background: #C9A227; color: #1A1033; font-weight: bold; border-radius: 10px; font-family: -apple-system, sans-serif; }
   .btn-ok:disabled { opacity: .45; }
   .btn-cancelar { padding: 11px 18px; background: rgba(255,255,255,.1); color: #F4F0FF; border-radius: 10px; font-family: -apple-system, sans-serif; }
+  .btn-todos {
+    width: 100%;
+    padding: 12px;
+    background: rgba(76,175,125,.16);
+    color: #8FE3B4;
+    border: 1px solid rgba(76,175,125,.4);
+    border-radius: 12px;
+    font-family: -apple-system, sans-serif;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .btn-todos:hover { background: rgba(76,175,125,.24); }
+  .explica-todos { font-size: 14px; color: rgba(244,240,255,.7); line-height: 1.6; margin-bottom: 14px; font-family: -apple-system, sans-serif; }
+  .explica-todos b { color: #F4F0FF; }
+  ul.relatorio { list-style: none; margin-top: 14px; max-height: 260px; overflow-y: auto; font-family: -apple-system, sans-serif; }
+  ul.relatorio li {
+    display: flex; gap: 8px; align-items: baseline;
+    font-size: 13px; padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  ul.relatorio li .ok { color: #7FE0A8; }
+  ul.relatorio li .falhou { color: #FF8A8A; }
+  ul.relatorio li .pulou { color: rgba(244,240,255,.35); }
+  ul.relatorio li .motivo { opacity: .6; font-size: 12px; }
+
   .avisar-email {
     display: flex;
     gap: 10px;
@@ -187,6 +212,18 @@
   <input type="text" class="busca" id="busca" placeholder="Buscar por nome, login, e-mail ou telefone...">
 
   <button class="btn-novo" id="btnNovo" style="display:none">➕ Cadastrar participante</button>
+  <button class="btn-todos" id="btnTodos" style="display:none">✉️ Enviar acesso para todos</button>
+
+  <div class="formulario" id="painelTodos" style="display:none">
+    <h2>Enviar acesso para todos</h2>
+    <p class="explica-todos" id="explicaTodos"></p>
+    <div class="form-acoes">
+      <span class="status" id="statusTodos"></span>
+      <button class="btn-cancelar" id="todosCancelar">Fechar</button>
+      <button class="btn-ok" id="todosEnviar">Enviar</button>
+    </div>
+    <ul class="relatorio" id="relatorioTodos"></ul>
+  </div>
 
   <div class="formulario" id="formNovo" style="display:none">
     <h2>Novo participante</h2>
@@ -314,6 +351,7 @@ document.getElementById('nEmail').addEventListener('input', ajustarCaixaAvisar);
 document.getElementById('nCancelar').addEventListener('click', function () {
   document.getElementById('formNovo').style.display = 'none';
   document.getElementById('btnNovo').style.display = 'block';
+  document.getElementById('btnTodos').style.display = 'block';
   document.getElementById('nStatus').textContent = '';
 });
 
@@ -351,6 +389,94 @@ document.getElementById('nSalvar').addEventListener('click', async function () {
   ['nNome', 'nLogin', 'nSenha', 'nEmail', 'nTelefone'].forEach(function (id) {
     document.getElementById(id).value = '';
   });
+  carregar();
+});
+
+/* ---------- enviar acesso para todos ---------- */
+// Um por vez, e não todos de uma vez: assim dá para acompanhar quem recebeu,
+// e uma falha no meio não deixa dúvida sobre o que chegou e o que não chegou.
+
+var enviandoEmMassa = false;
+
+document.getElementById('btnTodos').addEventListener('click', function () {
+  var comEmail = todos.filter(function (p) { return p.email; });
+  var semEmail = todos.filter(function (p) { return !p.email; });
+
+  document.getElementById('explicaTodos').innerHTML =
+    'Cada pessoa vai receber <b>uma senha nova</b> por e-mail, junto com as instruções de uso. ' +
+    '<b>As senhas atuais deixam de valer.</b><br><br>' +
+    '<b>' + comEmail.length + (comEmail.length === 1 ? ' pessoa</b> vai receber.' : ' pessoas</b> vão receber.') +
+    (semEmail.length
+      ? ' <b>' + semEmail.length + (semEmail.length === 1 ? '</b> fica de fora por não ter e-mail: ' : '</b> ficam de fora por não terem e-mail: ') +
+        semEmail.map(function (p) { return p.nome; }).join(', ') + '.'
+      : '');
+
+  document.getElementById('painelTodos').style.display = 'block';
+  this.style.display = 'none';
+  document.getElementById('relatorioTodos').innerHTML = '';
+  document.getElementById('statusTodos').textContent = '';
+  document.getElementById('todosEnviar').disabled = comEmail.length === 0;
+});
+
+document.getElementById('todosCancelar').addEventListener('click', function () {
+  if (enviandoEmMassa) return;
+  document.getElementById('painelTodos').style.display = 'none';
+  document.getElementById('btnTodos').style.display = 'block';
+});
+
+document.getElementById('todosEnviar').addEventListener('click', async function () {
+  var fila = todos.filter(function (p) { return p.email; });
+  if (!fila.length) return;
+
+  if (!confirm('Enviar uma senha nova para ' + fila.length + ' pessoas agora?\n\n' +
+               'Todas as senhas atuais deixam de valer, e não dá para desfazer.')) return;
+
+  enviandoEmMassa = true;
+  this.disabled = true;
+  document.getElementById('todosCancelar').disabled = true;
+  var statusEl = document.getElementById('statusTodos');
+  var relatorio = document.getElementById('relatorioTodos');
+  relatorio.innerHTML = '';
+
+  var enviados = 0, falhas = 0;
+
+  for (var i = 0; i < fila.length; i++) {
+    var p = fila[i];
+    statusEl.className = 'status';
+    statusEl.textContent = 'enviando ' + (i + 1) + ' de ' + fila.length + '...';
+
+    var r = await sb.functions.invoke('gev-reenviar-acesso', {
+      body: { perfil_id: p.id, primeira_vez: true }
+    });
+    var resposta = r.data || {};
+    var deuCerto = !r.error && !resposta.erro;
+
+    var li = document.createElement('li');
+    var marca = document.createElement('span');
+    marca.className = deuCerto ? 'ok' : 'falhou';
+    marca.textContent = deuCerto ? '✓' : '✕';
+    var nome = document.createElement('span');
+    nome.textContent = p.nome;
+    li.appendChild(marca);
+    li.appendChild(nome);
+    if (!deuCerto) {
+      var motivo = document.createElement('span');
+      motivo.className = 'motivo';
+      motivo.textContent = resposta.erro || 'falhou';
+      li.appendChild(motivo);
+      falhas++;
+    } else {
+      enviados++;
+    }
+    relatorio.appendChild(li);
+    relatorio.scrollTop = relatorio.scrollHeight;
+  }
+
+  enviandoEmMassa = false;
+  document.getElementById('todosCancelar').disabled = false;
+  statusEl.className = falhas ? 'status erro' : 'status ok';
+  statusEl.textContent = enviados + ' enviado' + (enviados === 1 ? '' : 's') +
+    (falhas ? ' · ' + falhas + ' falhou' + (falhas === 1 ? '' : 'ram') : '');
   carregar();
 });
 
@@ -695,6 +821,7 @@ GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
     : 'Para mudar núcleo, função ou nível de acesso de alguém, fale com o master.';
   GEV.montarNav('nav', 'usuarios/', perfil);
   document.getElementById('btnNovo').style.display = 'block';
+  document.getElementById('btnTodos').style.display = 'block';
   document.getElementById('campoPapelNovo').style.display = souMaster ? 'block' : 'none';
   document.getElementById('campoMidiaNovo').style.display = souMaster ? 'block' : 'none';
   carregar();
