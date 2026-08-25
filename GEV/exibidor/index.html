@@ -19,19 +19,32 @@
   }
   .disco.tocando { animation: girar 4s linear infinite; }
   @keyframes girar { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .disco.tocando { animation: none; } }
   h1 { font-size: clamp(22px, 6vw, 34px); }
   .nome { font-size: clamp(18px, 5vw, 26px); margin-top: 4px; min-height: 32px; }
-  .estado { opacity: .55; font-size: 14px; margin-top: 6px; font-family: -apple-system, sans-serif; }
-  .iniciar {
-    margin-top: 28px;
-    padding: 16px 28px;
-    background: #C9A227;
-    color: #1A1033;
-    border-radius: 12px;
-    font-size: 17px;
-    font-weight: bold;
-  }
+  .estado { opacity: .55; font-size: 14px; margin-top: 6px; font-family: -apple-system, sans-serif; min-height: 20px; }
+  .estado.erro { color: #FF8A8A; opacity: 1; }
   .voltar { display: block; margin-top: 24px; color: rgba(244,240,255,.35); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 12px; }
+
+  /* Só aparece se o navegador barrar o som. Enquanto não barra, ninguém vê nada. */
+  .liberar {
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 8, 32, .96);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .liberar.aparecendo { display: flex; }
+  .liberar .icone { font-size: 60px; }
+  .liberar h2 { font-size: clamp(22px, 6vw, 30px); }
+  .liberar p { font-family: -apple-system, sans-serif; font-size: 15px; opacity: .7; max-width: 34ch; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -40,9 +53,14 @@
   <div class="disco" id="disco">🎶</div>
   <h1>Grupo Evoluir</h1>
   <div class="nome" id="nome">aguardando...</div>
-  <div class="estado" id="estadoTexto">toque em "iniciar exibição" para ativar o som</div>
-  <button class="iniciar" id="iniciar">▶ Iniciar exibição</button>
+  <div class="estado" id="estadoTexto">conectando...</div>
   <a class="voltar" href="../mural/">voltar ao mural</a>
+</div>
+
+<div class="liberar" id="liberar">
+  <div class="icone">🔊</div>
+  <h2>Toque para liberar o som</h2>
+  <p>O navegador só deixa tocar áudio depois de um toque na tela. É uma vez só — depois disso tudo acontece sozinho.</p>
 </div>
 
 <audio id="player"></audio>
@@ -56,83 +74,70 @@ var player = document.getElementById('player');
 var disco = document.getElementById('disco');
 var nomeEl = document.getElementById('nome');
 var estadoEl = document.getElementById('estadoTexto');
-var faixaCarregadaId = null; // qual música está carregada no player agora
-var faixaPausadaId = null;   // se pausada, qual música ficou pausada (pra retomar do ponto certo)
-var ativo = false;
-var ultimoComando = null; // disparado_em do último comando já aplicado — evita reiniciar a música à toa
+var liberarEl = document.getElementById('liberar');
 
-// Tocar pode falhar (navegador bloqueou, arquivo com problema, aparelho no mudo).
-// Antes o erro era engolido em silencio e a tela ficava parada sem explicacao.
-function tocarComAviso() {
+var faixaCarregadaId = null; // qual música está carregada no player agora
+var faixaPausadaId = null;   // se pausada, qual ficou pausada (pra retomar do ponto certo)
+var ultimoComando = null;    // disparado_em do último comando aplicado
+var comandoPendente = null;  // comando que ficou esperando o som ser liberado
+
+function dizer(texto, ehErro) {
+  estadoEl.textContent = texto;
+  estadoEl.className = ehErro ? 'estado erro' : 'estado';
+}
+
+/* ---------- liberação do som ---------- */
+// Navegador nenhum deixa tocar áudio antes de um toque na tela. Em vez de pedir
+// isso na entrada, a tela conecta sozinha e só pede o toque se o som for barrado
+// de verdade — e aí retoma na hora o comando que estava esperando.
+
+function pedirLiberacao() {
+  liberarEl.classList.add('aparecendo');
+}
+
+function liberar() {
+  if (!liberarEl.classList.contains('aparecendo') && !comandoPendente) return;
+  liberarEl.classList.remove('aparecendo');
+  var pendente = comandoPendente;
+  comandoPendente = null;
+  if (pendente) {
+    ultimoComando = null; // força reaplicar o comando que tinha sido barrado
+    aplicarEstado(pendente);
+  }
+}
+
+['click', 'touchstart', 'keydown'].forEach(function (evento) {
+  document.addEventListener(evento, liberar, { passive: true });
+});
+
+function tocarComAviso(row) {
   player.play().then(function () {
-    if (estadoEl.dataset.erro) {
-      delete estadoEl.dataset.erro;
-      estadoEl.style.color = '';
-    }
+    liberarEl.classList.remove('aparecendo');
+    comandoPendente = null;
   }).catch(function (e) {
-    estadoEl.dataset.erro = '1';
-    estadoEl.style.color = '#FF8A8A';
-    estadoEl.textContent = 'Não consegui tocar: ' + (e && e.name === 'NotAllowedError'
-      ? 'o navegador bloqueou o som. Toque em "Iniciar exibição" de novo.'
-      : (e && e.message) || 'erro desconhecido');
+    if (e && e.name === 'NotAllowedError') {
+      comandoPendente = row;
+      pedirLiberacao();
+      dizer('esperando liberar o som', true);
+      return;
+    }
+    dizer('Não consegui tocar: ' + ((e && e.message) || 'erro desconhecido'), true);
   });
 }
 
 player.addEventListener('error', function () {
-  var codigos = { 1: 'carregamento interrompido', 2: 'falha de rede', 3: 'não consegui decodificar o arquivo', 4: 'formato não suportado' };
-  estadoEl.dataset.erro = '1';
-  estadoEl.style.color = '#FF8A8A';
-  estadoEl.textContent = 'Problema com o arquivo: ' + (player.error ? (codigos[player.error.code] || 'erro ' + player.error.code) : 'erro desconhecido');
+  if (!player.src) return; // sem música carregada não é erro de verdade
+  var codigos = {
+    1: 'carregamento interrompido',
+    2: 'falha de rede',
+    3: 'não consegui decodificar o arquivo',
+    4: 'formato não suportado'
+  };
+  dizer('Problema com o arquivo: ' + (player.error ? (codigos[player.error.code] || 'erro ' + player.error.code) : 'erro desconhecido'), true);
 });
 
-function aplicarEstado(row) {
-  if (!row) return;
-  nomeEl.textContent = row.musica_nome || 'aguardando...';
-  player.volume = (row.volume === null || row.volume === undefined) ? 1 : Number(row.volume);
-  player.loop = !!row.repetir;
+/* ---------- sinal de vida ---------- */
 
-  var comandoNovo = row.disparado_em !== ultimoComando;
-
-  if (row.acao === 'play' && row.musica_path) {
-    if (!comandoNovo && row.musica_id === faixaCarregadaId && faixaPausadaId === null) {
-      // já está tocando essa mesma música — foi só um update de volume/repetir, não mexe no player
-    } else if (row.musica_id === faixaCarregadaId && faixaPausadaId === row.musica_id) {
-      // mesma música que estava pausada -> retoma do ponto onde parou
-      faixaPausadaId = null;
-      tocarComAviso();
-    } else {
-      // música nova (ou reiniciando de propósito) -> toca do começo
-      player.src = GEV.publicUrlAudio(row.musica_path);
-      player.currentTime = 0;
-      tocarComAviso();
-      faixaCarregadaId = row.musica_id;
-      faixaPausadaId = null;
-    }
-    disco.classList.add('tocando');
-    estadoEl.textContent = row.repetir ? 'tocando agora · 🔁 repetindo' : 'tocando agora';
-  } else if (row.acao === 'pause') {
-    if (comandoNovo || faixaPausadaId !== faixaCarregadaId) {
-      player.pause();
-      faixaPausadaId = faixaCarregadaId;
-    }
-    disco.classList.remove('tocando');
-    estadoEl.textContent = 'pausado';
-  } else {
-    if (comandoNovo || faixaCarregadaId !== null) {
-      player.pause();
-      player.currentTime = 0;
-      faixaCarregadaId = null;
-      faixaPausadaId = null;
-    }
-    disco.classList.remove('tocando');
-    estadoEl.textContent = 'parado';
-  }
-
-  ultimoComando = row.disparado_em;
-}
-
-// Avisa o Controle remoto que esta tela está aberta e pronta para tocar.
-// Sem esse sinal, o controle não tem como saber se existe alguém do outro lado.
 function avisarQueEstouVivo(extras) {
   var dados = {
     exibidor_visto_em: new Date().toISOString(),
@@ -143,12 +148,11 @@ function avisarQueEstouVivo(extras) {
   return sb.from('gev_estado').update(dados).eq('id', 'atual');
 }
 
-// qualquer mudança real do player é avisada na hora
 ['play', 'pause', 'ended', 'stalled', 'waiting'].forEach(function (evento) {
   player.addEventListener(evento, function () { avisarQueEstouVivo().then(function () {}); });
 });
 
-// envia a posição atual pro Controle remoto poder mostrar a barrinha de progresso
+// posição atual, pro Controle remoto mostrar a barrinha de progresso
 var ultimoEnvioPosicao = 0;
 player.addEventListener('timeupdate', function () {
   var agora = Date.now();
@@ -161,31 +165,74 @@ player.addEventListener('timeupdate', function () {
   }).then(function () {});
 });
 
-document.getElementById('iniciar').onclick = async function () {
-  if (ativo) return;
-  ativo = true;
-  // gesto do usuário libera o áudio no navegador — necessário só uma vez
-  player.muted = true;
-  await player.play().catch(function () {});
-  player.pause();
-  player.muted = false;
-  this.style.display = 'none';
-  estadoEl.textContent = 'conectado — aguardando disparo remoto';
+/* ---------- aplicar o que o Controle remoto mandou ---------- */
 
+function aplicarEstado(row) {
+  if (!row) return;
+  nomeEl.textContent = row.musica_nome || 'aguardando...';
+  player.volume = (row.volume === null || row.volume === undefined) ? 1 : Number(row.volume);
+  player.loop = !!row.repetir;
+
+  var comandoNovo = row.disparado_em !== ultimoComando;
+
+  if (row.acao === 'play' && row.musica_path) {
+    if (!comandoNovo && row.musica_id === faixaCarregadaId && faixaPausadaId === null) {
+      // já está tocando essa mesma música — só mudou volume/repetir, não mexe no player
+    } else if (row.musica_id === faixaCarregadaId && faixaPausadaId === row.musica_id) {
+      // mesma música que estava pausada -> retoma do ponto onde parou
+      faixaPausadaId = null;
+      tocarComAviso(row);
+    } else {
+      // música nova (ou reiniciando de propósito) -> toca do começo
+      player.src = GEV.publicUrlAudio(row.musica_path);
+      player.currentTime = 0;
+      faixaCarregadaId = row.musica_id;
+      faixaPausadaId = null;
+      tocarComAviso(row);
+    }
+    disco.classList.add('tocando');
+    if (!comandoPendente) dizer(row.repetir ? 'tocando agora · 🔁 repetindo' : 'tocando agora');
+  } else if (row.acao === 'pause') {
+    if (comandoNovo || faixaPausadaId !== faixaCarregadaId) {
+      player.pause();
+      faixaPausadaId = faixaCarregadaId;
+    }
+    disco.classList.remove('tocando');
+    dizer('pausado');
+  } else {
+    if (comandoNovo || faixaCarregadaId !== null) {
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+      faixaCarregadaId = null;
+      faixaPausadaId = null;
+    }
+    disco.classList.remove('tocando');
+    comandoPendente = null;
+    liberarEl.classList.remove('aparecendo');
+    dizer('pronto — esperando o controle remoto');
+  }
+
+  ultimoComando = row.disparado_em;
+}
+
+/* ---------- conexão (sozinha, sem depender de ninguém) ---------- */
+
+async function conectar() {
   await avisarQueEstouVivo();
 
   var estadoR = await sb.from('gev_estado').select('*').eq('id', 'atual').maybeSingle();
-  if (estadoR.data) aplicarEstado(estadoR.data);
+  if (estadoR.data) {
+    aplicarEstado(estadoR.data);
+  } else {
+    dizer('pronto — esperando o controle remoto');
+  }
 
   sb.channel('gev_estado_mudou')
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'gev_estado' }, function (payload) {
       aplicarEstado(payload.new);
     })
-    .subscribe(function (status) {
-      if (status === 'SUBSCRIBED') {
-        estadoEl.textContent = faixaCarregadaId ? estadoEl.textContent : 'conectado — aguardando disparo remoto';
-      }
-    });
+    .subscribe();
 
   // rede de segurança: mesmo que o tempo real falhe, confere o estado periodicamente
   setInterval(async function () {
@@ -193,17 +240,18 @@ document.getElementById('iniciar').onclick = async function () {
     if (r.data) aplicarEstado(r.data);
   }, 3000);
 
-  // enquanto esta tela estiver aberta, avisa que está de pé (mesmo parado)
+  // enquanto esta tela estiver aberta, avisa que está de pé
   setInterval(function () {
     if (player.paused) avisarQueEstouVivo().then(function () {});
   }, 5000);
-
-  // Se esta aba for fechada, o sinal de vida simplesmente para de chegar e o
-  // Controle remoto considera o exibidor sumido depois de 15s.
-};
+}
 
 GEV.exigirAcesso(['master', 'coordenador']).then(function (perfil) {
-  if (perfil) GEV.montarNav('nav', 'exibidor/', perfil);
+  if (!perfil) return;
+  GEV.montarNav('nav', 'exibidor/', perfil);
+  conectar().catch(function (e) {
+    dizer('Não consegui conectar: ' + ((e && e.message) || 'erro desconhecido'), true);
+  });
 });
 </script>
 </body>
