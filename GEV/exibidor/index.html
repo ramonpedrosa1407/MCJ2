@@ -24,6 +24,16 @@
   .nome { font-size: clamp(18px, 5vw, 26px); margin-top: 4px; min-height: 32px; }
   .estado { opacity: .55; font-size: 14px; margin-top: 6px; font-family: -apple-system, sans-serif; min-height: 20px; }
   .estado.erro { color: #FF8A8A; opacity: 1; }
+  .iniciar {
+    margin-top: 24px;
+    padding: 16px 30px;
+    background: #C9A227;
+    color: #1A1033;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: bold;
+  }
+  .iniciar:disabled { opacity: .5; }
   .voltar { display: block; margin-top: 24px; color: rgba(244,240,255,.35); text-decoration: none; font-family: -apple-system, sans-serif; font-size: 12px; }
 
   /* Só aparece se o navegador barrar o som. Enquanto não barra, ninguém vê nada. */
@@ -54,6 +64,7 @@
   <h1>Grupo Evoluir</h1>
   <div class="nome" id="nome">aguardando...</div>
   <div class="estado" id="estadoTexto">conectando...</div>
+  <button class="iniciar" id="iniciar" style="display:none">▶ Iniciar exibição</button>
   <a class="voltar" href="../mural/">voltar ao mural</a>
 </div>
 
@@ -87,36 +98,113 @@ function dizer(texto, ehErro) {
 }
 
 /* ---------- liberação do som ---------- */
-// Navegador nenhum deixa tocar áudio antes de um toque na tela. Em vez de pedir
-// isso na entrada, a tela conecta sozinha e só pede o toque se o som for barrado
-// de verdade — e aí retoma na hora o comando que estava esperando.
+// Navegador nenhum toca áudio antes de um toque na tela. O "Iniciar exibição"
+// resolve isso UMA vez, no começo da reunião — melhor pedir agora do que na hora
+// em que a música deveria estar tocando.
+//
+// O jeito de destravar é tocar um som de verdade, ainda que mudo: 10ms de
+// silêncio embutidos aqui. Chamar play() sem nenhuma fonte carregada devolve uma
+// promessa que nunca responde, e foi exatamente isso que travava esta tela antes.
 
-function pedirLiberacao() {
-  liberarEl.classList.add('aparecendo');
+var SILENCIO = 'data:audio/wav;base64,UklGRsQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+var somLiberado = false;
+var botaoIniciar = document.getElementById('iniciar');
+
+// Um clique no botão dispara também o ouvinte de toque da tela. Se as duas
+// tentativas mexerem no player ao mesmo tempo, uma interrompe a outra e nenhuma
+// funciona — por isso existe só uma tentativa em andamento por vez.
+var destravamentoEmCurso = null;
+
+function destravarSom() {
+  if (somLiberado) return Promise.resolve(true);
+  if (destravamentoEmCurso) return destravamentoEmCurso;
+
+  var srcAnterior = player.getAttribute('src');
+  player.src = SILENCIO;
+
+  destravamentoEmCurso = player.play().then(function () {
+    player.pause();
+    player.currentTime = 0;
+    somLiberado = true;
+    return true;
+  }).catch(function () {
+    return false;
+  }).then(function (ok) {
+    // devolve a música que estava carregada, se havia alguma
+    if (srcAnterior) player.src = srcAnterior;
+    else player.removeAttribute('src');
+    destravamentoEmCurso = null;
+    return ok;
+  });
+
+  return destravamentoEmCurso;
 }
 
-function liberar() {
-  if (!liberarEl.classList.contains('aparecendo') && !comandoPendente) return;
+function mostrarBotaoIniciar() {
+  if (somLiberado) return;
+  botaoIniciar.style.display = 'inline-block';
+  botaoIniciar.disabled = false;
+  dizer('toque em "Iniciar exibição" para liberar o som');
+}
+
+function esconderBotaoIniciar() {
+  botaoIniciar.style.display = 'none';
   liberarEl.classList.remove('aparecendo');
+}
+
+// retoma o comando que ficou esperando o som ser liberado
+function retomarPendente() {
   var pendente = comandoPendente;
   comandoPendente = null;
   if (pendente) {
     ultimoComando = null; // força reaplicar o comando que tinha sido barrado
     aplicarEstado(pendente);
+  } else {
+    dizer('pronto — esperando o controle remoto');
   }
 }
 
+botaoIniciar.onclick = async function () {
+  botaoIniciar.disabled = true;
+  dizer('liberando o som...');
+  var ok = await destravarSom();
+  if (!ok) {
+    botaoIniciar.disabled = false;
+    dizer('o navegador ainda não liberou o som. Toque de novo.', true);
+    return;
+  }
+  esconderBotaoIniciar();
+  retomarPendente();
+};
+
+// rede de segurança: se o som for barrado no meio da reunião, qualquer toque
+// na tela libera e retoma o que estava esperando
+function liberarPorToque() {
+  if (!liberarEl.classList.contains('aparecendo')) return;
+  destravarSom().then(function (ok) {
+    if (!ok) return;
+    esconderBotaoIniciar();
+    retomarPendente();
+  });
+}
+
 ['click', 'touchstart', 'keydown'].forEach(function (evento) {
-  document.addEventListener(evento, liberar, { passive: true });
+  document.addEventListener(evento, liberarPorToque, { passive: true });
 });
+
+function pedirLiberacao() {
+  liberarEl.classList.add('aparecendo');
+}
 
 function tocarComAviso(row) {
   player.play().then(function () {
-    liberarEl.classList.remove('aparecendo');
+    somLiberado = true;
+    esconderBotaoIniciar();
     comandoPendente = null;
   }).catch(function (e) {
     if (e && e.name === 'NotAllowedError') {
       comandoPendente = row;
+      somLiberado = false;
       pedirLiberacao();
       dizer('esperando liberar o som', true);
       return;
@@ -210,7 +298,9 @@ function aplicarEstado(row) {
     disco.classList.remove('tocando');
     comandoPendente = null;
     liberarEl.classList.remove('aparecendo');
-    dizer('pronto — esperando o controle remoto');
+    // enquanto o som não estiver liberado, a tela continua pedindo o toque
+    if (somLiberado) dizer('pronto — esperando o controle remoto');
+    else mostrarBotaoIniciar();
   }
 
   ultimoComando = row.disparado_em;
@@ -221,10 +311,14 @@ function aplicarEstado(row) {
 async function conectar() {
   await avisarQueEstouVivo();
 
+  // tenta liberar o som sozinho; se o navegador não deixar, aí sim pede o toque
+  var jaLiberado = await destravarSom();
+  if (!jaLiberado) mostrarBotaoIniciar();
+
   var estadoR = await sb.from('gev_estado').select('*').eq('id', 'atual').maybeSingle();
   if (estadoR.data) {
     aplicarEstado(estadoR.data);
-  } else {
+  } else if (jaLiberado) {
     dizer('pronto — esperando o controle remoto');
   }
 
