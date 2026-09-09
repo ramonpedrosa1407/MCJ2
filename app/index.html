@@ -6062,6 +6062,8 @@ function gerarCrachasEvangelizacao(poloNome){
   win.onload = ()=>{ win.focus(); win.print(); };
 }
 
+const CRACHA_BG_URL = '/assets/cracha-mcj2026.png';
+
 function gerarCrachas(){
   const cfg = getCrachaCfg();
   const d   = getIns();
@@ -6087,86 +6089,21 @@ function gerarCrachas(){
   const rodapeBg  = cfg.rodapeBg;
   const rodapeCor = cfg.rodapeCor;
 
-  // ── FRENTE ──────────────────────────────────────────────────
+  // ── FRENTE — usa a arte fixa do crachá (fundo) + nome/turma sobrepostos ──
+  function tamanhoFonteNome(nome){
+    const len = (nome||'').length;
+    if(len<=14) return 46;
+    if(len<=20) return 38;
+    if(len<=28) return 30;
+    if(len<=36) return 25;
+    return 20;
+  }
+
   function frenteHtml(p){
     const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
-    const trab = p.trabalhador===true||p.trabalhador==='true';
-    const topoStyle = cfg.bgUrl
-      ? `background-image:linear-gradient(rgba(0,0,0,${cfg.overlay/100}),rgba(0,0,0,${cfg.overlay/100})),url('${cfg.bgUrl}');background-size:cover;background-position:center`
-      : `background:${topoBg}`;
-    const e = _cfgEvento;
-    const almoco = p.almoco==='Sim';
-    const almocoCrianca = p.almoco_crianca;
-    const polo = POLOS.find(x=>x.nome===p.polo)||{};
-
     return `<div class="cracha">
-
-      <!-- 20%: TÍTULO DO EVENTO -->
-      <div class="c-topo" style="${topoStyle}">
-        <div class="c-evento" style="color:${tituloCor}">${(e.titulo||(_cfgEvento.titulo||'')).replace(/\s*\d{4}$/,'')}</div>
-        <div class="c-ano" style="color:${tituloCor}">${(e.titulo||(_cfgEvento.titulo||'')).match(/\d{4}/)?.[0]||'2026'}</div>
-      </div>
-
-      <!-- 10%: TEMAS MANHÃ / TARDE -->
-      <div class="c-temas">
-        <div class="c-tema-item c-tema-manha">
-          <div class="c-tema-label">Manhã</div>
-          <div class="c-tema-val">${e.tema_manha||'—'}</div>
-        </div>
-        <div class="c-tema-sep"></div>
-        <div class="c-tema-item c-tema-tarde">
-          <div class="c-tema-label">Tarde</div>
-          <div class="c-tema-val">${e.tema_tarde||'—'}</div>
-        </div>
-      </div>
-
-      <!-- 25%: NOME -->
-      <div class="c-nome-wrap">
-        <div class="c-nome" style="font-size:${cfg.nomeSize||40}px">${nomeExibir}</div>
-        ${p.nome!==nomeExibir?`<div class="c-nome-completo">${p.nome}</div>`:''}
-      </div>
-
-      <!-- 10%: TURMA E SALA -->
-      <div class="c-info-row">
-        <div class="c-info-item">
-          <div class="c-info-label">Turma</div>
-          <div class="c-info-val">${p.turma||'—'}</div>
-        </div>
-        <div class="c-info-div"></div>
-        <div class="c-info-item">
-          <div class="c-info-label">Sala</div>
-          <div class="c-info-val">${p.sala||'—'}</div>
-        </div>
-        <div class="c-info-div"></div>
-        <div class="c-info-item">
-          <div class="c-info-label">Polo</div>
-          <div class="c-info-val">${p.polo}</div>
-        </div>
-      </div>
-
-      <!-- 25%: OBSERVAÇÕES -->
-      <div class="c-obs">
-        <div class="c-obs-label">Observações</div>
-        ${p.observacao
-          ? `<div class="c-obs-texto">${p.observacao}</div>`
-          : `<div class="c-obs-linhas">
-              <div class="c-obs-linha"></div>
-              <div class="c-obs-linha"></div>
-              <div class="c-obs-linha"></div>
-            </div>`
-        }
-      </div>
-
-      <!-- 10%: RODAPÉ — ALMOÇO + DATA + FUNÇÃO -->
-      <div class="c-rodape" style="background:${rodapeBg}">
-        <div class="c-rodape-esq">
-          ${almoco?`<span class="c-badge c-badge-almoco">🍽 Almoço</span>`:''}
-          ${almocoCrianca?`<span class="c-badge c-badge-cri">👶 Almoço</span>`:''}
-          ${trab?`<span class="c-badge c-badge-trab">Trabalhador</span>`:``}
-        </div>
-        <div class="c-rodape-dir" style="color:${rodapeCor}">${e.data||''}</div>
-      </div>
-
+      <div class="c-nome-overlay" style="font-size:${tamanhoFonteNome(nomeExibir)}px">${nomeExibir}</div>
+      <div class="c-turma-overlay">${p.turma||''}</div>
     </div>`;
   }
 
@@ -6233,61 +6170,45 @@ body{font-family:'Georgia',serif;background:white;-webkit-print-color-adjust:exa
 
 .par{display:flex;overflow:hidden;break-inside:avoid;}
 
-/* Crachá base — ocupa metade do par */
+/* Crachá base — ocupa metade do par — usa a arte fixa como fundo */
 .cracha{
+  position:relative;
   flex:1;
-  border:0.5px solid #D4B8A0;
-  border-radius:4px;
   overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  background:white;
-  font-family:'Georgia',serif;
+  background-image:url('${CRACHA_BG_URL}');
+  background-size:cover;
+  background-position:center;
   font-family:'Georgia',serif;
   max-height:141mm;
+}
 
+/* Caixa do NOME — coordenadas calculadas a partir da arte original (1624×2274px) */
+.c-nome-overlay{
+  position:absolute;
+  left:4.06%; top:30.74%;
+  width:91.87%; height:26.91%;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center;
+  padding:0 2%;
+  font-weight:bold;
+  line-height:1.12;
+  color:#4E3922;
+  overflow:hidden;
+}
 
-/* 20% — TÍTULO */
-.c-topo{height:20%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px 8px;background-size:cover;background-position:center}
-.c-evento{font-size:40px;font-weight:bold;letter-spacing:3px;line-height:1}
-.c-ano{font-size:25px;font-weight:bold;letter-spacing:5px;margin-top:1px;opacity:.8}
-
-/* 10% — TEMAS */
-.c-temas{height:10%;display:flex;align-items:stretch;border-top:0.5px solid #E8DDD0;border-bottom:0.5px solid #E8DDD0}
-.c-tema-item{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2px 6px}
-.c-tema-manha{text-align:left}
-.c-tema-tarde{text-align:right}
-.c-tema-label{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:#A08060;margin-bottom:1px;font-family:'Helvetica',sans-serif}
-.c-tema-val{font-size:10px;font-weight:bold;color:#1a1a2e;line-height:1.2}
-.c-tema-sep{width:0.5px;background:#E8DDD0;margin:3px 0}
-
-/* 25% — NOME */
-.c-nome-wrap{height:25%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 10px;text-align:center;border-bottom:0.5px solid #F0E8DC}
-.c-nome{font-weight:bold;color:#1a1a2e;line-height:1.1;text-align:center}
-.c-nome-completo{font-size:20px;color:#A08060;font-style:italic;margin-top:2px}
-
-/* 10% — TURMA E SALA */
-.c-info-row{height:10%;display:flex;align-items:stretch;background:#FAF5EF;border-bottom:0.5px solid #E8DDD0}
-.c-info-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px 4px}
-.c-info-label{font-size:8px;text-transform:uppercase;letter-spacing:.6px;color:#A08060;font-family:'Helvetica',sans-serif}
-.c-info-val{font-size:14px;font-weight:bold;color:#1a1a2e;margin-top:1px}
-.c-info-div{width:0.5px;background:#E8DDD0;margin:4px 0}
-
-/* 25% — OBSERVAÇÕES */
-.c-obs{height:25%;display:flex;flex-direction:column;padding:4px 8px;border-bottom:0.5px solid #E8DDD0}
-.c-obs-label{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:#C8C0B0;margin-bottom:4px;font-family:'Helvetica',sans-serif}
-.c-obs-linhas{flex:1;display:flex;flex-direction:column;justify-content:space-around}
-.c-obs-linha{border-bottom:0.5px solid #E8DDD0}
-.c-obs-texto{font-size:10px;color:#1a1a2e;line-height:1.5;padding-top:2px}
-
-/* 10% — RODAPÉ */
-.c-rodape{height:10%;display:flex;align-items:center;justify-content:space-between;padding:3px 8px}
-.c-rodape-esq{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
-.c-rodape-dir{font-size:10px;letter-spacing:.5px;font-family:'Helvetica',sans-serif}
-.c-badge{font-size:9px;font-weight:bold;padding:1px 5px;border-radius:6px;letter-spacing:.3px}
-.c-badge-almoco{background:#FFF8EF;color:#B45309;border:0.5px solid #FCD9A0}
-.c-badge-cri{background:#EFF6FF;color:#1D4ED8;border:0.5px solid #BFDBFE}
-.c-badge-trab{background:#F5F3FF;color:#5B21B6;border:0.5px solid #DDD6FE}
+/* Caixa da TURMA */
+.c-turma-overlay{
+  position:absolute;
+  left:4.06%; top:59.32%;
+  width:91.87%; height:11.3%;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#4E3922;
+}
 
 /* VERSO (mantido caso use no futuro) */
 .verso{background:#FAFAF8}
