@@ -6103,7 +6103,7 @@ function gerarCrachas(){
     const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
     return `<div class="cracha">
       <div class="c-nome-overlay" style="font-size:${tamanhoFonteNome(nomeExibir)}px">${nomeExibir}</div>
-      <div class="c-turma-overlay">${p.turma||''}</div>
+      <div class="c-turma-overlay">${p.sala||''}</div>
     </div>`;
   }
 
