@@ -486,11 +486,17 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 /* Drop zones */
 .drop-zone{transition:background .15s,border-color .15s}
 .drop-zone.drag-over{background:var(--blue-50)!important;border-color:var(--blue-400)!important}
+.drop-zone.pode-soltar{outline:2px dashed var(--mcj-gold);outline-offset:-2px;cursor:pointer}
 
 /* Pessoa card (draggable) */
-.pessoa-card{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;background:var(--gray-50);border:1px solid var(--gray-100);margin-bottom:4px;cursor:grab;user-select:none;-webkit-user-select:none;transition:box-shadow .15s,opacity .15s;touch-action:none}
+.pessoa-card{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;background:var(--gray-50);border:1px solid var(--gray-100);margin-bottom:4px;cursor:grab;user-select:none;-webkit-user-select:none;transition:box-shadow .15s,opacity .15s,border-color .15s;touch-action:none}
 .pessoa-card:active{cursor:grabbing;box-shadow:0 4px 14px rgba(0,0,0,.15);opacity:.85}
 .pessoa-card.dragging{opacity:.4;box-shadow:none}
+.pessoa-card.selecionado{border-color:var(--mcj-gold);background:#FFF8EC;box-shadow:0 0 0 2px rgba(200,135,58,.25)}
+
+/* Banner de seleção (modo toque, alternativa ao arrastar) */
+.turma-sel-banner{display:flex;align-items:center;gap:10px;background:#FFF8EC;border:1.5px solid var(--mcj-gold);border-radius:10px;padding:8px 12px;margin-bottom:1rem;font-size:12px;font-weight:600;color:var(--mcj-mid)}
+.turma-sel-banner button{margin-left:auto;background:none;border:1px solid var(--mcj-gold);color:var(--mcj-mid);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer}
 .pessoa-avatar{width:28px;height:28px;border-radius:50%;background:var(--blue-100);color:var(--blue-800);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pessoa-info{flex:1;min-width:0}
 .pessoa-nome{font-size:12px;font-weight:600;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -4650,6 +4656,7 @@ function renderPanels(){
 ================================================================ */
 let _turmaPoloAtivo = null;
 let _turmaTurmaAtiva = 'Adulto'; // Adulto | Mocidade | Evangelizacao
+let _turmaSelecionado = null; // {id, email, polo, nome} — modo "toque pra selecionar" (alternativa ao arrastar)
 let _dragEmail = null;
 let _dragPolo  = null;
 let _dragId    = null;
@@ -4712,7 +4719,9 @@ function renderTurmas(){
            onclick="removerAtribuicao('${p.email.replace(/'/g,"\\'")}','${poloAttr.replace(/'/g,"\\'")}',event,'${(p.id||'').replace(/'/g,"\\'")}')">×</button>`
       : '';
     const idAttr = (p.id||'').replace(/"/g,'&quot;');
-    return `<div class="pessoa-card"
+    const estaSelecionado = _turmaSelecionado && _turmaSelecionado.id && _turmaSelecionado.id===p.id
+      || (_turmaSelecionado && !_turmaSelecionado.id && !p.id && _turmaSelecionado.email===p.email && _turmaSelecionado.polo===p.polo);
+    return `<div class="pessoa-card${estaSelecionado?' selecionado':''}"
       draggable="true"
       data-email="${emailAttr}"
       data-polo="${poloAttr}"
@@ -4720,7 +4729,9 @@ function renderTurmas(){
       ontouchstart="touchStart(event,this)"
       ontouchmove="touchMove(event)"
       ontouchend="touchEnd(event)"
-      onmousedown="dragMouseDown(event,this)">
+      onmousedown="dragMouseDown(event,this)"
+      onclick="selecionarPessoaTurma(event,this)"
+      title="Toque para selecionar e depois toque na sala">
       <div class="pessoa-avatar">${iniciais}</div>
       <div class="pessoa-info">
         <div class="pessoa-nome">${nomeExibir}</div>
@@ -4731,11 +4742,14 @@ function renderTurmas(){
     </div>`;
   }
 
+  const podeSoltarCls = _turmaSelecionado ? ' pode-soltar' : '';
   const unassignedHtml = `
-    <div class="turmas-unassigned drop-zone" data-sala=""
-      ondragover="dragOver(event)" ondrop="drop(event,'')" ondragleave="dragLeave(event)">
+    <div class="turmas-unassigned drop-zone${podeSoltarCls}" data-sala=""
+      ondragover="dragOver(event)" ondrop="drop(event,'')" ondragleave="dragLeave(event)"
+      onclick="atribuirPessoaSelecionada(event,'')">
       <div class="turmas-unassigned-title">Sem sala atribuída (${semSala.length})</div>
-      <div class="turmas-unassigned-list drop-zone" data-sala="">
+      <div class="turmas-unassigned-list drop-zone${podeSoltarCls}" data-sala=""
+        onclick="atribuirPessoaSelecionada(event,'')">
         ${semSala.map(p=>pessoaCardHtml(p,false)).join('')||'<p style="color:var(--gray-400);font-size:12px;padding:.5rem">Todos atribuídos!</p>'}
       </div>
     </div>`;
@@ -4769,15 +4783,17 @@ function renderTurmas(){
                   onchange="atribuirExpositor('${poloKey}','${salaKey}','tarde',this.value)">${optExp(expTarde)}</select>
               </div>
             </div>` : '';
-          return `<div class="turmas-sala-card drop-zone" data-sala="${sala}"
-            ondragover="dragOver(event)" ondrop="drop(event,'${sala.replace(/'/g,"\\'")}',this)" ondragleave="dragLeave(event)">
+          return `<div class="turmas-sala-card drop-zone${podeSoltarCls}" data-sala="${sala}"
+            ondragover="dragOver(event)" ondrop="drop(event,'${sala.replace(/'/g,"\\'")}',this)" ondragleave="dragLeave(event)"
+            onclick="atribuirPessoaSelecionada(event,'${sala.replace(/'/g,"\\'")}')">
             <div class="turmas-sala-header" style="background:${c.bg};color:${c.text};border-color:${c.border}">
               <span>${sala}</span>
               <span class="turmas-sala-count">${nesta.length} pessoa${nesta.length!==1?'s':''}</span>
             </div>
             ${expBlock}
-            <div class="turmas-sala-list drop-zone" data-sala="${sala}"
-              ondragover="dragOver(event)" ondrop="drop(event,'${sala.replace(/'/g,"\\'")}',this)" ondragleave="dragLeave(event)">
+            <div class="turmas-sala-list drop-zone${podeSoltarCls}" data-sala="${sala}"
+              ondragover="dragOver(event)" ondrop="drop(event,'${sala.replace(/'/g,"\\'")}',this)" ondragleave="dragLeave(event)"
+              onclick="atribuirPessoaSelecionada(event,'${sala.replace(/'/g,"\\'")}')">
               ${nesta.map(p=>pessoaCardHtml(p,true)).join('')||'<p style="color:var(--gray-200);font-size:11px;padding:.25rem">Arraste aqui</p>'}
             </div>
           </div>`;
@@ -4824,6 +4840,11 @@ function renderTurmas(){
         ${polo.tem_mocidade===true?`<button class="turma-tab ${_turmaTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarTurmaTipo('Mocidade',this)">🌟 Mocidade (${inscritos.filter(p=>p.turma==='Mocidade').length})</button>`:''}
         ${polo.aceita_crianca?`<button class="turma-tab ${_turmaTurmaAtiva==='Evangelizacao'?'active':''}" onclick="selecionarTurmaTipo('Evangelizacao',this)" style="${_turmaTurmaAtiva==='Evangelizacao'?'border-color:#4ADE80;color:#15803D;background:#F0FDF4':''}">👶 Evangelização (${inscritos.reduce((acc,p)=>acc+(p.criancas?.length||0),0)})</button>`:''}
       </div>
+      ${_turmaSelecionado ? `
+        <div class="turma-sel-banner">
+          👆 Selecionado: <strong>${(_turmaSelecionado.nome||'').replace(/</g,'&lt;')}</strong> — toque numa sala (ou em "Sem sala atribuída") pra atribuir
+          <button onclick="cancelarSelecaoTurma(event)">Cancelar</button>
+        </div>` : ''}
       <div class="turmas-layout">
         ${_turmaTurmaAtiva==='Evangelizacao' ? renderEvangelizacaoLayout(polo, inscritos) : `
           ${unassignedHtml}
@@ -6766,6 +6787,58 @@ function atribuirExpositor(poloNome, sala, periodo, expositor){
   setCfg(); // salva no Supabase/cache silenciosamente
 }
 
+/* ---- Toque pra selecionar (alternativa ao arrastar) ---- */
+function selecionarPessoaTurma(e, card){
+  e.stopPropagation();
+  const id    = card.dataset.id || null;
+  const email = card.dataset.email;
+  const polo  = card.dataset.polo;
+  const jaEra = _turmaSelecionado && (id ? _turmaSelecionado.id===id : (_turmaSelecionado.email===email && _turmaSelecionado.polo===polo));
+  if(jaEra){
+    _turmaSelecionado = null;
+  } else {
+    const nome = card.querySelector('.pessoa-nome')?.textContent || '';
+    _turmaSelecionado = {id, email, polo, nome};
+  }
+  renderTurmas();
+}
+function cancelarSelecaoTurma(e){
+  if(e) e.stopPropagation();
+  _turmaSelecionado = null;
+  renderTurmas();
+}
+function atribuirPessoaSelecionada(e, sala){
+  // ignora cliques em botões/selects/cards dentro da zona — quem trata isso é o próprio elemento
+  if(e.target.closest('.btn-remover-atrib') || e.target.closest('select') || e.target.closest('.pessoa-card')) return;
+  if(!_turmaSelecionado) return;
+  if(!poloNoEscopo(_turmaSelecionado.polo)){ alert('Sem permissão para este polo.'); _turmaSelecionado=null; renderTurmas(); return; }
+  atualizarInscricao(_turmaSelecionado.email, _turmaSelecionado.polo, {sala: sala||''}, _turmaSelecionado.id);
+  _turmaSelecionado = null;
+  renderTurmas();
+}
+
+/* ---- Auto-scroll durante o arrasto (perto das bordas da tela) ---- */
+const _DRAG_SCROLL_EDGE  = 90; // px da borda que já dispara o scroll
+const _DRAG_SCROLL_SPEED = 16; // px por passo
+let _dragAutoScrollRAF = null;
+let _dragClienteY = null;
+function _dragAutoScrollTick(){
+  if(_dragClienteY==null){ _dragAutoScrollRAF=null; return; }
+  const h = window.innerHeight;
+  if(_dragClienteY < _DRAG_SCROLL_EDGE){
+    window.scrollBy(0, -_DRAG_SCROLL_SPEED * (1 - _dragClienteY/_DRAG_SCROLL_EDGE));
+  } else if(_dragClienteY > h - _DRAG_SCROLL_EDGE){
+    window.scrollBy(0, _DRAG_SCROLL_SPEED * (1 - (h-_dragClienteY)/_DRAG_SCROLL_EDGE));
+  }
+  _dragAutoScrollRAF = requestAnimationFrame(_dragAutoScrollTick);
+}
+document.addEventListener('dragover', e=>{
+  if(!_dragEmail) return; // só ativa durante o arrasto de uma pessoa na aba Turmas
+  _dragClienteY = e.clientY;
+  if(!_dragAutoScrollRAF) _dragAutoScrollRAF = requestAnimationFrame(_dragAutoScrollTick);
+});
+document.addEventListener('dragend', ()=>{ _dragClienteY=null; if(_dragAutoScrollRAF){cancelAnimationFrame(_dragAutoScrollRAF); _dragAutoScrollRAF=null;} });
+
 /* ---- Drag events (desktop) ---- */
 function dragOver(e){
   e.preventDefault();
@@ -6822,6 +6895,14 @@ function touchMove(e){
   document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
   const zone = el?.closest('.drop-zone');
   if(zone) zone.classList.add('drag-over');
+
+  // auto-scroll perto das bordas (arrastar de/para itens fora da tela no celular)
+  const h = window.innerHeight;
+  if(t.clientY < _DRAG_SCROLL_EDGE){
+    window.scrollBy(0, -_DRAG_SCROLL_SPEED);
+  } else if(t.clientY > h - _DRAG_SCROLL_EDGE){
+    window.scrollBy(0, _DRAG_SCROLL_SPEED);
+  }
 }
 function touchEnd(e){
   if(!_touchClone){ _touchCard=null; return; }
