@@ -6066,7 +6066,7 @@ function gerarCrachasEvangelizacao(poloNome){
   const topoStyle = `background:${topoBg}`;
 
   function crachaCriancaHtml(c){
-    const nomeExibir = c.cracha&&c.cracha.trim() ? c.cracha.trim() : c.nome;
+    const nomeExibir = (c.cracha&&c.cracha.trim() ? c.cracha.trim() : c.nome).toUpperCase();
     return `<div class="cracha">
 
       <!-- 20%: TOPO VERDE — EVENTO + EVANGELIZAÇÃO -->
@@ -6097,7 +6097,7 @@ function gerarCrachasEvangelizacao(poloNome){
       <!-- 25%: NOME DA CRIANÇA -->
       <div class="c-nome-wrap" style="background:white">
         <div class="c-nome" style="font-size:${cfg.nomeSize||40}px;color:#166534">${nomeExibir}</div>
-        ${(c.cracha&&c.cracha.trim()&&c.cracha!==c.nome)?`<div class="c-nome-completo" style="color:#4ADE80">${c.nome}</div>`:''}
+        ${(c.cracha&&c.cracha.trim()&&c.cracha!==c.nome)?`<div class="c-nome-completo" style="color:#4ADE80">${c.nome.toUpperCase()}</div>`:''}
       </div>
 
       <!-- 10%: NASCIMENTO -->
@@ -6111,7 +6111,7 @@ function gerarCrachasEvangelizacao(poloNome){
       <!-- 25%: RESPONSÁVEL -->
       <div class="c-obs" style="background:white;justify-content:center">
         <div class="c-obs-label" style="color:#4ADE80">Responsável</div>
-        <div style="font-size:16px;font-weight:700;color:#166534;margin-top:4px;line-height:1.2">${c.responsavel}</div>
+        <div style="font-size:16px;font-weight:700;color:#166534;margin-top:4px;line-height:1.2">${(c.responsavel||'').toUpperCase()}</div>
         ${c.responsavel_tel?`<div style="font-size:11px;color:var(--gray-400);margin-top:4px">📞 ${c.responsavel_tel}</div>`:''}
       </div>
 
@@ -6177,7 +6177,7 @@ function gerarCrachas(){
   }
 
   function frenteHtml(p){
-    const nomeExibir = p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome;
+    const nomeExibir = (p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome).toUpperCase();
     return `<div class="cracha">
       <div class="c-nome-overlay" style="font-size:${tamanhoFonteNome(nomeExibir)}px">${nomeExibir}</div>
       <div class="c-turma-overlay">${p.sala||''}</div>
@@ -6200,7 +6200,7 @@ function gerarCrachas(){
         <div class="verso-sub"></div>
       </div>
       <div class="verso-corpo">
-        <div class="verso-nome">${p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome}</div>
+        <div class="verso-nome">${(p.cracha&&p.cracha.trim()?p.cracha.trim():p.nome).toUpperCase()}</div>
         <div class="verso-qr-row">
           <div class="verso-qr-item">
             <img src="${avalUrl}" width="90" height="90" alt="QR Avaliação">
