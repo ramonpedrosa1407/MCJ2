@@ -657,10 +657,11 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
 .aval-hero-sub{font-size:13px;color:rgba(255,255,255,.6);letter-spacing:.3px}
 .aval-card{background:white;border-radius:14px;border:1px solid var(--mcj-sand);padding:1.25rem;margin-bottom:1rem}
 .aval-criterio-label{font-size:14px;font-weight:600;color:var(--mcj-dark);margin-bottom:.75rem}
-.aval-stars{display:flex;gap:6px}
-.aval-star{font-size:28px;cursor:pointer;color:var(--mcj-sand);transition:color .1s,transform .1s;user-select:none;-webkit-user-select:none;touch-action:manipulation;pointer-events:all;display:inline-block;line-height:1}
-.aval-star.on{color:var(--mcj-gold)}
-.aval-star:hover{transform:scale(1.15)}
+.aval-escala{display:flex;gap:6px;flex-wrap:wrap}
+.aval-opt{padding:8px 14px;border-radius:20px;border:1.5px solid var(--gray-100);background:var(--gray-50);color:var(--gray-600);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .12s;user-select:none;-webkit-user-select:none;touch-action:manipulation;white-space:nowrap}
+.aval-opt.na{color:var(--gray-400);border-style:dashed}
+.aval-opt.on{border-color:var(--mcj-gold);background:var(--mcj-gold);color:white}
+.aval-opt.na.on{border-color:var(--gray-400);background:var(--gray-400);color:white;border-style:solid}
 .aval-comment{width:100%;padding:10px 12px;border:1px solid var(--gray-100);border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;resize:vertical;min-height:80px;background:var(--gray-50);color:var(--mcj-text)}
 .aval-comment:focus{border-color:var(--mcj-gold);background:white;outline:none}
 .aval-submit{width:100%;padding:14px;background:var(--mcj-gold);color:white;border:none;border-radius:12px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:.5rem;transition:background .15s}
@@ -8179,13 +8180,11 @@ function renderAvaliacao(){
       ${criterios.map((c,j)=>`
         <div style="margin-bottom:1rem">
           <div class="aval-criterio-label">${c}</div>
-          <div class="aval-stars" id="stars-${chave}-${j}">
-            ${[1,2,3,4,5].map(n=>`
-              <span class="aval-star${(_avalNotas[chave+'_'+j]||0)>=n?' on':''}"
-                data-chave="${chave}" data-idx="${j}" data-val="${n}"
-                onmouseover="hoverStars('${chave}',${j},${n})"
-                onmouseout="resetHoverStars('${chave}',${j})"
-                onclick="setNota('${chave}',${j},${n})">★</span>`).join('')}
+          <div class="aval-escala" id="escala-${chave}-${j}">
+            ${AVAL_OPCOES.map(op=>`
+              <button type="button" class="aval-opt${op==='Não se aplica'?' na':''}${(_avalNotas[chave+'_'+j]||'')===op?' on':''}"
+                data-valor="${op}"
+                onclick="setNota('${chave}',${j},'${op.replace(/'/g,"\\'")}')">${op}</button>`).join('')}
           </div>
         </div>`).join('')}
       <div style="margin-top:8px">
@@ -8211,31 +8210,18 @@ function renderAvaliacao(){
     <button class="aval-submit" onclick="enviarAvaliacao()">Enviar avaliação ✓</button>`;
 }
 
-function setNota(chave, idx, nota){
-  _avalNotas[chave+'_'+idx] = nota;
-  atualizarStars(chave, idx, nota);
-}
-function hoverStars(chave, idx, nota){
-  const stars=document.querySelectorAll(`#stars-${chave}-${idx} .aval-star`);
-  stars.forEach((s,i)=>s.classList.toggle('on',i<nota));
-}
-function resetHoverStars(chave, idx){
-  atualizarStars(chave, idx, _avalNotas[chave+'_'+idx]||0);
-}
-function atualizarStars(chave, idx, nota){
-  const stars=document.querySelectorAll(`#stars-${chave}-${idx} .aval-star`);
-  stars.forEach((s,i)=>s.classList.toggle('on',i<nota));
-}
+const AVAL_OPCOES = ['Excelente','Bom','Razoável','Ruim','Não se aplica'];
+const AVAL_SCORE  = {'Excelente':4,'Bom':3,'Razoável':2,'Ruim':1}; // 'Não se aplica' fica de fora da média
 
-// Touch para mobile
-document.addEventListener('touchstart',function(e){
-  const star=e.target.closest('.aval-star');
-  if(!star) return;
-  const chave=star.dataset.chave;
-  const idx=parseInt(star.dataset.idx);
-  const val=parseInt(star.dataset.val);
-  if(chave&&!isNaN(idx)&&!isNaN(val)){ e.preventDefault(); setNota(chave,idx,val); }
-},{passive:false});
+function setNota(chave, idx, valor){
+  _avalNotas[chave+'_'+idx] = valor;
+  atualizarEscala(chave, idx);
+}
+function atualizarEscala(chave, idx){
+  const grupo=document.getElementById(`escala-${chave}-${idx}`);
+  if(!grupo) return;
+  grupo.querySelectorAll('.aval-opt').forEach(b=>b.classList.toggle('on', b.dataset.valor===(_avalNotas[chave+'_'+idx]||'')));
+}
 
 function aval_onPoloChange(){
   _avalPolo = document.getElementById('aval-polo')?.value||'';
@@ -8405,29 +8391,30 @@ async function renderAvaliacaoAdmin(){
   }
 
   function mediaDeNotas(chave,idx){
-    const notas=rows.map(r=>(r.notas||{})[chave+'_'+idx]).filter(n=>n>0);
-    return notas.length?notas.reduce((a,b)=>a+b,0)/notas.length:0;
+    const pontos=rows.map(r=>AVAL_SCORE[(r.notas||{})[chave+'_'+idx]]).filter(n=>n>0);
+    return pontos.length?pontos.reduce((a,b)=>a+b,0)/pontos.length:0;
   }
   function distribuicao(chave,idx){
-    const d=[0,0,0,0,0];
-    rows.forEach(r=>{const n=(r.notas||{})[chave+'_'+idx];if(n>=1&&n<=5)d[n-1]++;});
+    const d={}; AVAL_OPCOES.forEach(op=>d[op]=0);
+    rows.forEach(r=>{const v=(r.notas||{})[chave+'_'+idx]; if(v in d) d[v]++;});
     return d;
   }
   function secaoResultado(chave,titulo,crit){
     const medias=crit.map((_,j)=>mediaDeNotas(chave,j));
-    const mg=medias.length?medias.reduce((a,b)=>a+b,0)/medias.length:0;
+    const comMedia=medias.filter(m=>m>0);
+    const mg=comMedia.length?comMedia.reduce((a,b)=>a+b,0)/comMedia.length:0;
     return `<div style="background:white;border-radius:14px;border:1px solid var(--mcj-sand);overflow:hidden;margin-bottom:1.25rem">
       <div style="padding:.875rem 1.25rem;background:var(--mcj-dark);display:flex;align-items:center;justify-content:space-between">
         <span style="font-family:'EB Garamond',Georgia,serif;font-size:16px;font-weight:700;color:white">${titulo}</span>
-        <span style="font-size:18px;font-weight:800;color:var(--mcj-gold)">${mg.toFixed(1)} ⭐</span>
+        <span style="font-size:18px;font-weight:800;color:var(--mcj-gold)">${mg>0?mg.toFixed(1)+'/4':'—'}</span>
       </div>
       <div style="padding:1.25rem;display:flex;flex-direction:column;gap:.875rem">
         ${crit.map((c,j)=>{
           const m=medias[j];const d=distribuicao(chave,j);
           return `<div class="aval-result-card" style="margin-bottom:0">
-            <div class="aval-result-label"><span>${c}</span><span class="aval-result-media">${m.toFixed(1)} ★</span></div>
-            <div class="aval-bar-wrap"><div class="aval-bar" style="width:${(m/5*100).toFixed(0)}%"></div></div>
-            <div class="aval-dist">${[1,2,3,4,5].map(n=>`<span>${n}<span class="aval-dist-star">★</span> ${total?((d[n-1]/total)*100).toFixed(0):0}%</span>`).join(' · ')}</div>
+            <div class="aval-result-label"><span>${c}</span><span class="aval-result-media">${m>0?m.toFixed(1)+'/4':'—'}</span></div>
+            <div class="aval-bar-wrap"><div class="aval-bar" style="width:${(m/4*100).toFixed(0)}%"></div></div>
+            <div class="aval-dist">${AVAL_OPCOES.map(op=>`${op} ${total?((d[op]/total)*100).toFixed(0):0}%`).join(' · ')}</div>
           </div>`;
         }).join('')}
       </div>
@@ -8515,18 +8502,18 @@ function exportarAvaliacaoExcel(){
   });
 
   // Linha de médias
-  const mediaRow = ['','','MÉDIA GERAL','','',''];
+  const mediaRow = ['','','MÉDIA GERAL (1–4, exclui N/A)','','',''];
   criterios.evento.forEach((_,j)=>{
-    const notas=rows.map(r=>(r.notas||{})['evento_'+j]).filter(n=>n>0);
-    mediaRow.push(notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2):'');
+    const pontos=rows.map(r=>AVAL_SCORE[(r.notas||{})['evento_'+j]]).filter(n=>n>0);
+    mediaRow.push(pontos.length?(pontos.reduce((a,b)=>a+b,0)/pontos.length).toFixed(2):'');
   });
   criterios.manha.forEach((_,j)=>{
-    const notas=rows.map(r=>(r.notas||{})['manha_'+j]).filter(n=>n>0);
-    mediaRow.push(notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2):'');
+    const pontos=rows.map(r=>AVAL_SCORE[(r.notas||{})['manha_'+j]]).filter(n=>n>0);
+    mediaRow.push(pontos.length?(pontos.reduce((a,b)=>a+b,0)/pontos.length).toFixed(2):'');
   });
   criterios.tarde.forEach((_,j)=>{
-    const notas=rows.map(r=>(r.notas||{})['tarde_'+j]).filter(n=>n>0);
-    mediaRow.push(notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2):'');
+    const pontos=rows.map(r=>AVAL_SCORE[(r.notas||{})['tarde_'+j]]).filter(n=>n>0);
+    mediaRow.push(pontos.length?(pontos.reduce((a,b)=>a+b,0)/pontos.length).toFixed(2):'');
   });
   mediaRow.push('');
 
@@ -8537,17 +8524,18 @@ function exportarAvaliacaoExcel(){
   XLSX.utils.book_append_sheet(wb, ws1, 'Respostas');
 
   // Aba resumo (médias por critério)
-  const resumoRows = [['Seção','Critério','Média','1★','2★','3★','4★','5★']];
+  const resumoRows = [['Seção','Critério','Média (1–4)',...AVAL_OPCOES]];
   [['evento','📋 Evento'],['manha','🌅 Manhã'],['tarde','🌆 Tarde']].forEach(([chave,label])=>{
     criterios[chave].forEach((c,j)=>{
-      const notas=rows.map(r=>(r.notas||{})[chave+'_'+j]).filter(n=>n>0);
-      const media=notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2):'—';
-      const dist=[1,2,3,4,5].map(n=>notas.filter(v=>v===n).length);
+      const valores=rows.map(r=>(r.notas||{})[chave+'_'+j]).filter(Boolean);
+      const pontos=valores.map(v=>AVAL_SCORE[v]).filter(n=>n>0);
+      const media=pontos.length?(pontos.reduce((a,b)=>a+b,0)/pontos.length).toFixed(2):'—';
+      const dist=AVAL_OPCOES.map(op=>valores.filter(v=>v===op).length);
       resumoRows.push([label,c,media,...dist]);
     });
   });
   const ws2 = XLSX.utils.aoa_to_sheet(resumoRows);
-  ws2['!cols']=[{wch:14},{wch:36},{wch:8},{wch:5},{wch:5},{wch:5},{wch:5},{wch:5}];
+  ws2['!cols']=[{wch:14},{wch:36},{wch:12},{wch:10},{wch:8},{wch:10},{wch:8},{wch:14}];
   XLSX.utils.book_append_sheet(wb, ws2, 'Resumo por critério');
 
   XLSX.writeFile(wb,`MCJ_2026_Avaliacoes_${_avalFiltroTipo==='geral'?'Geral':(_avalFiltroValor||_avalFiltroTipo)}.xlsx`);
@@ -8561,32 +8549,31 @@ function exportarAvaliacaoPDF(){
   const total = rows.length;
 
   function media(chave, idx){
-    const notas=rows.map(r=>(r.notas||{})[chave+'_'+idx]).filter(n=>n>0);
-    return notas.length ? notas.reduce((a,b)=>a+b,0)/notas.length : 0;
+    const pontos=rows.map(r=>AVAL_SCORE[(r.notas||{})[chave+'_'+idx]]).filter(n=>n>0);
+    return pontos.length ? pontos.reduce((a,b)=>a+b,0)/pontos.length : 0;
   }
   function dist(chave, idx){
-    return [1,2,3,4,5].map(n=>rows.filter(r=>(r.notas||{})[chave+'_'+idx]===n).length);
+    return AVAL_OPCOES.map(op=>rows.filter(r=>(r.notas||{})[chave+'_'+idx]===op).length);
   }
-  function estrelas(m){ return '★'.repeat(Math.round(m))+'☆'.repeat(5-Math.round(m)); }
 
   function secaoHtml(titulo, chave, crit){
     const medias = crit.map((_,j)=>media(chave,j));
-    const mg = medias.length ? medias.reduce((a,b)=>a+b,0)/medias.length : 0;
+    const comMedia = medias.filter(m=>m>0);
+    const mg = comMedia.length ? comMedia.reduce((a,b)=>a+b,0)/comMedia.length : 0;
     return `
       <div class="sec">
         <div class="sec-head">
           <span>${titulo}</span>
-          <span class="sec-media">${mg.toFixed(1)} ★</span>
+          <span class="sec-media">${mg>0?mg.toFixed(1)+'/4':'—'}</span>
         </div>
         <table>
-          <thead><tr><th>Critério</th><th>Média</th><th>Estrelas</th><th>1★</th><th>2★</th><th>3★</th><th>4★</th><th>5★</th></tr></thead>
+          <thead><tr><th>Critério</th><th>Média</th>${AVAL_OPCOES.map(op=>`<th>${op}</th>`).join('')}</tr></thead>
           <tbody>
             ${crit.map((c,j)=>{
               const m=medias[j]; const d=dist(chave,j);
               return `<tr>
                 <td>${c}</td>
-                <td style="font-weight:700;color:#C8873A">${m.toFixed(1)}</td>
-                <td style="color:#C8873A;letter-spacing:1px">${estrelas(m)}</td>
+                <td style="font-weight:700;color:#C8873A">${m>0?m.toFixed(1)+'/4':'—'}</td>
                 ${d.map(v=>`<td style="text-align:center">${v}</td>`).join('')}
               </tr>`;
             }).join('')}
