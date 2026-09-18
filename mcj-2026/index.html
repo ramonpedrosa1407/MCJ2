@@ -4657,6 +4657,7 @@ function renderPanels(){
 let _turmaPoloAtivo = null;
 let _turmaTurmaAtiva = 'Adulto'; // Adulto | Mocidade | Evangelizacao
 let _turmaSelecionado = null; // {id, email, polo, nome} — modo "toque pra selecionar" (alternativa ao arrastar)
+let _turmaBusca = ''; // busca por nome/crachá na aba Turmas
 let _dragEmail = null;
 let _dragPolo  = null;
 let _dragId    = null;
@@ -4705,8 +4706,19 @@ function renderTurmas(){
 
   // filtrar por turma ativa
   const inscrFiltrados = inscritos.filter(p=>p.turma===_turmaTurmaAtiva);
-  const semSala   = inscrFiltrados.filter(p=>!p.sala||p.sala==='');
-  const comSala   = inscrFiltrados.filter(p=>p.sala&&p.sala!=='');
+
+  // busca por nome/crachá (só se aplica às turmas Adulto/Mocidade, que usam sem-sala/salas)
+  const buscaNorm = _turmaBusca.trim().toLowerCase();
+  const inscrBuscados = buscaNorm
+    ? inscrFiltrados.filter(p=>{
+        const nome   = (p.nome||'').toLowerCase();
+        const cracha = (p.cracha||'').toLowerCase();
+        return nome.includes(buscaNorm) || cracha.includes(buscaNorm);
+      })
+    : inscrFiltrados;
+
+  const semSala   = inscrBuscados.filter(p=>!p.sala||p.sala==='');
+  const comSala   = inscrBuscados.filter(p=>p.sala&&p.sala!=='');
 
   function pessoaCardHtml(p, mostraBtnRemover){
     const nomeExibir = p.cracha && p.cracha.trim() ? p.cracha.trim() : p.nome;
@@ -4800,7 +4812,7 @@ function renderTurmas(){
         }).join('')}
       </div>`;
 
-  const totalAtribuidos = comSala.length;
+  const totalAtribuidos = inscrFiltrados.filter(p=>p.sala&&p.sala!=='').length;
   const totalFiltrados  = inscrFiltrados.length;
 
   wrap.innerHTML = `
@@ -4840,6 +4852,19 @@ function renderTurmas(){
         ${polo.tem_mocidade===true?`<button class="turma-tab ${_turmaTurmaAtiva==='Mocidade'?'active':''}" onclick="selecionarTurmaTipo('Mocidade',this)">🌟 Mocidade (${inscritos.filter(p=>p.turma==='Mocidade').length})</button>`:''}
         ${polo.aceita_crianca?`<button class="turma-tab ${_turmaTurmaAtiva==='Evangelizacao'?'active':''}" onclick="selecionarTurmaTipo('Evangelizacao',this)" style="${_turmaTurmaAtiva==='Evangelizacao'?'border-color:#4ADE80;color:#15803D;background:#F0FDF4':''}">👶 Evangelização (${inscritos.reduce((acc,p)=>acc+(p.criancas?.length||0),0)})</button>`:''}
       </div>
+      ${_turmaTurmaAtiva!=='Evangelizacao' ? `
+        <div style="position:relative;margin-bottom:.75rem">
+          <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gray-300);pointer-events:none">🔍</span>
+          <input type="text" id="turmas-busca-input" value="${esc(_turmaBusca)}"
+            oninput="turmasBuscaInput(this)"
+            onkeydown="if(event.key==='Escape'){limparBuscaTurmas();}"
+            placeholder="Buscar por nome ou crachá..."
+            style="width:100%;padding:10px 40px 10px 40px;border:1.5px solid var(--gray-100);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;background:white;outline:none">
+          <button onclick="limparBuscaTurmas()"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-300);font-size:20px;cursor:pointer;line-height:1;display:${_turmaBusca?'block':'none'}">×</button>
+        </div>
+        ${buscaNorm ? `<div style="font-size:11px;color:var(--gray-400);margin-bottom:.75rem">${inscrBuscados.length} de ${inscrFiltrados.length} encontrado${inscrBuscados.length!==1?'s':''}</div>` : ''}
+      ` : ''}
       ${_turmaSelecionado ? `
         <div class="turma-sel-banner">
           👆 Selecionado: <strong>${(_turmaSelecionado.nome||'').replace(/</g,'&lt;')}</strong> — toque numa sala (ou em "Sem sala atribuída") pra atribuir
@@ -6785,6 +6810,21 @@ function atribuirExpositor(poloNome, sala, periodo, expositor){
   if(!p.expositores_salas[sala]) p.expositores_salas[sala]={manha:'',tarde:''};
   p.expositores_salas[sala][periodo] = expositor;
   setCfg(); // salva no Supabase/cache silenciosamente
+}
+
+/* ---- Busca (aba Turmas) ---- */
+function turmasBuscaInput(el){
+  _turmaBusca = el.value;
+  const pos = el.selectionStart;
+  renderTurmas();
+  const novo = document.getElementById('turmas-busca-input');
+  if(novo){ novo.focus(); novo.setSelectionRange(pos,pos); }
+}
+function limparBuscaTurmas(){
+  _turmaBusca = '';
+  renderTurmas();
+  const novo = document.getElementById('turmas-busca-input');
+  if(novo) novo.focus();
 }
 
 /* ---- Toque pra selecionar (alternativa ao arrastar) ---- */
