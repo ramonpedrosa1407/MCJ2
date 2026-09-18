@@ -981,6 +981,17 @@ footer{margin-top:auto;text-align:center;padding:1.5rem 1rem;padding-bottom:calc
     </div>
     <div class="admin-panel active" id="apanel-inscricoes">
       <div class="summary-grid" id="summary-grid"></div>
+      <div style="position:relative;margin-bottom:1rem">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--gray-300);pointer-events:none">🔍</span>
+        <input type="text" id="ins-busca-input"
+          oninput="_insBusca=this.value;renderPanels()"
+          onkeydown="if(event.key==='Escape'){_insBusca='';this.value='';renderPanels();}"
+          placeholder="Buscar por nome, e-mail, telefone ou crachá..."
+          style="width:100%;padding:12px 40px 12px 42px;border:1.5px solid var(--gray-100);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;background:white;outline:none">
+        <button onclick="_insBusca='';document.getElementById('ins-busca-input').value='';renderPanels()"
+          id="ins-busca-clear"
+          style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray-300);font-size:22px;cursor:pointer;line-height:1;display:none">×</button>
+      </div>
       <div id="polo-panels"></div>
     </div>
     <div class="admin-panel" id="apanel-turmas">
@@ -4397,6 +4408,8 @@ function copiarWhats(){
 /* ================================================================
    ADMIN — PAINEL INSCRIÇÕES
 ================================================================ */
+let _insBusca = ''; // busca por nome/e-mail/telefone/crachá na aba Inscrições
+
 function renderAdmin(){
   renderSummary();
   renderPanels();
@@ -4546,15 +4559,29 @@ function renderPanels(){
   const c=document.getElementById('polo-panels');
   if(!c) return;
   const polosVisiveis = SESSION.role==='admin' ? POLOS : POLOS.filter(p=>SESSION.polos.includes(p.nome));
+
+  const clearBtn = document.getElementById('ins-busca-clear');
+  if(clearBtn) clearBtn.style.display = _insBusca ? 'block' : 'none';
+  const buscaNorm = _insBusca.trim().toLowerCase();
+
   c.innerHTML=polosVisiveis.map((polo)=>{
     const i=POLOS.indexOf(polo);
     const cl=cor(i);
-    const lista=d.filter(x=>x.polo===polo.nome);
-    const pagoCount  = lista.filter(x=>x.pagamento==='Confirmado').length;
-    const salaCount  = lista.filter(x=>x.sala&&x.sala!=='').length;
+    const listaTotal=d.filter(x=>x.polo===polo.nome);
+    const lista = buscaNorm
+      ? listaTotal.filter(x=>{
+          const nome    = (x.nome||'').toLowerCase();
+          const email   = (x.email||'').toLowerCase();
+          const tel     = (x.telefone||'').toLowerCase();
+          const cracha  = (x.cracha||'').toLowerCase();
+          return nome.includes(buscaNorm) || email.includes(buscaNorm) || tel.includes(buscaNorm) || cracha.includes(buscaNorm);
+        })
+      : listaTotal;
+    const pagoCount  = listaTotal.filter(x=>x.pagamento==='Confirmado').length;
+    const salaCount  = listaTotal.filter(x=>x.sala&&x.sala!=='').length;
 
     const rows=lista.length===0
-      ?`<tr class="empty-row"><td colspan="16">Nenhuma inscrição neste polo.</td></tr>`
+      ?`<tr class="empty-row"><td colspan="16">${buscaNorm?'Nenhuma inscrição encontrada com esse termo.':'Nenhuma inscrição neste polo.'}</td></tr>`
       :lista.map((p,j)=>{
         const emailSafe  = p.email.replace(/'/g,"\\'");
         const poloSafe   = polo.nome.replace(/'/g,"\\'");
@@ -4617,27 +4644,30 @@ function renderPanels(){
         </tr>`;
       }).join('');
 
-    const trabCount    = lista.filter(x=>x.trabalhador===true||x.trabalhador==='true').length;
+    const trabCount    = listaTotal.filter(x=>x.trabalhador===true||x.trabalhador==='true').length;
 
     const nomeSafe   = polo.nome.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     const extraActions = `<button class="btn-export-polo" onclick="exportarPolo('${nomeSafe}')">⬇ Excel</button>
       ${_cfgEvento.livreto_url?`<button class="btn-export-polo" style="color:#075E54;border-color:#C8E6C0;background:#F0FAF0" onclick="dispararLivretoPolo('${nomeSafe}')">📖 Livreto WA</button>`:''}`;
 
     const fecharBtn    = `<button class="btn-export-polo" style="color:${polo.inscricoes_abertas===false?'var(--teal-600)':'var(--red-400)'};border-color:${polo.inscricoes_abertas===false?'var(--teal-100)':'var(--red-100)'}" onclick="toggleInscricoesPolo(${i})">${polo.inscricoes_abertas===false?'🔓 Reabrir':'🔒 Fechar'}</button>`;
-    const pagoResumo   = lista.length>0
-      ? `<span class="pago-resumo"><span class="pago-count-sim">✓ ${pagoCount} pago${pagoCount!==1?'s':''}</span><span class="pago-count-nao">· ${lista.length-pagoCount} pendente${lista.length-pagoCount!==1?'s':''}</span></span>`
+    const pagoResumo   = listaTotal.length>0
+      ? `<span class="pago-resumo"><span class="pago-count-sim">✓ ${pagoCount} pago${pagoCount!==1?'s':''}</span><span class="pago-count-nao">· ${listaTotal.length-pagoCount} pendente${listaTotal.length-pagoCount!==1?'s':''}</span></span>`
       : '';
     const trabResumo   = trabCount>0
       ? `<span class="trab-resumo">🔧 ${trabCount} trabalhador${trabCount!==1?'es':''}</span>`
+      : '';
+    const buscaResumo  = buscaNorm
+      ? `<span style="font-size:11px;color:var(--gray-400);font-weight:500">· ${lista.length} encontrado${lista.length!==1?'s':''}</span>`
       : '';
 
     return `<div class="polo-panel">
       <div class="polo-panel-header">
         <div class="polo-panel-title">
           <span class="polo-badge" style="background:${cl.bg};color:${cl.text};border:1px solid ${cl.border}">${polo.nome}</span>
-          ${lista.length} inscrito${lista.length!==1?'s':''}
+          ${listaTotal.length} inscrito${listaTotal.length!==1?'s':''}
           ${polo.inscricoes_abertas===false?'<span class="polo-status-badge polo-status-fechado">Fechadas</span>':''}
-          ${pagoResumo}${trabResumo}
+          ${pagoResumo}${trabResumo}${buscaResumo}
         </div>
         <div style="display:flex;gap:6px">${extraActions}${fecharBtn}</div>
       </div>
