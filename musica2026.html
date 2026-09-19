@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Letras MCJ - Telao</title>
+<style>
+:root {
+  --bg: #1c1108;
+  --bg-2: #3f2611;
+  --panel: #2a180d;
+  --text: #f3e3c4;
+  --text-dim: #b89468;
+  --accent: #d9a743;
+  --accent-2: #9c6b34;
+  --border: #4d3319;
+  --danger: #c46a3f;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #eecf95;
+    --bg-2: #f8e7bf;
+    --panel: #fdf6e6;
+    --text: #3a2313;
+    --text-dim: #8a6a3f;
+    --accent: #a8712e;
+    --accent-2: #6b4423;
+    --border: #d9bd85;
+  }
+}
+:root[data-theme="dark"] { }
+html, body {
+  height: 100%;
+  margin: 0;
+}
+* { box-sizing: border-box; }
+body {
+  background: radial-gradient(ellipse at top, var(--bg-2), var(--bg));
+  color: var(--text);
+  font-family: "Georgia", "Iowan Old Style", serif;
+  overflow: hidden;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+#app { height: 100%; width: 100%; position: relative; }
+
+/* ---------- LISTA / BUSCA ---------- */
+#listView {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(16px, 3vw, 40px);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(10px, 2vw, 20px);
+}
+.header h1 {
+  font-size: clamp(20px, 3vw, 32px);
+  margin: 0;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  font-weight: 600;
+}
+.header .count {
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+#searchBox {
+  width: 100%;
+  font-size: clamp(15px, 1.6vw, 19px);
+  padding: 8px 4px 10px 4px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  outline: none;
+  font-family: "Georgia", "Iowan Old Style", serif;
+  font-style: italic;
+  letter-spacing: 0.3px;
+  transition: border-color 0.2s ease;
+}
+#searchBox::placeholder { color: var(--text-dim); opacity: 0.75; }
+#searchBox:focus { border-bottom-color: var(--accent); }
+#songList {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+.songItem {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  font-size: clamp(16px, 2vw, 22px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.12s ease;
+}
+.songItem:last-child { border-bottom: none; }
+.songItem:hover, .songItem.active {
+  background: rgba(217, 167, 67, 0.16);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.songItem .title { font-weight: 600; }
+.songItem .idx {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--text-dim);
+  min-width: 26px;
+  text-align: right;
+}
+#songList .empty {
+  padding: 30px;
+  text-align: center;
+  color: var(--text-dim);
+  font-family: system-ui, sans-serif;
+}
+.hint {
+  margin-top: 10px;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+}
+.hint kbd {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+/* ---------- MODO APRESENTACAO ---------- */
+#presentView {
+  display: none;
+  position: absolute;
+  inset: 0;
+  flex-direction: column;
+  padding: clamp(20px, 4vw, 60px);
+  padding-top: calc(env(safe-area-inset-top, 0px) + clamp(20px, 4vw, 60px));
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(20px, 4vw, 60px));
+}
+#presentView.active { display: flex; }
+#presTitle {
+  font-size: clamp(16px, 2.2vw, 24px);
+  color: var(--accent);
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+  margin-bottom: clamp(10px, 2vh, 20px);
+}
+#presLines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: clamp(10px, 2.2vh, 26px);
+  padding: 0 clamp(0px, 4vw, 60px);
+}
+#presLines .line {
+  font-size: clamp(28px, 6.2vw, 72px);
+  line-height: 1.25;
+  font-weight: 500;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.25);
+}
+#presFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: clamp(10px, 2vh, 20px);
+}
+.dots {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 1;
+}
+.dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.dot.on { background: var(--accent); transform: scale(1.3); }
+.ctrlBtn {
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.ctrlBtn:hover { border-color: var(--accent); }
+.navArrow {
+  font-family: system-ui, sans-serif;
+  font-size: clamp(20px, 3vw, 30px);
+  background: transparent;
+  color: var(--text-dim);
+  border: none;
+  cursor: pointer;
+  padding: 6px 16px;
+  user-select: none;
+}
+.navArrow:hover { color: var(--accent); }
+.navZone {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 18%;
+  cursor: pointer;
+}
+.navZone.left { left: 0; }
+.navZone.right { right: 0; }
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 14px;
+  right: 14px;
+  z-index: 5;
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="listView">
+    <div class="header">
+      <h1>Letras - Momentos com Jesus</h1>
+      <span class="count" id="countLabel"></span>
+    </div>
+    <input id="searchBox" type="text" placeholder="Buscar musica... (nome ou autor)" autocomplete="off" autofocus>
+    <div id="songList"></div>
+    <div class="hint">Digite para buscar &middot; clique numa musica ou tecle <kbd>Enter</kbd> &middot; <kbd>F11</kbd> para tela cheia</div>
+  </div>
+
+  <div id="presentView">
+    <div class="topBar">
+      <button class="ctrlBtn" id="backBtn">&larr; Buscar (Backspace ou B)</button>
+      <button class="ctrlBtn" id="fsBtn">Tela cheia</button>
+    </div>
+    <div id="presTitle"></div>
+    <div id="presLines"></div>
+    <div class="navZone left" id="zoneLeft" title="Slide anterior"></div>
+    <div class="navZone right" id="zoneRight" title="Proximo slide"></div>
+    <div id="presFooter">
+      <button class="navArrow" id="prevBtn">&#8592;</button>
+      <div class="dots" id="dots"></div>
+      <button class="navArrow" id="nextBtn">&#8594;</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SONGS = [{"title": "A Barca - Tu Te Abeiraste da Praia (Astúlio Nunes)", "lyrics": ["Tu te abeiraste da praia", "Não buscaste nem sábios, nem ricos", "Somente queres que eu te siga", "Senhor, tu me olhaste nos olhos", "A sorrir pronunciaste meu nome", "Lá na praia eu deixei o meu barco", "Junto a ti buscarei outro mar", "Tu sabes bem que em meu barco", "Eu não tenho espadas nem ouro", "Somente redes e o meu trabalho", "Senhor, tu me olhaste nos olhos", "A sorrir pronunciaste meu nome", "Lá na praia eu deixei o meu barco", "Junto a ti buscarei outro mar", "Tu minhas mãos solicitas", "Meu cansaço que a outros descanse", "Amor que almeja seguir amando", "Senhor, tu me olhaste nos olhos", "A sorrir pronunciaste meu nome", "Lá na praia eu deixei o meu barco", "Junto a ti buscarei outro mar", "Tu pescador de outros lagos", "Ânsia eterna de almas que esperam", "Bondoso amigo que assim me chamas", "Senhor, tu me olhaste nos olhos", "A sorrir pronunciaste meu nome", "Lá na praia eu deixei o meu barco", "Junto a ti buscarei outro mar"]}, {"title": "A Barreira (Equipe Um Som)", "lyrics": ["Eu tento me aproximar do bem que há em mim", "Mas não consigo superar a barreira", "São tantas pedras no caminho", "Aquela flor que tem espinhos", "Histórias que eu mesma construí", "Não existe barreira pro amor", "Existe final para a dor", "Sei que junto de Ti não há medo", "Não existe barreira pro amor", "Existe final para a dor", "Sei que junto de Ti não há medo", "Estou tentando afastar o mal que eu já fiz", "Mas sinto que ainda existe a barreira", "Que impede o ar de renovar, que me impede de amar", "De estar em paz com toda natureza", "Não existe barreira pro amor", "Existe final para a dor", "Mas aquela canção que me leva ao perdão do que eu fiz", "De tudo o que não foi bom", "Aquece o coração Amizade, belo e bom vão me guiar", "Pra que eu possa superar", "Sei que junto de Ti não há medo", "Não existe barreira pro amor", "Existe final pra essa a dor", "Sei que junto de Ti não há medo", "Sei que junto de Ti", "não há medo"]}, {"title": "Aos Pés do Monte (Tim e Vanessa)", "lyrics": ["Um sentimento me ronda", "Não sei dizer, tudo é novo pra mim", "Um sentimento me ronda", "Meu coração se renova", "Sinto a esperança invadir o meu ser", "Não sei dizer, tudo é novo pra mim", "Meu coração se renova", "Quero ser manso, ser limpo, ser justo", "E pobre de espírito ser", "Tua palavra me sonda", "Sinto a esperança invadir o meu ser", "Quero ser manso, ser limpo, ser justo", "E pobre de espírito ser", "Tua palavra me sonda", "Me conta do Reino que espera por mim", "Eu te ofereço meu pranto", "As dores da alma que quer renascer", "Me conta do Reino que espera por mim", "Eu te ofereço meu pranto", "As dores da alma que quer renascer", "Eu ouvi tua voz", "Eu ouvi tua voz", "Teu falar me encantou", "Quis seguir, caminhar", "Quis saber pra onde vou", "Eis-me aqui", "Teu falar me encantou", "Minha dor serenou.", "Eu ouvi tua voz", "Quis seguir, caminhar", "Teu falar me encantou", "Quis saber pra onde vou", "Quis seguir, caminhar", "Eis-me aqui", "Minha dor serenou.", "Quis saber pra onde vou", "Eis-me aqui", "Minha dor serenou."]}, {"title": "Canção da Alegria Cristã (Grupo Acorde)", "lyrics": ["Somos companheiros, amigos irmãos", "Que vivem alegres pensando no bem", "A nossa alegria é de bons cristãos", "Não ofende a Jesus, nem fere a ninguém", "A nossa alegria, a nossa alegria", "É bem do evangelho, é bem do evangelho", "Vibra e contagia, vibra e contagia", "Da criança ao velho, da criança ao velho", "Mesmo entre perigos, mesmo entre perigos", "Daremos as mãos, daremos as mãos", "Como bons amigos, como bons amigos", "Como bons cristãos", "Sempre ombro a ombro, sempre lado a lado", "Vamos trabalhar com muita alegria", "Pelo Espiritismo mais cristianizado", "Pela implantação da paz e harmonia", "A nossa alegria, a nossa alegria", "É bem do evangelho, é bem do evangelho", "Vibra e contagia, vibra e contagia", "Da criança ao velho, da criança ao velho", "Mesmo entre perigos, mesmo entre perigos", "Daremos as mãos, daremos as mãos", "Como bons amigos, como bons amigos", "Como bons cristãos"]}, {"title": "Cativar (Autoria desconhecida)", "lyrics": ["Uma palavra tão linda já quase esquecida se faz relembrar:", "Contendo sete letrinhas e todas juntinhas se lê \"cativar\"!", "Cativar é amar; é também carregar", "Um pouquinho da dor que alguém tem que levar...", "\"Cativou\" (cativou), disse alguém (disse alguém), laços fortes", "criou...", "Responsável (responsável) é você (é você) pelo que cativou...", "Num deserto tão só; entre homens também;", "Vou tentar cativar, viver perto de alguém...", "\"Cativou\" (cativou), disse alguém (disse alguém), laços fortes", "criou...", "Responsável (responsável) é você (é você) pelo que cati_vooou...", "cati_vooou...", "Cativou..."]}, {"title": "De Damasco às Estrelas (Eduardo Barreto)", "lyrics": ["Nascido entre fariseus,", "Surge um homem da lei, cego e obstinado...", "Efetuando prisões, conduzindo cristãos a serem castigados...", "Quando a Luz se acendeu e uma voz entoou:", "\"Filho, por que me persegues?\"", "Então, o encanto se deu, novo homem nasceu", "De Damasco às estrelas...", "Do jugo à libertação, de douto a tecelão, entre becos e celas...", "Mas rompia os grilhões a falar de Jesus - estrela guia -", "E a cada dia se abria para a Luz.", "Então, o encanto se deu, novo homem nasceu", "De Damasco às estrelas...", "Do jugo à libertação, de douto a tecelão, entre becos e celas...", "Mas rompia os grilhões a falar de Jesus - estrela guia -", "E a cada dia se abria para a Luz.", "Estrela guia -", "E a cada dia se abria para a Luz."]}, {"title": "Depende de Você (Eduardo Barreto)", "lyrics": ["Amigo, brilha o sol", "Além de sua janela", "Perceba ao seu redor", "O quanto a vida é bela", "Acenda em você", "O brilho que dormita", "Liberte as asas, voe", "Ao encontro do mais puro amor", "Abrace o infini_to", "Desperte para a luz", "Deixe o amor brotar", "Frutificar de vez", "Que a vida é muito mais", "Depende de você", "Querer acreditar", "Que pode ser feliz", "E, enfim, se libertar!"]}, {"title": "Eu-Livre (Denis Soares)", "lyrics": ["Suave embalo de uma vida que volta às provas do amor", "Se renova como linda flor que quer se regenerar", "E se não sabe o que mais virá", "sabe que o tempo a protegerá", "Em torno de tantas escolhas estradas pra se trilhar", "O que a vida tem de certo? O que de novo mostrará?", "Sente por dentro vontade de amar e de viver sorrindo, de se libertar", "Sigo os caminhos que escolhi, sei que me prendo ao que sou", "E que estou pronto pra crescer expandir os limites de amar", "Cada virtude que eu colhi, fruto do tempo de existir", "Me determino e vou lutar: Eu-livre! Quero continuar!", "E na essência de viver e ser feliz", "Sigo o compasso da beleza de encontrar", "Pois cada elo que eu faço e vivo me faz", "Algo sentir, muito aprender, pra continuar", "A aventura de sonhar, de mais amar", "Sigo os caminhos que escolhi, sei que me prendo ao que sou", "E que estou pronto pra crescer expandir os limites de amar", "Cada virtude que eu colhi, fruto do tempo de existir", "Me determino e vou lutar: Eu-livre! Quero continuar!", "Sigo em frente e vou continuar", "Essa aventura de sonhar... Eu-livre!", "Da rara rarara", "Eu-livre!"]}, {"title": "Faz de Todo Coração (Cacá Rezende)", "lyrics": ["Amado meu, confia, persevera, acolhe teu irmão", "Vive de verdade e tudo que fizeres, faz de todo coração", "Tudo que fizeres, faz de todo coração", "Tudo que fizeres, faz de todo coração", "Meu Rabi, Cristo meu amigo", "Ouço tua voz me falar", "Eu conto contigo pro meu reino edificar", "Eu sou vacilante, as vezes sou distante", "Mas o teu amor me faz voltar", "Me orienta, Cristo. Quero ocupar o meu lugar", "Amado meu, confia, persevera, acolhe teu irmão", "Vive de verdade a tua evangelização", "Amado meu, confia, persevera, acolhe teu irmão", "Vive de verdade e tudo que fizeres, faz de todo coração", "Larará rará rarararararara", "Larará rará rarararararara", "Meu Rabi, Cristo meu amigo", "Quero proclamar a vida imortal", "Quero te servir presencial ou virtual", "Eu sou vacilante, as vezes tão distante", "Mas me faz vibrar o teu amor", "Me orienta, Cristo, a ser um bom evangelizador", "Amado meu, confia, persevera, acolhe teu irmão", "Vive de verdade a tua evangelização"]}, {"title": "Força do Bem (Música DIJ/FEEES)", "lyrics": ["Me perguntam de onde vem", "Esse olhar firme e seguro", "Quando tudo é desafio", "quando tudo é tão escuro", "As respostas que eu tenho", "Se encontram neste mundo", "A certeza que eu sinto", "é o meu porto-seguro", "Eu me cerco, eu vigio, eu me importo, eu procuro", "Persevero, acredito, eu transformo este mundo", "É na força do bem", "que eu me apego e caminho", "No poder que mantém", "meu coração protegido", "E não há nada, nada, nada a temer", "Pois a força do bem é o maior poder.", "Pois a força do bem é o maior poder."]}, {"title": "O Amor de Jesus (Ariovaldo Filho)", "lyrics": ["Olha a manhã que brilha na janela", "Este sol de Deus é luz", "De amor em seu coração.", "Olha o que Deus nos deu de presente", "Diamantes de poeira flutuando", "Em raios de luz.", "Vamos louvar a Deus", "E agradecer a tudo", "Um novo dia amanheceu (amanheceu)", "Nos levantar agora", "Sair ao mundo hoje", "Testificar o amor", "O amor de Jesus."]}, {"title": "O Essencial (Carlos Faria Jr.)", "lyrics": ["Toda magia do amor está no próprio ser", "Em acordar e ver o dia nascer", "Pensando no bem, num mundo feliz", "O essencial a vida é a sabedoria", "Para conduzí-la, fazer de cada dia", "Um dia de paz, um dia feliz...", "Todo o bem que se possa fazer", "Se deve fazer sem hesitação", "Dar sem pensar em receber", "O amor sempre presente em cada coração", "Esse caminho leva o homem", "Que busca a verdade, a encontrar a paz", "A fraternidade ajuda a construir", "Um mundo mais irmão."]}, {"title": "Obrigado, Senhor (Marielza Tiscate)", "lyrics": ["Senhor, quero te agradecer pelo dia que nasceu, pelos dias que vão", "vir...", "Senhor, ouve a minha oração, ouve o meu coração a dizer", "Obrigado, Senhor... obrigado", "Senhor, quero te agradecer pelo dia que nasceu, pelos dias que vão", "vir...", "Senhor, ouve a minha oração, ouve o meu coração a dizer", "Obrigado, Senhor... obrigado", "Senhor", "Obrigado, Senhor"]}, {"title": "Para o Jovem Espírita (Eduardo Barreto)", "lyrics": ["O jovem espírita não pode ser apenas um a mais na multidão", "Pois sabe o lado bom da vida e de sua bagagem deve lançar mão", "Levar ao mundo o sonho dos justos,", "O sopro do amor verdadeiro", "Há sinuosas curvas, as esquinas oferecem vício e tentação", "Oh jovem, tu tens o condão de ser o sal da terra, a luz na escuridão", "Todo exemplo é bem mais que palavras, é vivenciar a lição", "Lavrar a terra, lançar a semente, estar no mundo, mas ser diferente", "Com alegria, viver o presente, estar no mundo mas ser diferente", "Um Cristão"]}, {"title": "Paz do Meu Amor - adaptada (Luís Vieira)", "lyrics": ["Jesus, Você é isso", "Uma beleza imensa", "Toda recompensa", "De um amor sem fim", "Jesus, Você é isso", "Uma nuvem calma", "No céu de minh'alma", "É ternura em mim", "Jesus, Você é isso", "Estrela matutina", "Luz que descortina", "Um mundo encantador", "Jesus, Você é isso", "Fonte de ternura", "Lágrima que é pura", "Paz do meu amor"]}, {"title": "Pedro (Tim e Vanessa)", "lyrics": ["Vem que eu te farei um pescador de homens", "Se perseverares serás Cefas, Pedra", "E onde a agonia do vazio medra", "Frutificarás a mitigar a fome", "Quero ir contigo mas receio as águas", "Temo afundar enquanto vais andando", "Se no Horto já pressentes tuas chagas", "Eu, Tiago e João ao chão, em sono", "Como não bastasse, eis-me a ferir", "Um soldado que te traz voz de prisão", "Sou pequena ovelha, atemorizada", "Balindo negação", "Volvo à vida e tomo pela tua mão", "E tu que és a rocha", "Constrói a minha casa", "No coração do irmão", "Ouve, Simão Pedro, morrerás em cruz", "Não, eu não mereço essa distinção", "Se depois do Mestre", "Martírios são troféus", "E as mãos que Ele tocou", "Os pés que Ele lavou", "Apontarão Os céus", "Crê, te levarei aonde não queiras ir", "Pedro, tu me amas?", "Pedro, tu me amas?", "Pedro, tu me amas?", "Volvo à vida e tomo pela tua mão", "Crê, te levarei aonde não queiras ir", "Pedro, tu me amas?", "Pedro, tu me amas?", "Pedro, tu me amas?", "E tu que és a rocha", "Constrói a minha casa", "No coração do irmão", "Ouve, Simão Pedro, morrerás em cruz", "Não, eu não mereço essa distinção", "Se depois do Mestre", "Martírios são troféus", "E as mãos que Ele tocou", "Os pés que Ele lavou", "Apontarão Os céus", "Vem que eu te farei um pescador de homens", "Se perseverares serás Cefas, Pedra", "Vem que eu te farei um pescador de homens"]}, {"title": "Pense Já no Amanhã (André Bezerra)", "lyrics": ["O quê você está fazendo agora pense já no amanhã", "A vida passa, não demore encontre sua direção", "Se você quiser mudar o mundo só depende de você", "Deixar fluir o que vem lá do fundo do coração", "É hora de mudar, de encontrar a direção", "De tentar abrir as portas do seu coração", "De tentar mudar o mundo através do amor", "Demonstrar que a juventude tem o seu valor"]}, {"title": "Pérola (Flávia Rubatino / Lívia Rubatino)", "lyrics": ["Acorda, que o mundo lá fora te espera", "Muitos precisam de um sorriso, uma palavra amiga...", "E você, preocupado com a sua dor...", "Pare, pense no outro, esquece um pouco de si", "E verás que a dor que agora te alucina", "É o grão de areia que na ostra vira pérola enfeitando a vida.", "Sorria, afaste a dor do coração", "Ajudando a quem precisa de uma força maior", "Capaz de transformar aflições em fortaleza de fé", "Em Deus, em fortaleza de fé em Deus."]}, {"title": "Quanta Luz (Cenyra Pinto)", "lyrics": ["Quanta luz neste ambiente", "Descendo sobre nós", "Vibrando em nossa mente", "Quanta luz, quando assim em prece", "Como a alma cresce", "Aos olhos de Jesus...", "Quanta luz, pois em oração", "A voz do Mestre fala ao nosso coração...", "Quanta luz, descendo sobre nós", "Quanta luz.....quanta luz...quanta luz"]}, {"title": "Quero-Quero (Haroldo S. Mendonça / Ana Cláudia S. Mendonça)", "lyrics": ["Quero ser como um girassol", "sempre em busca da luz da manhã.", "Quero ser como um rouxinol", "a cantar sempre a vida sem fim.", "Quero, quero ser feliz, quero, quero todo o amor que há,", "Quero, quero ser um giz a rabiscar... rabiscar... a rabiscar", "O mundo inteiro de amor.", "Quero, quero plantar uma flor", "onde faltam as cores da paz.", "Quero ser um adulto no agir e criança no modo de ser.", "De amor...", "de amor...", "a rabiscar o mundo de amor..."]}, {"title": "Reencarnação (Equipe Um Som)", "lyrics": ["Já parou pra refletir", "O que você faz aqui", "De onde veio pra onde vai", "E se estamos aqui", "Vamos todos nos unir", "Pro mundo melhorar mais", "Muitos mundos, muitas vidas", "Muitas voltas, muitas idas", "É o caminho que se faz", "E se nessa não deu certo", "Você pode estar certo", "Deus te deu uma chance a mais", "Reencarnação", "Questão de justiça", "Se você errou aqui", "Volta pra reconstruir", "Tudo que ficou pra trás", "Reencarnação", "Questão de justiça", "Se você errou aqui", "Volta pra reconstruir", "Tudo que ficou pra trás", "Reencarnação", "Questão de justiça"]}, {"title": "Senhor, Que Queres Que Eu Faça? (Eduardo Barreto)", "lyrics": ["Eu quero ver o sol brilhar e a luz vencer a escuridão,", "A porta abrir e o amor brotar em flor em cada coração.", "A vida transpirando plena em formas naturais", "E os homens cada vez mais perto de seus ideais.", "Eu quero a paz em cada olhar, um riso aberto oferecer,", "A minha mão e a tua mão edificando a comunhão.", "E quando olhar, então, a tez da vida eu possa ver", "Mais brilho e menos fome, mais ventura em cada ser.", "Urge saber como posso servir, retirar as pedras do caminho...", "Senhor, que queres que eu faça", "Além de me banhar nas águas da transformação? Senhor", "Que queres que eu faça", "Do amor que quer romper as portas do meu coração?", "Sonhando que possa varrer do mundo a face escura da opressão. Senhor!"]}];
+
+// Chunk lines into readable slides
+const LINES_PER_SLIDE = 4;
+function chunk(lines, size) {
+  const out = [];
+  for (let i = 0; i < lines.length; i += size) out.push(lines.slice(i, i + size));
+  return out;
+}
+SONGS.forEach(s => { s.slides = chunk(s.lyrics, LINES_PER_SLIDE); });
+
+function normalize(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+const listView = document.getElementById('listView');
+const presentView = document.getElementById('presentView');
+const searchBox = document.getElementById('searchBox');
+const songListEl = document.getElementById('songList');
+const countLabel = document.getElementById('countLabel');
+const presTitle = document.getElementById('presTitle');
+const presLines = document.getElementById('presLines');
+const dotsEl = document.getElementById('dots');
+
+let filtered = SONGS.map((s, i) => ({ ...s, origIndex: i }));
+let activeIdx = 0;
+let currentSong = null;
+let currentSlide = 0;
+
+function renderList() {
+  const q = normalize(searchBox.value.trim());
+  filtered = SONGS
+    .map((s, i) => ({ ...s, origIndex: i }))
+    .filter(s => !q || normalize(s.title).includes(q));
+  countLabel.textContent = filtered.length + ' / ' + SONGS.length + ' musicas';
+  if (activeIdx >= filtered.length) activeIdx = 0;
+
+  if (filtered.length === 0) {
+    songListEl.innerHTML = '<div class="empty">Nenhuma musica encontrada.</div>';
+    return;
+  }
+  songListEl.innerHTML = filtered.map((s, i) => `
+    <div class="songItem${i === activeIdx ? ' active' : ''}" data-i="${i}">
+      <span class="title">${escapeHtml(s.title)}</span>
+      <span class="idx">${s.origIndex + 1}</span>
+    </div>
+  `).join('');
+  [...songListEl.children].forEach(el => {
+    el.addEventListener('click', () => openSong(filtered[+el.dataset.i]));
+  });
+  const activeEl = songListEl.querySelector('.songItem.active');
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function openSong(song) {
+  currentSong = song;
+  currentSlide = 0;
+  presTitle.textContent = song.title;
+  presTitle.style.cursor = 'pointer';
+  presTitle.title = 'Clique para voltar a busca';
+  renderSlide();
+  listView.style.display = 'none';
+  presentView.classList.add('active');
+}
+presTitle.addEventListener('click', closePresent);
+
+function closePresent() {
+  presentView.classList.remove('active');
+  listView.style.display = 'flex';
+  searchBox.focus();
+}
+
+function renderSlide() {
+  if (!currentSong) return;
+  const slides = currentSong.slides.length ? currentSong.slides : [['(sem letra)']];
+  currentSlide = Math.max(0, Math.min(currentSlide, slides.length - 1));
+  const lines = slides[currentSlide];
+  presLines.innerHTML = lines.map(l => `<div class="line">${escapeHtml(l)}</div>`).join('');
+  dotsEl.innerHTML = slides.map((_, i) => `<span class="dot${i === currentSlide ? ' on' : ''}" data-i="${i}"></span>`).join('');
+  [...dotsEl.children].forEach(d => d.addEventListener('click', () => { currentSlide = +d.dataset.i; renderSlide(); }));
+}
+
+function nextSlide() {
+  if (!currentSong) return;
+  if (currentSlide < currentSong.slides.length - 1) { currentSlide++; renderSlide(); }
+}
+function prevSlide() {
+  if (!currentSong) return;
+  if (currentSlide > 0) { currentSlide--; renderSlide(); }
+}
+
+searchBox.addEventListener('input', () => { activeIdx = 0; renderList(); });
+searchBox.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(activeIdx + 1, filtered.length - 1); renderList(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(activeIdx - 1, 0); renderList(); }
+  else if (e.key === 'Enter') { if (filtered[activeIdx]) openSong(filtered[activeIdx]); }
+});
+
+document.getElementById('backBtn').addEventListener('click', closePresent);
+document.getElementById('nextBtn').addEventListener('click', nextSlide);
+document.getElementById('prevBtn').addEventListener('click', prevSlide);
+document.getElementById('zoneLeft').addEventListener('click', prevSlide);
+document.getElementById('zoneRight').addEventListener('click', nextSlide);
+
+document.getElementById('fsBtn').addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
+  }
+});
+
+window.addEventListener('keydown', (e) => {
+  const isBack = e.key === 'Backspace' || e.code === 'Backspace' || e.keyCode === 8 ||
+                 e.key === 'Escape' || e.code === 'Escape' ||
+                 e.key === 'b' || e.key === 'B';
+  if (presentView.classList.contains('active')) {
+    if (e.key === 'ArrowRight' || e.code === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+    else if (e.key === 'ArrowLeft' || e.code === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+    else if (isBack) { e.preventDefault(); e.stopPropagation(); closePresent(); }
+    else if (e.key === 'f' || e.key === 'F11') { /* let browser or fsBtn handle */ }
+  } else {
+    if (e.key === '/' ) { e.preventDefault(); searchBox.focus(); }
+  }
+}, true);
+
+renderList();
+</script>
+</body>
+</html>
