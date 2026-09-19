@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crachá Avulso — MCJ 2026</title>
+<style>
+  :root{
+    --w: 105mm;
+    --h: 147mm;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f0ec;
+    margin: 0;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .painel{
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.10);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+  }
+  .painel strong{ width: 100%; text-align: center; font-size: 17px; color: #4a3419; }
+  .painel label{ font-size: 14px; color: #333; display:flex; align-items:center; gap:6px; }
+  .painel input[type=number]{
+    width: 64px; padding: 8px; font-size: 16px; text-align: center;
+    border: 1px solid #ccc; border-radius: 8px;
+  }
+  .painel button{
+    background: #8a6d3b; color: #fff; border: none; border-radius: 10px;
+    padding: 12px 24px; font-size: 15px; cursor: pointer; font-weight: bold;
+  }
+  .painel button.secundario{ background: #6b6b6b; }
+  .painel button:hover{ filter: brightness(1.1); }
+
+  #folha{
+    display: grid;
+    grid-template-columns: repeat(2, var(--w));
+    gap: 4mm;
+    background: #fff;
+    padding: 4mm;
+  }
+  .cracha{
+    width: var(--w);
+    height: var(--h);
+    background-image: url('/assets/cracha-mcj2026.png');
+    background-size: cover;
+    background-position: center;
+    border: 1px dashed #bbb;
+  }
+
+  @media print{
+    body{ background: #fff; padding: 0; margin: 0; }
+    .painel{ display: none; }
+    #folha{ gap: 0; padding: 0; }
+    .cracha{ border: none; }
+    @page{ size: A4; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="painel">
+    <strong>Imprimir crachá avulso — MCJ 2026</strong>
+    <label>Quantidade: <input type="number" id="qtd" min="1" max="40" value="1"></label>
+    <button onclick="gerar()">Gerar</button>
+    <button class="secundario" onclick="window.print()">Imprimir</button>
+  </div>
+
+  <div id="folha"></div>
+
+<script>
+function gerar(){
+  const qtdInput = document.getElementById('qtd');
+  let qtd = parseInt(qtdInput.value, 10);
+  if(!qtd || qtd < 1) qtd = 1;
+  if(qtd > 40) qtd = 40;
+  qtdInput.value = qtd;
+
+  const folha = document.getElementById('folha');
+  folha.innerHTML = '';
+  for(let i = 0; i < qtd; i++){
+    const div = document.createElement('div');
+    div.className = 'cracha';
+    folha.appendChild(div);
+  }
+}
+gerar();
+</script>
+
+</body>
+</html>
