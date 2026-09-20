@@ -27,22 +27,29 @@
     box-shadow: 0 2px 10px rgba(0,0,0,.10);
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
-    align-items: center;
+    gap: 14px;
+    align-items: flex-end;
     justify-content: center;
+    max-width: 720px;
   }
   .painel strong{ width: 100%; text-align: center; font-size: 17px; color: #4a3419; }
-  .painel label{ font-size: 14px; color: #333; display:flex; align-items:center; gap:6px; }
-  .painel input[type=number]{
-    width: 64px; padding: 8px; font-size: 16px; text-align: center;
+  .campo{ display:flex; flex-direction:column; gap:4px; }
+  .campo label{ font-size: 13px; color: #555; }
+  .campo input[type=text]{
+    padding: 10px; font-size: 16px;
     border: 1px solid #ccc; border-radius: 8px;
+    min-width: 200px;
   }
   .painel button{
     background: #8a6d3b; color: #fff; border: none; border-radius: 10px;
-    padding: 12px 24px; font-size: 15px; cursor: pointer; font-weight: bold;
+    padding: 12px 22px; font-size: 15px; cursor: pointer; font-weight: bold;
+    height: 42px;
   }
   .painel button.secundario{ background: #6b6b6b; }
+  .painel button.perigo{ background: #a34a3a; }
   .painel button:hover{ filter: brightness(1.1); }
+
+  .contador{ font-size: 14px; color: #555; text-align:center; width:100%; }
 
   #folha{
     display: grid;
@@ -52,12 +59,44 @@
     padding: 4mm;
   }
   .cracha{
+    position: relative;
     width: var(--w);
     height: var(--h);
     background-image: url('/assets/cracha-mcj2026.png');
     background-size: cover;
     background-position: center;
     border: 1px dashed #bbb;
+    overflow: hidden;
+  }
+  .overlay{
+    position: absolute;
+    left: 5.5%;
+    width: 89%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #3d2b17;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.1;
+    padding: 0 3%;
+  }
+  .overlay-nome{ top: 30.8%; height: 26.9%; }
+  .overlay-sala{ top: 59.4%; height: 11.2%; }
+
+  .remover{
+    position: absolute;
+    top: 3mm; right: 3mm;
+    width: 7mm; height: 7mm;
+    background: #a34a3a;
+    color: #fff;
+    border-radius: 50%;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 7mm;
+    padding: 0;
   }
 
   @media print{
@@ -65,6 +104,7 @@
     .painel{ display: none; }
     #folha{ gap: 0; padding: 0; }
     .cracha{ border: none; }
+    .remover{ display: none; }
     @page{ size: A4; margin: 0; }
   }
 </style>
@@ -73,30 +113,102 @@
 
   <div class="painel">
     <strong>Imprimir crachá avulso — MCJ 2026</strong>
-    <label>Quantidade: <input type="number" id="qtd" min="1" max="40" value="1"></label>
-    <button onclick="gerar()">Gerar</button>
+    <div class="campo">
+      <label for="nome">Nome (opcional — pode deixar em branco pra escrever à mão)</label>
+      <input type="text" id="nome" placeholder="Nome para o crachá">
+    </div>
+    <div class="campo">
+      <label for="sala">Sala (opcional)</label>
+      <input type="text" id="sala" placeholder="Sala">
+    </div>
+    <button onclick="adicionar()">Adicionar crachá</button>
     <button class="secundario" onclick="window.print()">Imprimir</button>
+    <button class="perigo" onclick="limpar()">Limpar tudo</button>
+    <div class="contador" id="contador">0 crachás na folha</div>
   </div>
 
   <div id="folha"></div>
 
 <script>
-function gerar(){
-  const qtdInput = document.getElementById('qtd');
-  let qtd = parseInt(qtdInput.value, 10);
-  if(!qtd || qtd < 1) qtd = 1;
-  if(qtd > 40) qtd = 40;
-  qtdInput.value = qtd;
+let crachas = [];
 
+function tamanhoFonteNome(nome){
+  const n = nome.length;
+  if(n <= 12) return '11mm';
+  if(n <= 18) return '9mm';
+  if(n <= 24) return '7.5mm';
+  return '6mm';
+}
+
+function adicionar(){
+  const nome = document.getElementById('nome').value.trim();
+  const sala = document.getElementById('sala').value.trim();
+  crachas.push({ nome, sala });
+  document.getElementById('nome').value = '';
+  document.getElementById('sala').value = '';
+  document.getElementById('nome').focus();
+  render();
+}
+
+function remover(i){
+  crachas.splice(i, 1);
+  render();
+}
+
+function limpar(){
+  if(crachas.length && !confirm('Limpar todos os crachás da folha?')) return;
+  crachas = [];
+  render();
+}
+
+function render(){
   const folha = document.getElementById('folha');
   folha.innerHTML = '';
-  for(let i = 0; i < qtd; i++){
+
+  if(crachas.length === 0){
+    // sempre deixa pelo menos 1 crachá em branco pronto pra imprimir/escrever à mão
+    crachas.push({ nome:'', sala:'' });
+  }
+
+  crachas.forEach((c, i) => {
     const div = document.createElement('div');
     div.className = 'cracha';
+
+    const nomeDiv = document.createElement('div');
+    nomeDiv.className = 'overlay overlay-nome';
+    nomeDiv.style.fontSize = tamanhoFonteNome(c.nome || '');
+    nomeDiv.textContent = c.nome || '';
+    div.appendChild(nomeDiv);
+
+    const salaDiv = document.createElement('div');
+    salaDiv.className = 'overlay overlay-sala';
+    salaDiv.style.fontSize = '6mm';
+    salaDiv.textContent = c.sala || '';
+    div.appendChild(salaDiv);
+
+    const btnRemover = document.createElement('button');
+    btnRemover.className = 'remover';
+    btnRemover.textContent = '✕';
+    btnRemover.onclick = () => remover(i);
+    div.appendChild(btnRemover);
+
     folha.appendChild(div);
-  }
+  });
+
+  document.getElementById('contador').textContent =
+    crachas.filter(c => c.nome || c.sala).length + ' preenchido(s) / ' + crachas.length + ' crachá(s) na folha';
 }
-gerar();
+
+// permite apertar Enter no campo Sala pra adicionar rápido
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sala').addEventListener('keydown', e => {
+    if(e.key === 'Enter') adicionar();
+  });
+  document.getElementById('nome').addEventListener('keydown', e => {
+    if(e.key === 'Enter') document.getElementById('sala').focus();
+  });
+  render();
+});
 </script>
 
 </body>
